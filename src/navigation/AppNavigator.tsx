@@ -6,8 +6,8 @@ import { useAuthStore } from '../store/authStore';
 import { LoginScreen } from '../components/auth/LoginScreen';
 import { MapScreen } from '../components/map/MapScreen';
 import { ProfileScreen } from '../components/profile/ProfileScreen';
-import { MessageScreen } from '../components/messages/MessageScreen';
 import { ActivityScreen } from '../components/activities/ActivityScreen';
+import { ChatScreen } from '../components/chat/ChatScreen';
 import { IconButton } from 'react-native-paper';
 
 const Stack = createStackNavigator();
@@ -67,11 +67,11 @@ const AppNavigator = () => {
           <>
             <Stack.Screen name="Main" component={MainTabs} />
             <Stack.Screen 
-              name="Message" 
-              component={MessageScreen}
+              name="Chat" 
+              component={ChatScreen}
               options={{ 
                 headerShown: true,
-                title: 'Messages',
+                title: 'Chat',
                 headerBackTitle: 'Back'
               }}
             />

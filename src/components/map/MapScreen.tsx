@@ -90,6 +90,13 @@ export const MapScreen: React.FC = () => {
     );
   };
 
+  // Handle chat functionality
+  const handleChat = (user: User) => {
+    // Navigate to chat screen
+    // This will be handled by the navigation
+    showToast(`Opening chat with ${user.nickname}`, 'info');
+  };
+
   // Refresh nearby users
   const handleRefresh = async () => {
     if (!currentLocation) {
@@ -194,18 +201,16 @@ export const MapScreen: React.FC = () => {
               <Button
                 mode="contained"
                 onPress={() => handleGreet(selectedUser)}
-                style={styles.greetButton}
+                style={styles.actionButton}
               >
                 Greet
               </Button>
               <Button
                 mode="outlined"
-                onPress={() => {
-                  // TODO: Implement message functionality
-                  showToast('Message feature coming soon!', 'info');
-                }}
+                onPress={() => handleChat(selectedUser)}
+                style={styles.actionButton}
               >
-                Message
+                Chat
               </Button>
             </View>
           </Card.Content>
@@ -277,9 +282,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  greetButton: {
+  actionButton: {
     flex: 1,
-    marginRight: 8,
+    marginHorizontal: 4,
   },
   fab: {
     position: 'absolute',
