@@ -65,8 +65,11 @@ COPY --from=builder /app/app.json ./
 COPY --from=builder /app/babel.config.js ./
 COPY --from=builder /app/tsconfig.json ./
 
-# Set proper permissions
-RUN chown -R nextjs:nodejs /app
+# Create necessary directories with proper permissions
+RUN mkdir -p assets && \
+    mkdir -p .expo && \
+    chown -R nextjs:nodejs /app && \
+    chmod -R 755 /app
 
 # Switch to non-root user
 USER nextjs
