@@ -38,6 +38,7 @@ RUN mkdir -p assets && \
     mkdir -p .expo/web && \
     mkdir -p .expo/ios && \
     mkdir -p .expo/android && \
+    mkdir -p .expo/metro && \
     chown -R nextjs:nodejs /app && \
     chmod -R 755 /app && \
     chmod -R 777 .expo
