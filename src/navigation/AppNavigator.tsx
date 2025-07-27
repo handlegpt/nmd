@@ -7,6 +7,7 @@ import { LoginScreen } from '../components/auth/LoginScreen';
 import { MapScreen } from '../components/map/MapScreen';
 import { ProfileScreen } from '../components/profile/ProfileScreen';
 import { MessageScreen } from '../components/messages/MessageScreen';
+import { ActivityScreen } from '../components/activities/ActivityScreen';
 import { IconButton } from 'react-native-paper';
 
 const Stack = createStackNavigator();
@@ -22,6 +23,8 @@ const MainTabs = () => {
 
           if (route.name === 'Map') {
             iconName = 'map';
+          } else if (route.name === 'Activities') {
+            iconName = 'calendar';
           } else if (route.name === 'Profile') {
             iconName = 'account';
           } else {
@@ -38,6 +41,11 @@ const MainTabs = () => {
         name="Map" 
         component={MapScreen}
         options={{ title: 'Discover' }}
+      />
+      <Tab.Screen 
+        name="Activities" 
+        component={ActivityScreen}
+        options={{ title: 'Activities' }}
       />
       <Tab.Screen 
         name="Profile" 

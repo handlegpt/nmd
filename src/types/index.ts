@@ -36,11 +36,7 @@ export interface Activity {
   id: string;
   title: string;
   description: string;
-  location: {
-    latitude: number;
-    longitude: number;
-    address: string;
-  };
+  location: Location;
   date_time: string;
   max_participants: number;
   current_participants: number;
