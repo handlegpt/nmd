@@ -36,8 +36,12 @@ COPY . .
 # Create necessary directories with proper permissions
 RUN mkdir -p assets && \
     mkdir -p .expo && \
+    mkdir -p .expo/web && \
+    mkdir -p .expo/ios && \
+    mkdir -p .expo/android && \
     chown -R nextjs:nodejs /app && \
-    chmod -R 755 /app
+    chmod -R 755 /app && \
+    chmod -R 777 /app/.expo
 
 # Switch to non-root user
 USER nextjs
