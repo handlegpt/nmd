@@ -1,17 +1,19 @@
-.PHONY: help setup start stop clean build logs
+.PHONY: help setup start stop clean build logs security-audit audit-fix
 
 # Default target
 help:
 	@echo "NomadNow - Digital Nomad Social App"
 	@echo ""
 	@echo "Available commands:"
-	@echo "  make setup    - Initial project setup"
-	@echo "  make start    - Start the application"
-	@echo "  make stop     - Stop the application"
-	@echo "  make clean    - Clean up containers and images"
-	@echo "  make build    - Build Docker images"
-	@echo "  make logs     - View application logs"
-	@echo "  make help     - Show this help message"
+	@echo "  make setup           - Initial project setup"
+	@echo "  make start           - Start the application"
+	@echo "  make stop            - Stop the application"
+	@echo "  make clean           - Clean up containers and images"
+	@echo "  make build           - Build Docker images"
+	@echo "  make logs            - View application logs"
+	@echo "  make security-audit  - Run security audit"
+	@echo "  make audit-fix       - Fix security vulnerabilities"
+	@echo "  make help            - Show this help message"
 
 # Initial setup
 setup:
@@ -43,6 +45,18 @@ build:
 logs:
 	@echo "📋 Viewing application logs..."
 	@docker-compose logs -f nomadnow-app
+
+# Security audit
+security-audit:
+	@echo "🔒 Running security audit..."
+	@chmod +x scripts/security-audit.sh
+	@./scripts/security-audit.sh
+
+# Fix security vulnerabilities
+audit-fix:
+	@echo "🔧 Fixing security vulnerabilities..."
+	@npm audit fix
+	@echo "✅ Security vulnerabilities fixed!"
 
 # Install dependencies locally
 install:
