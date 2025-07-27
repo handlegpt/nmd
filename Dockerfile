@@ -35,8 +35,12 @@ COPY . .
 
 # Create necessary directories with proper permissions
 RUN mkdir -p assets && \
+    mkdir -p .expo/web && \
+    mkdir -p .expo/ios && \
+    mkdir -p .expo/android && \
     chown -R nextjs:nodejs /app && \
-    chmod -R 755 /app
+    chmod -R 755 /app && \
+    chmod -R 777 .expo
 
 # Switch to non-root user
 USER nextjs
@@ -52,5 +56,5 @@ ENV EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:19002 || exit 1
 
-# Start command with directory setup
-CMD ["sh", "-c", "mkdir -p .expo/web .expo/ios .expo/android && chmod -R 777 .expo && npm start"] 
+# Start command
+CMD ["npm", "start"] 
