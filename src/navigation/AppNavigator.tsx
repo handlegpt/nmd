@@ -6,11 +6,13 @@ import { useAuthStore } from '../store/authStore';
 import { LoginScreen } from '../components/auth/LoginScreen';
 import { MapScreen } from '../components/map/MapScreen';
 import { ProfileScreen } from '../components/profile/ProfileScreen';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MessageScreen } from '../components/messages/MessageScreen';
+import { IconButton } from 'react-native-paper';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
+// Main app tabs
 const MainTabs = () => {
   return (
     <Tab.Navigator
@@ -19,46 +21,59 @@ const MainTabs = () => {
           let iconName: string;
 
           if (route.name === 'Map') {
-            iconName = focused ? 'map-marker' : 'map-marker-outline';
+            iconName = 'map';
           } else if (route.name === 'Profile') {
-            iconName = focused ? 'account' : 'account-outline';
+            iconName = 'account';
           } else {
             iconName = 'circle';
           }
 
-          return <MaterialCommunityIcons name={iconName as any} size={size} color={color} />;
+          return <IconButton icon={iconName} size={size} iconColor={color} />;
         },
-        tabBarActiveTintColor: '#2196F3',
+        tabBarActiveTintColor: '#2196f3',
         tabBarInactiveTintColor: 'gray',
-        headerShown: false,
       })}
     >
       <Tab.Screen 
         name="Map" 
         component={MapScreen}
-        options={{ title: '地图' }}
+        options={{ title: 'Discover' }}
       />
       <Tab.Screen 
         name="Profile" 
         component={ProfileScreen}
-        options={{ title: '我的' }}
+        options={{ title: 'Profile' }}
       />
     </Tab.Navigator>
   );
 };
 
-export const AppNavigator = () => {
+// Main app navigator
+const AppNavigator = () => {
   const { user } = useAuthStore();
 
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {user ? (
-          <Stack.Screen name="Main" component={MainTabs} />
+          <>
+            <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen 
+              name="Message" 
+              component={MessageScreen}
+              options={{ 
+                headerShown: true,
+                title: 'Messages',
+                headerBackTitle: 'Back'
+              }}
+            />
+          </>
         ) : (
-          <Stack.Screen name="Auth" component={LoginScreen} />
+          <Stack.Screen name="Login" component={LoginScreen} />
         )}
       </Stack.Navigator>
     </NavigationContainer>
   );
-}; 
+};
+
+export default AppNavigator; 

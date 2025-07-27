@@ -15,26 +15,73 @@ import {
   Paragraph,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
+import Toast from '../common/Toast';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [nickname, setNickname] = useState('');
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
   const { signIn, signUp, loading } = useAuthStore();
+
+  // Show toast message
+  const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
+    setToast({ visible: true, message, type });
+  };
+
+  // Hide toast message
+  const hideToast = () => {
+    setToast({ ...toast, visible: false });
+  };
+
+  // Validate form inputs
+  const validateForm = () => {
+    if (!email.trim()) {
+      showToast('Please enter your email', 'error');
+      return false;
+    }
+    if (!password.trim()) {
+      showToast('Please enter your password', 'error');
+      return false;
+    }
+    if (!isLogin && !nickname.trim()) {
+      showToast('Please enter your nickname', 'error');
+      return false;
+    }
+    if (password.length < 6) {
+      showToast('Password must be at least 6 characters', 'error');
+      return false;
+    }
+    return true;
+  };
 
   // Handle form submission for login/signup
   const handleSubmit = async () => {
+    if (!validateForm()) return;
+
     try {
       if (isLogin) {
         await signIn(email, password);
+        showToast('Successfully signed in!', 'success');
       } else {
         await signUp(email, password, nickname);
+        showToast('Account created successfully!', 'success');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Authentication error:', error);
-      // TODO: Show error message to user
+      const errorMessage = error?.message || 'Authentication failed. Please try again.';
+      showToast(errorMessage, 'error');
     }
+  };
+
+  // Clear form when switching between login/signup
+  const handleToggleMode = () => {
+    setIsLogin(!isLogin);
+    setEmail('');
+    setPassword('');
+    setNickname('');
   };
 
   return (
@@ -63,6 +110,7 @@ export const LoginScreen: React.FC = () => {
                 style={styles.input}
                 mode="outlined"
                 autoCapitalize="none"
+                placeholder="Enter your nickname"
               />
             )}
 
@@ -74,6 +122,8 @@ export const LoginScreen: React.FC = () => {
               mode="outlined"
               keyboardType="email-address"
               autoCapitalize="none"
+              placeholder="Enter your email"
+              autoComplete="email"
             />
 
             <TextInput
@@ -83,6 +133,8 @@ export const LoginScreen: React.FC = () => {
               style={styles.input}
               mode="outlined"
               secureTextEntry
+              placeholder="Enter your password"
+              autoComplete={isLogin ? "current-password" : "new-password"}
             />
 
             <Button
@@ -97,14 +149,26 @@ export const LoginScreen: React.FC = () => {
 
             <Button
               mode="text"
-              onPress={() => setIsLogin(!isLogin)}
-              style={styles.switchButton}
+              onPress={handleToggleMode}
+              style={styles.toggleButton}
+              disabled={loading}
             >
-              {isLogin ? 'No account? Sign up' : 'Have account? Sign in'}
+              {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
             </Button>
           </Card.Content>
         </Card>
       </ScrollView>
+
+      {/* Toast for user feedback */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onHide={hideToast}
+      />
+
+      {/* Loading spinner */}
+      <LoadingSpinner visible={loading} message="Authenticating..." />
     </KeyboardAvoidingView>
   );
 };
@@ -121,13 +185,18 @@ const styles = StyleSheet.create({
   },
   card: {
     elevation: 4,
-    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   title: {
     textAlign: 'center',
     marginBottom: 8,
     fontSize: 24,
-    fontWeight: 'bold',
   },
   subtitle: {
     textAlign: 'center',
@@ -142,7 +211,9 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     paddingVertical: 8,
   },
-  switchButton: {
+  toggleButton: {
     marginTop: 8,
   },
-}); 
+});
+
+export default LoginScreen; 

@@ -14,10 +14,13 @@ import {
   Avatar,
   Chip,
   Button,
+  IconButton,
 } from 'react-native-paper';
 import { useMapStore } from '../../store/mapStore';
 import { useAuthStore } from '../../store/authStore';
 import { User } from '../../types';
+import Toast from '../common/Toast';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 const { width, height } = Dimensions.get('window');
 
@@ -30,10 +33,22 @@ export const MapScreen: React.FC = () => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
     initializeMap();
   }, []);
+
+  // Show toast message
+  const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
+    setToast({ visible: true, message, type });
+  };
+
+  // Hide toast message
+  const hideToast = () => {
+    setToast({ ...toast, visible: false });
+  };
 
   // Initialize map with current location
   const initializeMap = async () => {
@@ -47,10 +62,11 @@ export const MapScreen: React.FC = () => {
           longitudeDelta: 0.0421,
         };
         setRegion(newRegion);
-        await fetchNearbyUsers(currentLocation.latitude, currentLocation.longitude);
+        await fetchNearbyUsers(currentLocation.latitude, currentLocation.longitude, 10);
+        showToast('Location updated successfully!', 'success');
       }
     } catch (error) {
-      Alert.alert('Error', 'Unable to get location information');
+      showToast('Unable to get location. Please check permissions.', 'error');
     }
   };
 
@@ -61,15 +77,14 @@ export const MapScreen: React.FC = () => {
 
   // Handle greeting functionality
   const handleGreet = (user: User) => {
-    // TODO: Implement greeting functionality (e.g., open Telegram or send email)
     Alert.alert(
       'Greet User',
       `Say hello to ${user.nickname}?`,
       [
         { text: 'Cancel', style: 'cancel' },
         { text: 'OK', onPress: () => {
-          // TODO: Implement greeting logic
-          console.log('Greeting:', user.nickname);
+          // TODO: Implement greeting logic (e.g., send message, open chat)
+          showToast(`Greeting sent to ${user.nickname}!`, 'success');
         }},
       ]
     );
@@ -77,9 +92,37 @@ export const MapScreen: React.FC = () => {
 
   // Refresh nearby users
   const handleRefresh = async () => {
-    if (currentLocation) {
-      await fetchNearbyUsers(currentLocation.latitude, currentLocation.longitude);
+    if (!currentLocation) {
+      showToast('Location not available. Please wait...', 'warning');
+      return;
     }
+
+    setIsRefreshing(true);
+    try {
+      await fetchNearbyUsers(currentLocation.latitude, currentLocation.longitude, 10);
+      showToast('Nearby users refreshed!', 'success');
+    } catch (error) {
+      showToast('Failed to refresh nearby users', 'error');
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  // Get user avatar or default
+  const getUserAvatar = (user: User) => {
+    return user.avatar_url || 'https://via.placeholder.com/50';
+  };
+
+  // Get distance from current location
+  const getDistance = (user: User) => {
+    if (!currentLocation || !user.location) return 'Unknown';
+    
+    const distance = Math.sqrt(
+      Math.pow(currentLocation.latitude - user.location.latitude, 2) +
+      Math.pow(currentLocation.longitude - user.location.longitude, 2)
+    ) * 111; // Rough conversion to km
+    
+    return distance < 1 ? `${Math.round(distance * 1000)}m` : `${Math.round(distance)}km`;
   };
 
   return (
@@ -99,8 +142,8 @@ export const MapScreen: React.FC = () => {
               latitude: currentLocation.latitude,
               longitude: currentLocation.longitude,
             }}
-            title="My Location"
-            description="You are here"
+            title="You are here"
+            description="Your current location"
             pinColor="blue"
           />
         )}
@@ -116,61 +159,38 @@ export const MapScreen: React.FC = () => {
             title={user.nickname}
             description={user.current_city}
             onPress={() => handleMarkerPress(user)}
-          >
-            <View style={styles.markerContainer}>
-              <Avatar.Image
-                size={40}
-                source={
-                  user.avatar_url
-                    ? { uri: user.avatar_url }
-                    : require('../../../assets/default-avatar.png')
-                }
-              />
-            </View>
-          </Marker>
+          />
         ))}
       </MapView>
 
-      {/* Selected user information card */}
+      {/* User details card */}
       {selectedUser && (
         <Card style={styles.userCard}>
           <Card.Content>
             <View style={styles.userHeader}>
               <Avatar.Image
                 size={50}
-                source={
-                  selectedUser.avatar_url
-                    ? { uri: selectedUser.avatar_url }
-                    : require('../../../assets/default-avatar.png')
-                }
+                source={{ uri: getUserAvatar(selectedUser) }}
               />
               <View style={styles.userInfo}>
                 <Title>{selectedUser.nickname}</Title>
                 <Paragraph>{selectedUser.current_city}</Paragraph>
+                <Chip style={styles.distanceChip}>
+                  {getDistance(selectedUser)}
+                </Chip>
               </View>
+              <IconButton
+                icon="close"
+                size={20}
+                onPress={() => setSelectedUser(null)}
+              />
             </View>
-
+            
             {selectedUser.bio && (
               <Paragraph style={styles.bio}>{selectedUser.bio}</Paragraph>
             )}
 
-            <View style={styles.languagesContainer}>
-              {selectedUser.languages.map((lang, index) => (
-                <Chip key={index} style={styles.chip}>
-                  {lang}
-                </Chip>
-              ))}
-            </View>
-
-            <View style={styles.interestsContainer}>
-              {selectedUser.interests.map((interest, index) => (
-                <Chip key={index} style={styles.chip} mode="outlined">
-                  {interest}
-                </Chip>
-              ))}
-            </View>
-
-            <View style={styles.actions}>
+            <View style={styles.userActions}>
               <Button
                 mode="contained"
                 onPress={() => handleGreet(selectedUser)}
@@ -180,22 +200,37 @@ export const MapScreen: React.FC = () => {
               </Button>
               <Button
                 mode="outlined"
-                onPress={() => setSelectedUser(null)}
+                onPress={() => {
+                  // TODO: Implement message functionality
+                  showToast('Message feature coming soon!', 'info');
+                }}
               >
-                Close
+                Message
               </Button>
             </View>
           </Card.Content>
         </Card>
       )}
 
-      {/* Refresh button */}
+      {/* Refresh FAB */}
       <FAB
-        style={styles.fab}
         icon="refresh"
+        style={styles.fab}
         onPress={handleRefresh}
-        loading={loading}
+        loading={isRefreshing}
+        disabled={loading || isRefreshing}
       />
+
+      {/* Toast for user feedback */}
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onHide={hideToast}
+      />
+
+      {/* Loading spinner */}
+      <LoadingSpinner visible={loading} message="Loading map..." />
     </View>
   );
 };
@@ -205,20 +240,21 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   map: {
-    width,
-    height,
-  },
-  markerContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
+    flex: 1,
   },
   userCard: {
     position: 'absolute',
-    bottom: 100,
-    left: 20,
-    right: 20,
+    bottom: 80,
+    left: 16,
+    right: 16,
     elevation: 8,
-    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.3,
+    shadowRadius: 4.65,
   },
   userHeader: {
     flexDirection: 'row',
@@ -226,28 +262,18 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   userInfo: {
-    marginLeft: 12,
     flex: 1,
+    marginLeft: 12,
+  },
+  distanceChip: {
+    alignSelf: 'flex-start',
+    marginTop: 4,
   },
   bio: {
     marginBottom: 12,
     fontStyle: 'italic',
   },
-  languagesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 8,
-  },
-  interestsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 16,
-  },
-  chip: {
-    marginRight: 8,
-    marginBottom: 4,
-  },
-  actions: {
+  userActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -261,4 +287,6 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-}); 
+});
+
+export default MapScreen; 
