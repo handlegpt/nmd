@@ -24,9 +24,9 @@ export const ProfileScreen: React.FC = () => {
   const [nickname, setNickname] = useState(user?.nickname || '');
   const [bio, setBio] = useState(user?.bio || '');
   const [currentCity, setCurrentCity] = useState(user?.current_city || '');
-  const [isVisible, setIsVisible] = useState(user?.is_visible || true);
+  const [isVisible, setIsVisible] = useState(user?.is_visible ?? true);
   const [isAvailableForMeetup, setIsAvailableForMeetup] = useState(
-    user?.is_available_for_meetup || true
+    user?.is_available_for_meetup ?? true
   );
 
   // Save profile changes
@@ -95,7 +95,7 @@ export const ProfileScreen: React.FC = () => {
               source={
                 user.avatar_url
                   ? { uri: user.avatar_url }
-                  : require('../../../assets/default-avatar.png')
+                  : { uri: 'https://via.placeholder.com/80x80/2196f3/ffffff?text=U' }
               }
             />
             <View style={styles.headerInfo}>
