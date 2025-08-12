@@ -7,6 +7,7 @@ import { LoginScreen } from '../components/auth/LoginScreen';
 import { MapScreen } from '../components/map/MapScreen';
 import { ProfileScreen } from '../components/profile/ProfileScreen';
 import { ActivityScreen } from '../components/activities/ActivityScreen';
+import { NotificationScreen } from '../components/notifications/NotificationScreen';
 import { ChatScreen } from '../components/chat/ChatScreen';
 import { IconButton } from 'react-native-paper';
 
@@ -25,6 +26,8 @@ const MainTabs = () => {
             iconName = 'map';
           } else if (route.name === 'Activities') {
             iconName = 'calendar';
+          } else if (route.name === 'Notifications') {
+            iconName = 'bell';
           } else if (route.name === 'Profile') {
             iconName = 'account';
           } else {
@@ -35,6 +38,21 @@ const MainTabs = () => {
         },
         tabBarActiveTintColor: '#2196f3',
         tabBarInactiveTintColor: 'gray',
+        tabBarStyle: {
+          backgroundColor: '#ffffff',
+          borderTopWidth: 1,
+          borderTopColor: '#e0e0e0',
+          paddingBottom: 8,
+          paddingTop: 8,
+          height: 60,
+        },
+        headerStyle: {
+          backgroundColor: '#2196f3',
+        },
+        headerTintColor: '#ffffff',
+        headerTitleStyle: {
+          fontWeight: 'bold',
+        },
       })}
     >
       <Tab.Screen 
@@ -46,6 +64,11 @@ const MainTabs = () => {
         name="Activities" 
         component={ActivityScreen}
         options={{ title: 'Activities' }}
+      />
+      <Tab.Screen 
+        name="Notifications" 
+        component={NotificationScreen}
+        options={{ title: 'Notifications' }}
       />
       <Tab.Screen 
         name="Profile" 
@@ -72,7 +95,14 @@ const AppNavigator = () => {
               options={{ 
                 headerShown: true,
                 title: 'Chat',
-                headerBackTitle: 'Back'
+                headerBackTitle: 'Back',
+                headerStyle: {
+                  backgroundColor: '#2196f3',
+                },
+                headerTintColor: '#ffffff',
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                },
               }}
             />
           </>

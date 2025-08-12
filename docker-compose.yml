@@ -1,32 +1,39 @@
 version: '3.8'
 
 services:
-  # Main React Native Expo app
-  nomadnow-app:
+  # Main React Native Expo Web app
+  nomadnow-web:
     build: .
     ports:
+      - "19006:19006"  # Expo Web interface
       - "19000:19000"  # Expo development server
       - "19001:19001"  # Expo DevTools
       - "19002:19002"  # Expo DevTools web interface
-      - "19006:19006"  # Expo Web interface
     environment:
       - NODE_ENV=development
       - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
       - EXPO_PUBLIC_SUPABASE_URL=${EXPO_PUBLIC_SUPABASE_URL}
       - EXPO_PUBLIC_SUPABASE_ANON_KEY=${EXPO_PUBLIC_SUPABASE_ANON_KEY}
+      - EXPO_WEB_PORT=19006
     stdin_open: true
     tty: true
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:19006"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-  # Optional: Local Supabase development environment
+  # Optional: Supabase local development
   # Uncomment if you want to run Supabase locally
   # supabase:
-  #   image: supabase/postgres-meta:latest
+  #   image: supabase/supabase-dev
   #   ports:
-  #     - "5432:5432"
+  #     - "54321:54321"  # Supabase Studio
+  #     - "54322:54322"  # Supabase API
   #   environment:
-  #     POSTGRES_PASSWORD: your_password
-  #     POSTGRES_DB: nomadnow
+  #     - POSTGRES_PASSWORD=your-super-secret-and-long-postgres-password
   #   volumes:
   #     - supabase_data:/var/lib/postgresql/data
   #   restart: unless-stopped

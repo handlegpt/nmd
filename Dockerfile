@@ -1,36 +1,29 @@
-# Use specific version for better security
+# Use Node.js Alpine for smaller image size
 FROM node:18.19-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apk add --no-cache \
+    curl \
+    git \
+    && rm -rf /var/cache/apk/*
 
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nextjs -u 1001
 
-# Install only necessary system dependencies
-RUN apk add --no-cache \
-    git \
-    bash \
-    curl \
-    && rm -rf /var/cache/apk/*
-
-# Install Expo CLI globally with specific version
-RUN npm install -g @expo/cli@latest && \
-    npm cache clean --force
-
-# Set working directory
-WORKDIR /app
-
-# Copy package files first for better caching
+# Copy package files
 COPY package*.json ./
 COPY package-lock.json ./
 
 # Install dependencies with security best practices
-RUN npm ci --legacy-peer-deps && \
+RUN npm ci --legacy-peer-deps --only=production && \
     npm cache clean --force && \
-    # Remove unnecessary files
-    rm -rf /root/.npm && \
-    rm -rf /root/.cache
+    npm audit --audit-level=moderate
 
-# Copy project files (excluding those in .dockerignore)
+# Copy project files
 COPY . .
 
 # Create necessary directories with proper permissions
@@ -46,16 +39,12 @@ RUN mkdir -p assets && \
 # Switch to non-root user
 USER nextjs
 
-# Expose ports for Expo development server
-EXPOSE 19000 19001 19002
+# Expose web port
+EXPOSE 19006
 
-# Set environment variables
-ENV NODE_ENV=development
-ENV EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+# Health check for web interface
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:19006 || exit 1
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:19002 || exit 1
-
-# Start command
+# Start the web development server
 CMD ["npm", "start"] 

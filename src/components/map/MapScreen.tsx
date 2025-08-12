@@ -4,6 +4,7 @@ import {
   StyleSheet,
   Dimensions,
   Alert,
+  Platform,
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import {
@@ -15,6 +16,7 @@ import {
   Chip,
   Button,
   IconButton,
+  useTheme,
 } from 'react-native-paper';
 import { useMapStore } from '../../store/mapStore';
 import { useAuthStore } from '../../store/authStore';
@@ -27,6 +29,7 @@ const { width, height } = Dimensions.get('window');
 export const MapScreen: React.FC = () => {
   const { currentLocation, nearbyUsers, selectedUser, loading, getCurrentLocation, fetchNearbyUsers, setSelectedUser } = useMapStore();
   const { user } = useAuthStore();
+  const theme = useTheme();
   const [region, setRegion] = useState({
     latitude: 39.9042, // Default to Beijing
     longitude: 116.4074,
@@ -77,23 +80,26 @@ export const MapScreen: React.FC = () => {
 
   // Handle greeting functionality
   const handleGreet = (user: User) => {
-    Alert.alert(
-      'Greet User',
-      `Say hello to ${user.nickname}?`,
-      [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'OK', onPress: () => {
-          // TODO: Implement greeting logic (e.g., send message, open chat)
-          showToast(`Greeting sent to ${user.nickname}!`, 'success');
-        }},
-      ]
-    );
+    if (Platform.OS === 'web') {
+      // Web-specific greeting logic
+      showToast(`Greeting sent to ${user.nickname}!`, 'success');
+    } else {
+      Alert.alert(
+        'Greet User',
+        `Say hello to ${user.nickname}?`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'OK', onPress: () => {
+            showToast(`Greeting sent to ${user.nickname}!`, 'success');
+          }},
+        ]
+      );
+    }
   };
 
   // Handle chat functionality
   const handleChat = (user: User) => {
     // Navigate to chat screen
-    // This will be handled by the navigation
     showToast(`Opening chat with ${user.nickname}`, 'info');
   };
 
@@ -141,6 +147,11 @@ export const MapScreen: React.FC = () => {
         onRegionChangeComplete={setRegion}
         showsUserLocation
         showsMyLocationButton
+        mapType="standard"
+        zoomEnabled
+        scrollEnabled
+        rotateEnabled
+        pitchEnabled
       >
         {/* Current user location marker */}
         {currentLocation && (
@@ -166,13 +177,14 @@ export const MapScreen: React.FC = () => {
             title={user.nickname}
             description={user.current_city}
             onPress={() => handleMarkerPress(user)}
+            pinColor="red"
           />
         ))}
       </MapView>
 
       {/* User details card */}
       {selectedUser && (
-        <Card style={styles.userCard}>
+        <Card style={[styles.userCard, Platform.OS === 'web' && styles.webUserCard]}>
           <Card.Content>
             <View style={styles.userHeader}>
               <Avatar.Image
@@ -202,6 +214,7 @@ export const MapScreen: React.FC = () => {
                 mode="contained"
                 onPress={() => handleGreet(selectedUser)}
                 style={styles.actionButton}
+                icon="hand-wave"
               >
                 Greet
               </Button>
@@ -209,6 +222,7 @@ export const MapScreen: React.FC = () => {
                 mode="outlined"
                 onPress={() => handleChat(selectedUser)}
                 style={styles.actionButton}
+                icon="message"
               >
                 Chat
               </Button>
@@ -220,10 +234,11 @@ export const MapScreen: React.FC = () => {
       {/* Refresh FAB */}
       <FAB
         icon="refresh"
-        style={styles.fab}
+        style={[styles.fab, Platform.OS === 'web' && styles.webFab]}
         onPress={handleRefresh}
         loading={isRefreshing}
         disabled={loading || isRefreshing}
+        label={Platform.OS === 'web' ? 'Refresh' : undefined}
       />
 
       {/* Toast for user feedback */}
@@ -243,6 +258,7 @@ export const MapScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f5f5f5',
   },
   map: {
     flex: 1,
@@ -260,6 +276,12 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.3,
     shadowRadius: 4.65,
+  },
+  webUserCard: {
+    maxWidth: 400,
+    left: '50%',
+    transform: [{ translateX: -200 }],
+    bottom: 100,
   },
   userHeader: {
     flexDirection: 'row',
@@ -291,6 +313,10 @@ const styles = StyleSheet.create({
     margin: 16,
     right: 0,
     bottom: 0,
+  },
+  webFab: {
+    right: 16,
+    bottom: 16,
   },
 });
 

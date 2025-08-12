@@ -3,7 +3,7 @@
     "name": "NomadNow",
     "slug": "nomadnow",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -14,38 +14,27 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.nomadnow.app"
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      },
-      "package": "com.nomadnow.app",
-      "permissions": [
-        "ACCESS_FINE_LOCATION",
-        "ACCESS_COARSE_LOCATION",
-        "CAMERA",
-        "READ_EXTERNAL_STORAGE",
-        "WRITE_EXTERNAL_STORAGE"
-      ]
-    },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "static",
+      "build": {
+        "babel": {
+          "include": ["@expo/vector-icons"]
+        }
+      }
     },
     "plugins": [
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "允许 NomadNow 访问您的位置以显示附近的数字游民"
+          "locationAlwaysAndWhenInUsePermission": "Allow NomadNow to access your location to show nearby digital nomads"
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "允许 NomadNow 访问您的相册以选择头像"
+          "photosPermission": "Allow NomadNow to access your photos to select avatar"
         }
       ]
     ]
