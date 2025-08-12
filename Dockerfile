@@ -16,10 +16,9 @@ RUN addgroup -g 1001 -S nodejs && \
 
 # Copy package files
 COPY package*.json ./
-COPY package-lock.json ./
 
 # Install dependencies with security best practices
-RUN npm ci --legacy-peer-deps --only=production && \
+RUN npm install --legacy-peer-deps && \
     npm cache clean --force && \
     npm audit --audit-level=moderate
 
