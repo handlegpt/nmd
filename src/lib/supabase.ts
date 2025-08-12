@@ -1,7 +1,22 @@
 import { createClient } from '@supabase/supabase-js';
 import * as SecureStore from 'expo-secure-store';
 
-// Secure storage adapter for Expo
+// Check if environment variables are set
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  console.error('Missing Supabase environment variables:');
+  console.error('EXPO_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
+  console.error('EXPO_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing');
+  
+  // Show error in browser console
+  if (typeof window !== 'undefined') {
+    console.error('Please set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in your .env file');
+  }
+}
+
+// Custom storage adapter for Expo SecureStore
 const ExpoSecureStoreAdapter = {
   getItem: (key: string) => {
     return SecureStore.getItemAsync(key);
@@ -14,18 +29,19 @@ const ExpoSecureStoreAdapter = {
   },
 };
 
-// Supabase configuration
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'your-supabase-url';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'your-supabase-anon-key';
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    storage: ExpoSecureStoreAdapter,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-});
+// Create Supabase client with fallback values
+export const supabase = createClient(
+  supabaseUrl || 'https://your-project.supabase.co',
+  supabaseAnonKey || 'your-anon-key',
+  {
+    auth: {
+      storage: ExpoSecureStoreAdapter,
+      autoRefreshToken: true,
+      persistSession: true,
+      detectSessionInUrl: false,
+    },
+  }
+);
 
 // Database schema SQL (execute in Supabase SQL editor)
 /*
