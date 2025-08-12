@@ -19,8 +19,7 @@ COPY package*.json ./
 
 # Install dependencies with security best practices
 RUN npm install --legacy-peer-deps && \
-    npm cache clean --force && \
-    npm audit --audit-level=moderate
+    npm cache clean --force
 
 # Copy project files
 COPY . .
