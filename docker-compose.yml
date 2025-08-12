@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Main React Native Expo Web app
   nomadnow-web:
@@ -9,17 +7,19 @@ services:
       - "19000:19000"  # Expo development server
       - "19001:19001"  # Expo DevTools
       - "19002:19002"  # Expo DevTools web interface
+      - "8081:8081"    # Metro bundler and web server
     environment:
       - NODE_ENV=development
       - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
       - EXPO_PUBLIC_SUPABASE_URL=${EXPO_PUBLIC_SUPABASE_URL}
       - EXPO_PUBLIC_SUPABASE_ANON_KEY=${EXPO_PUBLIC_SUPABASE_ANON_KEY}
       - EXPO_WEB_PORT=19006
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
     stdin_open: true
     tty: true
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:19006"]
+      test: ["CMD", "curl", "-f", "http://localhost:8081"]
       interval: 30s
       timeout: 10s
       retries: 3
