@@ -16,13 +16,7 @@
     ],
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro",
-      "output": "static",
-      "build": {
-        "babel": {
-          "include": ["@expo/vector-icons"]
-        }
-      }
+      "bundler": "metro"
     },
     "plugins": [
       [
