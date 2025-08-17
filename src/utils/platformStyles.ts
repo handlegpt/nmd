@@ -17,11 +17,13 @@ export const createShadowStyle = (options: {
   } = options;
 
   if (Platform.OS === 'web') {
+    // For web, only return boxShadow, no shadow* properties
     return {
       boxShadow: `${shadowOffset.width}px ${shadowOffset.height}px ${shadowRadius}px rgba(0, 0, 0, ${shadowOpacity})`,
     };
   }
 
+  // For native platforms, return shadow* properties and elevation
   return {
     shadowColor,
     shadowOffset,

@@ -41,7 +41,7 @@ const LoginPrompt = ({ navigation }: { navigation: any }) => (
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+    ...shadowPresets.small,
   }}>
     <span style={{ fontSize: '14px', fontWeight: '500' }}>Sign in to access all features</span>
     <button 
