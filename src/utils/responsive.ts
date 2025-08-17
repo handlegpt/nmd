@@ -1,4 +1,5 @@
 import { Dimensions, Platform, StatusBar } from 'react-native';
+import { createShadowStyle } from './platformStyles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -128,50 +129,29 @@ export const mediaQuery = {
 
 // Platform-specific styles
 export const platformStyles = {
-  shadow: isWeb
-    ? {
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-      }
-    : isIOS
-    ? {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-      }
-    : {
-        elevation: 4,
-      },
+  shadow: createShadowStyle({
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+  }),
   
-  cardShadow: isWeb
-    ? {
-        boxShadow: '0 1px 10px rgba(0, 0, 0, 0.05)',
-      }
-    : isIOS
-    ? {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-      }
-    : {
-        elevation: 2,
-      },
+  cardShadow: createShadowStyle({
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
+  }),
   
-  buttonShadow: isWeb
-    ? {
-        boxShadow: '0 2px 4px rgba(99, 102, 241, 0.3)',
-      }
-    : isIOS
-    ? {
-        shadowColor: '#6366f1',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.3,
-        shadowRadius: 4,
-      }
-    : {
-        elevation: 6,
-      },
+  buttonShadow: createShadowStyle({
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 6,
+  }),
 };
 
 // Web-specific styles (for React Native Web)
