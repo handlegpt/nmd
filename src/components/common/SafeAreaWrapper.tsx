@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useResponsive } from '../../utils/responsive';
+import { shadowPresets } from '../../utils/platformStyles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -209,10 +210,6 @@ const styles = StyleSheet.create({
   bottomSheet: {
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 10,
+    ...shadowPresets.large,
   },
 });

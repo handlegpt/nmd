@@ -18,6 +18,7 @@ import {
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { Message, User } from '../../types';
+import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { supabase } from '../../lib/supabase';
@@ -266,7 +267,7 @@ const styles = StyleSheet.create({
   },
   headerCard: {
     margin: 16,
-    elevation: 2,
+    ...shadowPresets.small,
   },
   headerContent: {
     flexDirection: 'row',

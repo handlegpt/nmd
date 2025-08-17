@@ -17,6 +17,7 @@ import {
   useTheme,
 } from 'react-native-paper';
 import { useResponsive } from '../../utils/responsive';
+import { shadowPresets } from '../../utils/platformStyles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -357,7 +358,7 @@ interface OptimizedCardProps {
   children: React.ReactNode;
   onPress?: () => void;
   style?: any;
-  elevation?: number;
+  shadowPreset?: 'small' | 'medium' | 'large' | 'card' | 'button';
   loading?: boolean;
 }
 
@@ -365,14 +366,14 @@ export const OptimizedCard: React.FC<OptimizedCardProps> = ({
   children,
   onPress,
   style,
-  elevation = 2,
+  shadowPreset = 'small',
   loading = false,
 }) => {
   const { isPhone, platformStyles } = useResponsive();
 
   if (loading) {
     return (
-      <Card style={[styles.optimizedCard, style]} elevation={elevation}>
+      <Card style={[styles.optimizedCard, style, { ...shadowPresets[shadowPreset] }]}>
         <Card.Content>
           <ActivityIndicator size="small" />
         </Card.Content>
@@ -384,10 +385,9 @@ export const OptimizedCard: React.FC<OptimizedCardProps> = ({
     <Card
       style={[
         styles.optimizedCard,
-        isPhone && platformStyles.cardShadow,
+        isPhone ? { ...shadowPresets.small } : { ...shadowPresets[shadowPreset] },
         style,
       ]}
-      elevation={isPhone ? 0 : elevation}
       onPress={onPress}
     >
       <Card.Content>{children}</Card.Content>

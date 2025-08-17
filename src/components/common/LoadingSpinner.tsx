@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ActivityIndicator, Text } from 'react-native-paper';
+import { shadowPresets } from '../../utils/platformStyles';
 
 interface LoadingSpinnerProps {
   visible: boolean;
@@ -44,14 +45,7 @@ const styles = StyleSheet.create({
     padding: 24,
     borderRadius: 12,
     alignItems: 'center',
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
+    ...shadowPresets.large,
   },
   message: {
     marginTop: 12,

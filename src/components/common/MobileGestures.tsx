@@ -9,6 +9,7 @@ import {
   Animated,
 } from 'react-native';
 import { useResponsive } from '../../utils/responsive';
+import { shadowPresets } from '../../utils/platformStyles';
 
 interface GestureProps {
   children: React.ReactNode;
@@ -330,11 +331,7 @@ const styles = StyleSheet.create({
   swipeableCard: {
     backgroundColor: '#ffffff',
     borderRadius: 12,
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    ...shadowPresets.small,
   },
   actionIndicator: {
     position: 'absolute',

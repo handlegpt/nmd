@@ -79,16 +79,12 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     backgroundColor: '#ffffff',
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+    ...shadowPresets.small,
   },
   searchbar: {
     backgroundColor: '#f8fafc',
     borderRadius: 12,
-    elevation: 0,
+    ...shadowPresets.small,
     marginBottom: 12,
   },
   searchInput: {
