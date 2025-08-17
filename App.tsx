@@ -2,10 +2,13 @@ import React, { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import AppNavigator from './src/navigation/AppNavigator';
 import { useAuthStore } from './src/store/authStore';
 import { supabase, isMockMode } from './src/lib/supabase';
 import { ErrorBoundary } from './src/components/common/ErrorBoundary';
+import { PerformanceMonitor } from './src/components/common/MobileOptimizations';
+import { useResponsive } from './src/utils/responsive';
 
 export default function App() {
   const { setUser, setSession } = useAuthStore();
@@ -47,14 +50,20 @@ export default function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const { isPhone } = useResponsive();
+
   return (
     <ErrorBoundary>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <PaperProvider>
-          <AppNavigator />
-          <StatusBar style="auto" />
-        </PaperProvider>
-      </GestureHandlerRootView>
+      <SafeAreaProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <PaperProvider>
+            <PerformanceMonitor enableMonitoring={isPhone}>
+              <AppNavigator />
+              <StatusBar style="auto" />
+            </PerformanceMonitor>
+          </PaperProvider>
+        </GestureHandlerRootView>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 } 
