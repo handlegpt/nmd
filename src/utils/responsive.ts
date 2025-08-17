@@ -128,7 +128,11 @@ export const mediaQuery = {
 
 // Platform-specific styles
 export const platformStyles = {
-  shadow: isIOS
+  shadow: isWeb
+    ? {
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+      }
+    : isIOS
     ? {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -139,7 +143,11 @@ export const platformStyles = {
         elevation: 4,
       },
   
-  cardShadow: isIOS
+  cardShadow: isWeb
+    ? {
+        boxShadow: '0 1px 10px rgba(0, 0, 0, 0.05)',
+      }
+    : isIOS
     ? {
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
@@ -150,7 +158,11 @@ export const platformStyles = {
         elevation: 2,
       },
   
-  buttonShadow: isIOS
+  buttonShadow: isWeb
+    ? {
+        boxShadow: '0 2px 4px rgba(99, 102, 241, 0.3)',
+      }
+    : isIOS
     ? {
         shadowColor: '#6366f1',
         shadowOffset: { width: 0, height: 2 },

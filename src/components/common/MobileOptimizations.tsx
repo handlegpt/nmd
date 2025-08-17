@@ -369,7 +369,7 @@ export const OptimizedCard: React.FC<OptimizedCardProps> = ({
   shadowPreset = 'small',
   loading = false,
 }) => {
-  const { isPhone, platformStyles } = useResponsive();
+  const { isPhone } = useResponsive();
 
   if (loading) {
     return (
