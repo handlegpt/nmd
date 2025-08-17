@@ -57,7 +57,7 @@ export default function App() {
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <PaperProvider>
-            <PerformanceMonitor enableMonitoring={isPhone}>
+            <PerformanceMonitor enableMonitoring={false}>
               <AppNavigator />
               <StatusBar style="auto" />
             </PerformanceMonitor>

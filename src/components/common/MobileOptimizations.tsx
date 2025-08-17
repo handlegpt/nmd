@@ -286,6 +286,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   enableMonitoring = true,
   onPerformanceIssue,
 }) => {
+  const [showPerformanceInfo, setShowPerformanceInfo] = useState(false);
   const [fps, setFps] = useState(60);
   const [renderTime, setRenderTime] = useState(0);
   const frameCount = useRef(0);
@@ -332,10 +333,19 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   return (
     <View style={styles.performanceMonitor}>
       {children}
-      {enableMonitoring && Platform.OS === 'web' && (
+      {enableMonitoring && Platform.OS === 'web' && showPerformanceInfo && (
         <View style={styles.performanceInfo}>
           <Text style={styles.performanceText}>FPS: {fps}</Text>
           <Text style={styles.performanceText}>Render: {renderTime.toFixed(1)}ms</Text>
+        </View>
+      )}
+      {/* Hidden toggle button for development */}
+      {enableMonitoring && Platform.OS === 'web' && __DEV__ && (
+        <View 
+          style={styles.performanceToggle}
+          onTouchEnd={() => setShowPerformanceInfo(!showPerformanceInfo)}
+        >
+          <Text style={styles.performanceToggleText}>⚡</Text>
         </View>
       )}
     </View>
@@ -458,6 +468,19 @@ const styles = StyleSheet.create({
   performanceText: {
     color: 'white',
     fontSize: 12,
+  },
+  performanceToggle: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    padding: 8,
+    borderRadius: 4,
+    cursor: 'pointer',
+  },
+  performanceToggleText: {
+    color: 'white',
+    fontSize: 16,
   },
   optimizedCard: {
     margin: 8,
