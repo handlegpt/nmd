@@ -17,6 +17,7 @@ import {
   Chip,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
+import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 
 interface SettingsState {

@@ -9,6 +9,7 @@ import {
   Chip,
   Surface,
 } from 'react-native-paper';
+import { shadowPresets } from '../../utils/platformStyles';
 
 interface SearchBarProps {
   placeholder?: string;

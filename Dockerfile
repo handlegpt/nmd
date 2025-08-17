@@ -48,7 +48,7 @@ ENV NODE_ENV=development
 EXPOSE 19006
 
 # Health check for web interface
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=15s --start-period=120s --retries=5 \
     CMD curl -f http://localhost:19006 || exit 1
 
 # Start the web development server using the start script
