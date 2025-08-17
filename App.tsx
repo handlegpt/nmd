@@ -12,6 +12,7 @@ import { PerformanceMonitor } from './src/components/common/MobileOptimizations'
 import { useResponsive } from './src/utils/responsive';
 import { colors, spacing } from './src/utils/responsive';
 import './src/utils/cryptoPolyfill';
+import './src/utils/warnings'; // Import warning suppression
 
 // Note: Lazy loading is commented out due to TypeScript module configuration
 // const LazyAppNavigator = React.lazy(() => import('./src/navigation/AppNavigator'));

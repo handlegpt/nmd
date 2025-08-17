@@ -1,15 +1,26 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import {
   View,
   StyleSheet,
+  Animated,
+  Dimensions,
+  Platform,
+} from 'react-native';
+import {
   PanGestureHandler,
+  State,
   TapGestureHandler,
   LongPressGestureHandler,
-  State,
-  Animated,
-} from 'react-native';
+} from 'react-native-gesture-handler';
 import { useResponsive } from '../../utils/responsive';
 import { shadowPresets } from '../../utils/platformStyles';
+
+const { width, height } = Dimensions.get('window');
+
+// Helper function to determine if we should use native driver
+const shouldUseNativeDriver = () => {
+  return Platform.OS !== 'web';
+};
 
 interface GestureProps {
   children: React.ReactNode;
@@ -75,11 +86,11 @@ export const MobileGestures: React.FC<GestureProps> = ({
       Animated.parallel([
         Animated.spring(translateX, {
           toValue: 0,
-          useNativeDriver: true,
+          useNativeDriver: shouldUseNativeDriver(),
         }),
         Animated.spring(translateY, {
           toValue: 0,
-          useNativeDriver: true,
+          useNativeDriver: shouldUseNativeDriver(),
         }),
       ]).start();
     }
@@ -109,13 +120,13 @@ export const MobileGestures: React.FC<GestureProps> = ({
       // Scale down effect
       Animated.spring(scale, {
         toValue: 0.95,
-        useNativeDriver: true,
+        useNativeDriver: shouldUseNativeDriver(),
       }).start();
     } else if (event.nativeEvent.state === State.END) {
       // Scale back up
       Animated.spring(scale, {
         toValue: 1,
-        useNativeDriver: true,
+        useNativeDriver: shouldUseNativeDriver(),
       }).start();
       
       if (onLongPress) {
@@ -194,7 +205,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
         Animated.timing(translateX, {
           toValue: 300,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver: shouldUseNativeDriver(),
         }).start(() => {
           onSwipeRight();
           setSwiped(true);
@@ -204,7 +215,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
         Animated.timing(translateX, {
           toValue: -300,
           duration: 300,
-          useNativeDriver: true,
+          useNativeDriver: shouldUseNativeDriver(),
         }).start(() => {
           onSwipeLeft();
           setSwiped(true);
@@ -213,7 +224,7 @@ export const SwipeableCard: React.FC<SwipeableCardProps> = ({
         // Reset position
         Animated.spring(translateX, {
           toValue: 0,
-          useNativeDriver: true,
+          useNativeDriver: shouldUseNativeDriver(),
         }).start();
       }
     }
@@ -288,7 +299,7 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
       
       Animated.spring(translateY, {
         toValue: 0,
-        useNativeDriver: true,
+        useNativeDriver: shouldUseNativeDriver(),
       }).start();
       setCanRefresh(false);
     }
