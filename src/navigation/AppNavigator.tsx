@@ -13,6 +13,8 @@ import { ChatScreen } from '../components/chat/ChatScreen';
 import { FeedScreen } from '../components/feed/FeedScreen';
 import { SettingsScreen } from '../components/settings/SettingsScreen';
 import { IconButton } from 'react-native-paper';
+import { useResponsive } from '../utils/responsive';
+import { useUrlSync } from '../hooks/useUrlSync';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -31,32 +33,19 @@ const LoginPrompt = ({ navigation }: { navigation: any }) => (
     zIndex: 1000,
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    flexDirection: 'row'
+    alignItems: 'center'
   }}>
-    <span style={{ fontSize: '14px' }}>
-      👋 Welcome to NomadNow! Join us to connect with fellow digital nomads
-    </span>
-    <button
+    <span>Sign in to access all features</span>
+    <button 
       onClick={() => navigation.navigate('Login')}
       style={{
         backgroundColor: 'white',
         color: '#6366f1',
         border: 'none',
         padding: '8px 16px',
-        borderRadius: '8px',
-        fontSize: '14px',
-        fontWeight: 'bold',
+        borderRadius: '4px',
         cursor: 'pointer',
-        transition: 'all 0.2s ease'
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.backgroundColor = '#f8fafc';
-        e.currentTarget.style.transform = 'translateY(-1px)';
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.backgroundColor = 'white';
-        e.currentTarget.style.transform = 'translateY(0)';
+        fontWeight: 'bold'
       }}
     >
       Sign In
@@ -67,6 +56,7 @@ const LoginPrompt = ({ navigation }: { navigation: any }) => (
 // Main app tabs
 const MainTabs = ({ navigation }: { navigation: any }) => {
   const { user } = useAuthStore();
+  const { isPhone } = useResponsive();
   
   return (
     <>
@@ -137,7 +127,7 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
           options={{ title: 'Notifications' }}
         />
         <Tab.Screen 
-          name="Profile" 
+          name="Profile"
           component={ProfileScreen}
           options={{ 
             title: 'Profile',
@@ -159,6 +149,10 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
 // Main app navigator
 const AppNavigator = () => {
   const { user } = useAuthStore();
+  const { isWeb } = useResponsive();
+  
+  // Use URL sync hook for web
+  useUrlSync();
 
   return (
     <NavigationContainer>
