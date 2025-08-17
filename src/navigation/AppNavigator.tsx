@@ -16,6 +16,12 @@ import { IconButton } from 'react-native-paper';
 import { useResponsive } from '../utils/responsive';
 import { useUrlSync } from '../hooks/useUrlSync';
 
+// URL sync wrapper component that uses the hook inside NavigationContainer
+const UrlSyncWrapper = () => {
+  useUrlSync();
+  return null;
+};
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -166,12 +172,11 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
 const AppNavigator = () => {
   const { user } = useAuthStore();
   const { isWeb } = useResponsive();
-  
-  // Use URL sync hook for web
-  useUrlSync();
 
   return (
     <NavigationContainer>
+      {/* URL sync hook must be inside NavigationContainer */}
+      {isWeb && <UrlSyncWrapper />}
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         <Stack.Screen name="Main" component={MainTabs} />
         <Stack.Screen 
