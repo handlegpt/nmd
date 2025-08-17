@@ -30,6 +30,8 @@ import { LocationShare } from '../common/LocationShare';
 import { MediaPicker } from '../common/MediaPicker';
 import { PostEnhancer } from '../common/PostEnhancer';
 import { ResponsiveContainer } from '../common/ResponsiveContainer';
+import { PlaceholderImage } from '../common/PlaceholderImage';
+import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -84,7 +86,7 @@ export const FeedScreen: React.FC = () => {
       id: '1',
       userId: '1',
       userNickname: 'Sarah',
-      userAvatar: 'https://via.placeholder.com/50x50/FF6B6B/ffffff?text=S',
+      userAvatar: '',
       content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session?',
       location: 'Canggu, Bali',
       locationDetails: {
@@ -95,7 +97,7 @@ export const FeedScreen: React.FC = () => {
       media: [
         {
           id: '1',
-          uri: 'https://via.placeholder.com/400x300/FF6B6B/ffffff?text=Beach+View',
+          uri: '',
           type: 'image',
           filename: 'beach_view.jpg',
           size: 1024000,
@@ -113,7 +115,7 @@ export const FeedScreen: React.FC = () => {
       id: '2',
       userId: '2',
       userNickname: 'Alex',
-      userAvatar: 'https://via.placeholder.com/50x50/4ECDC4/ffffff?text=A',
+      userAvatar: '',
       content: 'Working from this amazing coworking space with ocean views. The wifi is lightning fast!',
       location: 'Uluwatu, Bali',
       locationDetails: {
@@ -133,7 +135,7 @@ export const FeedScreen: React.FC = () => {
       id: '3',
       userId: '3',
       userNickname: 'Mike',
-      userAvatar: 'https://via.placeholder.com/50x50/2196F3/ffffff?text=M',
+      userAvatar: '',
       content: 'Working from a beautiful cafe in Seminyak. Great coffee and even better wifi! Anyone want to join for lunch?',
       location: 'Seminyak, Bali',
       locationDetails: {
@@ -264,7 +266,7 @@ export const FeedScreen: React.FC = () => {
       id: Date.now().toString(),
       userId: user?.id || '1',
       userNickname: user?.nickname || 'Anonymous',
-      userAvatar: user?.avatar_url || 'https://via.placeholder.com/50x50/6366f1/ffffff?text=U',
+              userAvatar: user?.avatar_url || '',
       content: newPost.content,
       location: newPost.location,
       locationDetails: newPost.locationDetails,
@@ -311,7 +313,17 @@ export const FeedScreen: React.FC = () => {
       <View style={styles.mediaGrid}>
         {media.map((item, index) => (
           <Surface key={item.id} style={styles.mediaItem}>
-            <Image source={{ uri: item.uri }} style={styles.mediaImage} />
+            {item.uri ? (
+              <Image source={{ uri: item.uri }} style={styles.mediaImage} />
+            ) : (
+              <PlaceholderImage 
+                width={styles.mediaItem.width} 
+                height={styles.mediaItem.height}
+                text={item.filename || 'Media'}
+                backgroundColor="#f1f5f9"
+                textColor="#64748b"
+              />
+            )}
             {item.type === 'video' && (
               <View style={styles.videoOverlay}>
                 <IconButton icon="play" size={20} iconColor="#ffffff" />
@@ -361,7 +373,15 @@ export const FeedScreen: React.FC = () => {
             <Card key={post.id} style={styles.postCard}>
               <Card.Content>
                 <View style={styles.postHeader}>
-                  <Avatar.Image size={40} source={{ uri: post.userAvatar }} />
+                  {post.userAvatar ? (
+                    <Avatar.Image size={40} source={{ uri: post.userAvatar }} />
+                  ) : (
+                    <Avatar.Text 
+                      size={40} 
+                      label={post.userNickname.charAt(0).toUpperCase()}
+                      style={{ backgroundColor: '#6366f1' }}
+                    />
+                  )}
                   <View style={styles.postHeaderInfo}>
                     <Title style={styles.postAuthor}>{post.userNickname}</Title>
                     <View style={styles.postMeta}>
@@ -730,11 +750,7 @@ const styles = StyleSheet.create({
     margin: 16,
     marginBottom: 8,
     borderRadius: 12,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+    ...shadowPresets.card,
   },
   postHeader: {
     flexDirection: 'row',
