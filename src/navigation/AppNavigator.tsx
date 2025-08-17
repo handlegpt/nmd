@@ -10,7 +10,7 @@ import { shadowPresets } from '../utils/platformStyles';
 import { colors, spacing, borderRadius } from '../utils/responsive';
 
 // Import screens
-import { FeedScreen } from '../components/feed/FeedScreen';
+import FeedScreen from '../components/feed/FeedScreen';
 import { MapScreen } from '../components/map/MapScreen';
 import { ActivityScreen } from '../components/activities/ActivityScreen';
 import { NotificationScreen } from '../components/notifications/NotificationScreen';
@@ -19,7 +19,7 @@ import { LoginScreen } from '../components/auth/LoginScreen';
 import { SettingsScreen } from '../components/settings/SettingsScreen';
 import { ChatScreen } from '../components/chat/ChatScreen';
 import { MessageScreen } from '../components/messages/MessageScreen';
-import { ResponsiveContainer } from '../components/common/ResponsiveContainer';
+import ResponsiveContainer from '../components/common/ResponsiveContainer';
 import { useUrlSync } from '../hooks/useUrlSync';
 
 // URL sync wrapper component that uses the hook inside NavigationContainer
