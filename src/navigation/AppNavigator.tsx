@@ -10,6 +10,7 @@ import { ActivityScreen } from '../components/activities/ActivityScreen';
 import { NotificationScreen } from '../components/notifications/NotificationScreen';
 import { ChatScreen } from '../components/chat/ChatScreen';
 import { FeedScreen } from '../components/feed/FeedScreen';
+import { SettingsScreen } from '../components/settings/SettingsScreen';
 import { IconButton } from 'react-native-paper';
 
 const Stack = createStackNavigator();
@@ -132,7 +133,17 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
         <Tab.Screen 
           name="Profile" 
           component={ProfileScreen}
-          options={{ title: 'Profile' }}
+          options={{ 
+            title: 'Profile',
+            headerRight: () => (
+              <IconButton
+                icon="cog"
+                iconColor="#ffffff"
+                size={24}
+                onPress={() => navigation.navigate('Settings')}
+              />
+            ),
+          }}
         />
       </Tab.Navigator>
     </>
@@ -169,6 +180,21 @@ const AppNavigator = () => {
           options={{ 
             headerShown: true,
             title: 'Sign In',
+            headerStyle: {
+              backgroundColor: '#6366f1',
+            },
+            headerTintColor: '#ffffff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen 
+          name="Settings" 
+          component={SettingsScreen}
+          options={{ 
+            headerShown: true,
+            title: 'Settings',
             headerStyle: {
               backgroundColor: '#6366f1',
             },

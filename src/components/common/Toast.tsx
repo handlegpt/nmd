@@ -1,6 +1,14 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
-import { Text, Surface } from 'react-native-paper';
+import React, { useEffect } from 'react';
+import {
+  View,
+  StyleSheet,
+  Animated,
+} from 'react-native';
+import {
+  Surface,
+  Text,
+  IconButton,
+} from 'react-native-paper';
 
 interface ToastProps {
   visible: boolean;
@@ -10,33 +18,33 @@ interface ToastProps {
   onHide: () => void;
 }
 
-export const Toast: React.FC<ToastProps> = ({
+const Toast: React.FC<ToastProps> = ({
   visible,
   message,
   type = 'info',
   duration = 3000,
   onHide,
 }) => {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const slideAnim = useRef(new Animated.Value(-100)).current;
+  const translateY = new Animated.Value(-100);
+  const opacity = new Animated.Value(0);
 
   useEffect(() => {
     if (visible) {
       // Show toast
       Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 1,
+        Animated.timing(translateY, {
+          toValue: 0,
           duration: 300,
           useNativeDriver: true,
         }),
-        Animated.timing(slideAnim, {
-          toValue: 0,
+        Animated.timing(opacity, {
+          toValue: 1,
           duration: 300,
           useNativeDriver: true,
         }),
       ]).start();
 
-      // Hide toast after duration
+      // Auto hide after duration
       const timer = setTimeout(() => {
         hideToast();
       }, duration);
@@ -47,13 +55,13 @@ export const Toast: React.FC<ToastProps> = ({
 
   const hideToast = () => {
     Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 0,
+      Animated.timing(translateY, {
+        toValue: -100,
         duration: 300,
         useNativeDriver: true,
       }),
-      Animated.timing(slideAnim, {
-        toValue: -100,
+      Animated.timing(opacity, {
+        toValue: 0,
         duration: 300,
         useNativeDriver: true,
       }),
@@ -62,33 +70,21 @@ export const Toast: React.FC<ToastProps> = ({
     });
   };
 
-  const getBackgroundColor = () => {
+  const getToastStyle = () => {
     switch (type) {
       case 'success':
-        return '#4caf50';
+        return { backgroundColor: '#10b981', icon: 'check-circle' };
       case 'error':
-        return '#f44336';
+        return { backgroundColor: '#ef4444', icon: 'alert-circle' };
       case 'warning':
-        return '#ff9800';
+        return { backgroundColor: '#f59e0b', icon: 'alert' };
       case 'info':
       default:
-        return '#2196f3';
+        return { backgroundColor: '#6366f1', icon: 'information' };
     }
   };
 
-  const getIcon = () => {
-    switch (type) {
-      case 'success':
-        return '✓';
-      case 'error':
-        return '✕';
-      case 'warning':
-        return '⚠';
-      case 'info':
-      default:
-        return 'ℹ';
-    }
-  };
+  const toastStyle = getToastStyle();
 
   if (!visible) return null;
 
@@ -97,14 +93,28 @@ export const Toast: React.FC<ToastProps> = ({
       style={[
         styles.container,
         {
-          opacity: fadeAnim,
-          transform: [{ translateY: slideAnim }],
+          transform: [{ translateY }],
+          opacity,
         },
       ]}
     >
-      <Surface style={[styles.toast, { backgroundColor: getBackgroundColor() }]}>
-        <Text style={styles.icon}>{getIcon()}</Text>
-        <Text style={styles.message}>{message}</Text>
+      <Surface style={[styles.toast, { backgroundColor: toastStyle.backgroundColor }]}>
+        <View style={styles.content}>
+          <IconButton
+            icon={toastStyle.icon}
+            iconColor="#ffffff"
+            size={20}
+            style={styles.icon}
+          />
+          <Text style={styles.message}>{message}</Text>
+        </View>
+        <IconButton
+          icon="close"
+          iconColor="#ffffff"
+          size={20}
+          onPress={hideToast}
+          style={styles.closeButton}
+        />
       </Surface>
     </Animated.View>
   );
@@ -113,34 +123,43 @@ export const Toast: React.FC<ToastProps> = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 50,
-    left: 20,
-    right: 20,
-    zIndex: 1000,
+    top: 0,
+    left: 0,
+    right: 0,
+    zIndex: 9999,
+    paddingHorizontal: 16,
+    paddingTop: 16,
   },
   toast: {
+    borderRadius: 12,
     padding: 16,
-    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     elevation: 4,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 4,
+  },
+  content: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   icon: {
-    color: 'white',
-    fontSize: 18,
-    marginRight: 12,
+    margin: 0,
+    marginRight: 8,
   },
   message: {
-    color: 'white',
-    fontSize: 16,
     flex: 1,
+    color: '#ffffff',
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  closeButton: {
+    margin: 0,
+    marginLeft: 8,
   },
 });
 

@@ -30,6 +30,8 @@
     "expo-location": "~16.5.5",
     "expo-image-picker": "~14.7.1",
     "expo-secure-store": "~12.8.1",
+    "@react-native-async-storage/async-storage": "1.21.0",
+    "@react-native-community/netinfo": "11.1.0",
     "zustand": "^4.5.0"
   },
   "devDependencies": {
