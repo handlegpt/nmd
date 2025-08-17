@@ -301,7 +301,7 @@ export const FeedScreen: React.FC = () => {
         >
           <Card style={styles.modalCard}>
             <Card.Content>
-              <Title style={styles.modalTitle}>Share Your Nomad Life</Title>
+              <Title style={styles.modalTitle}>Share Your Nomad Now</Title>
               
               <TextInput
                 label="What's on your mind?"

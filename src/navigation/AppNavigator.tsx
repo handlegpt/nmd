@@ -61,7 +61,7 @@ const MainTabs = () => {
       <Tab.Screen 
         name="Feed" 
         component={FeedScreen}
-        options={{ title: 'Nomad Life' }}
+        options={{ title: 'Nomad Now' }}
       />
       <Tab.Screen 
         name="Map" 
