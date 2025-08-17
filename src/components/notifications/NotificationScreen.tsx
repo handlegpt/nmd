@@ -29,7 +29,7 @@ interface Notification {
   is_read: boolean;
 }
 
-export const NotificationScreen: React.FC = () => {
+export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const { user } = useAuthStore();
   const [notifications, setNotifications] = useState<Notification[]>([
     {
@@ -229,6 +229,13 @@ export const NotificationScreen: React.FC = () => {
     showToast('Notification deleted', 'success');
   };
 
+  // Handle sign in navigation
+  const handleSignIn = () => {
+    if (navigation) {
+      navigation.navigate('Login');
+    }
+  };
+
   if (!user) {
     return (
       <View style={styles.container}>
@@ -240,11 +247,9 @@ export const NotificationScreen: React.FC = () => {
             </Paragraph>
             <Button 
               mode="contained" 
-              onPress={() => {
-                // Navigate to login screen
-                console.log('Navigate to login');
-              }} 
+              onPress={handleSignIn} 
               style={styles.button}
+              contentStyle={styles.buttonContent}
             >
               Sign In
             </Button>
@@ -391,6 +396,9 @@ const styles = StyleSheet.create({
   button: {
     width: '100%',
     paddingVertical: 10,
+  },
+  buttonContent: {
+    height: 48,
   },
 });
 

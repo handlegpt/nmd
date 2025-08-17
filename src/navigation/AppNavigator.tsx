@@ -16,13 +16,13 @@ const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
 // Login prompt component for guest users
-const LoginPrompt = ({ onLogin }: { onLogin: () => void }) => (
+const LoginPrompt = ({ navigation }: { navigation: any }) => (
   <div style={{
     position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#1976d2',
+    backgroundColor: '#6366f1',
     color: 'white',
     padding: '12px 16px',
     textAlign: 'center',
@@ -36,16 +36,25 @@ const LoginPrompt = ({ onLogin }: { onLogin: () => void }) => (
       👋 Welcome to NomadNow! Join us to connect with fellow digital nomads
     </span>
     <button
-      onClick={onLogin}
+      onClick={() => navigation.navigate('Login')}
       style={{
         backgroundColor: 'white',
-        color: '#1976d2',
+        color: '#6366f1',
         border: 'none',
         padding: '8px 16px',
-        borderRadius: '6px',
+        borderRadius: '8px',
         fontSize: '14px',
         fontWeight: 'bold',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        transition: 'all 0.2s ease'
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.backgroundColor = '#f8fafc';
+        e.currentTarget.style.transform = 'translateY(-1px)';
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.backgroundColor = 'white';
+        e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
       Sign In
@@ -54,12 +63,12 @@ const LoginPrompt = ({ onLogin }: { onLogin: () => void }) => (
 );
 
 // Main app tabs
-const MainTabs = () => {
+const MainTabs = ({ navigation }: { navigation: any }) => {
   const { user } = useAuthStore();
   
   return (
     <>
-      {!user && <LoginPrompt onLogin={() => {}} />}
+      {!user && <LoginPrompt navigation={navigation} />}
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -81,7 +90,7 @@ const MainTabs = () => {
 
             return <IconButton icon={iconName} size={size} iconColor={color} />;
           },
-          tabBarActiveTintColor: '#2196f3',
+          tabBarActiveTintColor: '#6366f1',
           tabBarInactiveTintColor: 'gray',
           tabBarStyle: {
             backgroundColor: '#ffffff',
@@ -92,7 +101,7 @@ const MainTabs = () => {
             height: 60,
           },
           headerStyle: {
-            backgroundColor: '#2196f3',
+            backgroundColor: '#6366f1',
           },
           headerTintColor: '#ffffff',
           headerTitleStyle: {
@@ -146,7 +155,7 @@ const AppNavigator = () => {
             title: 'Chat',
             headerBackTitle: 'Back',
             headerStyle: {
-              backgroundColor: '#2196f3',
+              backgroundColor: '#6366f1',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {
@@ -161,7 +170,7 @@ const AppNavigator = () => {
             headerShown: true,
             title: 'Sign In',
             headerStyle: {
-              backgroundColor: '#2196f3',
+              backgroundColor: '#6366f1',
             },
             headerTintColor: '#ffffff',
             headerTitleStyle: {

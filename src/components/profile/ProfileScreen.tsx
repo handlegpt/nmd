@@ -18,7 +18,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from '../../store/authStore';
 
-export const ProfileScreen: React.FC = () => {
+export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const { user, updateProfile, signOut } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [nickname, setNickname] = useState(user?.nickname || '');
@@ -77,6 +77,13 @@ export const ProfileScreen: React.FC = () => {
     );
   };
 
+  // Handle sign in navigation
+  const handleSignIn = () => {
+    if (navigation) {
+      navigation.navigate('Login');
+    }
+  };
+
   if (!user) {
     return (
       <View style={styles.container}>
@@ -88,11 +95,9 @@ export const ProfileScreen: React.FC = () => {
             </Paragraph>
             <Button 
               mode="contained" 
-              onPress={() => {
-                // Navigate to login screen
-                console.log('Navigate to login');
-              }} 
+              onPress={handleSignIn} 
               style={styles.button}
+              contentStyle={styles.buttonContent}
             >
               Sign In
             </Button>
@@ -349,5 +354,8 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 10,
+  },
+  buttonContent: {
+    height: 50,
   },
 }); 
