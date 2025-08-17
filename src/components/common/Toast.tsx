@@ -9,6 +9,7 @@ import {
   Text,
   IconButton,
 } from 'react-native-paper';
+import { shadowPresets } from '../../utils/platformStyles';
 
 interface ToastProps {
   visible: boolean;
@@ -136,11 +137,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    ...shadowPresets.medium,
   },
   content: {
     flex: 1,

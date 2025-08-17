@@ -15,6 +15,7 @@ import { SettingsScreen } from '../components/settings/SettingsScreen';
 import { IconButton } from 'react-native-paper';
 import { useResponsive } from '../utils/responsive';
 import { useUrlSync } from '../hooks/useUrlSync';
+import { shadowPresets } from '../utils/platformStyles';
 
 // URL sync wrapper component that uses the hook inside NavigationContainer
 const UrlSyncWrapper = () => {
@@ -112,11 +113,7 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
             paddingBottom: Platform.OS === 'ios' ? 20 : 8,
             paddingTop: 8,
             height: Platform.OS === 'ios' ? 80 : 60,
-            elevation: 8,
-            shadowColor: '#000',
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.1,
-            shadowRadius: 4,
+            ...shadowPresets.medium,
           },
           headerStyle: {
             backgroundColor: '#6366f1',

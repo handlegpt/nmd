@@ -24,6 +24,7 @@ import { useMapStore } from '../../store/mapStore';
 import { useAuthStore } from '../../store/authStore';
 import { User } from '../../types';
 import { ResponsiveContainer } from '../common/ResponsiveContainer';
+import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -309,11 +310,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingHorizontal: 20,
     backgroundColor: '#ffffff',
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
+    ...shadowPresets.small,
     position: 'relative',
   },
   headerContent: {
@@ -347,11 +344,7 @@ const styles = StyleSheet.create({
   },
   locationCard: {
     margin: 20,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
+    ...shadowPresets.medium,
     borderRadius: 20,
     backgroundColor: '#ffffff',
   },
@@ -395,11 +388,7 @@ const styles = StyleSheet.create({
   },
   userCard: {
     marginBottom: 20,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
+    ...shadowPresets.medium,
     borderRadius: 20,
     backgroundColor: '#ffffff',
   },

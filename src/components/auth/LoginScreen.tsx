@@ -17,6 +17,7 @@ import {
   Divider,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
+import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -301,11 +302,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   card: {
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
+    ...shadowPresets.medium,
     borderRadius: 20,
     backgroundColor: '#ffffff',
   },
