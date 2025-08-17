@@ -15,7 +15,6 @@ import {
   Paragraph,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
-import { isMockMode } from '../../lib/supabase';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -77,32 +76,6 @@ export const LoginScreen: React.FC = () => {
     }
   };
 
-  // Handle demo mode
-  const handleDemoMode = () => {
-    if (isMockMode) {
-      // Import mock user data
-      const mockUser = {
-        id: 'mock-user-id',
-        email: 'demo@nomadnow.com',
-        nickname: 'Demo Nomad',
-        avatar_url: 'https://via.placeholder.com/80x80/2196f3/ffffff?text=D',
-        bio: 'Digital nomad exploring the world!',
-        current_city: 'Bali, Indonesia',
-        languages: ['English', 'Spanish'],
-        interests: ['Coding', 'Travel', 'Coffee'],
-        is_visible: true,
-        is_available_for_meetup: true,
-        location: { latitude: -8.3405, longitude: 115.0920 },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      setUser(mockUser);
-      showToast('Welcome to NomadNow Demo!', 'success');
-    } else {
-      showToast('Demo mode only available when Supabase is not configured', 'info');
-    }
-  };
-
   // Clear form when switching between login/signup
   const handleToggleMode = () => {
     setIsLogin(!isLogin);
@@ -125,44 +98,38 @@ export const LoginScreen: React.FC = () => {
             <Paragraph style={styles.subtitle}>
               {isLogin
                 ? 'Sign in to discover nearby digital nomads'
-                : 'Create account to start your digital nomad journey'}
+                : 'Create your account and start your journey'}
             </Paragraph>
-
-            {/* Nickname field for signup only */}
-            {!isLogin && (
-              <TextInput
-                label="Nickname"
-                value={nickname}
-                onChangeText={setNickname}
-                style={styles.input}
-                mode="outlined"
-                autoCapitalize="none"
-                placeholder="Enter your nickname"
-              />
-            )}
 
             <TextInput
               label="Email"
               value={email}
               onChangeText={setEmail}
-              style={styles.input}
               mode="outlined"
+              style={styles.input}
               keyboardType="email-address"
               autoCapitalize="none"
-              placeholder="Enter your email"
-              autoComplete="email"
             />
 
             <TextInput
               label="Password"
               value={password}
               onChangeText={setPassword}
-              style={styles.input}
               mode="outlined"
+              style={styles.input}
               secureTextEntry
-              placeholder="Enter your password"
-              autoComplete={isLogin ? "current-password" : "new-password"}
             />
+
+            {!isLogin && (
+              <TextInput
+                label="Nickname"
+                value={nickname}
+                onChangeText={setNickname}
+                mode="outlined"
+                style={styles.input}
+                placeholder="Enter your preferred nickname"
+              />
+            )}
 
             <Button
               mode="contained"
@@ -182,30 +149,16 @@ export const LoginScreen: React.FC = () => {
             >
               {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
             </Button>
-
-            {/* Demo mode button */}
-            <Button
-              mode="outlined"
-              onPress={handleDemoMode}
-              style={styles.demoButton}
-              disabled={loading}
-            >
-              {isMockMode ? 'Enter Demo Mode' : 'Demo Mode Unavailable'}
-            </Button>
           </Card.Content>
         </Card>
       </ScrollView>
 
-      {/* Toast for user feedback */}
       <Toast
         visible={toast.visible}
         message={toast.message}
         type={toast.type}
         onHide={hideToast}
       />
-
-      {/* Loading spinner */}
-      <LoadingSpinner visible={loading} message="Authenticating..." />
     </KeyboardAvoidingView>
   );
 };
@@ -213,7 +166,7 @@ export const LoginScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8f9fa',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -222,20 +175,17 @@ const styles = StyleSheet.create({
   },
   card: {
     elevation: 4,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    borderRadius: 12,
   },
   title: {
+    fontSize: 28,
+    fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 8,
-    fontSize: 24,
+    color: '#1976d2',
   },
   subtitle: {
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: 24,
     color: '#666',
@@ -245,16 +195,11 @@ const styles = StyleSheet.create({
   },
   button: {
     marginTop: 8,
-    marginBottom: 16,
     paddingVertical: 8,
+    borderRadius: 8,
   },
   toggleButton: {
     marginTop: 8,
-  },
-  demoButton: {
-    marginTop: 16,
     paddingVertical: 8,
   },
-});
-
-export default LoginScreen; 
+}); 

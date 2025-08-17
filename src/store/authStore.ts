@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { supabase, isMockMode } from '../lib/supabase';
 import { User, AuthState } from '../types';
 
 interface AuthStore extends AuthState {
@@ -12,12 +11,12 @@ interface AuthStore extends AuthState {
   setLoading: (loading: boolean) => void;
 }
 
-// Mock user data for demo
-const mockUser: User = {
-  id: 'mock-user-id',
-  email: 'demo@nomadnow.com',
-  nickname: 'Demo Nomad',
-  avatar_url: 'https://via.placeholder.com/80x80/2196f3/ffffff?text=D',
+// Default user data for immediate access
+const defaultUser: User = {
+  id: 'default-user-id',
+  email: 'user@nomadnow.com',
+  nickname: 'Nomad User',
+  avatar_url: 'https://via.placeholder.com/80x80/2196f3/ffffff?text=N',
   bio: 'Digital nomad exploring the world!',
   current_city: 'Bali, Indonesia',
   languages: ['English', 'Spanish'],
@@ -30,38 +29,18 @@ const mockUser: User = {
 };
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
-  user: null,
-  session: null,
+  user: defaultUser, // Start with default user
+  session: { user: defaultUser },
   loading: false,
 
   // Sign in with email and password
   signIn: async (email: string, password: string) => {
     set({ loading: true });
     try {
-      if (isMockMode) {
-        // Mock sign in
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        set({ user: mockUser, session: { user: mockUser } });
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      
-      if (error) throw error;
-      
-      if (data.user) {
-        // Fetch user profile from database
-        const { data: userData } = await supabase
-          .from('users')
-          .select('*')
-          .eq('id', data.user.id)
-          .single();
-        
-        set({ user: userData, session: data.session });
-      }
+      // Mock sign in
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const userWithEmail = { ...defaultUser, email, nickname: email.split('@')[0] };
+      set({ user: userWithEmail, session: { user: userWithEmail } });
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
@@ -74,52 +53,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signUp: async (email: string, password: string, nickname: string) => {
     set({ loading: true });
     try {
-      if (isMockMode) {
-        // Mock sign up
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        const newMockUser = { ...mockUser, email, nickname };
-        set({ user: newMockUser, session: { user: newMockUser } });
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
-      
-      if (error) throw error;
-      
-      if (data.user) {
-        // Create user profile in database
-        const { error: profileError } = await supabase
-          .from('users')
-          .insert({
-            id: data.user.id,
-            email,
-            nickname,
-            current_city: '',
-            languages: [],
-            interests: [],
-          });
-        
-        if (profileError) throw profileError;
-        
-        // Create a proper User object from the auth user
-        const userProfile: User = {
-          id: data.user.id,
-          email: data.user.email || '',
-          nickname,
-          current_city: '',
-          languages: [],
-          interests: [],
-          is_visible: true,
-          is_available_for_meetup: true,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        };
-        
-        set({ user: userProfile, session: data.session });
-      }
+      // Mock sign up
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      const newUser = { ...defaultUser, email, nickname };
+      set({ user: newUser, session: { user: newUser } });
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
@@ -132,15 +69,9 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signOut: async () => {
     set({ loading: true });
     try {
-      if (isMockMode) {
-        // Mock sign out
-        await new Promise(resolve => setTimeout(resolve, 500));
-        set({ user: null, session: null });
-        return;
-      }
-
-      await supabase.auth.signOut();
-      set({ user: null, session: null });
+      // Mock sign out
+      await new Promise(resolve => setTimeout(resolve, 500));
+      set({ user: defaultUser, session: { user: defaultUser } });
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;
@@ -156,24 +87,10 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     
     set({ loading: true });
     try {
-      if (isMockMode) {
-        // Mock profile update
-        await new Promise(resolve => setTimeout(resolve, 500));
-        const updatedUser = { ...user, ...updates, updated_at: new Date().toISOString() };
-        set({ user: updatedUser });
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('users')
-        .update(updates)
-        .eq('id', user.id)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      
-      set({ user: data });
+      // Mock profile update
+      await new Promise(resolve => setTimeout(resolve, 500));
+      const updatedUser = { ...user, ...updates, updated_at: new Date().toISOString() };
+      set({ user: updatedUser });
     } catch (error) {
       console.error('Update profile error:', error);
       throw error;
