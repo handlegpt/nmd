@@ -6,6 +6,7 @@ import {
   Alert,
   Platform,
   Dimensions,
+  Image,
 } from 'react-native';
 import {
   Card,
@@ -26,10 +27,20 @@ import {
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { LocationShare } from '../common/LocationShare';
+import { MediaPicker } from '../common/MediaPicker';
+import { PostEnhancer } from '../common/PostEnhancer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 const { width } = Dimensions.get('window');
+
+interface MediaItem {
+  id: string;
+  uri: string;
+  type: 'image' | 'video';
+  filename: string;
+  size: number;
+}
 
 interface Post {
   id: string;
@@ -46,7 +57,7 @@ interface Post {
       longitude: number;
     };
   };
-  images?: string[];
+  media?: MediaItem[];
   isMeetupRequest: boolean;
   meetupDetails?: {
     title: string;
@@ -59,6 +70,8 @@ interface Post {
   comments: number;
   createdAt: string;
   tags: string[];
+  emotion?: string;
+  topic?: string;
 }
 
 export const FeedScreen: React.FC = () => {
@@ -78,11 +91,22 @@ export const FeedScreen: React.FC = () => {
         address: 'Canggu, Bali, Indonesia',
         coordinates: { latitude: -8.6500, longitude: 115.1333 },
       },
+      media: [
+        {
+          id: '1',
+          uri: 'https://via.placeholder.com/400x300/FF6B6B/ffffff?text=Beach+View',
+          type: 'image',
+          filename: 'beach_view.jpg',
+          size: 1024000,
+        },
+      ],
       isMeetupRequest: false,
       likes: 15,
       comments: 5,
       createdAt: '2 hours ago',
       tags: ['Bali', 'Beach', 'Surfing'],
+      emotion: 'excited',
+      topic: 'travel',
     },
     {
       id: '2',
@@ -101,6 +125,8 @@ export const FeedScreen: React.FC = () => {
       comments: 8,
       createdAt: '4 hours ago',
       tags: ['Coworking', 'Ocean View', 'Uluwatu'],
+      emotion: 'productive',
+      topic: 'work',
     },
     {
       id: '3',
@@ -126,6 +152,8 @@ export const FeedScreen: React.FC = () => {
       comments: 3,
       createdAt: '6 hours ago',
       tags: ['Cafe', 'Lunch', 'Seminyak'],
+      emotion: 'happy',
+      topic: 'food',
     },
   ]);
   const [modalVisible, setModalVisible] = useState(false);
@@ -139,6 +167,10 @@ export const FeedScreen: React.FC = () => {
     maxPeople: 4,
     location: '',
     locationDetails: null as any,
+    media: [] as MediaItem[],
+    tags: [] as string[],
+    emotion: '',
+    topic: '',
   });
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
 
@@ -188,6 +220,38 @@ export const FeedScreen: React.FC = () => {
     showToast('Location selected!', 'success');
   };
 
+  // Handle media selection
+  const handleMediaSelect = (media: MediaItem[]) => {
+    setNewPost({
+      ...newPost,
+      media,
+    });
+  };
+
+  // Handle tags change
+  const handleTagsChange = (tags: string[]) => {
+    setNewPost({
+      ...newPost,
+      tags,
+    });
+  };
+
+  // Handle emotion change
+  const handleEmotionChange = (emotion: string) => {
+    setNewPost({
+      ...newPost,
+      emotion,
+    });
+  };
+
+  // Handle topic change
+  const handleTopicChange = (topic: string) => {
+    setNewPost({
+      ...newPost,
+      topic,
+    });
+  };
+
   // Handle create post
   const handleCreatePost = () => {
     if (!newPost.content.trim()) {
@@ -203,6 +267,7 @@ export const FeedScreen: React.FC = () => {
       content: newPost.content,
       location: newPost.location,
       locationDetails: newPost.locationDetails,
+      media: newPost.media,
       isMeetupRequest: newPost.isMeetupRequest,
       meetupDetails: newPost.isMeetupRequest ? {
         title: newPost.meetupTitle,
@@ -214,7 +279,9 @@ export const FeedScreen: React.FC = () => {
       likes: 0,
       comments: 0,
       createdAt: 'Just now',
-      tags: [],
+      tags: newPost.tags,
+      emotion: newPost.emotion,
+      topic: newPost.topic,
     };
 
     setPosts([post, ...posts]);
@@ -227,9 +294,46 @@ export const FeedScreen: React.FC = () => {
       maxPeople: 4,
       location: '',
       locationDetails: null,
+      media: [],
+      tags: [],
+      emotion: '',
+      topic: '',
     });
     setModalVisible(false);
     showToast('Post created successfully!', 'success');
+  };
+
+  const renderMediaGrid = (media: MediaItem[]) => {
+    if (!media || media.length === 0) return null;
+
+    return (
+      <View style={styles.mediaGrid}>
+        {media.map((item, index) => (
+          <Surface key={item.id} style={styles.mediaItem}>
+            <Image source={{ uri: item.uri }} style={styles.mediaImage} />
+            {item.type === 'video' && (
+              <View style={styles.videoOverlay}>
+                <IconButton icon="play" size={20} iconColor="#ffffff" />
+              </View>
+            )}
+          </Surface>
+        ))}
+      </View>
+    );
+  };
+
+  const getEmotionEmoji = (emotion: string) => {
+    const emotionMap: Record<string, string> = {
+      happy: '😊',
+      excited: '🤩',
+      relaxed: '😌',
+      inspired: '✨',
+      grateful: '🙏',
+      adventurous: '🏔️',
+      productive: '💪',
+      creative: '🎨',
+    };
+    return emotionMap[emotion] || '';
   };
 
   if (!user) {
@@ -264,12 +368,21 @@ export const FeedScreen: React.FC = () => {
                       {post.location && (
                         <Paragraph style={styles.postLocation}>📍 {post.location}</Paragraph>
                       )}
+                      {post.emotion && (
+                        <Paragraph style={styles.postEmotion}>
+                          {getEmotionEmoji(post.emotion)}
+                        </Paragraph>
+                      )}
                     </View>
                   </View>
                 </View>
 
                 <Paragraph style={styles.postContent}>{post.content}</Paragraph>
 
+                {/* Media Grid */}
+                {renderMediaGrid(post.media || [])}
+
+                {/* Tags */}
                 {post.tags.length > 0 && (
                   <View style={styles.tagsContainer}>
                     {post.tags.map((tag, index) => (
@@ -278,6 +391,13 @@ export const FeedScreen: React.FC = () => {
                       </Chip>
                     ))}
                   </View>
+                )}
+
+                {/* Topic Badge */}
+                {post.topic && (
+                  <Chip icon="folder" style={styles.topicChip} textStyle={styles.topicText}>
+                    {post.topic}
+                  </Chip>
                 )}
 
                 {post.isMeetupRequest && post.meetupDetails && (
@@ -351,12 +471,21 @@ export const FeedScreen: React.FC = () => {
                     {post.location && (
                       <Paragraph style={styles.postLocation}>📍 {post.location}</Paragraph>
                     )}
+                    {post.emotion && (
+                      <Paragraph style={styles.postEmotion}>
+                        {getEmotionEmoji(post.emotion)}
+                      </Paragraph>
+                    )}
                   </View>
                 </View>
               </View>
 
               <Paragraph style={styles.postContent}>{post.content}</Paragraph>
 
+              {/* Media Grid */}
+              {renderMediaGrid(post.media || [])}
+
+              {/* Tags */}
               {post.tags.length > 0 && (
                 <View style={styles.tagsContainer}>
                   {post.tags.map((tag, index) => (
@@ -365,6 +494,13 @@ export const FeedScreen: React.FC = () => {
                     </Chip>
                   ))}
                 </View>
+              )}
+
+              {/* Topic Badge */}
+              {post.topic && (
+                <Chip icon="folder" style={styles.topicChip} textStyle={styles.topicText}>
+                  {post.topic}
+                </Chip>
               )}
 
               {post.isMeetupRequest && post.meetupDetails && (
@@ -441,6 +577,23 @@ export const FeedScreen: React.FC = () => {
                 mode="outlined"
                 outlineColor="#e5e7eb"
                 activeOutlineColor="#6366f1"
+              />
+
+              {/* Media Picker */}
+              <MediaPicker
+                onMediaSelect={handleMediaSelect}
+                maxItems={9}
+              />
+
+              {/* Post Enhancer */}
+              <PostEnhancer
+                selectedTags={newPost.tags}
+                onTagsChange={handleTagsChange}
+                selectedEmotion={newPost.emotion}
+                onEmotionChange={handleEmotionChange}
+                selectedTopic={newPost.topic}
+                onTopicChange={handleTopicChange}
+                content={newPost.content}
               />
 
               {/* Enhanced Location Selection */}
@@ -611,11 +764,42 @@ const styles = StyleSheet.create({
     color: '#6366f1',
     fontWeight: '500',
   },
+  postEmotion: {
+    fontSize: 16,
+    marginLeft: 4,
+  },
   postContent: {
     fontSize: 16,
     lineHeight: 24,
     color: '#1e293b',
     marginBottom: 12,
+  },
+  mediaGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+    marginBottom: 12,
+  },
+  mediaItem: {
+    width: (width - 80) / 3,
+    height: (width - 80) / 3,
+    borderRadius: 8,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  mediaImage: {
+    width: '100%',
+    height: '100%',
+  },
+  videoOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   tagsContainer: {
     flexDirection: 'row',
@@ -630,6 +814,14 @@ const styles = StyleSheet.create({
   tagText: {
     fontSize: 12,
     color: '#6366f1',
+  },
+  topicChip: {
+    backgroundColor: '#6366f1',
+    marginBottom: 12,
+  },
+  topicText: {
+    color: '#ffffff',
+    fontSize: 12,
   },
   meetupCard: {
     backgroundColor: '#f8fafc',
