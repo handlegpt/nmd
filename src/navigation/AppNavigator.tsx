@@ -40,32 +40,7 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
   
   return (
     <>
-      {!user && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          backgroundColor: colors.primary,
-          color: colors.white,
-          padding: `${spacing.sm}px`,
-          zIndex: 1000,
-          borderRadius: `0 0 0 ${borderRadius.lg}px`,
-          ...shadowPresets.small,
-        }}>
-          <IconButton
-            icon="account-circle"
-            iconColor={colors.white}
-            size={24}
-            onPress={() => navigation.navigate('Login')}
-            style={{
-              margin: 0,
-              padding: 0,
-            }}
-          />
-        </div>
-      )}
       <div style={{ 
-        paddingTop: !user ? '60px' : '0px',
         minHeight: '100vh'
       }}>
         <Tab.Navigator
