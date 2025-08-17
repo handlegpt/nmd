@@ -9,6 +9,7 @@ import { ProfileScreen } from '../components/profile/ProfileScreen';
 import { ActivityScreen } from '../components/activities/ActivityScreen';
 import { NotificationScreen } from '../components/notifications/NotificationScreen';
 import { ChatScreen } from '../components/chat/ChatScreen';
+import { FeedScreen } from '../components/feed/FeedScreen';
 import { IconButton } from 'react-native-paper';
 
 const Stack = createStackNavigator();
@@ -22,7 +23,9 @@ const MainTabs = () => {
         tabBarIcon: ({ focused, color, size }) => {
           let iconName: string;
 
-          if (route.name === 'Map') {
+          if (route.name === 'Feed') {
+            iconName = 'home';
+          } else if (route.name === 'Map') {
             iconName = 'map';
           } else if (route.name === 'Activities') {
             iconName = 'calendar';
@@ -56,6 +59,11 @@ const MainTabs = () => {
       })}
     >
       <Tab.Screen 
+        name="Feed" 
+        component={FeedScreen}
+        options={{ title: 'Nomad Life' }}
+      />
+      <Tab.Screen 
         name="Map" 
         component={MapScreen}
         options={{ title: 'Discover' }}
@@ -63,7 +71,7 @@ const MainTabs = () => {
       <Tab.Screen 
         name="Activities" 
         component={ActivityScreen}
-        options={{ title: 'Activities' }}
+        options={{ title: 'Meetups' }}
       />
       <Tab.Screen 
         name="Notifications" 

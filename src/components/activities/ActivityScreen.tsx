@@ -1,50 +1,138 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   StyleSheet,
-  FlatList,
   ScrollView,
   Alert,
+  Platform,
 } from 'react-native';
 import {
   Card,
   Title,
   Paragraph,
+  Avatar,
   Button,
-  TextInput,
   FAB,
   Chip,
-  Avatar,
   Divider,
-  Dialog,
+  IconButton,
+  useTheme,
+  TextInput,
+  Modal,
   Portal,
-  Text,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
-import { Activity, User } from '../../types';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { supabase } from '../../lib/supabase';
+
+interface Meetup {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  date: string;
+  time: string;
+  maxParticipants: number;
+  currentParticipants: number;
+  createdBy: {
+    id: string;
+    nickname: string;
+    avatar: string;
+  };
+  participants: Array<{
+    id: string;
+    nickname: string;
+    avatar: string;
+  }>;
+  tags: string[];
+  status: 'upcoming' | 'ongoing' | 'completed';
+  createdAt: string;
+}
 
 export const ActivityScreen: React.FC = () => {
   const { user } = useAuthStore();
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [showCreateDialog, setShowCreateDialog] = useState(false);
-  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
-  
-  // New activity form
-  const [newActivity, setNewActivity] = useState({
+  const theme = useTheme();
+  const [meetups, setMeetups] = useState<Meetup[]>([
+    {
+      id: '1',
+      title: 'Bali Digital Nomad Coffee Meetup',
+      description: 'Let\'s grab coffee and share our digital nomad experiences! Perfect for networking and making new friends.',
+      location: 'Canggu Coworking Space, Bali',
+      date: 'Tomorrow',
+      time: '10:00 AM',
+      maxParticipants: 8,
+      currentParticipants: 3,
+      createdBy: {
+        id: '1',
+        nickname: 'Alex',
+        avatar: 'https://via.placeholder.com/40x40/4CAF50/ffffff?text=A',
+      },
+      participants: [
+        { id: '1', nickname: 'Alex', avatar: 'https://via.placeholder.com/40x40/4CAF50/ffffff?text=A' },
+        { id: '2', nickname: 'Sarah', avatar: 'https://via.placeholder.com/40x40/FF9800/ffffff?text=S' },
+        { id: '3', nickname: 'Mike', avatar: 'https://via.placeholder.com/40x40/2196F3/ffffff?text=M' },
+      ],
+      tags: ['Coffee', 'Networking', 'Coworking'],
+      status: 'upcoming',
+      createdAt: '2 hours ago',
+    },
+    {
+      id: '2',
+      title: 'Surfing Session at Uluwatu',
+      description: 'Early morning surf session! All levels welcome. Let\'s catch some waves together.',
+      location: 'Uluwatu Beach, Bali',
+      date: 'Today',
+      time: '6:00 AM',
+      maxParticipants: 6,
+      currentParticipants: 4,
+      createdBy: {
+        id: '2',
+        nickname: 'Sarah',
+        avatar: 'https://via.placeholder.com/40x40/FF9800/ffffff?text=S',
+      },
+      participants: [
+        { id: '2', nickname: 'Sarah', avatar: 'https://via.placeholder.com/40x40/FF9800/ffffff?text=S' },
+        { id: '4', nickname: 'Tom', avatar: 'https://via.placeholder.com/40x40/9C27B0/ffffff?text=T' },
+        { id: '5', nickname: 'Emma', avatar: 'https://via.placeholder.com/40x40/FF5722/ffffff?text=E' },
+        { id: '6', nickname: 'David', avatar: 'https://via.placeholder.com/40x40/607D8B/ffffff?text=D' },
+      ],
+      tags: ['Surfing', 'Beach', 'Morning'],
+      status: 'upcoming',
+      createdAt: '1 day ago',
+    },
+    {
+      id: '3',
+      title: 'Lunch at Seminyak Cafe',
+      description: 'Casual lunch meetup! Great food and conversation guaranteed.',
+      location: 'Seminyak Cafe, Bali',
+      date: 'Today',
+      time: '1:00 PM',
+      maxParticipants: 4,
+      currentParticipants: 2,
+      createdBy: {
+        id: '3',
+        nickname: 'Mike',
+        avatar: 'https://via.placeholder.com/40x40/2196F3/ffffff?text=M',
+      },
+      participants: [
+        { id: '3', nickname: 'Mike', avatar: 'https://via.placeholder.com/40x40/2196F3/ffffff?text=M' },
+        { id: '7', nickname: 'Lisa', avatar: 'https://via.placeholder.com/40x40/4CAF50/ffffff?text=L' },
+      ],
+      tags: ['Lunch', 'Food', 'Casual'],
+      status: 'upcoming',
+      createdAt: '3 hours ago',
+    },
+  ]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [newMeetup, setNewMeetup] = useState({
     title: '',
     description: '',
-    date: new Date(),
-    maxParticipants: 10,
     location: '',
+    date: '',
+    time: '',
+    maxParticipants: 4,
   });
-
-  useEffect(() => {
-    loadActivities();
-  }, []);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -56,255 +144,282 @@ export const ActivityScreen: React.FC = () => {
     setToast({ ...toast, visible: false });
   };
 
-  // Load activities from database
-  const loadActivities = async () => {
-    setLoading(true);
-    try {
-      // TODO: Implement actual activity loading from Supabase
-      // For now, using mock data
-      const mockActivities: Activity[] = [
-        {
-          id: '1',
-          title: 'Digital Nomad Meetup',
-          description: 'Let\'s meet for coffee and share our experiences!',
-          location: { latitude: 39.9042, longitude: 116.4074, city: 'Beijing' },
-          date_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
-          max_participants: 8,
-          current_participants: 3,
-          created_by: 'user-1',
-          participants: ['user-1', 'user-2', 'user-3'],
-          created_at: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          title: 'Co-working Session',
-          description: 'Looking for someone to co-work with at a local cafe.',
-          location: { latitude: 39.9042, longitude: 116.4074, city: 'Beijing' },
-          date_time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-          max_participants: 4,
-          current_participants: 1,
-          created_by: 'user-2',
-          participants: ['user-2'],
-          created_at: new Date().toISOString(),
-        },
-      ];
-      setActivities(mockActivities);
-    } catch (error) {
-      showToast('Failed to load activities', 'error');
-    } finally {
-      setLoading(false);
-    }
+  // Handle join meetup
+  const handleJoinMeetup = (meetupId: string) => {
+    setMeetups(meetups.map(meetup => {
+      if (meetup.id === meetupId && meetup.currentParticipants < meetup.maxParticipants) {
+        const newParticipant = {
+          id: user?.id || 'user',
+          nickname: user?.nickname || 'Demo User',
+          avatar: user?.avatar_url || 'https://via.placeholder.com/40x40/2196f3/ffffff?text=U',
+        };
+        return {
+          ...meetup,
+          currentParticipants: meetup.currentParticipants + 1,
+          participants: [...meetup.participants, newParticipant],
+        };
+      }
+      return meetup;
+    }));
+    showToast('Joined meetup successfully!', 'success');
   };
 
-  // Create new activity
-  const createActivity = async () => {
-    if (!user || !newActivity.title.trim() || !newActivity.description.trim()) {
-      showToast('Please fill in all required fields', 'error');
+  // Handle leave meetup
+  const handleLeaveMeetup = (meetupId: string) => {
+    setMeetups(meetups.map(meetup => {
+      if (meetup.id === meetupId) {
+        return {
+          ...meetup,
+          currentParticipants: Math.max(0, meetup.currentParticipants - 1),
+          participants: meetup.participants.filter(p => p.id !== (user?.id || 'user')),
+        };
+      }
+      return meetup;
+    }));
+    showToast('Left meetup', 'info');
+  };
+
+  // Handle create meetup
+  const handleCreateMeetup = () => {
+    if (!newMeetup.title.trim() || !newMeetup.description.trim() || !newMeetup.location.trim() || !newMeetup.date.trim() || !newMeetup.time.trim()) {
+      showToast('Please fill in all fields', 'error');
       return;
     }
 
-    try {
-      const activity: Activity = {
-        id: Date.now().toString(),
-        title: newActivity.title.trim(),
-        description: newActivity.description.trim(),
-        location: { latitude: 39.9042, longitude: 116.4074, city: newActivity.location || 'Unknown' },
-        date_time: newActivity.date.toISOString(),
-        max_participants: newActivity.maxParticipants,
-        current_participants: 1,
-        created_by: user.id,
-        participants: [user.id],
-        created_at: new Date().toISOString(),
-      };
+    const meetup: Meetup = {
+      id: Date.now().toString(),
+      title: newMeetup.title,
+      description: newMeetup.description,
+      location: newMeetup.location,
+      date: newMeetup.date,
+      time: newMeetup.time,
+      maxParticipants: newMeetup.maxParticipants,
+      currentParticipants: 1,
+      createdBy: {
+        id: user?.id || 'user',
+        nickname: user?.nickname || 'Demo User',
+        avatar: user?.avatar_url || 'https://via.placeholder.com/40x40/2196f3/ffffff?text=U',
+      },
+      participants: [{
+        id: user?.id || 'user',
+        nickname: user?.nickname || 'Demo User',
+        avatar: user?.avatar_url || 'https://via.placeholder.com/40x40/2196f3/ffffff?text=U',
+      }],
+      tags: ['New Meetup'],
+      status: 'upcoming',
+      createdAt: 'Just now',
+    };
 
-      // TODO: Implement actual activity creation in Supabase
-      setActivities(prev => [activity, ...prev]);
-      setShowCreateDialog(false);
-      setNewActivity({ title: '', description: '', date: new Date(), maxParticipants: 10, location: '' });
-      showToast('Activity created successfully!', 'success');
-    } catch (error) {
-      showToast('Failed to create activity', 'error');
-    }
+    setMeetups([meetup, ...meetups]);
+    setModalVisible(false);
+    setNewMeetup({
+      title: '',
+      description: '',
+      location: '',
+      date: '',
+      time: '',
+      maxParticipants: 4,
+    });
+    showToast('Meetup created successfully!', 'success');
   };
 
-  // Join activity
-  const joinActivity = async (activity: Activity) => {
-    if (!user) return;
-
-    try {
-      // TODO: Implement actual join logic in Supabase
-      const updatedActivity = {
-        ...activity,
-        current_participants: activity.current_participants + 1,
-        participants: [...activity.participants, user.id],
-      };
-
-      setActivities(prev => 
-        prev.map(a => a.id === activity.id ? updatedActivity : a)
-      );
-
-      showToast('Successfully joined the activity!', 'success');
-    } catch (error) {
-      showToast('Failed to join activity', 'error');
-    }
+  // Check if user is participant
+  const isParticipant = (meetup: Meetup) => {
+    return meetup.participants.some(p => p.id === (user?.id || 'user'));
   };
-
-  // Leave activity
-  const leaveActivity = async (activity: Activity) => {
-    if (!user) return;
-
-    try {
-      // TODO: Implement actual leave logic in Supabase
-      const updatedActivity = {
-        ...activity,
-        current_participants: activity.current_participants - 1,
-        participants: activity.participants.filter(id => id !== user.id),
-      };
-
-      setActivities(prev => 
-        prev.map(a => a.id === activity.id ? updatedActivity : a)
-      );
-
-      showToast('Successfully left the activity', 'success');
-    } catch (error) {
-      showToast('Failed to leave activity', 'error');
-    }
-  };
-
-  // Format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = date.getTime() - now.getTime();
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-
-    if (days > 0) return `${days} day${days > 1 ? 's' : ''} from now`;
-    if (hours > 0) return `${hours} hour${hours > 1 ? 's' : ''} from now`;
-    return 'Starting soon';
-  };
-
-  // Check if user is participating
-  const isParticipating = (activity: Activity) => {
-    return user && activity.participants.includes(user.id);
-  };
-
-  // Render activity item
-  const renderActivity = ({ item }: { item: Activity }) => (
-    <Card style={styles.activityCard}>
-      <Card.Content>
-        <Title>{item.title}</Title>
-        <Paragraph style={styles.description}>{item.description}</Paragraph>
-        
-        <View style={styles.activityInfo}>
-          <Chip icon="map-marker" style={styles.chip}>
-            {item.location.city}
-          </Chip>
-          <Chip icon="clock" style={styles.chip}>
-            {formatDate(item.date_time)}
-          </Chip>
-          <Chip icon="account-group" style={styles.chip}>
-            {item.current_participants}/{item.max_participants}
-          </Chip>
-        </View>
-
-        <Divider style={styles.divider} />
-
-        <View style={styles.actions}>
-          {isParticipating(item) ? (
-            <Button
-              mode="outlined"
-              onPress={() => leaveActivity(item)}
-              style={styles.actionButton}
-            >
-              Leave
-            </Button>
-          ) : (
-            <Button
-              mode="contained"
-              onPress={() => joinActivity(item)}
-              disabled={item.current_participants >= item.max_participants}
-              style={styles.actionButton}
-            >
-              Join
-            </Button>
-          )}
-        </View>
-      </Card.Content>
-    </Card>
-  );
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={activities}
-        renderItem={renderActivity}
-        keyExtractor={item => item.id}
-        style={styles.list}
-        showsVerticalScrollIndicator={false}
-      />
+      <ScrollView style={styles.scrollView}>
+        {meetups.map((meetup) => (
+          <Card key={meetup.id} style={styles.meetupCard}>
+            <Card.Content>
+              <View style={styles.meetupHeader}>
+                <Avatar.Image
+                  size={40}
+                  source={{ uri: meetup.createdBy.avatar }}
+                />
+                <View style={styles.meetupInfo}>
+                  <Title style={styles.meetupTitle}>{meetup.title}</Title>
+                  <Paragraph style={styles.meetupMeta}>
+                    Created by {meetup.createdBy.nickname} • {meetup.createdAt}
+                  </Paragraph>
+                </View>
+              </View>
 
-      {/* Create Activity FAB */}
+              <Paragraph style={styles.meetupDescription}>{meetup.description}</Paragraph>
+
+              <View style={styles.meetupDetails}>
+                <View style={styles.detailRow}>
+                  <IconButton icon="map-marker" size={16} />
+                  <Paragraph style={styles.detailText}>{meetup.location}</Paragraph>
+                </View>
+                <View style={styles.detailRow}>
+                  <IconButton icon="calendar" size={16} />
+                  <Paragraph style={styles.detailText}>{meetup.date} at {meetup.time}</Paragraph>
+                </View>
+                <View style={styles.detailRow}>
+                  <IconButton icon="account-group" size={16} />
+                  <Paragraph style={styles.detailText}>
+                    {meetup.currentParticipants}/{meetup.maxParticipants} participants
+                  </Paragraph>
+                </View>
+              </View>
+
+              <View style={styles.participantsContainer}>
+                <Paragraph style={styles.participantsTitle}>Participants:</Paragraph>
+                <View style={styles.participantsList}>
+                  {meetup.participants.slice(0, 5).map((participant, index) => (
+                    <Avatar.Image
+                      key={participant.id}
+                      size={30}
+                      source={{ uri: participant.avatar }}
+                      style={styles.participantAvatar}
+                    />
+                  ))}
+                  {meetup.participants.length > 5 && (
+                    <View style={styles.moreParticipants}>
+                      <Paragraph style={styles.moreText}>+{meetup.participants.length - 5}</Paragraph>
+                    </View>
+                  )}
+                </View>
+              </View>
+
+              <View style={styles.meetupTags}>
+                {meetup.tags.map((tag, index) => (
+                  <Chip key={index} style={styles.tagChip} textStyle={styles.tagText}>
+                    #{tag}
+                  </Chip>
+                ))}
+              </View>
+
+              <Divider style={styles.divider} />
+
+              <View style={styles.meetupActions}>
+                {isParticipant(meetup) ? (
+                  <Button
+                    mode="outlined"
+                    onPress={() => handleLeaveMeetup(meetup.id)}
+                    icon="account-remove"
+                    style={styles.actionButton}
+                  >
+                    Leave
+                  </Button>
+                ) : (
+                  <Button
+                    mode="contained"
+                    onPress={() => handleJoinMeetup(meetup.id)}
+                    disabled={meetup.currentParticipants >= meetup.maxParticipants}
+                    icon="account-plus"
+                    style={styles.actionButton}
+                  >
+                    {meetup.currentParticipants >= meetup.maxParticipants ? 'Full' : 'Join'}
+                  </Button>
+                )}
+                <Button
+                  mode="text"
+                  onPress={() => showToast('Chat feature coming soon!', 'info')}
+                  icon="chat"
+                  style={styles.actionButton}
+                >
+                  Chat
+                </Button>
+              </View>
+            </Card.Content>
+          </Card>
+        ))}
+      </ScrollView>
+
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => setShowCreateDialog(true)}
+        onPress={() => setModalVisible(true)}
       />
 
-      {/* Create Activity Dialog */}
       <Portal>
-        <Dialog visible={showCreateDialog} onDismiss={() => setShowCreateDialog(false)}>
-          <Dialog.Title>Create New Activity</Dialog.Title>
-          <Dialog.Content>
-            <TextInput
-              label="Title"
-              value={newActivity.title}
-              onChangeText={(text) => setNewActivity(prev => ({ ...prev, title: text }))}
-              style={styles.input}
-              mode="outlined"
-            />
-            <TextInput
-              label="Description"
-              value={newActivity.description}
-              onChangeText={(text) => setNewActivity(prev => ({ ...prev, description: text }))}
-              style={styles.input}
-              mode="outlined"
-              multiline
-              numberOfLines={3}
-            />
-            <TextInput
-              label="Location"
-              value={newActivity.location}
-              onChangeText={(text) => setNewActivity(prev => ({ ...prev, location: text }))}
-              style={styles.input}
-              mode="outlined"
-            />
-            <TextInput
-              label="Max Participants"
-              value={newActivity.maxParticipants.toString()}
-              onChangeText={(text) => setNewActivity(prev => ({ ...prev, maxParticipants: parseInt(text) || 10 }))}
-              style={styles.input}
-              mode="outlined"
-              keyboardType="numeric"
-            />
-          </Dialog.Content>
-          <Dialog.Actions>
-            <Button onPress={() => setShowCreateDialog(false)}>Cancel</Button>
-            <Button onPress={createActivity}>Create</Button>
-          </Dialog.Actions>
-        </Dialog>
+        <Modal
+          visible={modalVisible}
+          onDismiss={() => setModalVisible(false)}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Card style={styles.modalCard}>
+            <Card.Content>
+              <Title style={styles.modalTitle}>Create New Meetup</Title>
+              
+              <TextInput
+                label="Meetup Title"
+                value={newMeetup.title}
+                onChangeText={(text) => setNewMeetup({ ...newMeetup, title: text })}
+                style={styles.textInput}
+              />
+
+              <TextInput
+                label="Description"
+                value={newMeetup.description}
+                onChangeText={(text) => setNewMeetup({ ...newMeetup, description: text })}
+                multiline
+                numberOfLines={3}
+                style={styles.textInput}
+              />
+
+              <TextInput
+                label="Location"
+                value={newMeetup.location}
+                onChangeText={(text) => setNewMeetup({ ...newMeetup, location: text })}
+                style={styles.textInput}
+              />
+
+              <TextInput
+                label="Date"
+                value={newMeetup.date}
+                onChangeText={(text) => setNewMeetup({ ...newMeetup, date: text })}
+                placeholder="e.g., Tomorrow, Next Friday"
+                style={styles.textInput}
+              />
+
+              <TextInput
+                label="Time"
+                value={newMeetup.time}
+                onChangeText={(text) => setNewMeetup({ ...newMeetup, time: text })}
+                placeholder="e.g., 2:00 PM"
+                style={styles.textInput}
+              />
+
+              <TextInput
+                label="Max Participants"
+                value={newMeetup.maxParticipants.toString()}
+                onChangeText={(text) => setNewMeetup({ ...newMeetup, maxParticipants: parseInt(text) || 4 })}
+                keyboardType="numeric"
+                style={styles.textInput}
+              />
+
+              <View style={styles.modalActions}>
+                <Button
+                  mode="outlined"
+                  onPress={() => setModalVisible(false)}
+                  style={styles.modalButton}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  mode="contained"
+                  onPress={handleCreateMeetup}
+                  style={styles.modalButton}
+                >
+                  Create
+                </Button>
+              </View>
+            </Card.Content>
+          </Card>
+        </Modal>
       </Portal>
 
-      {/* Toast for user feedback */}
       <Toast
         visible={toast.visible}
         message={toast.message}
         type={toast.type}
         onHide={hideToast}
       />
-
-      {/* Loading spinner */}
-      <LoadingSpinner visible={loading} message="Loading activities..." />
     </View>
   );
 };
@@ -314,35 +429,97 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  list: {
+  scrollView: {
     flex: 1,
-    padding: 16,
   },
-  activityCard: {
-    marginBottom: 16,
+  meetupCard: {
+    margin: 16,
+    marginBottom: 8,
     elevation: 2,
   },
-  description: {
-    marginVertical: 8,
+  meetupHeader: {
+    flexDirection: 'row',
+    marginBottom: 12,
   },
-  activityInfo: {
+  meetupInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  meetupTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  meetupMeta: {
+    fontSize: 12,
+    color: '#666',
+  },
+  meetupDescription: {
+    fontSize: 16,
+    lineHeight: 24,
+    marginBottom: 16,
+  },
+  meetupDetails: {
+    marginBottom: 16,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  detailText: {
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  participantsContainer: {
+    marginBottom: 16,
+  },
+  participantsTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  participantsList: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  participantAvatar: {
+    marginRight: 8,
+  },
+  moreParticipants: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: '#e0e0e0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  moreText: {
+    fontSize: 12,
+    color: '#666',
+  },
+  meetupTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginVertical: 8,
+    marginBottom: 16,
   },
-  chip: {
+  tagChip: {
     marginRight: 8,
     marginBottom: 4,
+    backgroundColor: '#f0f0f0',
+  },
+  tagText: {
+    fontSize: 12,
   },
   divider: {
     marginVertical: 8,
   },
-  actions: {
+  meetupActions: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
+    gap: 12,
   },
   actionButton: {
-    marginLeft: 8,
+    flex: 1,
   },
   fab: {
     position: 'absolute',
@@ -350,9 +527,26 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  input: {
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: 20,
+  },
+  modalCard: {
+    maxHeight: '80%',
+  },
+  modalTitle: {
+    marginBottom: 16,
+  },
+  textInput: {
     marginBottom: 12,
   },
-});
-
-export default ActivityScreen; 
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  modalButton: {
+    flex: 1,
+  },
+}); 
