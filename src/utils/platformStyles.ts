@@ -76,4 +76,4 @@ export const shadowPresets = {
     shadowRadius: 20,
     elevation: 3,
   }),
-};
+} as const;

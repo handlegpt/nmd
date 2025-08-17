@@ -373,7 +373,7 @@ export const OptimizedCard: React.FC<OptimizedCardProps> = ({
 
   if (loading) {
     return (
-      <Card style={[styles.optimizedCard, style, { ...shadowPresets[shadowPreset] }]}>
+      <Card style={[styles.optimizedCard, style, { ...shadowPresets[shadowPreset as keyof typeof shadowPresets] }]}>
         <Card.Content>
           <ActivityIndicator size="small" />
         </Card.Content>
@@ -385,7 +385,7 @@ export const OptimizedCard: React.FC<OptimizedCardProps> = ({
     <Card
       style={[
         styles.optimizedCard,
-        isPhone ? { ...shadowPresets.small } : { ...shadowPresets[shadowPreset] },
+        isPhone ? { ...shadowPresets.small } : { ...shadowPresets[shadowPreset as keyof typeof shadowPresets] },
         style,
       ]}
       onPress={onPress}
