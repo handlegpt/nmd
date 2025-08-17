@@ -14,7 +14,6 @@ import {
 } from 'react-native-paper';
 import * as Battery from 'expo-battery';
 import * as Network from 'expo-network';
-import * as Sensors from 'expo-sensors';
 import { useResponsive } from '../../utils/responsive';
 
 interface DeviceStatus {
@@ -23,9 +22,6 @@ interface DeviceStatus {
   networkType: string;
   isConnected: boolean;
   isInternetReachable: boolean;
-  acceleration: Sensors.AccelerometerData | null;
-  gyroscope: Sensors.GyroscopeData | null;
-  magnetometer: Sensors.MagnetometerData | null;
 }
 
 export const DeviceStatus: React.FC = () => {
@@ -37,9 +33,6 @@ export const DeviceStatus: React.FC = () => {
     networkType: 'unknown',
     isConnected: false,
     isInternetReachable: false,
-    acceleration: null,
-    gyroscope: null,
-    magnetometer: null,
   });
 
   useEffect(() => {
@@ -97,41 +90,9 @@ export const DeviceStatus: React.FC = () => {
       }
     };
 
-    // Sensors monitoring (optional)
-    const setupSensorsMonitoring = async () => {
-      try {
-        // Accelerometer
-        const accelerometerSubscription = Sensors.Accelerometer.addListener((data) => {
-          setStatus(prev => ({ ...prev, acceleration: data }));
-        });
-
-        // Gyroscope
-        const gyroscopeSubscription = Sensors.Gyroscope.addListener((data) => {
-          setStatus(prev => ({ ...prev, gyroscope: data }));
-        });
-
-        // Magnetometer
-        const magnetometerSubscription = Sensors.Magnetometer.addListener((data) => {
-          setStatus(prev => ({ ...prev, magnetometer: data }));
-        });
-
-        return () => {
-          accelerometerSubscription?.remove();
-          gyroscopeSubscription?.remove();
-          magnetometerSubscription?.remove();
-        };
-      } catch (error) {
-        console.warn('Sensors monitoring not available:', error);
-      }
-    };
-
     setupBatteryMonitoring();
     setupNetworkMonitoring();
-    const cleanupSensors = setupSensorsMonitoring();
-
-    return () => {
-      cleanupSensors?.();
-    };
+  }, [isPhone]);
   }, [isPhone]);
 
   if (!isPhone) {
@@ -211,26 +172,7 @@ export const DeviceStatus: React.FC = () => {
         </Card.Content>
       </Card>
 
-      {/* Sensors Status (Optional) */}
-      {status.acceleration && (
-        <Card style={styles.statusCard}>
-          <Card.Content style={styles.statusContent}>
-            <View style={styles.statusHeader}>
-              <IconButton
-                icon="axis-arrow"
-                size={24}
-                iconColor={theme.colors.primary}
-              />
-              <Title style={styles.statusTitle}>Motion</Title>
-            </View>
-            <Paragraph style={styles.statusText}>
-              X: {status.acceleration.x.toFixed(2)} | 
-              Y: {status.acceleration.y.toFixed(2)} | 
-              Z: {status.acceleration.z.toFixed(2)}
-            </Paragraph>
-          </Card.Content>
-        </Card>
-      )}
+
 
       {/* Device Info */}
       <Card style={styles.statusCard}>
