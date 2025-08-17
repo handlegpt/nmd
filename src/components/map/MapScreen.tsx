@@ -18,6 +18,7 @@ import {
   IconButton,
   useTheme,
   Divider,
+  Surface,
 } from 'react-native-paper';
 import { useMapStore } from '../../store/mapStore';
 import { useAuthStore } from '../../store/authStore';
@@ -158,46 +159,80 @@ export const MapScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        <Card style={styles.headerCard}>
+      {/* Header */}
+      <Surface style={styles.header}>
+        <Title style={styles.headerTitle}>Discover Nomads</Title>
+        <Paragraph style={styles.headerSubtitle}>Find fellow travelers nearby</Paragraph>
+      </Surface>
+
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {/* Location Card */}
+        <Card style={styles.locationCard}>
           <Card.Content>
-            <Title style={styles.title}>Discover Nearby Nomads</Title>
-            <Paragraph style={styles.subtitle}>
-              {currentLocation 
-                ? `You're in ${currentLocation.city}, ${currentLocation.country}`
-                : 'Location not available'
-              }
-            </Paragraph>
+            <View style={styles.locationHeader}>
+              <IconButton icon="map-marker" size={24} iconColor="#1976d2" />
+              <View style={styles.locationInfo}>
+                <Title style={styles.locationTitle}>
+                  {currentLocation ? currentLocation.city : 'Unknown Location'}
+                </Title>
+                <Paragraph style={styles.locationSubtitle}>
+                  {currentLocation ? `${currentLocation.country}` : 'Location not available'}
+                </Paragraph>
+              </View>
+            </View>
             <View style={styles.statsContainer}>
               <Chip icon="account-group" style={styles.statChip}>
                 {displayUsers.length} nomads nearby
               </Chip>
-              <Chip icon="map-marker" style={styles.statChip}>
-                {currentLocation ? `${currentLocation.city}` : 'Unknown location'}
+              <Chip icon="wifi" style={styles.statChip}>
+                {displayUsers.filter(u => u.is_available_for_meetup).length} available
               </Chip>
             </View>
           </Card.Content>
         </Card>
 
+        {/* Users List */}
         <View style={styles.usersContainer}>
-          {displayUsers.map((nomad) => (
-            <Card key={nomad.id} style={styles.userCard} onPress={() => handleUserPress(nomad)}>
-              <Card.Content>
+          {displayUsers.map((nomad, index) => (
+            <Card key={nomad.id} style={[styles.userCard, { marginTop: index === 0 ? 16 : 12 }]} onPress={() => handleUserPress(nomad)}>
+              <Card.Content style={styles.userCardContent}>
                 <View style={styles.userHeader}>
                   <Avatar.Image
-                    size={60}
+                    size={64}
                     source={{ uri: nomad.avatar_url }}
+                    style={styles.userAvatar}
                   />
                   <View style={styles.userInfo}>
                     <Title style={styles.userName}>{nomad.nickname}</Title>
                     <Paragraph style={styles.userBio}>{nomad.bio}</Paragraph>
-                    <View style={styles.userTags}>
-                      {nomad.interests.slice(0, 3).map((interest, index) => (
-                        <Chip key={index} style={styles.tagChip} textStyle={styles.tagText}>
-                          {interest}
-                        </Chip>
-                      ))}
+                    <View style={styles.userStatus}>
+                      <Chip 
+                        icon={nomad.is_available_for_meetup ? "check-circle" : "clock"} 
+                        style={[styles.statusChip, { backgroundColor: nomad.is_available_for_meetup ? '#e8f5e8' : '#fff3e0' }]}
+                        textStyle={{ color: nomad.is_available_for_meetup ? '#2e7d32' : '#f57c00' }}
+                      >
+                        {nomad.is_available_for_meetup ? 'Available' : 'Busy'}
+                      </Chip>
                     </View>
+                  </View>
+                </View>
+                
+                <View style={styles.userTags}>
+                  {nomad.interests.slice(0, 3).map((interest, index) => (
+                    <Chip key={index} style={styles.tagChip} textStyle={styles.tagText}>
+                      {interest}
+                    </Chip>
+                  ))}
+                </View>
+
+                <View style={styles.userLanguages}>
+                  <Paragraph style={styles.languagesTitle}>Languages:</Paragraph>
+                  <View style={styles.languagesList}>
+                    {nomad.languages.map((language, index) => (
+                      <Chip key={index} style={styles.languageChip} textStyle={styles.languageText}>
+                        {language}
+                      </Chip>
+                    ))}
                   </View>
                 </View>
                 
@@ -209,6 +244,7 @@ export const MapScreen: React.FC = () => {
                     onPress={() => handleGreet(nomad)}
                     style={styles.actionButton}
                     icon="hand-wave"
+                    contentStyle={styles.actionButtonContent}
                   >
                     Greet
                   </Button>
@@ -217,6 +253,7 @@ export const MapScreen: React.FC = () => {
                     onPress={() => handleChat(nomad)}
                     style={styles.actionButton}
                     icon="chat"
+                    contentStyle={styles.actionButtonContent}
                   >
                     Chat
                   </Button>
@@ -232,6 +269,7 @@ export const MapScreen: React.FC = () => {
         style={styles.fab}
         onPress={handleRefresh}
         loading={isRefreshing}
+        color="#ffffff"
       />
 
       <Toast
@@ -247,24 +285,59 @@ export const MapScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8f9fa',
+  },
+  header: {
+    paddingTop: Platform.OS === 'web' ? 20 : 40,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    backgroundColor: '#ffffff',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1976d2',
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#666',
   },
   scrollView: {
     flex: 1,
   },
-  headerCard: {
+  locationCard: {
     margin: 16,
-    elevation: 4,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    borderRadius: 12,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 8,
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
+  locationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 16,
+  },
+  locationInfo: {
+    flex: 1,
+    marginLeft: 8,
+  },
+  locationTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
+  },
+  locationSubtitle: {
+    fontSize: 14,
+    color: '#666',
   },
   statsContainer: {
     flexDirection: 'row',
@@ -273,60 +346,117 @@ const styles = StyleSheet.create({
   },
   statChip: {
     marginRight: 8,
+    backgroundColor: '#e3f2fd',
   },
   usersContainer: {
     padding: 16,
   },
   userCard: {
     marginBottom: 16,
-    elevation: 2,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    borderRadius: 12,
+  },
+  userCardContent: {
+    padding: 0,
   },
   userHeader: {
     flexDirection: 'row',
     marginBottom: 16,
+    padding: 16,
+    paddingBottom: 0,
+  },
+  userAvatar: {
+    marginRight: 16,
   },
   userInfo: {
     flex: 1,
-    marginLeft: 16,
   },
   userName: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 4,
+    color: '#333',
+    marginBottom: 8,
   },
   userBio: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#666',
+    lineHeight: 22,
+    marginBottom: 12,
+  },
+  userStatus: {
     marginBottom: 8,
+  },
+  statusChip: {
+    alignSelf: 'flex-start',
   },
   userTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 4,
+    marginBottom: 16,
+    paddingHorizontal: 16,
   },
   tagChip: {
-    marginRight: 4,
+    marginRight: 8,
     marginBottom: 4,
-    backgroundColor: '#e3f2fd',
+    backgroundColor: '#f0f8ff',
+    borderRadius: 16,
   },
   tagText: {
     fontSize: 12,
+    color: '#1976d2',
+  },
+  userLanguages: {
+    paddingHorizontal: 16,
+    marginBottom: 16,
+  },
+  languagesTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  languagesList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  languageChip: {
+    marginRight: 8,
+    marginBottom: 4,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 12,
+  },
+  languageText: {
+    fontSize: 12,
+    color: '#666',
   },
   divider: {
     marginVertical: 12,
+    backgroundColor: '#e0e0e0',
   },
   userActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 12,
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   actionButton: {
     flex: 1,
+    borderRadius: 8,
+  },
+  actionButtonContent: {
+    paddingVertical: 4,
   },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
     bottom: 0,
+    backgroundColor: '#1976d2',
+    borderRadius: 28,
   },
 }); 

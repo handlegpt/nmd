@@ -5,6 +5,7 @@ import {
   ScrollView,
   Alert,
   Platform,
+  Dimensions,
 } from 'react-native';
 import {
   Card,
@@ -20,10 +21,13 @@ import {
   TextInput,
   Modal,
   Portal,
+  Surface,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
+
+const { width } = Dimensions.get('window');
 
 interface Post {
   id: string;
@@ -199,20 +203,30 @@ export const FeedScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={styles.scrollView}>
-        {posts.map((post) => (
-          <Card key={post.id} style={styles.postCard}>
-            <Card.Content>
+      {/* Header */}
+      <Surface style={styles.header}>
+        <Title style={styles.headerTitle}>Nomad Now</Title>
+        <Paragraph style={styles.headerSubtitle}>Share your journey</Paragraph>
+      </Surface>
+
+      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+        {posts.map((post, index) => (
+          <Card key={post.id} style={[styles.postCard, { marginTop: index === 0 ? 16 : 8 }]}>
+            <Card.Content style={styles.postContent}>
               <View style={styles.postHeader}>
                 <Avatar.Image
-                  size={40}
+                  size={48}
                   source={{ uri: post.userAvatar }}
+                  style={styles.userAvatar}
                 />
                 <View style={styles.postInfo}>
                   <Title style={styles.userName}>{post.userNickname}</Title>
-                  <Paragraph style={styles.postMeta}>
-                    {post.location} • {post.createdAt}
-                  </Paragraph>
+                  <View style={styles.postMeta}>
+                    <IconButton icon="map-marker" size={12} iconColor="#666" />
+                    <Paragraph style={styles.postMetaText}>
+                      {post.location} • {post.createdAt}
+                    </Paragraph>
+                  </View>
                 </View>
               </View>
 
@@ -220,22 +234,37 @@ export const FeedScreen: React.FC = () => {
 
               {post.isMeetupRequest && post.meetupDetails && (
                 <Card style={styles.meetupCard}>
-                  <Card.Content>
-                    <Title style={styles.meetupTitle}>{post.meetupDetails.title}</Title>
-                    <Paragraph style={styles.meetupDetails}>
-                      📅 {post.meetupDetails.date}
-                    </Paragraph>
-                    <Paragraph style={styles.meetupDetails}>
-                      📍 {post.meetupDetails.location}
-                    </Paragraph>
-                    <Paragraph style={styles.meetupDetails}>
-                      👥 {post.meetupDetails.currentPeople}/{post.meetupDetails.maxPeople} people
-                    </Paragraph>
+                  <Card.Content style={styles.meetupCardContent}>
+                    <View style={styles.meetupHeader}>
+                      <IconButton icon="calendar" size={20} iconColor="#1976d2" />
+                      <Title style={styles.meetupTitle}>{post.meetupDetails.title}</Title>
+                    </View>
+                    <View style={styles.meetupDetails}>
+                      <View style={styles.meetupDetailRow}>
+                        <IconButton icon="clock" size={16} iconColor="#666" />
+                        <Paragraph style={styles.meetupDetailText}>
+                          {post.meetupDetails.date}
+                        </Paragraph>
+                      </View>
+                      <View style={styles.meetupDetailRow}>
+                        <IconButton icon="map-marker" size={16} iconColor="#666" />
+                        <Paragraph style={styles.meetupDetailText}>
+                          {post.meetupDetails.location}
+                        </Paragraph>
+                      </View>
+                      <View style={styles.meetupDetailRow}>
+                        <IconButton icon="account-group" size={16} iconColor="#666" />
+                        <Paragraph style={styles.meetupDetailText}>
+                          {post.meetupDetails.currentPeople}/{post.meetupDetails.maxPeople} people
+                        </Paragraph>
+                      </View>
+                    </View>
                     <Button
                       mode="contained"
                       onPress={() => handleJoinMeetup(post.id)}
                       disabled={post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople}
                       style={styles.joinButton}
+                      contentStyle={styles.joinButtonContent}
                     >
                       {post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople 
                         ? 'Full' 
@@ -262,6 +291,7 @@ export const FeedScreen: React.FC = () => {
                   onPress={() => handleLike(post.id)}
                   icon="heart"
                   style={styles.actionButton}
+                  labelStyle={styles.actionLabel}
                 >
                   {post.likes}
                 </Button>
@@ -270,6 +300,7 @@ export const FeedScreen: React.FC = () => {
                   onPress={() => showToast('Comments feature coming soon!', 'info')}
                   icon="comment"
                   style={styles.actionButton}
+                  labelStyle={styles.actionLabel}
                 >
                   {post.comments}
                 </Button>
@@ -278,6 +309,7 @@ export const FeedScreen: React.FC = () => {
                   onPress={() => showToast('Share feature coming soon!', 'info')}
                   icon="share"
                   style={styles.actionButton}
+                  labelStyle={styles.actionLabel}
                 >
                   Share
                 </Button>
@@ -291,6 +323,7 @@ export const FeedScreen: React.FC = () => {
         icon="plus"
         style={styles.fab}
         onPress={() => setModalVisible(true)}
+        color="#ffffff"
       />
 
       <Portal>
@@ -310,6 +343,7 @@ export const FeedScreen: React.FC = () => {
                 multiline
                 numberOfLines={4}
                 style={styles.textInput}
+                mode="outlined"
               />
 
               <Button
@@ -328,6 +362,7 @@ export const FeedScreen: React.FC = () => {
                     value={newPost.meetupTitle}
                     onChangeText={(text) => setNewPost({ ...newPost, meetupTitle: text })}
                     style={styles.textInput}
+                    mode="outlined"
                   />
                   <TextInput
                     label="Date & Time"
@@ -335,12 +370,14 @@ export const FeedScreen: React.FC = () => {
                     onChangeText={(text) => setNewPost({ ...newPost, meetupDate: text })}
                     placeholder="e.g., Tomorrow, 2:00 PM"
                     style={styles.textInput}
+                    mode="outlined"
                   />
                   <TextInput
                     label="Location"
                     value={newPost.meetupLocation}
                     onChangeText={(text) => setNewPost({ ...newPost, meetupLocation: text })}
                     style={styles.textInput}
+                    mode="outlined"
                   />
                   <TextInput
                     label="Max People"
@@ -348,6 +385,7 @@ export const FeedScreen: React.FC = () => {
                     onChangeText={(text) => setNewPost({ ...newPost, maxPeople: parseInt(text) || 4 })}
                     keyboardType="numeric"
                     style={styles.textInput}
+                    mode="outlined"
                   />
                 </View>
               )}
@@ -386,81 +424,155 @@ export const FeedScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#f8f9fa',
+  },
+  header: {
+    paddingTop: Platform.OS === 'web' ? 20 : 40,
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+    backgroundColor: '#ffffff',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#1976d2',
+    marginBottom: 4,
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#666',
   },
   scrollView: {
     flex: 1,
   },
   postCard: {
-    margin: 16,
-    marginBottom: 8,
-    elevation: 2,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    borderRadius: 12,
+  },
+  postContent: {
+    padding: 0,
   },
   postHeader: {
     flexDirection: 'row',
-    marginBottom: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  userAvatar: {
+    marginRight: 12,
   },
   postInfo: {
     flex: 1,
-    marginLeft: 12,
   },
   userName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 4,
   },
   postMeta: {
-    fontSize: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  postMetaText: {
+    fontSize: 14,
     color: '#666',
+    marginLeft: -8,
   },
   postContent: {
     fontSize: 16,
     lineHeight: 24,
-    marginBottom: 12,
+    marginBottom: 16,
+    color: '#333',
   },
   meetupCard: {
     backgroundColor: '#e3f2fd',
+    marginBottom: 16,
+    borderRadius: 8,
+    elevation: 1,
+  },
+  meetupCardContent: {
+    padding: 16,
+  },
+  meetupHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 12,
   },
   meetupTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#1976d2',
+    marginLeft: 8,
   },
   meetupDetails: {
+    marginBottom: 16,
+  },
+  meetupDetailRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  meetupDetailText: {
     fontSize: 14,
-    marginBottom: 4,
+    color: '#666',
+    marginLeft: -8,
   },
   joinButton: {
-    marginTop: 8,
+    borderRadius: 8,
+  },
+  joinButtonContent: {
+    paddingVertical: 4,
   },
   postTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   tagChip: {
     marginRight: 8,
     marginBottom: 4,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#f0f8ff',
+    borderRadius: 16,
   },
   tagText: {
     fontSize: 12,
+    color: '#1976d2',
   },
   divider: {
-    marginVertical: 8,
+    marginVertical: 12,
+    backgroundColor: '#e0e0e0',
   },
   postActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    paddingTop: 8,
   },
   actionButton: {
     flex: 1,
+    borderRadius: 8,
+  },
+  actionLabel: {
+    fontSize: 14,
+    color: '#666',
   },
   fab: {
     position: 'absolute',
     margin: 16,
     right: 0,
     bottom: 0,
+    backgroundColor: '#1976d2',
+    borderRadius: 28,
   },
   modalContainer: {
     flex: 1,
@@ -469,18 +581,23 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     maxHeight: '80%',
+    borderRadius: 12,
   },
   modalTitle: {
-    marginBottom: 16,
+    marginBottom: 20,
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#1976d2',
   },
   textInput: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   toggleButton: {
-    marginBottom: 12,
+    marginBottom: 16,
+    borderRadius: 8,
   },
   meetupForm: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   modalActions: {
     flexDirection: 'row',
@@ -489,5 +606,6 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
+    borderRadius: 8,
   },
 });
