@@ -335,15 +335,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
           <Text style={styles.performanceText}>Render: {renderTime.toFixed(1)}ms</Text>
         </View>
       )}
-      {/* Hidden toggle button for development */}
-      {enableMonitoring && Platform.OS === 'web' && __DEV__ && (
-        <View 
-          style={styles.performanceToggle}
-          onTouchEnd={() => setShowPerformanceInfo(!showPerformanceInfo)}
-        >
-          <Text style={styles.performanceToggleText}>⚡</Text>
-        </View>
-      )}
+      {/* Removed performance toggle button to avoid UI clutter */}
     </View>
   );
 };
