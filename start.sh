@@ -16,4 +16,4 @@ fi
 
 # Start the application
 echo "Starting Expo development server..."
-npx expo start --web --port 19006 --host 0.0.0.0
+npx expo start --web --port 19006 --host lan
