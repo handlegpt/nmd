@@ -52,7 +52,45 @@ export const fontSizes = {
   '4xl': isPhone() ? 28 : 32,
 };
 
-// Spacing
+// Modern color palette
+export const colors = {
+  // Primary colors
+  primary: '#6366f1',
+  primaryLight: '#818cf8',
+  primaryDark: '#4f46e5',
+  
+  // Neutral colors
+  white: '#ffffff',
+  gray50: '#f9fafb',
+  gray100: '#f3f4f6',
+  gray200: '#e5e7eb',
+  gray300: '#d1d5db',
+  gray400: '#9ca3af',
+  gray500: '#6b7280',
+  gray600: '#4b5563',
+  gray700: '#374151',
+  gray800: '#1f2937',
+  gray900: '#111827',
+  
+  // Semantic colors
+  success: '#10b981',
+  warning: '#f59e0b',
+  error: '#ef4444',
+  info: '#3b82f6',
+  
+  // Background colors
+  background: '#ffffff',
+  surface: '#ffffff',
+  surfaceVariant: '#f8fafc',
+  
+  // Text colors
+  textPrimary: '#111827',
+  textSecondary: '#6b7280',
+  textTertiary: '#9ca3af',
+  textInverse: '#ffffff',
+};
+
+// Modern spacing system
 export const spacing = {
   xs: isPhone() ? 4 : 6,
   sm: isPhone() ? 8 : 12,
@@ -60,14 +98,17 @@ export const spacing = {
   lg: isPhone() ? 24 : 28,
   xl: isPhone() ? 32 : 36,
   '2xl': isPhone() ? 48 : 56,
+  '3xl': isPhone() ? 64 : 72,
 };
 
-// Border radius
+// Modern border radius
 export const borderRadius = {
+  none: 0,
   sm: isPhone() ? 4 : 6,
   base: isPhone() ? 8 : 10,
   lg: isPhone() ? 12 : 16,
   xl: isPhone() ? 16 : 20,
+  '2xl': isPhone() ? 24 : 28,
   full: 9999,
 };
 

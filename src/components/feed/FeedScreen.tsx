@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
   ScrollView,
-  Alert,
-  Platform,
+  FlatList,
+  RefreshControl,
   Dimensions,
   Image,
 } from 'react-native';
@@ -15,23 +15,23 @@ import {
   Avatar,
   Button,
   FAB,
+  IconButton,
+  Surface,
   Chip,
   Divider,
-  IconButton,
-  useTheme,
-  TextInput,
-  Modal,
   Portal,
-  Surface,
-  List,
+  Modal,
+  TextInput,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
+import { useResponsive } from '../../utils/responsive';
+import { shadowPresets } from '../../utils/platformStyles';
+import { colors, spacing, borderRadius } from '../../utils/responsive';
 import { LocationShare } from '../common/LocationShare';
 import { MediaPicker } from '../common/MediaPicker';
 import { PostEnhancer } from '../common/PostEnhancer';
-import { ResponsiveContainer } from '../common/ResponsiveContainer';
 import { PlaceholderImage } from '../common/PlaceholderImage';
-import { shadowPresets } from '../../utils/platformStyles';
+import { ResponsiveContainer } from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -79,7 +79,7 @@ interface Post {
 
 export const FeedScreen: React.FC = () => {
   const { user } = useAuthStore();
-  const theme = useTheme();
+  const theme = useResponsive();
 
   const [posts, setPosts] = useState<Post[]>([
     {
@@ -720,51 +720,54 @@ export const FeedScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.gray50,
   },
   scrollView: {
     flex: 1,
   },
   guestCard: {
-    margin: 16,
-    borderRadius: 12,
-    backgroundColor: '#6366f1',
+    margin: spacing.base,
+    borderRadius: borderRadius.xl,
+    backgroundColor: colors.primary,
+    ...shadowPresets.card,
   },
   guestTitle: {
-    color: '#ffffff',
+    color: colors.white,
     textAlign: 'center',
     fontSize: 24,
     fontWeight: '700',
   },
   guestSubtitle: {
-    color: '#ffffff',
+    color: colors.white,
     textAlign: 'center',
-    marginTop: 8,
+    marginTop: spacing.sm,
     opacity: 0.9,
   },
   guestButton: {
-    marginTop: 16,
-    backgroundColor: '#ffffff',
+    marginTop: spacing.base,
+    backgroundColor: colors.white,
+    color: colors.primary,
   },
   postCard: {
-    margin: 16,
-    marginBottom: 8,
-    borderRadius: 12,
+    margin: spacing.base,
+    marginBottom: spacing.sm,
+    borderRadius: borderRadius.xl,
+    backgroundColor: colors.white,
     ...shadowPresets.card,
   },
   postHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.sm,
   },
   postHeaderInfo: {
-    marginLeft: 12,
+    marginLeft: spacing.sm,
     flex: 1,
   },
   postAuthor: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1e293b',
+    color: colors.textPrimary,
   },
   postMeta: {
     flexDirection: 'row',
@@ -773,23 +776,23 @@ const styles = StyleSheet.create({
   },
   postTime: {
     fontSize: 12,
-    color: '#64748b',
-    marginRight: 8,
+    color: colors.textSecondary,
+    marginRight: spacing.sm,
   },
   postLocation: {
     fontSize: 12,
-    color: '#6366f1',
+    color: colors.primary,
     fontWeight: '500',
   },
   postEmotion: {
     fontSize: 16,
-    marginLeft: 4,
+    marginLeft: spacing.xs,
   },
   postContent: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#1e293b',
-    marginBottom: 12,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   mediaGrid: {
     flexDirection: 'row',
@@ -877,10 +880,12 @@ const styles = StyleSheet.create({
   },
   fab: {
     position: 'absolute',
-    margin: 16,
+    margin: spacing.base,
     right: 0,
     bottom: 0,
-    backgroundColor: '#6366f1',
+    backgroundColor: colors.primary,
+    borderRadius: borderRadius.full,
+    ...shadowPresets.medium,
   },
   modalContainer: {
     margin: 20,

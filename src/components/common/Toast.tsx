@@ -1,15 +1,8 @@
-import React, { useEffect } from 'react';
-import {
-  View,
-  StyleSheet,
-  Animated,
-} from 'react-native';
-import {
-  Surface,
-  Text,
-  IconButton,
-} from 'react-native-paper';
+import React, { useEffect, useRef } from 'react';
+import { View, StyleSheet, Animated, Text } from 'react-native';
+import { Surface, IconButton } from 'react-native-paper';
 import { shadowPresets } from '../../utils/platformStyles';
+import { colors, spacing, borderRadius } from '../../utils/responsive';
 
 interface ToastProps {
   visible: boolean;
@@ -26,8 +19,8 @@ const Toast: React.FC<ToastProps> = ({
   duration = 3000,
   onHide,
 }) => {
-  const translateY = new Animated.Value(-100);
-  const opacity = new Animated.Value(0);
+  const translateY = useRef(new Animated.Value(-100)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
     if (visible) {
@@ -56,16 +49,16 @@ const Toast: React.FC<ToastProps> = ({
 
   const hideToast = () => {
     Animated.parallel([
-                  Animated.timing(translateY, {
-              toValue: -100,
-              duration: 300,
-              useNativeDriver: false,
-            }),
-            Animated.timing(opacity, {
-              toValue: 0,
-              duration: 300,
-              useNativeDriver: false,
-            }),
+      Animated.timing(translateY, {
+        toValue: -100,
+        duration: 300,
+        useNativeDriver: false,
+      }),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: false,
+      }),
     ]).start(() => {
       onHide();
     });
@@ -74,14 +67,14 @@ const Toast: React.FC<ToastProps> = ({
   const getToastStyle = () => {
     switch (type) {
       case 'success':
-        return { backgroundColor: '#10b981', icon: 'check-circle' };
+        return { backgroundColor: colors.success, icon: 'check-circle' };
       case 'error':
-        return { backgroundColor: '#ef4444', icon: 'alert-circle' };
+        return { backgroundColor: colors.error, icon: 'alert-circle' };
       case 'warning':
-        return { backgroundColor: '#f59e0b', icon: 'alert' };
+        return { backgroundColor: colors.warning, icon: 'alert' };
       case 'info':
       default:
-        return { backgroundColor: '#6366f1', icon: 'information' };
+        return { backgroundColor: colors.primary, icon: 'information' };
     }
   };
 
@@ -103,7 +96,7 @@ const Toast: React.FC<ToastProps> = ({
         <View style={styles.content}>
           <IconButton
             icon={toastStyle.icon}
-            iconColor="#ffffff"
+            iconColor={colors.white}
             size={20}
             style={styles.icon}
           />
@@ -111,7 +104,7 @@ const Toast: React.FC<ToastProps> = ({
         </View>
         <IconButton
           icon="close"
-          iconColor="#ffffff"
+          iconColor={colors.white}
           size={20}
           onPress={hideToast}
           style={styles.closeButton}
@@ -128,12 +121,12 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     zIndex: 9999,
-    paddingHorizontal: 16,
-    paddingTop: 16,
+    paddingHorizontal: spacing.base,
+    paddingTop: spacing.base,
   },
   toast: {
-    borderRadius: 12,
-    padding: 16,
+    borderRadius: borderRadius.lg,
+    padding: spacing.base,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -146,17 +139,17 @@ const styles = StyleSheet.create({
   },
   icon: {
     margin: 0,
-    marginRight: 8,
+    marginRight: spacing.sm,
   },
   message: {
     flex: 1,
-    color: '#ffffff',
+    color: colors.white,
     fontSize: 14,
     fontWeight: '500',
   },
   closeButton: {
     margin: 0,
-    marginLeft: 8,
+    marginLeft: spacing.sm,
   },
 });
 

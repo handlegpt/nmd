@@ -1,117 +1,68 @@
 import React, { useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Platform,
-} from 'react-native';
-import {
-  Searchbar,
-  Chip,
-  Surface,
-} from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Searchbar, Surface } from 'react-native-paper';
+import { useResponsive } from '../../utils/responsive';
 import { shadowPresets } from '../../utils/platformStyles';
+import { colors, spacing, borderRadius } from '../../utils/responsive';
 
 interface SearchBarProps {
   placeholder?: string;
-  onSearch: (query: string) => void;
-  onFilterChange?: (filters: string[]) => void;
-  filters?: string[];
-  availableFilters?: string[];
+  onSearch?: (query: string) => void;
+  onClear?: () => void;
+  style?: any;
 }
 
-export const SearchBar: React.FC<SearchBarProps> = ({
-  placeholder = "Search nomads, meetups, posts...",
+const SearchBar: React.FC<SearchBarProps> = ({
+  placeholder = 'Search...',
   onSearch,
-  onFilterChange,
-  filters = [],
-  availableFilters = ['Users', 'Meetups', 'Posts', 'Locations'],
+  onClear,
+  style,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const { isPhone } = useResponsive();
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    onSearch(query);
+    onSearch?.(query);
   };
 
-  const handleFilterToggle = (filter: string) => {
-    const newFilters = filters.includes(filter)
-      ? filters.filter(f => f !== filter)
-      : [...filters, filter];
-    onFilterChange?.(newFilters);
+  const handleClear = () => {
+    setSearchQuery('');
+    onClear?.();
   };
 
   return (
-    <Surface style={styles.container}>
+    <Surface style={[styles.container, style, ...shadowPresets.small]}>
       <Searchbar
         placeholder={placeholder}
         onChangeText={handleSearch}
         value={searchQuery}
+        onClearIconPress={handleClear}
         style={styles.searchbar}
-        iconColor="#6366f1"
-        inputStyle={styles.searchInput}
+        iconColor={colors.gray500}
+        inputStyle={styles.input}
+        placeholderTextColor={colors.gray400}
       />
-      
-      {availableFilters.length > 0 && (
-        <View style={styles.filtersContainer}>
-          {availableFilters.map((filter) => (
-            <Chip
-              key={filter}
-              selected={filters.includes(filter)}
-              onPress={() => handleFilterToggle(filter)}
-              style={[
-                styles.filterChip,
-                filters.includes(filter) && styles.selectedChip
-              ]}
-              textStyle={[
-                styles.filterText,
-                filters.includes(filter) && styles.selectedFilterText
-              ]}
-            >
-              {filter}
-            </Chip>
-          ))}
-        </View>
-      )}
     </Surface>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
-    backgroundColor: '#ffffff',
-    ...shadowPresets.small,
+    margin: spacing.base,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.white,
+    overflow: 'hidden',
   },
   searchbar: {
-    backgroundColor: '#f8fafc',
-    borderRadius: 12,
-    ...shadowPresets.small,
-    marginBottom: 12,
-  },
-  searchInput: {
-    fontSize: 16,
-    color: '#1e293b',
-  },
-  filtersContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
-  },
-  filterChip: {
-    backgroundColor: '#f1f5f9',
-    borderRadius: 20,
+    backgroundColor: colors.white,
+    elevation: 0,
     borderWidth: 0,
   },
-  selectedChip: {
-    backgroundColor: '#6366f1',
-  },
-  filterText: {
-    fontSize: 12,
-    color: '#475569',
-    fontWeight: '500',
-  },
-  selectedFilterText: {
-    color: '#ffffff',
-    fontWeight: '600',
+  input: {
+    fontSize: 16,
+    color: colors.textPrimary,
   },
 });
+
+export default SearchBar;

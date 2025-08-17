@@ -1,56 +1,68 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { ActivityIndicator, Text } from 'react-native-paper';
+import { View, StyleSheet, Modal, Text } from 'react-native';
+import { ActivityIndicator, Surface } from 'react-native-paper';
 import { shadowPresets } from '../../utils/platformStyles';
+import { colors, spacing, borderRadius } from '../../utils/responsive';
 
 interface LoadingSpinnerProps {
   visible: boolean;
   message?: string;
   size?: 'small' | 'large';
-  color?: string;
 }
 
-export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
+const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   visible,
   message = 'Loading...',
   size = 'large',
-  color = '#2196f3',
 }) => {
   if (!visible) return null;
 
   return (
-    <View style={styles.container}>
-      <View style={styles.spinnerContainer}>
-        <ActivityIndicator size={size} color={color} />
-        <Text style={styles.message}>{message}</Text>
+    <Modal
+      transparent
+      visible={visible}
+      animationType="fade"
+    >
+      <View style={styles.overlay}>
+        <Surface style={styles.container}>
+          <ActivityIndicator 
+            size={size} 
+            color={colors.primary}
+            style={styles.spinner}
+          />
+          {message && (
+            <Text style={styles.message}>{message}</Text>
+          )}
+        </Surface>
       </View>
-    </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
+  overlay: {
+    flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1000,
   },
-  spinnerContainer: {
-    backgroundColor: 'white',
-    padding: 24,
-    borderRadius: 12,
+  container: {
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.xl,
+    padding: spacing.xl,
     alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 120,
     ...shadowPresets.large,
   },
+  spinner: {
+    marginBottom: spacing.sm,
+  },
   message: {
-    marginTop: 12,
-    fontSize: 16,
-    color: '#666',
+    fontSize: 14,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    fontWeight: '500',
   },
 });
 

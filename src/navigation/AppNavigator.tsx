@@ -1,21 +1,26 @@
 import React from 'react';
 import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import { IconButton } from 'react-native-paper';
 import { useAuthStore } from '../store/authStore';
-import { LoginScreen } from '../components/auth/LoginScreen';
+import { useResponsive } from '../utils/responsive';
+import { shadowPresets } from '../utils/platformStyles';
+import { colors, spacing, borderRadius } from '../utils/responsive';
+
+// Import screens
+import { FeedScreen } from '../components/feed/FeedScreen';
 import { MapScreen } from '../components/map/MapScreen';
-import { ProfileScreen } from '../components/profile/ProfileScreen';
 import { ActivityScreen } from '../components/activities/ActivityScreen';
 import { NotificationScreen } from '../components/notifications/NotificationScreen';
-import { ChatScreen } from '../components/chat/ChatScreen';
-import { FeedScreen } from '../components/feed/FeedScreen';
+import { ProfileScreen } from '../components/profile/ProfileScreen';
+import { LoginScreen } from '../components/auth/LoginScreen';
 import { SettingsScreen } from '../components/settings/SettingsScreen';
-import { IconButton } from 'react-native-paper';
-import { useResponsive } from '../utils/responsive';
+import { ChatScreen } from '../components/chat/ChatScreen';
+import { MessageScreen } from '../components/messages/MessageScreen';
+import { ResponsiveContainer } from '../components/common/ResponsiveContainer';
 import { useUrlSync } from '../hooks/useUrlSync';
-import { shadowPresets } from '../utils/platformStyles';
 
 // URL sync wrapper component that uses the hook inside NavigationContainer
 const UrlSyncWrapper = () => {
@@ -23,46 +28,47 @@ const UrlSyncWrapper = () => {
   return null;
 };
 
-const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-// Login prompt component for guest users
+// Simplified login prompt with modern design
 const LoginPrompt = ({ navigation }: { navigation: any }) => (
   <div style={{
     position: 'fixed',
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#6366f1',
-    color: 'white',
-    padding: '12px 16px',
-    textAlign: 'center',
+    backgroundColor: colors.primary,
+    color: colors.white,
+    padding: `${spacing.sm}px ${spacing.base}px`,
     zIndex: 1000,
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    borderRadius: `0 0 ${borderRadius.lg}px ${borderRadius.lg}px`,
     ...shadowPresets.small,
   }}>
     <span style={{ fontSize: '14px', fontWeight: '500' }}>Sign in to access all features</span>
     <button 
       onClick={() => navigation.navigate('Login')}
       style={{
-        backgroundColor: 'white',
-        color: '#6366f1',
+        backgroundColor: colors.white,
+        color: colors.primary,
         border: 'none',
-        padding: '8px 16px',
-        borderRadius: '4px',
+        padding: `${spacing.xs}px ${spacing.sm}px`,
+        borderRadius: `${borderRadius.base}px`,
         cursor: 'pointer',
-        fontWeight: 'bold',
+        fontWeight: '600',
         fontSize: '14px',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.2s ease',
+        ...shadowPresets.subtle,
       }}
       onMouseOver={(e) => {
-        e.currentTarget.style.backgroundColor = '#f8fafc';
+        e.currentTarget.style.backgroundColor = colors.gray50;
         e.currentTarget.style.transform = 'translateY(-1px)';
       }}
       onMouseOut={(e) => {
-        e.currentTarget.style.backgroundColor = 'white';
+        e.currentTarget.style.backgroundColor = colors.white;
         e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
@@ -104,21 +110,21 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
 
             return <IconButton icon={iconName} size={size} iconColor={color} />;
           },
-          tabBarActiveTintColor: '#6366f1',
-          tabBarInactiveTintColor: 'gray',
+          tabBarActiveTintColor: colors.primary,
+                     tabBarInactiveTintColor: colors.gray500,
           tabBarStyle: {
-            backgroundColor: '#ffffff',
+            backgroundColor: colors.white,
             borderTopWidth: 1,
-            borderTopColor: '#e0e0e0',
+            borderTopColor: colors.gray200,
             paddingBottom: Platform.OS === 'ios' ? 20 : 8,
             paddingTop: 8,
             height: Platform.OS === 'ios' ? 80 : 60,
             ...shadowPresets.medium,
           },
           headerStyle: {
-            backgroundColor: '#6366f1',
+            backgroundColor: colors.primary,
           },
-          headerTintColor: '#ffffff',
+          headerTintColor: colors.white,
           headerTitleStyle: {
             fontWeight: 'bold',
           },
@@ -152,7 +158,7 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
             headerRight: () => (
               <IconButton
                 icon="cog"
-                iconColor="#ffffff"
+                iconColor={colors.white}
                 size={24}
                 onPress={() => navigation.navigate('Settings')}
               />
@@ -184,9 +190,9 @@ const AppNavigator = () => {
             title: 'Chat',
             headerBackTitle: 'Back',
             headerStyle: {
-              backgroundColor: '#6366f1',
+              backgroundColor: colors.primary,
             },
-            headerTintColor: '#ffffff',
+            headerTintColor: colors.white,
             headerTitleStyle: {
               fontWeight: 'bold',
             },
@@ -199,9 +205,9 @@ const AppNavigator = () => {
             headerShown: true,
             title: 'Sign In',
             headerStyle: {
-              backgroundColor: '#6366f1',
+              backgroundColor: colors.primary,
             },
-            headerTintColor: '#ffffff',
+            headerTintColor: colors.white,
             headerTitleStyle: {
               fontWeight: 'bold',
             },
@@ -214,9 +220,9 @@ const AppNavigator = () => {
             headerShown: true,
             title: 'Settings',
             headerStyle: {
-              backgroundColor: '#6366f1',
+              backgroundColor: colors.primary,
             },
-            headerTintColor: '#ffffff',
+            headerTintColor: colors.white,
             headerTitleStyle: {
               fontWeight: 'bold',
             },
