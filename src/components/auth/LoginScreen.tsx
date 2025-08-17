@@ -18,6 +18,8 @@ import {
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { shadowPresets } from '../../utils/platformStyles';
+import { colors, spacing, borderRadius } from '../../utils/responsive';
+import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -137,12 +139,13 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Card style={styles.card}>
+    <ResponsiveContainer>
+      <KeyboardAvoidingView
+        style={styles.container}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Card style={styles.card}>
           <Card.Content>
             <Title style={styles.title}>
               {showVerification ? 'Verify Your Email' : (isLogin ? 'Welcome Back' : 'Join NomadNow')}
@@ -166,8 +169,8 @@ export const LoginScreen: React.FC = () => {
                   style={styles.input}
                   keyboardType="email-address"
                   autoCapitalize="none"
-                  outlineColor="#e5e7eb"
-                  activeOutlineColor="#6366f1"
+                  outlineColor={colors.gray300}
+                  activeOutlineColor={colors.primary}
                 />
 
                 <TextInput
@@ -177,8 +180,8 @@ export const LoginScreen: React.FC = () => {
                   mode="outlined"
                   style={styles.input}
                   secureTextEntry
-                  outlineColor="#e5e7eb"
-                  activeOutlineColor="#6366f1"
+                  outlineColor={colors.gray300}
+                  activeOutlineColor={colors.primary}
                 />
 
                 {!isLogin && (
@@ -189,8 +192,8 @@ export const LoginScreen: React.FC = () => {
                     mode="outlined"
                     style={styles.input}
                     placeholder="Enter your preferred nickname"
-                    outlineColor="#e5e7eb"
-                    activeOutlineColor="#6366f1"
+                    outlineColor={colors.gray300}
+                    activeOutlineColor={colors.primary}
                   />
                 )}
 
@@ -234,8 +237,8 @@ export const LoginScreen: React.FC = () => {
                   keyboardType="numeric"
                   maxLength={6}
                   placeholder="Enter 6-digit code"
-                  outlineColor="#e5e7eb"
-                  activeOutlineColor="#6366f1"
+                  outlineColor={colors.gray300}
+                  activeOutlineColor={colors.primary}
                 />
 
                 <Button
@@ -288,100 +291,101 @@ export const LoginScreen: React.FC = () => {
         onHide={hideToast}
       />
     </KeyboardAvoidingView>
+    </ResponsiveContainer>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8fafc',
+    backgroundColor: colors.gray50,
   },
   scrollContainer: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: 20,
+    padding: spacing.base,
   },
   card: {
     ...shadowPresets.medium,
-    borderRadius: 20,
-    backgroundColor: '#ffffff',
+    borderRadius: borderRadius.xl,
+    backgroundColor: colors.white,
   },
   title: {
     fontSize: 28,
     fontWeight: '800',
     textAlign: 'center',
-    marginBottom: 8,
-    color: '#1e293b',
+    marginBottom: spacing.sm,
+    color: colors.textPrimary,
     letterSpacing: -0.5,
   },
   subtitle: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 24,
-    color: '#64748b',
+    marginBottom: spacing.lg,
+    color: colors.textSecondary,
     fontWeight: '500',
   },
   input: {
-    marginBottom: 16,
-    backgroundColor: '#ffffff',
+    marginBottom: spacing.base,
+    backgroundColor: colors.white,
   },
   button: {
-    marginTop: 8,
-    paddingVertical: 8,
-    borderRadius: 12,
-    backgroundColor: '#6366f1',
+    marginTop: spacing.sm,
+    paddingVertical: spacing.sm,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.primary,
   },
   buttonContent: {
-    paddingVertical: 8,
+    paddingVertical: spacing.sm,
   },
   toggleButton: {
-    marginTop: 8,
-    paddingVertical: 8,
+    marginTop: spacing.sm,
+    paddingVertical: spacing.sm,
   },
   verificationContainer: {
-    marginBottom: 20,
+    marginBottom: spacing.base,
     alignItems: 'center',
   },
   verificationText: {
     fontSize: 16,
-    color: '#64748b',
-    marginBottom: 12,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
     textAlign: 'center',
   },
   emailChip: {
-    backgroundColor: '#eef2ff',
-    borderRadius: 20,
+    backgroundColor: colors.primaryLight + '20', // 20% opacity
+    borderRadius: borderRadius.full,
   },
   emailChipText: {
-    color: '#6366f1',
+    color: colors.primary,
     fontWeight: '600',
   },
   divider: {
-    marginVertical: 20,
-    backgroundColor: '#e2e8f0',
+    marginVertical: spacing.base,
+    backgroundColor: colors.gray200,
   },
   verificationActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 20,
+    marginBottom: spacing.base,
   },
   actionButton: {
     flex: 1,
   },
   verificationInfo: {
-    backgroundColor: '#f8fafc',
-    padding: 16,
-    borderRadius: 12,
+    backgroundColor: colors.gray50,
+    padding: spacing.base,
+    borderRadius: borderRadius.lg,
     borderWidth: 1,
-    borderColor: '#e2e8f0',
+    borderColor: colors.gray200,
   },
   infoText: {
     fontSize: 14,
-    color: '#64748b',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   codeText: {
     fontWeight: '700',
-    color: '#6366f1',
+    color: colors.primary,
   },
 }); 
