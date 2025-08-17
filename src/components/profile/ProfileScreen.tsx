@@ -113,14 +113,18 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
       <Card style={styles.card}>
         <Card.Content>
           <View style={styles.header}>
-            <Avatar.Image
-              size={80}
-              source={
-                user.avatar_url
-                  ? { uri: user.avatar_url }
-                  : { uri: 'https://via.placeholder.com/80x80/2196f3/ffffff?text=U' }
-              }
-            />
+            {user.avatar_url ? (
+              <Avatar.Image
+                size={80}
+                source={{ uri: user.avatar_url }}
+              />
+            ) : (
+              <Avatar.Text
+                size={80}
+                label={user.nickname.charAt(0).toUpperCase()}
+                style={{ backgroundColor: '#6366f1' }}
+              />
+            )}
             <View style={styles.headerInfo}>
               <Title>{user.nickname}</Title>
               <Paragraph>{user.current_city}</Paragraph>

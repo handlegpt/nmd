@@ -8,6 +8,10 @@ import {
   Animated,
   Dimensions,
   TouchableWithoutFeedback,
+  StyleProp,
+  ViewStyle,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
 } from 'react-native';
 import { useResponsive } from '../../utils/responsive';
 
@@ -15,7 +19,7 @@ const { height: screenHeight } = Dimensions.get('window');
 
 interface KeyboardHandlerProps {
   children: React.ReactNode;
-  style?: any;
+  style?: StyleProp<ViewStyle>;
   behavior?: 'height' | 'position' | 'padding';
   keyboardVerticalOffset?: number;
   enableOnAndroid?: boolean;

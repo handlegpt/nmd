@@ -31,18 +31,18 @@ const Toast: React.FC<ToastProps> = ({
 
   useEffect(() => {
     if (visible) {
-      // Show toast
+      // Show toast animation
       Animated.parallel([
-                      Animated.timing(translateY, {
-                toValue: 0,
-                duration: 300,
-                useNativeDriver: false,
-              }),
-              Animated.timing(opacity, {
-                toValue: 1,
-                duration: 300,
-                useNativeDriver: false,
-              }),
+        Animated.timing(translateY, {
+          toValue: 0,
+          duration: 300,
+          useNativeDriver: false,
+        }),
+        Animated.timing(opacity, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: false,
+        }),
       ]).start();
 
       // Auto hide after duration
@@ -52,7 +52,7 @@ const Toast: React.FC<ToastProps> = ({
 
       return () => clearTimeout(timer);
     }
-  }, [visible]);
+  }, [visible, duration]);
 
   const hideToast = () => {
     Animated.parallel([

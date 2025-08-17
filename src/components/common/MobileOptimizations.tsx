@@ -53,7 +53,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     }, 100);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [uri]); // Add uri as dependency to reload when source changes
 
   const handleLoad = () => {
     setIsLoading(false);
@@ -290,34 +290,29 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   const [showPerformanceInfo, setShowPerformanceInfo] = useState(false);
   const [fps, setFps] = useState(60);
   const [renderTime, setRenderTime] = useState(0);
+  const [memoryUsage, setMemoryUsage] = useState(0);
   const frameCount = useRef(0);
   const lastTime = useRef(Date.now());
 
-  useEffect(() => {
-    if (!enableMonitoring) return;
-
-    const measurePerformance = () => {
-      const now = Date.now();
-      frameCount.current++;
-
-      if (now - lastTime.current >= 1000) {
-        const currentFps = Math.round((frameCount.current * 1000) / (now - lastTime.current));
-        setFps(currentFps);
-
-        if (currentFps < 30 && onPerformanceIssue) {
-          onPerformanceIssue(`Low FPS detected: ${currentFps}`);
-        }
-
-        frameCount.current = 0;
-        lastTime.current = now;
+  const checkMemory = useCallback(() => {
+    if (Platform.OS === 'web') {
+      if ('memory' in performance) {
+        const memory = (performance as any).memory;
+        const usedMB = memory.usedJSHeapSize / 1024 / 1024;
+        setMemoryUsage(usedMB);
       }
+    }
+  }, []);
 
-      requestAnimationFrame(measurePerformance);
-    };
-
-    const animationId = requestAnimationFrame(measurePerformance);
-    return () => cancelAnimationFrame(animationId);
-  }, [enableMonitoring, onPerformanceIssue]);
+  useEffect(() => {
+    if (enableMonitoring) {
+      const interval = setInterval(checkMemory, 5000);
+      
+      return () => {
+        clearInterval(interval);
+      };
+    }
+  }, [enableMonitoring, checkMemory]);
 
   const measureRenderTime = useCallback((callback: () => void) => {
     const startTime = performance.now();
@@ -476,7 +471,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.3)',
     padding: 8,
     borderRadius: 4,
-    cursor: 'pointer',
   },
   performanceToggleText: {
     color: 'white',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   View,
   StyleSheet,
@@ -21,7 +21,7 @@ import { Message, User } from '../../types';
 import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { supabase } from '../../lib/supabase';
+import { supabase, isMockMode } from '../../lib/supabase';
 
 export const ChatScreen: React.FC<any> = ({ route }) => {
   const { selectedUser } = route?.params || {};
@@ -33,31 +33,43 @@ export const ChatScreen: React.FC<any> = ({ route }) => {
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
   const flatListRef = useRef<FlatList>(null);
 
+  // Scroll to bottom
+  const scrollToBottom = useCallback(() => {
+    const timer = setTimeout(() => {
+      flatListRef.current?.scrollToEnd({ animated: true });
+    }, 100);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   useEffect(() => {
     if (selectedUser) {
       loadMessages();
-      // Set up real-time subscription
-      const subscription = supabase
-        .channel('messages')
-        .on('postgres_changes', {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: `from_user_id=eq.${user?.id} OR to_user_id=eq.${user?.id}`,
-        }, (payload) => {
-          const newMessage = payload.new as Message;
-          if (newMessage.from_user_id === selectedUser.id || newMessage.to_user_id === selectedUser.id) {
-            setMessages(prev => [...prev, newMessage]);
-            scrollToBottom();
-          }
-        })
-        .subscribe();
+      
+      // Set up real-time subscription (only in non-mock mode)
+      if (!isMockMode && 'channel' in supabase) {
+        const subscription = (supabase as any)
+          .channel('messages')
+          .on('postgres_changes', {
+            event: 'INSERT',
+            schema: 'public',
+            table: 'messages',
+            filter: `from_user_id=eq.${user?.id} OR to_user_id=eq.${user?.id}`,
+          }, (payload: any) => {
+            const newMessage = payload.new as Message;
+            if (newMessage.from_user_id === selectedUser.id || newMessage.to_user_id === selectedUser.id) {
+              setMessages(prev => [...prev, newMessage]);
+              scrollToBottom();
+            }
+          })
+          .subscribe();
 
-      return () => {
-        subscription.unsubscribe();
-      };
+        return () => {
+          subscription.unsubscribe();
+        };
+      }
     }
-  }, [selectedUser?.id]);
+  }, [selectedUser?.id, user?.id, scrollToBottom]);
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -134,13 +146,6 @@ export const ChatScreen: React.FC<any> = ({ route }) => {
     }
   };
 
-  // Scroll to bottom
-  const scrollToBottom = () => {
-    setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-  };
-
   // Format timestamp
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -202,10 +207,18 @@ export const ChatScreen: React.FC<any> = ({ route }) => {
       {/* Header */}
       <Card style={styles.headerCard}>
         <Card.Content style={styles.headerContent}>
-          <Avatar.Image
-            size={40}
-            source={{ uri: selectedUser.avatar_url || 'https://via.placeholder.com/40' }}
-          />
+          {selectedUser.avatar_url ? (
+            <Avatar.Image
+              size={40}
+              source={{ uri: selectedUser.avatar_url }}
+            />
+          ) : (
+            <Avatar.Text
+              size={40}
+              label={selectedUser.nickname.charAt(0).toUpperCase()}
+              style={{ backgroundColor: '#6366f1' }}
+            />
+          )}
           <View style={styles.headerInfo}>
             <Title style={styles.headerTitle}>{selectedUser.nickname}</Title>
             <Paragraph style={styles.headerSubtitle}>{selectedUser.current_city}</Paragraph>
