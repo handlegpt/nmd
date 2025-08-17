@@ -1,4 +1,5 @@
 import React from 'react';
+import { Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -97,9 +98,14 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
             backgroundColor: '#ffffff',
             borderTopWidth: 1,
             borderTopColor: '#e0e0e0',
-            paddingBottom: 8,
+            paddingBottom: Platform.OS === 'ios' ? 20 : 8,
             paddingTop: 8,
-            height: 60,
+            height: Platform.OS === 'ios' ? 80 : 60,
+            elevation: 8,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
           },
           headerStyle: {
             backgroundColor: '#6366f1',

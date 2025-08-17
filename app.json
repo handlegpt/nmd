@@ -4,26 +4,102 @@
     "slug": "nomadnow",
     "version": "1.0.0",
     "orientation": "default",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#6366f1"
+    },
     "assetBundlePatterns": [
       "**/*"
     ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.nomadnow.app",
+      "buildNumber": "1.0.0",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "NomadNow needs access to your location to show nearby digital nomads and help you discover new connections.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "NomadNow needs access to your location to show nearby digital nomads and help you discover new connections.",
+        "NSCameraUsageDescription": "NomadNow needs access to your camera to take photos for your profile and posts.",
+        "NSPhotoLibraryUsageDescription": "NomadNow needs access to your photo library to select images for your profile and posts.",
+        "NSMicrophoneUsageDescription": "NomadNow needs access to your microphone for voice messages and calls.",
+        "UIBackgroundModes": [
+          "location",
+          "fetch",
+          "remote-notification"
+        ]
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#6366f1"
+      },
+      "package": "com.nomadnow.app",
+      "versionCode": 1,
+      "permissions": [
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "RECORD_AUDIO",
+        "INTERNET",
+        "ACCESS_NETWORK_STATE",
+        "VIBRATE",
+        "WAKE_LOCK"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "your-google-maps-api-key"
+        }
+      }
+    },
     "web": {
-      "bundler": "metro"
+      "bundler": "metro",
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow NomadNow to access your location to show nearby digital nomads"
+          "locationAlwaysAndWhenInUsePermission": "Allow NomadNow to access your location to show nearby digital nomads",
+          "locationAlwaysPermission": "Allow NomadNow to access your location in the background for real-time updates",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Allow NomadNow to access your photos to select avatar"
+          "photosPermission": "Allow NomadNow to access your photos to select avatar and share images",
+          "cameraPermission": "Allow NomadNow to access your camera to take photos"
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#6366f1",
+          "sounds": ["./assets/notification-sound.wav"]
+        }
+      ],
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow NomadNow to access your media library",
+          "savePhotosPermission": "Allow NomadNow to save photos to your library",
+          "isAccessMediaLocationEnabled": true
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    },
+    "owner": "nomadnow"
   }
 } 
