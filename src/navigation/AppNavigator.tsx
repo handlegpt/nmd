@@ -31,51 +31,7 @@ const UrlSyncWrapper = () => {
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-// Simplified login prompt with modern design
-const LoginPrompt = ({ navigation }: { navigation: any }) => (
-  <div style={{
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: colors.primary,
-    color: colors.white,
-    padding: `${spacing.sm}px ${spacing.base}px`,
-    zIndex: 1000,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    borderRadius: `0 0 ${borderRadius.lg}px ${borderRadius.lg}px`,
-    ...shadowPresets.small,
-  }}>
-    <span style={{ fontSize: '14px', fontWeight: '500' }}>Sign in to access all features</span>
-    <button 
-      onClick={() => navigation.navigate('Login')}
-      style={{
-        backgroundColor: colors.white,
-        color: colors.primary,
-        border: 'none',
-        padding: `${spacing.xs}px ${spacing.sm}px`,
-        borderRadius: `${borderRadius.base}px`,
-        cursor: 'pointer',
-        fontWeight: '600',
-        fontSize: '14px',
-        transition: 'all 0.2s ease',
-        ...shadowPresets.subtle,
-      }}
-      onMouseOver={(e) => {
-        e.currentTarget.style.backgroundColor = colors.gray50;
-        e.currentTarget.style.transform = 'translateY(-1px)';
-      }}
-      onMouseOut={(e) => {
-        e.currentTarget.style.backgroundColor = colors.white;
-        e.currentTarget.style.transform = 'translateY(0)';
-      }}
-    >
-      Sign In
-    </button>
-  </div>
-);
+
 
 // Main app tabs
 const MainTabs = ({ navigation }: { navigation: any }) => {
@@ -84,7 +40,30 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
   
   return (
     <>
-      {!user && <LoginPrompt navigation={navigation} />}
+      {!user && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          backgroundColor: colors.primary,
+          color: colors.white,
+          padding: `${spacing.sm}px`,
+          zIndex: 1000,
+          borderRadius: `0 0 0 ${borderRadius.lg}px`,
+          ...shadowPresets.small,
+        }}>
+          <IconButton
+            icon="account-circle"
+            iconColor={colors.white}
+            size={24}
+            onPress={() => navigation.navigate('Login')}
+            style={{
+              margin: 0,
+              padding: 0,
+            }}
+          />
+        </div>
+      )}
       <div style={{ 
         paddingTop: !user ? '60px' : '0px',
         minHeight: '100vh'
@@ -108,32 +87,37 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
               iconName = 'circle';
             }
 
-            return <IconButton icon={iconName} size={size} iconColor={color} />;
+            return (
+              <IconButton
+                icon={iconName}
+                iconColor={focused ? colors.primary : colors.gray400}
+                size={size}
+                style={{ margin: 0 }}
+              />
+            );
           },
           tabBarActiveTintColor: colors.primary,
-                     tabBarInactiveTintColor: colors.gray500,
+          tabBarInactiveTintColor: colors.gray400,
           tabBarStyle: {
             backgroundColor: colors.white,
-            borderTopWidth: 1,
             borderTopColor: colors.gray200,
-            paddingBottom: Platform.OS === 'ios' ? 20 : 8,
-            paddingTop: 8,
-            height: Platform.OS === 'ios' ? 80 : 60,
-            ...shadowPresets.medium,
+            borderTopWidth: 1,
+            paddingBottom: isPhone ? 0 : 10,
+            paddingTop: 10,
+            height: isPhone ? 60 : 80,
+            ...shadowPresets.small,
           },
-          headerStyle: {
-            backgroundColor: colors.primary,
+          tabBarLabelStyle: {
+            fontSize: 12,
+            fontWeight: '600',
+            marginTop: 4,
           },
-          headerTintColor: colors.white,
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        })}
-      >
+          headerShown: false,
+        })}>
         <Tab.Screen 
           name="Feed" 
           component={FeedScreen}
-          options={{ title: 'Nomad Now' }}
+          options={{ title: 'Home' }}
         />
         <Tab.Screen 
           name="Map" 
@@ -181,60 +165,54 @@ const AppNavigator = () => {
       {/* URL sync hook must be inside NavigationContainer */}
       {isWeb && <UrlSyncWrapper />}
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {user ? (
-          // User is logged in - show main app
-          <>
-            <Stack.Screen name="Main" component={MainTabs} />
-            <Stack.Screen 
-              name="Chat" 
-              component={ChatScreen}
-              options={{ 
-                headerShown: true,
-                title: 'Chat',
-                headerBackTitle: 'Back',
-                headerStyle: {
-                  backgroundColor: colors.primary,
-                },
-                headerTintColor: colors.white,
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                },
-              }}
-            />
-            <Stack.Screen 
-              name="Settings" 
-              component={SettingsScreen}
-              options={{ 
-                headerShown: true,
-                title: 'Settings',
-                headerStyle: {
-                  backgroundColor: colors.primary,
-                },
-                headerTintColor: colors.white,
-                headerTitleStyle: {
-                  fontWeight: 'bold',
-                },
-              }}
-            />
-          </>
-        ) : (
-          // User is not logged in - show login screen
-          <Stack.Screen 
-            name="Login" 
-            component={LoginScreen}
-            options={{ 
-              headerShown: true,
-              title: 'Sign In',
-              headerStyle: {
-                backgroundColor: colors.primary,
-              },
-              headerTintColor: colors.white,
-              headerTitleStyle: {
-                fontWeight: 'bold',
-              },
-            }}
-          />
-        )}
+        {/* Always show main app, but with different header based on auth status */}
+        <Stack.Screen name="Main" component={MainTabs} />
+        <Stack.Screen 
+          name="Chat" 
+          component={ChatScreen}
+          options={{ 
+            headerShown: true,
+            title: 'Chat',
+            headerBackTitle: 'Back',
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.white,
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen 
+          name="Login" 
+          component={LoginScreen}
+          options={{ 
+            headerShown: true,
+            title: 'Sign In',
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.white,
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen 
+          name="Settings" 
+          component={SettingsScreen}
+          options={{ 
+            headerShown: true,
+            title: 'Settings',
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.white,
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
