@@ -31,7 +31,7 @@ export const LoginScreen: React.FC = () => {
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
-  const { signIn, signUp, loading, setUser } = useAuthStore();
+  const { signIn, signUp, loading, setUser, setSession } = useAuthStore();
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -72,6 +72,40 @@ export const LoginScreen: React.FC = () => {
       return false;
     }
     return true;
+  };
+
+  // Handle Gmail login
+  const handleGmailLogin = async () => {
+    try {
+      // Mock Gmail login - in real app, this would use Google OAuth
+      const gmailUser = {
+        id: 'gmail-user-id',
+        email: 'user@gmail.com',
+        nickname: 'Gmail User',
+        avatar_url: 'https://via.placeholder.com/80x80/4285f4/ffffff?text=G',
+        bio: 'Digital nomad exploring the world!',
+        current_city: 'Bali, Indonesia',
+        languages: ['English', 'Spanish'],
+        interests: ['Coding', 'Travel', 'Coffee'],
+        is_visible: true,
+        is_available_for_meetup: true,
+        location: { latitude: -8.3405, longitude: 115.0920 },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      
+      // Simulate Gmail login process
+      showToast('Connecting to Gmail...', 'info');
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Set user and session
+      setUser(gmailUser);
+      setSession({ user: gmailUser });
+      showToast('Successfully signed in with Gmail!', 'success');
+    } catch (error: any) {
+      console.error('Gmail login error:', error);
+      showToast('Gmail login failed. Please try again.', 'error');
+    }
   };
 
   // Handle form submission for login/signup
@@ -208,6 +242,18 @@ export const LoginScreen: React.FC = () => {
                   {isLogin ? 'Sign In' : 'Continue'}
                 </Button>
 
+                {/* Gmail Login Button */}
+                <Button
+                  mode="outlined"
+                  onPress={handleGmailLogin}
+                  style={[styles.button, styles.gmailButton]}
+                  disabled={loading}
+                  contentStyle={styles.buttonContent}
+                  icon="google"
+                >
+                  Continue with Gmail
+                </Button>
+
                 <Button
                   mode="text"
                   onPress={handleToggleMode}
@@ -341,6 +387,11 @@ const styles = StyleSheet.create({
   toggleButton: {
     marginTop: spacing.sm,
     paddingVertical: spacing.sm,
+  },
+  gmailButton: {
+    marginTop: spacing.sm,
+    borderColor: '#4285f4',
+    borderWidth: 2,
   },
   verificationContainer: {
     marginBottom: spacing.base,

@@ -181,53 +181,60 @@ const AppNavigator = () => {
       {/* URL sync hook must be inside NavigationContainer */}
       {isWeb && <UrlSyncWrapper />}
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Main" component={MainTabs} />
-        <Stack.Screen 
-          name="Chat" 
-          component={ChatScreen}
-          options={{ 
-            headerShown: true,
-            title: 'Chat',
-            headerBackTitle: 'Back',
-            headerStyle: {
-              backgroundColor: colors.primary,
-            },
-            headerTintColor: colors.white,
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }}
-        />
-        <Stack.Screen 
-          name="Login" 
-          component={LoginScreen}
-          options={{ 
-            headerShown: true,
-            title: 'Sign In',
-            headerStyle: {
-              backgroundColor: colors.primary,
-            },
-            headerTintColor: colors.white,
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }}
-        />
-        <Stack.Screen 
-          name="Settings" 
-          component={SettingsScreen}
-          options={{ 
-            headerShown: true,
-            title: 'Settings',
-            headerStyle: {
-              backgroundColor: colors.primary,
-            },
-            headerTintColor: colors.white,
-            headerTitleStyle: {
-              fontWeight: 'bold',
-            },
-          }}
-        />
+        {user ? (
+          // User is logged in - show main app
+          <>
+            <Stack.Screen name="Main" component={MainTabs} />
+            <Stack.Screen 
+              name="Chat" 
+              component={ChatScreen}
+              options={{ 
+                headerShown: true,
+                title: 'Chat',
+                headerBackTitle: 'Back',
+                headerStyle: {
+                  backgroundColor: colors.primary,
+                },
+                headerTintColor: colors.white,
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                },
+              }}
+            />
+            <Stack.Screen 
+              name="Settings" 
+              component={SettingsScreen}
+              options={{ 
+                headerShown: true,
+                title: 'Settings',
+                headerStyle: {
+                  backgroundColor: colors.primary,
+                },
+                headerTintColor: colors.white,
+                headerTitleStyle: {
+                  fontWeight: 'bold',
+                },
+              }}
+            />
+          </>
+        ) : (
+          // User is not logged in - show login screen
+          <Stack.Screen 
+            name="Login" 
+            component={LoginScreen}
+            options={{ 
+              headerShown: true,
+              title: 'Sign In',
+              headerStyle: {
+                backgroundColor: colors.primary,
+              },
+              headerTintColor: colors.white,
+              headerTitleStyle: {
+                fontWeight: 'bold',
+              },
+            }}
+          />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );
