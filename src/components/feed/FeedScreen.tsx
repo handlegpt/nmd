@@ -22,6 +22,7 @@ import {
   Modal,
   Portal,
   Surface,
+  List,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import Toast from '../common/Toast';
@@ -36,6 +37,14 @@ interface Post {
   userAvatar: string;
   content: string;
   location: string;
+  locationDetails?: {
+    name: string;
+    address: string;
+    coordinates?: {
+      latitude: number;
+      longitude: number;
+    };
+  };
   images?: string[];
   isMeetupRequest: boolean;
   meetupDetails?: {
@@ -62,6 +71,11 @@ export const FeedScreen: React.FC = () => {
       userAvatar: 'https://via.placeholder.com/50x50/4CAF50/ffffff?text=A',
       content: 'Just arrived in Bali! Looking for fellow digital nomads to grab coffee and share experiences. Anyone up for a coworking session tomorrow?',
       location: 'Bali, Indonesia',
+      locationDetails: {
+        name: 'Canggu Coworking Space',
+        address: 'Canggu, Bali, Indonesia',
+        coordinates: { latitude: -8.6500, longitude: 115.1333 },
+      },
       isMeetupRequest: true,
       meetupDetails: {
         title: 'Bali Digital Nomad Meetup',
@@ -82,6 +96,11 @@ export const FeedScreen: React.FC = () => {
       userAvatar: 'https://via.placeholder.com/50x50/FF9800/ffffff?text=S',
       content: 'Amazing sunset at Uluwatu today! The waves were perfect for surfing. This is why I love the nomad lifestyle 🌊',
       location: 'Uluwatu, Bali',
+      locationDetails: {
+        name: 'Uluwatu Beach',
+        address: 'Uluwatu, Bali, Indonesia',
+        coordinates: { latitude: -8.8167, longitude: 115.0833 },
+      },
       isMeetupRequest: false,
       likes: 24,
       comments: 8,
@@ -95,6 +114,11 @@ export const FeedScreen: React.FC = () => {
       userAvatar: 'https://via.placeholder.com/50x50/2196F3/ffffff?text=M',
       content: 'Working from a beautiful cafe in Seminyak. Great coffee and even better wifi! Anyone want to join for lunch?',
       location: 'Seminyak, Bali',
+      locationDetails: {
+        name: 'Seminyak Cafe',
+        address: 'Seminyak, Bali, Indonesia',
+        coordinates: { latitude: -8.6833, longitude: 115.1667 },
+      },
       isMeetupRequest: true,
       meetupDetails: {
         title: 'Lunch Meetup',
@@ -110,6 +134,7 @@ export const FeedScreen: React.FC = () => {
     },
   ]);
   const [modalVisible, setModalVisible] = useState(false);
+  const [locationModalVisible, setLocationModalVisible] = useState(false);
   const [newPost, setNewPost] = useState({
     content: '',
     isMeetupRequest: false,
@@ -117,8 +142,19 @@ export const FeedScreen: React.FC = () => {
     meetupDate: '',
     meetupLocation: '',
     maxPeople: 4,
+    location: '',
+    locationDetails: null as any,
   });
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
+
+  // Popular locations for quick selection
+  const popularLocations = [
+    { name: 'Canggu Coworking Space', address: 'Canggu, Bali, Indonesia', coordinates: { latitude: -8.6500, longitude: 115.1333 } },
+    { name: 'Uluwatu Beach', address: 'Uluwatu, Bali, Indonesia', coordinates: { latitude: -8.8167, longitude: 115.0833 } },
+    { name: 'Seminyak Cafe', address: 'Seminyak, Bali, Indonesia', coordinates: { latitude: -8.6833, longitude: 115.1667 } },
+    { name: 'Kuta Beach', address: 'Kuta, Bali, Indonesia', coordinates: { latitude: -8.7167, longitude: 115.1667 } },
+    { name: 'Nusa Dua Resort', address: 'Nusa Dua, Bali, Indonesia', coordinates: { latitude: -8.7833, longitude: 115.2167 } },
+  ];
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -155,6 +191,17 @@ export const FeedScreen: React.FC = () => {
     showToast('Joined meetup!', 'success');
   };
 
+  // Handle location selection
+  const handleLocationSelect = (location: any) => {
+    setNewPost({
+      ...newPost,
+      location: location.address,
+      locationDetails: location,
+    });
+    setLocationModalVisible(false);
+    showToast(`Location set to ${location.name}`, 'success');
+  };
+
   // Handle create post
   const handleCreatePost = () => {
     if (!newPost.content.trim()) {
@@ -173,7 +220,8 @@ export const FeedScreen: React.FC = () => {
       userNickname: user?.nickname || 'Demo User',
       userAvatar: user?.avatar_url || 'https://via.placeholder.com/50x50/2196f3/ffffff?text=U',
       content: newPost.content,
-      location: user?.current_city || 'Unknown Location',
+      location: newPost.location || user?.current_city || 'Unknown Location',
+      locationDetails: newPost.locationDetails,
       isMeetupRequest: newPost.isMeetupRequest,
       meetupDetails: newPost.isMeetupRequest ? {
         title: newPost.meetupTitle,
@@ -197,6 +245,8 @@ export const FeedScreen: React.FC = () => {
       meetupDate: '',
       meetupLocation: '',
       maxPeople: 4,
+      location: '',
+      locationDetails: null,
     });
     showToast('Post created successfully!', 'success');
   };
@@ -231,6 +281,29 @@ export const FeedScreen: React.FC = () => {
               </View>
 
               <Paragraph style={styles.postContent}>{post.content}</Paragraph>
+
+              {/* Location Card */}
+              {post.locationDetails && (
+                <Card style={styles.locationCard}>
+                  <Card.Content style={styles.locationCardContent}>
+                    <View style={styles.locationHeader}>
+                      <IconButton icon="map-marker" size={20} iconColor="#1976d2" />
+                      <View style={styles.locationInfo}>
+                        <Title style={styles.locationTitle}>{post.locationDetails.name}</Title>
+                        <Paragraph style={styles.locationAddress}>{post.locationDetails.address}</Paragraph>
+                      </View>
+                    </View>
+                    <Button
+                      mode="outlined"
+                      onPress={() => showToast('Map view coming soon!', 'info')}
+                      icon="map"
+                      style={styles.mapButton}
+                    >
+                      View on Map
+                    </Button>
+                  </Card.Content>
+                </Card>
+              )}
 
               {post.isMeetupRequest && post.meetupDetails && (
                 <Card style={styles.meetupCard}>
@@ -326,6 +399,7 @@ export const FeedScreen: React.FC = () => {
         color="#ffffff"
       />
 
+      {/* Create Post Modal */}
       <Portal>
         <Modal
           visible={modalVisible}
@@ -345,6 +419,16 @@ export const FeedScreen: React.FC = () => {
                 style={styles.textInput}
                 mode="outlined"
               />
+
+              {/* Location Selection */}
+              <Button
+                mode="outlined"
+                onPress={() => setLocationModalVisible(true)}
+                icon="map-marker"
+                style={styles.locationButton}
+              >
+                {newPost.location ? newPost.location : 'Add Location'}
+              </Button>
 
               <Button
                 mode="outlined"
@@ -406,6 +490,42 @@ export const FeedScreen: React.FC = () => {
                   Post
                 </Button>
               </View>
+            </Card.Content>
+          </Card>
+        </Modal>
+      </Portal>
+
+      {/* Location Selection Modal */}
+      <Portal>
+        <Modal
+          visible={locationModalVisible}
+          onDismiss={() => setLocationModalVisible(false)}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Card style={styles.modalCard}>
+            <Card.Content>
+              <Title style={styles.modalTitle}>Choose Location</Title>
+              
+              <View style={styles.locationList}>
+                {popularLocations.map((location, index) => (
+                  <List.Item
+                    key={index}
+                    title={location.name}
+                    description={location.address}
+                    left={(props) => <List.Icon {...props} icon="map-marker" />}
+                    onPress={() => handleLocationSelect(location)}
+                    style={styles.locationItem}
+                  />
+                ))}
+              </View>
+
+              <Button
+                mode="outlined"
+                onPress={() => setLocationModalVisible(false)}
+                style={styles.modalButton}
+              >
+                Cancel
+              </Button>
             </Card.Content>
           </Card>
         </Modal>
@@ -494,6 +614,37 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     marginBottom: 16,
     color: '#333',
+  },
+  locationCard: {
+    backgroundColor: '#f8f9fa',
+    marginBottom: 16,
+    borderRadius: 8,
+    elevation: 1,
+  },
+  locationCardContent: {
+    padding: 16,
+  },
+  locationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  locationInfo: {
+    flex: 1,
+    marginLeft: 8,
+  },
+  locationTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#1976d2',
+    marginBottom: 4,
+  },
+  locationAddress: {
+    fontSize: 14,
+    color: '#666',
+  },
+  mapButton: {
+    borderRadius: 8,
   },
   meetupCard: {
     backgroundColor: '#e3f2fd',
@@ -592,6 +743,10 @@ const styles = StyleSheet.create({
   textInput: {
     marginBottom: 16,
   },
+  locationButton: {
+    marginBottom: 16,
+    borderRadius: 8,
+  },
   toggleButton: {
     marginBottom: 16,
     borderRadius: 8,
@@ -607,5 +762,12 @@ const styles = StyleSheet.create({
   modalButton: {
     flex: 1,
     borderRadius: 8,
+  },
+  locationList: {
+    marginBottom: 20,
+  },
+  locationItem: {
+    borderRadius: 8,
+    marginBottom: 8,
   },
 });
