@@ -13,54 +13,13 @@ const createMockClient = () => ({
   }),
 });
 
-// Check if environment variables are set
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
+// Always use mock mode for web compatibility
+const isMockMode = true;
 
-// Use mock mode if environment variables are not set or in web environment
-const isMockMode = !supabaseUrl || !supabaseAnonKey || typeof window !== 'undefined';
+console.log('Running in mock mode. All Supabase functionality will be simulated.');
 
-if (isMockMode) {
-  console.warn('Running in mock mode. Supabase functionality will be simulated.');
-}
-
-// Create Supabase client or mock client
-let supabase: any;
-
-if (isMockMode) {
-  supabase = createMockClient();
-} else {
-  // Only import Supabase in non-web environments
-  try {
-    const { createClient } = require('@supabase/supabase-js');
-    const SecureStore = require('expo-secure-store');
-
-    // Custom storage adapter for Expo SecureStore
-    const ExpoSecureStoreAdapter = {
-      getItem: (key: string) => {
-        return SecureStore.getItemAsync(key);
-      },
-      setItem: (key: string, value: string) => {
-        return SecureStore.setItemAsync(key, value);
-      },
-      removeItem: (key: string) => {
-        return SecureStore.deleteItemAsync(key);
-      },
-    };
-
-    supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        storage: ExpoSecureStoreAdapter,
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: false,
-      },
-    });
-  } catch (error) {
-    console.warn('Failed to initialize Supabase, using mock client:', error);
-    supabase = createMockClient();
-  }
-}
+// Create mock Supabase client
+const supabase = createMockClient();
 
 export { supabase, isMockMode };
 
