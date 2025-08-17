@@ -36,6 +36,7 @@ import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { debounce } from '../../utils/performance';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
@@ -82,6 +83,7 @@ interface Post {
 const FeedScreen: React.FC = () => {
   const { user } = useAuthStore();
   const { isPhone } = useResponsive();
+  const navigation = useNavigation();
 
   const [posts, setPosts] = useState<Post[]>(() => [
     {
@@ -362,7 +364,7 @@ const FeedScreen: React.FC = () => {
             </Paragraph>
             <Button
               mode="contained"
-              onPress={() => {/* Navigate to login */}}
+              onPress={() => (navigation as any).navigate('Login')}
               style={styles.guestButton}
             >
               Sign In to Start Sharing
@@ -493,7 +495,7 @@ const FeedScreen: React.FC = () => {
                 </Paragraph>
                 <Button
                   mode="contained"
-                  onPress={() => {/* Navigate to login */}}
+                  onPress={() => (navigation as any).navigate('Login')}
                   style={styles.guestButton}
                 >
                   Sign In to Post
