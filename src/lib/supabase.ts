@@ -1,47 +1,68 @@
-import { createClient } from '@supabase/supabase-js';
-import * as SecureStore from 'expo-secure-store';
+// Mock Supabase client for web compatibility
+const createMockClient = () => ({
+  auth: {
+    signInWithPassword: async () => ({ data: null, error: null }),
+    signUp: async () => ({ data: null, error: null }),
+    signOut: async () => ({ error: null }),
+    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+  },
+  from: () => ({
+    select: () => ({ eq: () => ({ single: () => ({ data: null, error: null }) }) }),
+    insert: () => ({ data: null, error: null }),
+    update: () => ({ eq: () => ({ select: () => ({ single: () => ({ data: null, error: null }) }) }) }),
+  }),
+});
 
 // Check if environment variables are set
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-// Use mock mode if environment variables are not set
-const isMockMode = !supabaseUrl || !supabaseAnonKey;
+// Use mock mode if environment variables are not set or in web environment
+const isMockMode = !supabaseUrl || !supabaseAnonKey || typeof window !== 'undefined';
 
 if (isMockMode) {
-  console.warn('Supabase environment variables not set. Running in mock mode.');
-  console.warn('To enable full functionality, set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY');
+  console.warn('Running in mock mode. Supabase functionality will be simulated.');
 }
 
-// Custom storage adapter for Expo SecureStore
-const ExpoSecureStoreAdapter = {
-  getItem: (key: string) => {
-    return SecureStore.getItemAsync(key);
-  },
-  setItem: (key: string, value: string) => {
-    return SecureStore.setItemAsync(key, value);
-  },
-  removeItem: (key: string) => {
-    return SecureStore.deleteItemAsync(key);
-  },
-};
+// Create Supabase client or mock client
+let supabase: any;
 
-// Create Supabase client with fallback values
-export const supabase = createClient(
-  supabaseUrl || 'https://mock.supabase.co',
-  supabaseAnonKey || 'mock-key',
-  {
-    auth: {
-      storage: ExpoSecureStoreAdapter,
-      autoRefreshToken: true,
-      persistSession: true,
-      detectSessionInUrl: false,
-    },
+if (isMockMode) {
+  supabase = createMockClient();
+} else {
+  // Only import Supabase in non-web environments
+  try {
+    const { createClient } = require('@supabase/supabase-js');
+    const SecureStore = require('expo-secure-store');
+
+    // Custom storage adapter for Expo SecureStore
+    const ExpoSecureStoreAdapter = {
+      getItem: (key: string) => {
+        return SecureStore.getItemAsync(key);
+      },
+      setItem: (key: string, value: string) => {
+        return SecureStore.setItemAsync(key, value);
+      },
+      removeItem: (key: string) => {
+        return SecureStore.deleteItemAsync(key);
+      },
+    };
+
+    supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        storage: ExpoSecureStoreAdapter,
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: false,
+      },
+    });
+  } catch (error) {
+    console.warn('Failed to initialize Supabase, using mock client:', error);
+    supabase = createMockClient();
   }
-);
+}
 
-// Export mock mode flag
-export { isMockMode };
+export { supabase, isMockMode };
 
 // Database schema SQL (execute in Supabase SQL editor)
 /*
