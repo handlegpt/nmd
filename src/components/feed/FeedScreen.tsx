@@ -489,16 +489,17 @@ const FeedScreen: React.FC = () => {
           {!user && (
             <Card style={styles.guestCard}>
               <Card.Content>
-                <Title style={styles.guestTitle}>Welcome to NomadNow!</Title>
+                <Title style={styles.guestTitle}>Welcome to NomadNow! 🌍</Title>
                 <Paragraph style={styles.guestSubtitle}>
-                  Discover amazing digital nomads and connect with fellow travelers
+                  Discover amazing digital nomads and connect with fellow travelers around the world
                 </Paragraph>
                 <Button
                   mode="contained"
                   onPress={() => (navigation as any).navigate('Login')}
                   style={styles.guestButton}
+                  contentStyle={styles.guestButtonContent}
                 >
-                  Sign In to Post
+                  Sign In to Start Sharing
                 </Button>
               </Card.Content>
             </Card>
@@ -575,15 +576,15 @@ const FeedScreen: React.FC = () => {
                 )}
 
                 {/* Tags */}
-                                  {post.tags.length > 0 && (
-                    <View style={styles.tagsContainer}>
-                      {post.tags.map((tag, index) => (
-                        <Chip key={index} style={styles.tag} textStyle={styles.tagText}>
-                          {tag}
-                        </Chip>
-                      ))}
-                    </View>
-                  )}
+                {post.tags.length > 0 && (
+                  <View style={styles.tagsContainer}>
+                    {post.tags.map((tag, index) => (
+                      <Chip key={index} style={styles.tag} textStyle={styles.tagText}>
+                        {tag}
+                      </Chip>
+                    ))}
+                  </View>
+                )}
 
                 <Divider style={styles.divider} />
 
@@ -749,6 +750,7 @@ const styles = StyleSheet.create({
   },
   guestCard: {
     margin: spacing.base,
+    marginBottom: spacing.lg,
     borderRadius: borderRadius.xl,
     backgroundColor: colors.primary,
     ...shadowPresets.card,
@@ -756,23 +758,33 @@ const styles = StyleSheet.create({
   guestTitle: {
     color: colors.white,
     textAlign: 'center',
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '700',
+    marginBottom: spacing.sm,
   },
   guestSubtitle: {
     color: colors.white,
     textAlign: 'center',
     marginTop: spacing.sm,
+    marginBottom: spacing.lg,
     opacity: 0.9,
+    fontSize: 16,
+    lineHeight: 24,
   },
   guestButton: {
     marginTop: spacing.base,
     backgroundColor: colors.white,
     color: colors.primary,
+    borderRadius: borderRadius.lg,
+    ...shadowPresets.small,
+  },
+  guestButtonContent: {
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
   },
   postCard: {
     margin: spacing.base,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.lg,
     borderRadius: borderRadius.xl,
     backgroundColor: colors.white,
     ...shadowPresets.card,
@@ -780,54 +792,55 @@ const styles = StyleSheet.create({
   postHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.sm,
+    marginBottom: spacing.lg,
   },
   postHeaderInfo: {
-    marginLeft: spacing.sm,
+    marginLeft: spacing.base,
     flex: 1,
   },
   postAuthor: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
     color: colors.textPrimary,
+    marginBottom: spacing.xs,
   },
   postMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 2,
+    flexWrap: 'wrap',
   },
   postTime: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.textSecondary,
-    marginRight: spacing.sm,
+    marginRight: spacing.base,
   },
   postLocation: {
-    fontSize: 12,
+    fontSize: 14,
     color: colors.primary,
     fontWeight: '500',
+    marginRight: spacing.sm,
   },
   postEmotion: {
-    fontSize: 16,
+    fontSize: 18,
     marginLeft: spacing.xs,
   },
   postContent: {
     fontSize: 16,
     lineHeight: 24,
     color: colors.textPrimary,
-    marginBottom: spacing.sm,
+    marginBottom: spacing.lg,
   },
   mediaGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 4,
-    marginBottom: 12,
+    marginBottom: spacing.lg,
   },
   mediaItem: {
-    width: (width - 80) / 3,
-    height: (width - 80) / 3,
-    borderRadius: 8,
+    width: (width - spacing.base * 4) / 3,
+    height: (width - spacing.base * 4) / 3,
+    margin: 2,
+    borderRadius: borderRadius.md,
     overflow: 'hidden',
-    position: 'relative',
   },
   mediaImage: {
     width: '100%',
@@ -846,59 +859,64 @@ const styles = StyleSheet.create({
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 12,
+    marginBottom: spacing.lg,
   },
   tag: {
-    marginRight: 8,
-    marginBottom: 4,
-    backgroundColor: '#f1f5f9',
+    marginRight: spacing.sm,
+    marginBottom: spacing.sm,
+    backgroundColor: colors.gray100,
   },
   tagText: {
+    color: colors.textSecondary,
     fontSize: 12,
-    color: '#6366f1',
   },
   topicChip: {
-    backgroundColor: '#6366f1',
-    marginBottom: 12,
+    backgroundColor: colors.primary,
+    marginBottom: spacing.lg,
   },
   topicText: {
-    color: '#ffffff',
+    color: colors.white,
     fontSize: 12,
   },
   meetupCard: {
-    backgroundColor: '#f8fafc',
-    marginBottom: 12,
-    borderRadius: 8,
+    backgroundColor: colors.gray50,
+    marginBottom: spacing.lg,
+    borderRadius: borderRadius.lg,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.primary,
   },
   meetupTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    marginBottom: spacing.sm,
   },
   meetupDetails: {
     fontSize: 14,
-    color: '#64748b',
-    marginBottom: 4,
+    color: colors.textSecondary,
+    marginBottom: spacing.xs,
   },
   meetupPeople: {
     fontSize: 14,
-    color: '#64748b',
-    marginBottom: 12,
+    color: colors.textSecondary,
+    marginBottom: spacing.md,
   },
   joinButton: {
-    borderColor: '#6366f1',
+    borderColor: colors.primary,
+    borderRadius: borderRadius.lg,
   },
   divider: {
-    marginVertical: 12,
+    marginVertical: spacing.lg,
+    backgroundColor: colors.gray200,
   },
   postActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+    paddingTop: spacing.sm,
   },
   actionLabel: {
     fontSize: 14,
-    color: '#64748b',
+    color: colors.textSecondary,
   },
   fab: {
     position: 'absolute',
@@ -916,49 +934,52 @@ const styles = StyleSheet.create({
     maxHeight: '90%',
   },
   modalCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 12,
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.xl,
     maxHeight: '100%',
   },
   modalTitle: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: '700',
-    color: '#1e293b',
-    marginBottom: 16,
+    color: colors.textPrimary,
+    marginBottom: spacing.lg,
   },
   textInput: {
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   locationButton: {
-    marginBottom: 12,
-    borderColor: '#6366f1',
+    marginBottom: spacing.md,
+    borderColor: colors.primary,
+    borderRadius: borderRadius.lg,
   },
   locationButtonLabel: {
-    color: '#6366f1',
+    color: colors.primary,
   },
   toggleButton: {
-    marginBottom: 12,
-    borderColor: '#6366f1',
+    marginBottom: spacing.md,
+    borderColor: colors.primary,
+    borderRadius: borderRadius.lg,
   },
   toggleButtonLabel: {
-    color: '#6366f1',
+    color: colors.primary,
   },
   meetupForm: {
-    marginTop: 12,
-    padding: 12,
-    backgroundColor: '#f8fafc',
-    borderRadius: 8,
+    marginTop: spacing.md,
+    padding: spacing.md,
+    backgroundColor: colors.gray50,
+    borderRadius: borderRadius.lg,
   },
   modalActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 16,
+    marginTop: spacing.lg,
   },
   modalButton: {
     flex: 1,
-    marginHorizontal: 4,
+    marginHorizontal: spacing.xs,
+    borderRadius: borderRadius.lg,
   },
   createButton: {
-    backgroundColor: '#6366f1',
+    backgroundColor: colors.primary,
   },
 });
