@@ -23,7 +23,7 @@ import {
 import { useMapStore } from '../../store/mapStore';
 import { useAuthStore } from '../../store/authStore';
 import { User } from '../../types';
-import { ResponsiveContainer } from '../common/ResponsiveContainer';
+import ResponsiveContainer from '../common/ResponsiveContainer';
 import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
