@@ -170,16 +170,21 @@ export const MapScreen: React.FC = () => {
     <View style={styles.container}>
       {/* Header */}
       <Surface style={styles.header}>
-        <Title style={styles.headerTitle}>Discover Nomads</Title>
-        <Paragraph style={styles.headerSubtitle}>Find fellow travelers nearby</Paragraph>
+        <View style={styles.headerContent}>
+          <Title style={styles.headerTitle}>Discover Nomads</Title>
+          <Paragraph style={styles.headerSubtitle}>Find fellow travelers nearby</Paragraph>
+        </View>
+        <View style={styles.headerDecoration} />
       </Surface>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {/* Location Card */}
+        {/* Enhanced Location Card */}
         <Card style={styles.locationCard}>
           <Card.Content>
             <View style={styles.locationHeader}>
-              <IconButton icon="map-marker" size={24} iconColor="#1976d2" />
+              <View style={styles.locationIcon}>
+                <IconButton icon="map-marker" size={24} iconColor="#6366f1" />
+              </View>
               <View style={styles.locationInfo}>
                 <Title style={styles.locationTitle}>
                   {currentLocation ? currentLocation.city : 'Unknown Location'}
@@ -190,24 +195,24 @@ export const MapScreen: React.FC = () => {
               </View>
             </View>
             <View style={styles.statsContainer}>
-              <Chip icon="account-group" style={styles.statChip}>
+              <Chip icon="account-group" style={styles.statChip} textStyle={styles.statChipText}>
                 {displayUsers.length} nomads nearby
               </Chip>
-              <Chip icon="wifi" style={styles.statChip}>
+              <Chip icon="wifi" style={styles.statChip} textStyle={styles.statChipText}>
                 {displayUsers.filter(u => u.is_available_for_meetup).length} available
               </Chip>
             </View>
           </Card.Content>
         </Card>
 
-        {/* Users List */}
+        {/* Enhanced Users List */}
         <View style={styles.usersContainer}>
           {displayUsers.map((nomad, index) => (
-            <Card key={nomad.id} style={[styles.userCard, { marginTop: index === 0 ? 16 : 12 }]} onPress={() => handleUserPress(nomad)}>
+            <Card key={nomad.id} style={[styles.userCard, { marginTop: index === 0 ? 20 : 16 }]} onPress={() => handleUserPress(nomad)}>
               <Card.Content style={styles.userCardContent}>
                 <View style={styles.userHeader}>
                   <Avatar.Image
-                    size={64}
+                    size={72}
                     source={{ uri: nomad.avatar_url }}
                     style={styles.userAvatar}
                   />
@@ -217,8 +222,8 @@ export const MapScreen: React.FC = () => {
                     <View style={styles.userStatus}>
                       <Chip 
                         icon={nomad.is_available_for_meetup ? "check-circle" : "clock"} 
-                        style={[styles.statusChip, { backgroundColor: nomad.is_available_for_meetup ? '#e8f5e8' : '#fff3e0' }]}
-                        textStyle={{ color: nomad.is_available_for_meetup ? '#2e7d32' : '#f57c00' }}
+                        style={[styles.statusChip, { backgroundColor: nomad.is_available_for_meetup ? '#dcfce7' : '#fef3c7' }]}
+                        textStyle={{ color: nomad.is_available_for_meetup ? '#166534' : '#92400e' }}
                       >
                         {nomad.is_available_for_meetup ? 'Available' : 'Busy'}
                       </Chip>
@@ -254,6 +259,7 @@ export const MapScreen: React.FC = () => {
                     style={styles.actionButton}
                     icon="hand-wave"
                     contentStyle={styles.actionButtonContent}
+                    labelStyle={styles.actionButtonLabel}
                   >
                     Greet
                   </Button>
@@ -263,6 +269,7 @@ export const MapScreen: React.FC = () => {
                     style={styles.actionButton}
                     icon="chat"
                     contentStyle={styles.actionButtonContent}
+                    labelStyle={styles.actionButtonLabel}
                   >
                     Chat
                   </Button>
@@ -294,138 +301,170 @@ export const MapScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#f8fafc',
   },
   header: {
     paddingTop: Platform.OS === 'web' ? 20 : 40,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
     backgroundColor: '#ffffff',
-    elevation: 2,
+    elevation: 0,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    position: 'relative',
+  },
+  headerContent: {
+    position: 'relative',
+    zIndex: 2,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1976d2',
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#1e293b',
     marginBottom: 4,
+    letterSpacing: -0.5,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  headerDecoration: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    opacity: 0.05,
+    borderRadius: 20,
   },
   scrollView: {
     flex: 1,
   },
   locationCard: {
-    margin: 16,
-    elevation: 3,
+    margin: 20,
+    elevation: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    borderRadius: 12,
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    borderRadius: 20,
+    backgroundColor: '#ffffff',
   },
   locationHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 20,
+  },
+  locationIcon: {
+    marginRight: 12,
   },
   locationInfo: {
     flex: 1,
-    marginLeft: 8,
   },
   locationTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
+    color: '#1e293b',
     marginBottom: 4,
   },
   locationSubtitle: {
     fontSize: 14,
-    color: '#666',
+    color: '#64748b',
+    fontWeight: '500',
   },
   statsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 12,
   },
   statChip: {
-    marginRight: 8,
-    backgroundColor: '#e3f2fd',
+    backgroundColor: '#eef2ff',
+    borderRadius: 20,
+  },
+  statChipText: {
+    color: '#6366f1',
+    fontWeight: '600',
   },
   usersContainer: {
-    padding: 16,
+    padding: 20,
   },
   userCard: {
-    marginBottom: 16,
-    elevation: 3,
+    marginBottom: 20,
+    elevation: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    borderRadius: 12,
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    borderRadius: 20,
+    backgroundColor: '#ffffff',
   },
   userCardContent: {
     padding: 0,
   },
   userHeader: {
     flexDirection: 'row',
-    marginBottom: 16,
-    padding: 16,
+    marginBottom: 20,
+    padding: 20,
     paddingBottom: 0,
   },
   userAvatar: {
     marginRight: 16,
+    borderWidth: 2,
+    borderColor: '#f1f5f9',
   },
   userInfo: {
     flex: 1,
   },
   userName: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
+    color: '#1e293b',
     marginBottom: 8,
   },
   userBio: {
     fontSize: 16,
-    color: '#666',
-    lineHeight: 22,
+    color: '#64748b',
+    lineHeight: 24,
     marginBottom: 12,
+    fontWeight: '400',
   },
   userStatus: {
     marginBottom: 8,
   },
   statusChip: {
     alignSelf: 'flex-start',
+    borderRadius: 20,
   },
   userTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 16,
-    paddingHorizontal: 16,
+    marginBottom: 20,
+    paddingHorizontal: 20,
   },
   tagChip: {
     marginRight: 8,
-    marginBottom: 4,
-    backgroundColor: '#f0f8ff',
-    borderRadius: 16,
+    marginBottom: 8,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 20,
+    borderWidth: 0,
   },
   tagText: {
     fontSize: 12,
-    color: '#1976d2',
+    color: '#475569',
+    fontWeight: '600',
   },
   userLanguages: {
-    paddingHorizontal: 16,
-    marginBottom: 16,
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   languagesTitle: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
+    color: '#1e293b',
     marginBottom: 8,
   },
   languagesList: {
@@ -434,38 +473,49 @@ const styles = StyleSheet.create({
   },
   languageChip: {
     marginRight: 8,
-    marginBottom: 4,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
+    marginBottom: 8,
+    backgroundColor: '#f8fafc',
+    borderRadius: 16,
   },
   languageText: {
     fontSize: 12,
-    color: '#666',
+    color: '#64748b',
+    fontWeight: '500',
   },
   divider: {
-    marginVertical: 12,
-    backgroundColor: '#e0e0e0',
+    marginVertical: 16,
+    backgroundColor: '#e2e8f0',
+    height: 1,
   },
   userActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     gap: 12,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   actionButton: {
     flex: 1,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   actionButtonContent: {
-    paddingVertical: 4,
+    paddingVertical: 8,
+  },
+  actionButtonLabel: {
+    fontSize: 14,
+    fontWeight: '600',
   },
   fab: {
     position: 'absolute',
-    margin: 16,
+    margin: 20,
     right: 0,
     bottom: 0,
-    backgroundColor: '#1976d2',
+    backgroundColor: '#6366f1',
     borderRadius: 28,
+    elevation: 8,
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
   },
 }); 

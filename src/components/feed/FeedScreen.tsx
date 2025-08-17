@@ -258,26 +258,29 @@ export const FeedScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Modern Gradient Header */}
       <Surface style={styles.header}>
-        <Title style={styles.headerTitle}>Nomad Now</Title>
-        <Paragraph style={styles.headerSubtitle}>Share your journey</Paragraph>
+        <View style={styles.headerContent}>
+          <Title style={styles.headerTitle}>Nomad Now</Title>
+          <Paragraph style={styles.headerSubtitle}>Share your journey</Paragraph>
+        </View>
+        <View style={styles.headerDecoration} />
       </Surface>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {posts.map((post, index) => (
-          <Card key={post.id} style={[styles.postCard, { marginTop: index === 0 ? 16 : 8 }]}>
+          <Card key={post.id} style={[styles.postCard, { marginTop: index === 0 ? 20 : 16 }]}>
             <Card.Content style={styles.postContent}>
               <View style={styles.postHeader}>
                 <Avatar.Image
-                  size={48}
+                  size={56}
                   source={{ uri: post.userAvatar }}
                   style={styles.userAvatar}
                 />
                 <View style={styles.postInfo}>
                   <Title style={styles.userName}>{post.userNickname}</Title>
                   <View style={styles.postMeta}>
-                    <IconButton icon="map-marker" size={12} iconColor="#666" />
+                    <IconButton icon="map-marker" size={14} iconColor="#6366f1" />
                     <Paragraph style={styles.postMetaText}>
                       {post.location} • {post.createdAt}
                     </Paragraph>
@@ -285,14 +288,16 @@ export const FeedScreen: React.FC = () => {
                 </View>
               </View>
 
-                                        <Paragraph style={styles.postText}>{post.content}</Paragraph>
+              <Paragraph style={styles.postText}>{post.content}</Paragraph>
 
-              {/* Location Card */}
+              {/* Enhanced Location Card */}
               {post.locationDetails && (
                 <Card style={styles.locationCard}>
                   <Card.Content style={styles.locationCardContent}>
                     <View style={styles.locationHeader}>
-                      <IconButton icon="map-marker" size={20} iconColor="#1976d2" />
+                      <View style={styles.locationIcon}>
+                        <IconButton icon="map-marker" size={20} iconColor="#6366f1" />
+                      </View>
                       <View style={styles.locationInfo}>
                         <Title style={styles.locationTitle}>{post.locationDetails.name}</Title>
                         <Paragraph style={styles.locationAddress}>{post.locationDetails.address}</Paragraph>
@@ -303,6 +308,7 @@ export const FeedScreen: React.FC = () => {
                       onPress={() => showToast('Map view coming soon!', 'info')}
                       icon="map"
                       style={styles.mapButton}
+                      labelStyle={styles.mapButtonLabel}
                     >
                       View on Map
                     </Button>
@@ -310,28 +316,31 @@ export const FeedScreen: React.FC = () => {
                 </Card>
               )}
 
+              {/* Enhanced Meetup Card */}
               {post.isMeetupRequest && post.meetupDetails && (
                 <Card style={styles.meetupCard}>
                   <Card.Content style={styles.meetupCardContent}>
                     <View style={styles.meetupHeader}>
-                      <IconButton icon="calendar" size={20} iconColor="#1976d2" />
+                      <View style={styles.meetupIcon}>
+                        <IconButton icon="calendar" size={20} iconColor="#6366f1" />
+                      </View>
                       <Title style={styles.meetupTitle}>{post.meetupDetails.title}</Title>
                     </View>
                     <View style={styles.meetupDetails}>
                       <View style={styles.meetupDetailRow}>
-                        <IconButton icon="clock" size={16} iconColor="#666" />
+                        <IconButton icon="clock" size={16} iconColor="#6b7280" />
                         <Paragraph style={styles.meetupDetailText}>
                           {post.meetupDetails.date}
                         </Paragraph>
                       </View>
                       <View style={styles.meetupDetailRow}>
-                        <IconButton icon="map-marker" size={16} iconColor="#666" />
+                        <IconButton icon="map-marker" size={16} iconColor="#6b7280" />
                         <Paragraph style={styles.meetupDetailText}>
                           {post.meetupDetails.location}
                         </Paragraph>
                       </View>
                       <View style={styles.meetupDetailRow}>
-                        <IconButton icon="account-group" size={16} iconColor="#666" />
+                        <IconButton icon="account-group" size={16} iconColor="#6b7280" />
                         <Paragraph style={styles.meetupDetailText}>
                           {post.meetupDetails.currentPeople}/{post.meetupDetails.maxPeople} people
                         </Paragraph>
@@ -343,6 +352,7 @@ export const FeedScreen: React.FC = () => {
                       disabled={post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople}
                       style={styles.joinButton}
                       contentStyle={styles.joinButtonContent}
+                      labelStyle={styles.joinButtonLabel}
                     >
                       {post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople 
                         ? 'Full' 
@@ -353,6 +363,7 @@ export const FeedScreen: React.FC = () => {
                 </Card>
               )}
 
+              {/* Modern Tags */}
               <View style={styles.postTags}>
                 {post.tags.map((tag, index) => (
                   <Chip key={index} style={styles.tagChip} textStyle={styles.tagText}>
@@ -363,6 +374,7 @@ export const FeedScreen: React.FC = () => {
 
               <Divider style={styles.divider} />
 
+              {/* Enhanced Action Buttons */}
               <View style={styles.postActions}>
                 <Button
                   mode="text"
@@ -397,6 +409,7 @@ export const FeedScreen: React.FC = () => {
         ))}
       </ScrollView>
 
+      {/* Modern FAB */}
       <FAB
         icon="plus"
         style={styles.fab}
@@ -410,7 +423,7 @@ export const FeedScreen: React.FC = () => {
         color="#ffffff"
       />
 
-      {/* Create Post Modal */}
+      {/* Enhanced Create Post Modal */}
       <Portal>
         <Modal
           visible={modalVisible}
@@ -429,14 +442,17 @@ export const FeedScreen: React.FC = () => {
                 numberOfLines={4}
                 style={styles.textInput}
                 mode="outlined"
+                outlineColor="#e5e7eb"
+                activeOutlineColor="#6366f1"
               />
 
-              {/* Location Selection */}
+              {/* Enhanced Location Selection */}
               <Button
                 mode="outlined"
                 onPress={() => setLocationModalVisible(true)}
                 icon="map-marker"
                 style={styles.locationButton}
+                labelStyle={styles.locationButtonLabel}
               >
                 {newPost.location ? newPost.location : 'Add Location'}
               </Button>
@@ -446,6 +462,7 @@ export const FeedScreen: React.FC = () => {
                 onPress={() => setNewPost({ ...newPost, isMeetupRequest: !newPost.isMeetupRequest })}
                 icon={newPost.isMeetupRequest ? "calendar-check" : "calendar-plus"}
                 style={styles.toggleButton}
+                labelStyle={styles.toggleButtonLabel}
               >
                 {newPost.isMeetupRequest ? 'Remove Meetup Request' : 'Add Meetup Request'}
               </Button>
@@ -458,6 +475,8 @@ export const FeedScreen: React.FC = () => {
                     onChangeText={(text) => setNewPost({ ...newPost, meetupTitle: text })}
                     style={styles.textInput}
                     mode="outlined"
+                    outlineColor="#e5e7eb"
+                    activeOutlineColor="#6366f1"
                   />
                   <TextInput
                     label="Date & Time"
@@ -466,6 +485,8 @@ export const FeedScreen: React.FC = () => {
                     placeholder="e.g., Tomorrow, 2:00 PM"
                     style={styles.textInput}
                     mode="outlined"
+                    outlineColor="#e5e7eb"
+                    activeOutlineColor="#6366f1"
                   />
                   <TextInput
                     label="Location"
@@ -473,6 +494,8 @@ export const FeedScreen: React.FC = () => {
                     onChangeText={(text) => setNewPost({ ...newPost, meetupLocation: text })}
                     style={styles.textInput}
                     mode="outlined"
+                    outlineColor="#e5e7eb"
+                    activeOutlineColor="#6366f1"
                   />
                   <TextInput
                     label="Max People"
@@ -481,6 +504,8 @@ export const FeedScreen: React.FC = () => {
                     keyboardType="numeric"
                     style={styles.textInput}
                     mode="outlined"
+                    outlineColor="#e5e7eb"
+                    activeOutlineColor="#6366f1"
                   />
                 </View>
               )}
@@ -490,6 +515,7 @@ export const FeedScreen: React.FC = () => {
                   mode="outlined"
                   onPress={() => setModalVisible(false)}
                   style={styles.modalButton}
+                  labelStyle={styles.modalButtonLabel}
                 >
                   Cancel
                 </Button>
@@ -497,6 +523,7 @@ export const FeedScreen: React.FC = () => {
                   mode="contained"
                   onPress={handleCreatePost}
                   style={styles.modalButton}
+                  labelStyle={styles.modalButtonLabel}
                 >
                   Post
                 </Button>
@@ -506,7 +533,7 @@ export const FeedScreen: React.FC = () => {
         </Modal>
       </Portal>
 
-      {/* Location Selection Modal */}
+      {/* Enhanced Location Selection Modal */}
       <Portal>
         <Modal
           visible={locationModalVisible}
@@ -523,9 +550,11 @@ export const FeedScreen: React.FC = () => {
                     key={index}
                     title={location.name}
                     description={location.address}
-                    left={(props) => <List.Icon {...props} icon="map-marker" />}
+                    left={(props) => <List.Icon {...props} icon="map-marker" color="#6366f1" />}
                     onPress={() => handleLocationSelect(location)}
                     style={styles.locationItem}
+                    titleStyle={styles.locationItemTitle}
+                    descriptionStyle={styles.locationItemDescription}
                   />
                 ))}
               </View>
@@ -534,6 +563,7 @@ export const FeedScreen: React.FC = () => {
                 mode="outlined"
                 onPress={() => setLocationModalVisible(false)}
                 style={styles.modalButton}
+                labelStyle={styles.modalButtonLabel}
               >
                 Cancel
               </Button>
@@ -555,60 +585,82 @@ export const FeedScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#f8fafc',
   },
   header: {
     paddingTop: Platform.OS === 'web' ? 20 : 40,
-    paddingBottom: 16,
-    paddingHorizontal: 16,
+    paddingBottom: 20,
+    paddingHorizontal: 20,
     backgroundColor: '#ffffff',
-    elevation: 2,
+    elevation: 0,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    position: 'relative',
+  },
+  headerContent: {
+    position: 'relative',
+    zIndex: 2,
   },
   headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1976d2',
+    fontSize: 32,
+    fontWeight: '800',
+    color: '#1e293b',
     marginBottom: 4,
+    letterSpacing: -0.5,
   },
   headerSubtitle: {
     fontSize: 16,
-    color: '#666',
+    color: '#64748b',
+    fontWeight: '500',
+  },
+  headerDecoration: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    opacity: 0.05,
+    borderRadius: 20,
   },
   scrollView: {
     flex: 1,
   },
   postCard: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-    elevation: 3,
+    marginHorizontal: 20,
+    marginBottom: 20,
+    elevation: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    borderRadius: 12,
+    shadowOpacity: 0.08,
+    shadowRadius: 20,
+    borderRadius: 20,
+    backgroundColor: '#ffffff',
   },
   postContent: {
     padding: 0,
   },
   postHeader: {
     flexDirection: 'row',
-    marginBottom: 16,
+    marginBottom: 20,
     alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 20,
   },
   userAvatar: {
-    marginRight: 12,
+    marginRight: 16,
+    borderWidth: 2,
+    borderColor: '#f1f5f9',
   },
   postInfo: {
     flex: 1,
   },
   userName: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: '700',
+    color: '#1e293b',
     marginBottom: 4,
   },
   postMeta: {
@@ -617,124 +669,165 @@ const styles = StyleSheet.create({
   },
   postMetaText: {
     fontSize: 14,
-    color: '#666',
+    color: '#64748b',
     marginLeft: -8,
+    fontWeight: '500',
   },
   postText: {
     fontSize: 16,
-    lineHeight: 24,
-    marginBottom: 16,
-    color: '#333',
+    lineHeight: 26,
+    marginBottom: 20,
+    color: '#334155',
+    paddingHorizontal: 20,
+    fontWeight: '400',
   },
   locationCard: {
-    backgroundColor: '#f8f9fa',
-    marginBottom: 16,
-    borderRadius: 8,
-    elevation: 1,
+    backgroundColor: '#f8fafc',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    elevation: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
   },
   locationCardContent: {
-    padding: 16,
+    padding: 20,
   },
   locationHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
+  },
+  locationIcon: {
+    marginRight: 12,
   },
   locationInfo: {
     flex: 1,
-    marginLeft: 8,
   },
   locationTitle: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1976d2',
+    fontWeight: '700',
+    color: '#1e293b',
     marginBottom: 4,
   },
   locationAddress: {
     fontSize: 14,
-    color: '#666',
+    color: '#64748b',
+    fontWeight: '500',
   },
   mapButton: {
-    borderRadius: 8,
+    borderRadius: 12,
+    borderColor: '#6366f1',
+    borderWidth: 1.5,
+  },
+  mapButtonLabel: {
+    color: '#6366f1',
+    fontWeight: '600',
   },
   meetupCard: {
-    backgroundColor: '#e3f2fd',
-    marginBottom: 16,
-    borderRadius: 8,
-    elevation: 1,
+    backgroundColor: '#eef2ff',
+    marginHorizontal: 20,
+    marginBottom: 20,
+    borderRadius: 16,
+    elevation: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
   },
   meetupCardContent: {
-    padding: 16,
+    padding: 20,
   },
   meetupHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
+  },
+  meetupIcon: {
+    marginRight: 12,
   },
   meetupTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1976d2',
-    marginLeft: 8,
+    fontWeight: '700',
+    color: '#1e293b',
   },
   meetupDetails: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
   meetupDetailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 12,
   },
   meetupDetailText: {
     fontSize: 14,
-    color: '#666',
+    color: '#475569',
     marginLeft: -8,
+    fontWeight: '500',
   },
   joinButton: {
-    borderRadius: 8,
+    borderRadius: 12,
+    backgroundColor: '#6366f1',
   },
   joinButtonContent: {
-    paddingVertical: 4,
+    paddingVertical: 8,
+  },
+  joinButtonLabel: {
+    fontWeight: '600',
   },
   postTags: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 16,
+    marginBottom: 20,
+    paddingHorizontal: 20,
   },
   tagChip: {
     marginRight: 8,
-    marginBottom: 4,
-    backgroundColor: '#f0f8ff',
-    borderRadius: 16,
+    marginBottom: 8,
+    backgroundColor: '#f1f5f9',
+    borderRadius: 20,
+    borderWidth: 0,
   },
   tagText: {
     fontSize: 12,
-    color: '#1976d2',
+    color: '#475569',
+    fontWeight: '600',
   },
   divider: {
-    marginVertical: 12,
-    backgroundColor: '#e0e0e0',
+    marginVertical: 16,
+    backgroundColor: '#e2e8f0',
+    height: 1,
   },
   postActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: 8,
+    paddingHorizontal: 20,
+    paddingBottom: 20,
   },
   actionButton: {
     flex: 1,
-    borderRadius: 8,
+    borderRadius: 12,
   },
   actionLabel: {
     fontSize: 14,
-    color: '#666',
+    color: '#64748b',
+    fontWeight: '600',
   },
   fab: {
     position: 'absolute',
-    margin: 16,
+    margin: 20,
     right: 0,
     bottom: 0,
-    backgroundColor: '#1976d2',
+    backgroundColor: '#6366f1',
     borderRadius: 28,
+    elevation: 8,
+    shadowColor: '#6366f1',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
   },
   modalContainer: {
     flex: 1,
@@ -743,27 +836,45 @@ const styles = StyleSheet.create({
   },
   modalCard: {
     maxHeight: '80%',
-    borderRadius: 12,
+    borderRadius: 20,
+    elevation: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 30,
   },
   modalTitle: {
-    marginBottom: 20,
+    marginBottom: 24,
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#1976d2',
+    fontWeight: '700',
+    color: '#1e293b',
   },
   textInput: {
     marginBottom: 16,
+    backgroundColor: '#ffffff',
   },
   locationButton: {
     marginBottom: 16,
-    borderRadius: 8,
+    borderRadius: 12,
+    borderColor: '#e5e7eb',
+    borderWidth: 1.5,
+  },
+  locationButtonLabel: {
+    color: '#6366f1',
+    fontWeight: '600',
   },
   toggleButton: {
     marginBottom: 16,
-    borderRadius: 8,
+    borderRadius: 12,
+    borderColor: '#e5e7eb',
+    borderWidth: 1.5,
+  },
+  toggleButtonLabel: {
+    color: '#6366f1',
+    fontWeight: '600',
   },
   meetupForm: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   modalActions: {
     flexDirection: 'row',
@@ -772,13 +883,26 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     flex: 1,
-    borderRadius: 8,
+    borderRadius: 12,
+  },
+  modalButtonLabel: {
+    fontWeight: '600',
   },
   locationList: {
-    marginBottom: 20,
+    marginBottom: 24,
   },
   locationItem: {
-    borderRadius: 8,
+    borderRadius: 12,
     marginBottom: 8,
+    backgroundColor: '#f8fafc',
+  },
+  locationItemTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#1e293b',
+  },
+  locationItemDescription: {
+    fontSize: 14,
+    color: '#64748b',
   },
 });
