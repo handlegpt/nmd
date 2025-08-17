@@ -59,7 +59,12 @@
     },
     "web": {
       "bundler": "metro",
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "build": {
+        "babel": {
+          "include": ["@expo/vector-icons"]
+        }
+      }
     },
     "plugins": [
       [

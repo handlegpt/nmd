@@ -35,7 +35,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   uri,
   width: imgWidth,
   height: imgHeight,
-  placeholder = 'https://via.placeholder.com/300x200?text=Loading...',
+  placeholder = '',
   onLoad,
   onError,
   style,
@@ -68,7 +68,7 @@ export const LazyImage: React.FC<LazyImageProps> = ({
   if (!shouldLoad) {
     return (
       <View style={[styles.placeholder, { width: imgWidth, height: imgHeight }, style]}>
-        <ActivityIndicator size="small" />
+        <ActivityIndicator size="small" color="#6366f1" />
       </View>
     );
   }

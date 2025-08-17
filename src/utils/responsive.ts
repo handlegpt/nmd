@@ -162,6 +162,19 @@ export const platformStyles = {
       },
 };
 
+// Web-specific styles (for React Native Web)
+export const webStyles = {
+  shadow: {
+    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+  },
+  cardShadow: {
+    boxShadow: '0 1px 10px rgba(0, 0, 0, 0.05)',
+  },
+  buttonShadow: {
+    boxShadow: '0 2px 4px rgba(99, 102, 241, 0.3)',
+  },
+};
+
 // Responsive grid
 export const grid = {
   columns: isPhone() ? 1 : isTablet() ? 2 : 3,
