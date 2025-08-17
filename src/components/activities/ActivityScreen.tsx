@@ -23,6 +23,7 @@ import {
   Surface,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
+import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -66,12 +67,12 @@ export const ActivityScreen: React.FC = () => {
       createdBy: {
         id: '1',
         nickname: 'Alex',
-        avatar: 'https://via.placeholder.com/40x40/4CAF50/ffffff?text=A',
+        avatar: '',
       },
       participants: [
-        { id: '1', nickname: 'Alex', avatar: 'https://via.placeholder.com/40x40/4CAF50/ffffff?text=A' },
-        { id: '2', nickname: 'Sarah', avatar: 'https://via.placeholder.com/40x40/FF9800/ffffff?text=S' },
-        { id: '3', nickname: 'Mike', avatar: 'https://via.placeholder.com/40x40/2196F3/ffffff?text=M' },
+        { id: '1', nickname: 'Alex', avatar: '' },
+        { id: '2', nickname: 'Sarah', avatar: '' },
+        { id: '3', nickname: 'Mike', avatar: '' },
       ],
       tags: ['Coffee', 'Networking', 'Coworking'],
       status: 'upcoming',
@@ -89,13 +90,13 @@ export const ActivityScreen: React.FC = () => {
       createdBy: {
         id: '2',
         nickname: 'Sarah',
-        avatar: 'https://via.placeholder.com/40x40/FF9800/ffffff?text=S',
+        avatar: '',
       },
       participants: [
-        { id: '2', nickname: 'Sarah', avatar: 'https://via.placeholder.com/40x40/FF9800/ffffff?text=S' },
-        { id: '4', nickname: 'Tom', avatar: 'https://via.placeholder.com/40x40/9C27B0/ffffff?text=T' },
-        { id: '5', nickname: 'Emma', avatar: 'https://via.placeholder.com/40x40/FF5722/ffffff?text=E' },
-        { id: '6', nickname: 'David', avatar: 'https://via.placeholder.com/40x40/607D8B/ffffff?text=D' },
+        { id: '2', nickname: 'Sarah', avatar: '' },
+        { id: '4', nickname: 'Tom', avatar: '' },
+        { id: '5', nickname: 'Emma', avatar: '' },
+        { id: '6', nickname: 'David', avatar: '' },
       ],
       tags: ['Surfing', 'Beach', 'Morning'],
       status: 'upcoming',
@@ -113,11 +114,11 @@ export const ActivityScreen: React.FC = () => {
       createdBy: {
         id: '3',
         nickname: 'Mike',
-        avatar: 'https://via.placeholder.com/40x40/2196F3/ffffff?text=M',
+        avatar: '',
       },
       participants: [
-        { id: '3', nickname: 'Mike', avatar: 'https://via.placeholder.com/40x40/2196F3/ffffff?text=M' },
-        { id: '7', nickname: 'Lisa', avatar: 'https://via.placeholder.com/40x40/4CAF50/ffffff?text=L' },
+        { id: '3', nickname: 'Mike', avatar: '' },
+        { id: '7', nickname: 'Lisa', avatar: '' },
       ],
       tags: ['Lunch', 'Food', 'Casual'],
       status: 'upcoming',
@@ -157,7 +158,7 @@ export const ActivityScreen: React.FC = () => {
         const newParticipant = {
           id: user?.id || 'user',
           nickname: user?.nickname || 'Demo User',
-          avatar: user?.avatar_url || 'https://via.placeholder.com/40x40/2196f3/ffffff?text=U',
+          avatar: user?.avatar_url || '',
         };
         return {
           ...meetup,
@@ -214,12 +215,12 @@ export const ActivityScreen: React.FC = () => {
       createdBy: {
         id: user?.id || 'user',
         nickname: user?.nickname || 'Demo User',
-        avatar: user?.avatar_url || 'https://via.placeholder.com/40x40/2196f3/ffffff?text=U',
+        avatar: user?.avatar_url || '',
       },
       participants: [{
         id: user?.id || 'user',
         nickname: user?.nickname || 'Demo User',
-        avatar: user?.avatar_url || 'https://via.placeholder.com/40x40/2196f3/ffffff?text=U',
+        avatar: user?.avatar_url || '',
       }],
       tags: ['New Meetup'],
       status: 'upcoming',
@@ -260,11 +261,19 @@ export const ActivityScreen: React.FC = () => {
           <Card key={meetup.id} style={styles.meetupCard}>
             <Card.Content>
               <View style={styles.meetupHeader}>
-                <Avatar.Image
-                  size={48}
-                  source={{ uri: meetup.createdBy.avatar }}
-                  style={styles.creatorAvatar}
-                />
+                {meetup.createdBy.avatar ? (
+                  <Avatar.Image
+                    size={48}
+                    source={{ uri: meetup.createdBy.avatar }}
+                    style={styles.creatorAvatar}
+                  />
+                ) : (
+                  <Avatar.Text 
+                    size={48} 
+                    label={meetup.createdBy.nickname.charAt(0).toUpperCase()}
+                    style={[styles.creatorAvatar, { backgroundColor: '#6366f1' }]}
+                  />
+                )}
                 <View style={styles.meetupInfo}>
                   <Title style={styles.meetupTitle}>{meetup.title}</Title>
                   <Paragraph style={styles.meetupMeta}>
@@ -302,12 +311,20 @@ export const ActivityScreen: React.FC = () => {
                 <Paragraph style={styles.participantsTitle}>Participants:</Paragraph>
                 <View style={styles.participantsList}>
                   {meetup.participants.slice(0, 5).map((participant, index) => (
-                    <Avatar.Image
-                      key={participant.id}
-                      size={36}
-                      source={{ uri: participant.avatar }}
-                      style={styles.participantAvatar}
-                    />
+                    participant.avatar ? (
+                      <Avatar.Image
+                        key={participant.id}
+                        size={36}
+                        source={{ uri: participant.avatar }}
+                      />
+                    ) : (
+                      <Avatar.Text
+                        key={participant.id}
+                        size={36}
+                        label={participant.nickname.charAt(0).toUpperCase()}
+                        style={{ backgroundColor: '#6366f1' }}
+                      />
+                     )
                   ))}
                   {meetup.participants.length > 5 && (
                     <View style={styles.moreParticipants}>

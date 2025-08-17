@@ -119,7 +119,7 @@ export const MapScreen: React.FC = () => {
       id: '1',
       email: 'alex@example.com',
       nickname: 'Alex',
-      avatar_url: 'https://via.placeholder.com/60x60/4CAF50/ffffff?text=A',
+      avatar_url: '',
       bio: 'Full-stack developer from Berlin',
       current_city: 'Bali, Indonesia',
       languages: ['English', 'German'],
@@ -134,7 +134,7 @@ export const MapScreen: React.FC = () => {
       id: '2',
       email: 'sarah@example.com',
       nickname: 'Sarah',
-      avatar_url: 'https://via.placeholder.com/60x60/FF9800/ffffff?text=S',
+      avatar_url: '',
       bio: 'Digital nomad and yoga instructor',
       current_city: 'Bali, Indonesia',
       languages: ['English', 'Spanish'],
@@ -149,7 +149,7 @@ export const MapScreen: React.FC = () => {
       id: '3',
       email: 'mike@example.com',
       nickname: 'Mike',
-      avatar_url: 'https://via.placeholder.com/60x60/2196F3/ffffff?text=M',
+      avatar_url: '',
       bio: 'UX designer and coffee enthusiast',
       current_city: 'Bali, Indonesia',
       languages: ['English', 'French'],
@@ -213,11 +213,19 @@ export const MapScreen: React.FC = () => {
             <Card key={nomad.id} style={[styles.userCard, { marginTop: index === 0 ? 20 : 16 }]} onPress={() => handleUserPress(nomad)}>
               <Card.Content style={styles.userCardContent}>
                 <View style={styles.userHeader}>
-                  <Avatar.Image
-                    size={72}
-                    source={{ uri: nomad.avatar_url }}
-                    style={styles.userAvatar}
-                  />
+                  {nomad.avatar_url ? (
+                    <Avatar.Image
+                      size={72}
+                      source={{ uri: nomad.avatar_url }}
+                      style={styles.userAvatar}
+                    />
+                  ) : (
+                    <Avatar.Text 
+                      size={72} 
+                      label={nomad.nickname.charAt(0).toUpperCase()}
+                      style={[styles.userAvatar, { backgroundColor: '#6366f1' }]}
+                    />
+                  )}
                   <View style={styles.userInfo}>
                     <Title style={styles.userName}>{nomad.nickname}</Title>
                     <Paragraph style={styles.userBio}>{nomad.bio}</Paragraph>
