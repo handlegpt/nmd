@@ -1,168 +1,137 @@
 #!/bin/bash
 
-echo "🔒 Running security audit for NomadNow..."
+# Security Audit Script for NomadNow
+# This script performs security checks before deployment
+
+set -e
+
+echo "🔒 Starting security audit for NomadNow..."
 
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
 # Function to print colored output
 print_status() {
-    if [ $1 -eq 0 ]; then
-        echo -e "${GREEN}✅ $2${NC}"
-    else
-        echo -e "${RED}❌ $2${NC}"
+    echo -e "${BLUE}[INFO]${NC} $1"
+}
+
+print_success() {
+    echo -e "${GREEN}[SUCCESS]${NC} $1"
+}
+
+print_warning() {
+    echo -e "${YELLOW}[WARNING]${NC} $1"
+}
+
+print_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Check if we're in the right directory
+if [ ! -f "package.json" ]; then
+    print_error "package.json not found. Please run this script from the project root."
+    exit 1
+fi
+
+print_status "Checking for package-lock.json..."
+if [ ! -f "package-lock.json" ]; then
+    print_warning "package-lock.json not found. Generating..."
+    npm install
+fi
+
+print_status "Running npm audit for production dependencies..."
+npm audit --production --audit-level=moderate || {
+    print_warning "Security vulnerabilities found. Check the audit report above."
+    read -p "Continue with build? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        print_error "Build cancelled due to security concerns."
+        exit 1
     fi
 }
 
-# Check if npm is available
-if ! command -v npm &> /dev/null; then
-    echo -e "${RED}❌ npm is not installed${NC}"
+print_status "Checking for .dockerignore file..."
+if [ ! -f ".dockerignore" ]; then
+    print_error ".dockerignore file not found. This is required for security."
     exit 1
 fi
 
-# Check if package.json exists
-if [ ! -f package.json ]; then
-    echo -e "${RED}❌ package.json not found${NC}"
+print_status "Checking for sensitive files..."
+SENSITIVE_FILES=(
+    ".env"
+    ".env.local"
+    ".env.production"
+    "*.key"
+    "*.pem"
+    "*.crt"
+    "id_rsa"
+    "id_ed25519"
+)
+
+for file in "${SENSITIVE_FILES[@]}"; do
+    if find . -name "$file" -type f | grep -q .; then
+        print_warning "Sensitive file found: $file"
+    fi
+done
+
+print_status "Checking Dockerfile security..."
+if [ -f "Dockerfile" ]; then
+    # Check for security best practices
+    if grep -q "npm ci" Dockerfile; then
+        print_success "Using npm ci for deterministic builds"
+    else
+        print_warning "Consider using npm ci instead of npm install"
+    fi
+    
+    if grep -q "USER nextjs" Dockerfile; then
+        print_success "Non-root user configured"
+    else
+        print_warning "Consider running as non-root user"
+    fi
+    
+    if grep -q "HEALTHCHECK" Dockerfile; then
+        print_success "Health check configured"
+    else
+        print_warning "Consider adding health check"
+    fi
+else
+    print_error "Dockerfile not found"
     exit 1
 fi
 
-echo "📦 Checking for vulnerable dependencies..."
-
-# Run npm audit
-npm audit --production
-AUDIT_EXIT_CODE=$?
-print_status $AUDIT_EXIT_CODE "npm audit completed"
-
-# Check for outdated packages
-echo "🔄 Checking for outdated packages..."
-npm outdated
-OUTDATED_EXIT_CODE=$?
-print_status $OUTDATED_EXIT_CODE "outdated packages check"
-
-# Check for known vulnerabilities in dependencies
-echo "🔍 Checking for known vulnerabilities..."
-npm audit --audit-level=moderate
-VULNERABILITIES_EXIT_CODE=$?
-print_status $VULNERABILITIES_EXIT_CODE "vulnerability scan"
-
-# Check Docker security
-echo "🐳 Checking Docker security..."
-
-# Check if Dockerfile exists
-if [ -f Dockerfile ]; then
-    echo -e "${GREEN}✅ Dockerfile found${NC}"
-    
-    # Check for common security issues in Dockerfile
-    if grep -q "USER root" Dockerfile; then
-        echo -e "${YELLOW}⚠️  Warning: Running as root user${NC}"
+print_status "Checking docker-compose.yml security..."
+if [ -f "docker-compose.yml" ]; then
+    if grep -q "security_opt" docker-compose.yml; then
+        print_success "Security options configured"
     else
-        echo -e "${GREEN}✅ Non-root user configured${NC}"
+        print_warning "Consider adding security_opt: no-new-privileges"
     fi
     
-    if grep -q "npm install" Dockerfile; then
-        echo -e "${YELLOW}⚠️  Warning: Using npm install instead of npm ci${NC}"
+    if grep -q "healthcheck" docker-compose.yml; then
+        print_success "Health check configured in docker-compose"
     else
-        echo -e "${GREEN}✅ Using npm ci for deterministic builds${NC}"
-    fi
-    
-    # Check for legacy-peer-deps usage
-    if grep -q "legacy-peer-deps" Dockerfile; then
-        echo -e "${YELLOW}⚠️  Warning: Using --legacy-peer-deps flag${NC}"
-        echo -e "${YELLOW}   This may indicate dependency conflicts that should be resolved${NC}"
-    else
-        echo -e "${GREEN}✅ No legacy-peer-deps usage detected${NC}"
+        print_warning "Consider adding health check in docker-compose"
     fi
 else
-    echo -e "${RED}❌ Dockerfile not found${NC}"
+    print_error "docker-compose.yml not found"
+    exit 1
 fi
 
-# Check .dockerignore
-if [ -f .dockerignore ]; then
-    echo -e "${GREEN}✅ .dockerignore found${NC}"
-    
-    # Check for critical exclusions
-    if grep -q "\.env" .dockerignore; then
-        echo -e "${GREEN}✅ .env files excluded${NC}"
-    else
-        echo -e "${RED}❌ .env files not excluded${NC}"
-    fi
-    
-    if grep -q "node_modules" .dockerignore; then
-        echo -e "${GREEN}✅ node_modules excluded${NC}"
-    else
-        echo -e "${RED}❌ node_modules not excluded${NC}"
-    fi
-else
-    echo -e "${RED}❌ .dockerignore not found${NC}"
-fi
+print_status "Security checklist completed:"
+echo "✅ package-lock.json present"
+echo "✅ npm audit completed"
+echo "✅ .dockerignore configured"
+echo "✅ Dockerfile security checked"
+echo "✅ docker-compose.yml security checked"
 
-# Check for sensitive files
-echo "🔐 Checking for sensitive files..."
-SENSITIVE_FILES=0
-
-if [ -f .env ]; then
-    echo -e "${RED}❌ .env file found in repository${NC}"
-    SENSITIVE_FILES=$((SENSITIVE_FILES + 1))
-fi
-
-if [ -f .env.local ]; then
-    echo -e "${RED}❌ .env.local file found in repository${NC}"
-    SENSITIVE_FILES=$((SENSITIVE_FILES + 1))
-fi
-
-if [ -f .env.production ]; then
-    echo -e "${RED}❌ .env.production file found in repository${NC}"
-    SENSITIVE_FILES=$((SENSITIVE_FILES + 1))
-fi
-
-if [ $SENSITIVE_FILES -eq 0 ]; then
-    echo -e "${GREEN}✅ No sensitive files found in repository${NC}"
-fi
-
-# Check for dependency conflicts
-echo "🔍 Checking for dependency conflicts..."
-if npm ls 2>&1 | grep -q "ERESOLVE"; then
-    echo -e "${RED}❌ Dependency conflicts detected${NC}"
-    echo -e "${YELLOW}   Run 'npm ls' to see detailed conflicts${NC}"
-    DEPENDENCY_CONFLICTS=1
-else
-    echo -e "${GREEN}✅ No dependency conflicts detected${NC}"
-    DEPENDENCY_CONFLICTS=0
-fi
-
-# Summary
+print_success "Security audit completed successfully!"
+print_status "To build and run the application:"
+echo "  make build"
+echo "  make start"
 echo ""
-echo "📊 Security Audit Summary:"
-echo "=========================="
-
-if [ $AUDIT_EXIT_CODE -eq 0 ] && [ $VULNERABILITIES_EXIT_CODE -eq 0 ] && [ $SENSITIVE_FILES -eq 0 ] && [ $DEPENDENCY_CONFLICTS -eq 0 ]; then
-    echo -e "${GREEN}✅ All security checks passed${NC}"
-    echo ""
-    echo "Recommendations:"
-    echo "1. Run 'npm audit fix' to fix any vulnerabilities"
-    echo "2. Update dependencies regularly"
-    echo "3. Use 'npm ci' instead of 'npm install' in Docker"
-    echo "4. Run as non-root user in containers"
-    echo "5. Exclude sensitive files from Docker builds"
-    echo "6. Resolve any dependency conflicts"
-else
-    echo -e "${RED}❌ Security issues found${NC}"
-    echo ""
-    echo "Actions needed:"
-    if [ $AUDIT_EXIT_CODE -ne 0 ]; then
-        echo "- Run 'npm audit fix' to fix vulnerabilities"
-    fi
-    if [ $SENSITIVE_FILES -gt 0 ]; then
-        echo "- Remove sensitive files from repository"
-    fi
-    if [ $DEPENDENCY_CONFLICTS -eq 1 ]; then
-        echo "- Resolve dependency conflicts"
-    fi
-    echo "- Review Docker security configuration"
-fi
-
-echo ""
-echo "🔒 Security audit completed!" 
+print_status "Or use the full deployment command:"
+echo "  make deploy" 

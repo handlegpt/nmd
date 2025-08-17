@@ -1,50 +1,62 @@
-.PHONY: help setup start stop clean build logs security-audit audit-fix
+# NomadNow Development and Deployment
+# Usage: make <target>
+
+.PHONY: help setup build start stop clean logs security-audit audit-fix
 
 # Default target
 help:
 	@echo "NomadNow - Digital Nomad Social App"
-	@echo ""
-	@echo "Available commands:"
-	@echo "  make setup           - Initial project setup"
-	@echo "  make start           - Start the application"
-	@echo "  make stop            - Stop the application"
-	@echo "  make clean           - Clean up containers and images"
-	@echo "  make build           - Build Docker images"
-	@echo "  make logs            - View application logs"
-	@echo "  make security-audit  - Run security audit"
-	@echo "  make audit-fix       - Fix security vulnerabilities"
-	@echo "  make help            - Show this help message"
+	@echo "=================================="
+	@echo "Available targets:"
+	@echo "  setup          - Initial setup and dependency installation"
+	@echo "  build          - Build Docker image"
+	@echo "  start          - Start the application"
+	@echo "  stop           - Stop the application"
+	@echo "  logs           - View application logs"
+	@echo "  clean          - Clean up containers and images"
+	@echo "  security-audit - Run security audit and checks"
+	@echo "  audit-fix      - Fix security vulnerabilities"
 
 # Initial setup
 setup:
-	@echo "🚀 Setting up NomadNow..."
-	@chmod +x scripts/*.sh
-	@./scripts/setup.sh
+	@echo "🔧 Setting up NomadNow..."
+	@if [ ! -f "package-lock.json" ]; then \
+		echo "Installing dependencies..."; \
+		npm install; \
+	fi
+	@echo "✅ Setup completed"
+
+# Build Docker image
+build:
+	@echo "🏗️ Building Docker image..."
+	@docker-compose build
+	@echo "✅ Build completed"
 
 # Start the application
 start:
 	@echo "🚀 Starting NomadNow..."
-	@./scripts/start.sh
+	@docker-compose up -d
+	@echo "✅ Application started"
+	@echo "🌐 Available at: http://localhost:8081"
 
 # Stop the application
 stop:
 	@echo "🛑 Stopping NomadNow..."
-	@./scripts/stop.sh
-
-# Clean up
-clean:
-	@echo "🧹 Cleaning up NomadNow..."
-	@./scripts/clean.sh
-
-# Build Docker images
-build:
-	@echo "🔨 Building Docker images..."
-	@docker-compose build
+	@docker-compose down
+	@echo "✅ Application stopped"
 
 # View logs
 logs:
 	@echo "📋 Viewing application logs..."
-	@docker-compose logs -f nomadnow-app
+	@docker-compose logs -f nomadnow-web
+
+# Clean up
+clean:
+	@echo "🧹 Cleaning up..."
+	@docker-compose down
+	@docker rmi nomadnow:latest 2>/dev/null || true
+	@docker system prune -f
+	@echo "✅ Cleanup completed"
 
 # Security audit
 security-audit:
@@ -56,24 +68,8 @@ security-audit:
 audit-fix:
 	@echo "🔧 Fixing security vulnerabilities..."
 	@npm audit fix
-	@echo "✅ Security vulnerabilities fixed!"
+	@echo "✅ Security fixes applied"
 
-# Install dependencies locally
-install:
-	@echo "📦 Installing dependencies..."
-	@npm install
-
-# Run tests
-test:
-	@echo "🧪 Running tests..."
-	@npm test
-
-# Lint code
-lint:
-	@echo "🔍 Linting code..."
-	@npm run lint
-
-# Format code
-format:
-	@echo "✨ Formatting code..."
-	@npx prettier --write "src/**/*.{ts,tsx,js,jsx}" 
+# Full deployment
+deploy: setup security-audit build start
+	@echo "🎉 Deployment completed!" 

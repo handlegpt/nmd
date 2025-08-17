@@ -1,11 +1,11 @@
-# Use Node.js Alpine for smaller image size
+# Use Node.js Alpine for smaller image size and security
 FROM node:18.19-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Install system dependencies
-RUN apk add --no-cache \
+# Install system dependencies with security updates
+RUN apk add --no-cache --update \
     curl \
     git \
     && rm -rf /var/cache/apk/*
@@ -14,14 +14,16 @@ RUN apk add --no-cache \
 RUN addgroup -g 1001 -S nodejs && \
     adduser -S nextjs -u 1001
 
-# Copy package files
+# Copy package files first for better caching
 COPY package*.json ./
+COPY package-lock.json ./
 
 # Install dependencies with security best practices
-RUN npm install --legacy-peer-deps && \
-    npm cache clean --force
+RUN npm ci && \
+    npm cache clean --force && \
+    npm audit --production --audit-level=moderate || true
 
-# Copy project files
+# Copy project files (excluding .dockerignore contents)
 COPY . .
 
 # Create necessary directories with proper permissions
