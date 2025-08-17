@@ -8,6 +8,7 @@ WORKDIR /app
 RUN apk add --no-cache --update \
     curl \
     git \
+    bash \
     && rm -rf /var/cache/apk/*
 
 # Create non-root user for security
@@ -16,12 +17,10 @@ RUN addgroup -g 1001 -S nodejs && \
 
 # Copy package files first for better caching
 COPY package*.json ./
-COPY package-lock.json ./
 
-# Install dependencies with security best practices
-RUN npm ci && \
-    npm cache clean --force && \
-    npm audit --production --audit-level=moderate || true
+# Install all dependencies (including dev dependencies for Expo CLI)
+RUN npm install && \
+    npm cache clean --force
 
 # Copy project files (excluding .dockerignore contents)
 COPY . .
@@ -32,12 +31,18 @@ RUN mkdir -p assets && \
     mkdir -p .expo/ios && \
     mkdir -p .expo/android && \
     mkdir -p .expo/metro && \
+    chmod +x start.sh && \
     chown -R nextjs:nodejs /app && \
     chmod -R 755 /app && \
     chmod -R 777 .expo
 
 # Switch to non-root user
 USER nextjs
+
+# Set environment variables for Expo
+ENV EXPO_WEB_PORT=19006
+ENV EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+ENV NODE_ENV=development
 
 # Expose web port
 EXPOSE 19006
@@ -46,5 +51,5 @@ EXPOSE 19006
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
     CMD curl -f http://localhost:19006 || exit 1
 
-# Start the web development server
-CMD ["npm", "start"] 
+# Start the web development server using the start script
+CMD ["./start.sh"] 
