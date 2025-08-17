@@ -25,6 +25,7 @@ import {
   List,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
+import { LocationShare } from '../common/LocationShare';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -63,38 +64,32 @@ interface Post {
 export const FeedScreen: React.FC = () => {
   const { user } = useAuthStore();
   const theme = useTheme();
+
   const [posts, setPosts] = useState<Post[]>([
     {
       id: '1',
       userId: '1',
-      userNickname: 'Alex',
-      userAvatar: 'https://via.placeholder.com/50x50/4CAF50/ffffff?text=A',
-      content: 'Just arrived in Bali! Looking for fellow digital nomads to grab coffee and share experiences. Anyone up for a coworking session tomorrow?',
-      location: 'Bali, Indonesia',
+      userNickname: 'Sarah',
+      userAvatar: 'https://via.placeholder.com/50x50/FF6B6B/ffffff?text=S',
+      content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session?',
+      location: 'Canggu, Bali',
       locationDetails: {
-        name: 'Canggu Coworking Space',
+        name: 'Canggu Beach',
         address: 'Canggu, Bali, Indonesia',
         coordinates: { latitude: -8.6500, longitude: 115.1333 },
       },
-      isMeetupRequest: true,
-      meetupDetails: {
-        title: 'Bali Digital Nomad Meetup',
-        date: 'Tomorrow, 10:00 AM',
-        location: 'Canggu Coworking Space',
-        maxPeople: 8,
-        currentPeople: 3,
-      },
-      likes: 12,
+      isMeetupRequest: false,
+      likes: 15,
       comments: 5,
       createdAt: '2 hours ago',
-      tags: ['Bali', 'Coworking', 'Coffee'],
+      tags: ['Bali', 'Beach', 'Surfing'],
     },
     {
       id: '2',
       userId: '2',
-      userNickname: 'Sarah',
-      userAvatar: 'https://via.placeholder.com/50x50/FF9800/ffffff?text=S',
-      content: 'Amazing sunset at Uluwatu today! The waves were perfect for surfing. This is why I love the nomad lifestyle 🌊',
+      userNickname: 'Alex',
+      userAvatar: 'https://via.placeholder.com/50x50/4ECDC4/ffffff?text=A',
+      content: 'Working from this amazing coworking space with ocean views. The wifi is lightning fast!',
       location: 'Uluwatu, Bali',
       locationDetails: {
         name: 'Uluwatu Beach',
@@ -105,7 +100,7 @@ export const FeedScreen: React.FC = () => {
       likes: 24,
       comments: 8,
       createdAt: '4 hours ago',
-      tags: ['Surfing', 'Sunset', 'Uluwatu'],
+      tags: ['Coworking', 'Ocean View', 'Uluwatu'],
     },
     {
       id: '3',
@@ -134,7 +129,7 @@ export const FeedScreen: React.FC = () => {
     },
   ]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [locationModalVisible, setLocationModalVisible] = useState(false);
+  const [locationShareVisible, setLocationShareVisible] = useState(false);
   const [newPost, setNewPost] = useState({
     content: '',
     isMeetupRequest: false,
@@ -146,15 +141,6 @@ export const FeedScreen: React.FC = () => {
     locationDetails: null as any,
   });
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
-
-  // Popular locations for quick selection
-  const popularLocations = [
-    { name: 'Canggu Coworking Space', address: 'Canggu, Bali, Indonesia', coordinates: { latitude: -8.6500, longitude: 115.1333 } },
-    { name: 'Uluwatu Beach', address: 'Uluwatu, Bali, Indonesia', coordinates: { latitude: -8.8167, longitude: 115.0833 } },
-    { name: 'Seminyak Cafe', address: 'Seminyak, Bali, Indonesia', coordinates: { latitude: -8.6833, longitude: 115.1667 } },
-    { name: 'Kuta Beach', address: 'Kuta, Bali, Indonesia', coordinates: { latitude: -8.7167, longitude: 115.1667 } },
-    { name: 'Nusa Dua Resort', address: 'Nusa Dua, Bali, Indonesia', coordinates: { latitude: -8.7833, longitude: 115.2167 } },
-  ];
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -191,41 +177,31 @@ export const FeedScreen: React.FC = () => {
     showToast('Joined meetup!', 'success');
   };
 
-  // Handle location selection
+  // Handle location selection from LocationShare component
   const handleLocationSelect = (location: any) => {
     setNewPost({
       ...newPost,
       location: location.address,
       locationDetails: location,
     });
-    setLocationModalVisible(false);
-    showToast(`Location set to ${location.name}`, 'success');
+    setLocationShareVisible(false);
+    showToast('Location selected!', 'success');
   };
 
   // Handle create post
   const handleCreatePost = () => {
-    if (!user) {
-      showToast('Please sign in to create posts', 'info');
-      return;
-    }
-
     if (!newPost.content.trim()) {
-      showToast('Please write something to share', 'error');
-      return;
-    }
-
-    if (newPost.isMeetupRequest && (!newPost.meetupTitle || !newPost.meetupDate || !newPost.meetupLocation)) {
-      showToast('Please fill in all meetup details', 'error');
+      showToast('Please enter some content', 'warning');
       return;
     }
 
     const post: Post = {
       id: Date.now().toString(),
       userId: user?.id || '1',
-      userNickname: user?.nickname || 'Demo User',
-      userAvatar: user?.avatar_url || 'https://via.placeholder.com/50x50/2196f3/ffffff?text=U',
+      userNickname: user?.nickname || 'Anonymous',
+      userAvatar: user?.avatar_url || 'https://via.placeholder.com/50x50/6366f1/ffffff?text=U',
       content: newPost.content,
-      location: newPost.location || user?.current_city || 'Unknown Location',
+      location: newPost.location,
       locationDetails: newPost.locationDetails,
       isMeetupRequest: newPost.isMeetupRequest,
       meetupDetails: newPost.isMeetupRequest ? {
@@ -238,11 +214,10 @@ export const FeedScreen: React.FC = () => {
       likes: 0,
       comments: 0,
       createdAt: 'Just now',
-      tags: ['New Post'],
+      tags: [],
     };
 
     setPosts([post, ...posts]);
-    setModalVisible(false);
     setNewPost({
       content: '',
       isMeetupRequest: false,
@@ -253,152 +228,188 @@ export const FeedScreen: React.FC = () => {
       location: '',
       locationDetails: null,
     });
+    setModalVisible(false);
     showToast('Post created successfully!', 'success');
   };
 
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Card style={styles.guestCard}>
+          <Card.Content>
+            <Title style={styles.guestTitle}>Welcome to NomadNow!</Title>
+            <Paragraph style={styles.guestSubtitle}>
+              Join our community of digital nomads to discover amazing places, connect with fellow travelers, and share your adventures.
+            </Paragraph>
+            <Button
+              mode="contained"
+              onPress={() => {/* Navigate to login */}}
+              style={styles.guestButton}
+            >
+              Sign In to Start Sharing
+            </Button>
+          </Card.Content>
+        </Card>
+
+        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+          {posts.map((post) => (
+            <Card key={post.id} style={styles.postCard}>
+              <Card.Content>
+                <View style={styles.postHeader}>
+                  <Avatar.Image size={40} source={{ uri: post.userAvatar }} />
+                  <View style={styles.postHeaderInfo}>
+                    <Title style={styles.postAuthor}>{post.userNickname}</Title>
+                    <View style={styles.postMeta}>
+                      <Paragraph style={styles.postTime}>{post.createdAt}</Paragraph>
+                      {post.location && (
+                        <Paragraph style={styles.postLocation}>📍 {post.location}</Paragraph>
+                      )}
+                    </View>
+                  </View>
+                </View>
+
+                <Paragraph style={styles.postContent}>{post.content}</Paragraph>
+
+                {post.tags.length > 0 && (
+                  <View style={styles.tagsContainer}>
+                    {post.tags.map((tag, index) => (
+                      <Chip key={index} style={styles.tag} textStyle={styles.tagText}>
+                        #{tag}
+                      </Chip>
+                    ))}
+                  </View>
+                )}
+
+                {post.isMeetupRequest && post.meetupDetails && (
+                  <Card style={styles.meetupCard}>
+                    <Card.Content>
+                      <Title style={styles.meetupTitle}>{post.meetupDetails.title}</Title>
+                      <Paragraph style={styles.meetupDetails}>
+                        📅 {post.meetupDetails.date} • 📍 {post.meetupDetails.location}
+                      </Paragraph>
+                      <Paragraph style={styles.meetupPeople}>
+                        👥 {post.meetupDetails.currentPeople}/{post.meetupDetails.maxPeople} people
+                      </Paragraph>
+                      <Button
+                        mode="outlined"
+                        onPress={() => handleJoinMeetup(post.id)}
+                        disabled={post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople}
+                        style={styles.joinButton}
+                      >
+                        {post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople ? 'Full' : 'Join Meetup'}
+                      </Button>
+                    </Card.Content>
+                  </Card>
+                )}
+
+                <Divider style={styles.divider} />
+
+                <View style={styles.postActions}>
+                  <Button
+                    mode="text"
+                    onPress={() => handleLike(post.id)}
+                    icon="heart"
+                    labelStyle={styles.actionLabel}
+                  >
+                    {post.likes}
+                  </Button>
+                  <Button
+                    mode="text"
+                    icon="comment"
+                    labelStyle={styles.actionLabel}
+                  >
+                    {post.comments}
+                  </Button>
+                  <Button
+                    mode="text"
+                    icon="share"
+                    labelStyle={styles.actionLabel}
+                  >
+                    Share
+                  </Button>
+                </View>
+              </Card.Content>
+            </Card>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
-      {/* Modern Gradient Header */}
-      <Surface style={styles.header}>
-        <View style={styles.headerContent}>
-          <Title style={styles.headerTitle}>Nomad Now</Title>
-          <Paragraph style={styles.headerSubtitle}>Share your journey</Paragraph>
-        </View>
-        <View style={styles.headerDecoration} />
-      </Surface>
-
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        {posts.map((post, index) => (
-          <Card key={post.id} style={[styles.postCard, { marginTop: index === 0 ? 20 : 16 }]}>
-            <Card.Content style={styles.postContent}>
+        {posts.map((post) => (
+          <Card key={post.id} style={styles.postCard}>
+            <Card.Content>
               <View style={styles.postHeader}>
-                <Avatar.Image
-                  size={56}
-                  source={{ uri: post.userAvatar }}
-                  style={styles.userAvatar}
-                />
-                <View style={styles.postInfo}>
-                  <Title style={styles.userName}>{post.userNickname}</Title>
+                <Avatar.Image size={40} source={{ uri: post.userAvatar }} />
+                <View style={styles.postHeaderInfo}>
+                  <Title style={styles.postAuthor}>{post.userNickname}</Title>
                   <View style={styles.postMeta}>
-                    <IconButton icon="map-marker" size={14} iconColor="#6366f1" />
-                    <Paragraph style={styles.postMetaText}>
-                      {post.location} • {post.createdAt}
-                    </Paragraph>
+                    <Paragraph style={styles.postTime}>{post.createdAt}</Paragraph>
+                    {post.location && (
+                      <Paragraph style={styles.postLocation}>📍 {post.location}</Paragraph>
+                    )}
                   </View>
                 </View>
               </View>
 
-              <Paragraph style={styles.postText}>{post.content}</Paragraph>
+              <Paragraph style={styles.postContent}>{post.content}</Paragraph>
 
-              {/* Enhanced Location Card */}
-              {post.locationDetails && (
-                <Card style={styles.locationCard}>
-                  <Card.Content style={styles.locationCardContent}>
-                    <View style={styles.locationHeader}>
-                      <View style={styles.locationIcon}>
-                        <IconButton icon="map-marker" size={20} iconColor="#6366f1" />
-                      </View>
-                      <View style={styles.locationInfo}>
-                        <Title style={styles.locationTitle}>{post.locationDetails.name}</Title>
-                        <Paragraph style={styles.locationAddress}>{post.locationDetails.address}</Paragraph>
-                      </View>
-                    </View>
-                    <Button
-                      mode="outlined"
-                      onPress={() => showToast('Map view coming soon!', 'info')}
-                      icon="map"
-                      style={styles.mapButton}
-                      labelStyle={styles.mapButtonLabel}
-                    >
-                      View on Map
-                    </Button>
-                  </Card.Content>
-                </Card>
+              {post.tags.length > 0 && (
+                <View style={styles.tagsContainer}>
+                  {post.tags.map((tag, index) => (
+                    <Chip key={index} style={styles.tag} textStyle={styles.tagText}>
+                      #{tag}
+                    </Chip>
+                  ))}
+                </View>
               )}
 
-              {/* Enhanced Meetup Card */}
               {post.isMeetupRequest && post.meetupDetails && (
                 <Card style={styles.meetupCard}>
-                  <Card.Content style={styles.meetupCardContent}>
-                    <View style={styles.meetupHeader}>
-                      <View style={styles.meetupIcon}>
-                        <IconButton icon="calendar" size={20} iconColor="#6366f1" />
-                      </View>
-                      <Title style={styles.meetupTitle}>{post.meetupDetails.title}</Title>
-                    </View>
-                    <View style={styles.meetupDetails}>
-                      <View style={styles.meetupDetailRow}>
-                        <IconButton icon="clock" size={16} iconColor="#6b7280" />
-                        <Paragraph style={styles.meetupDetailText}>
-                          {post.meetupDetails.date}
-                        </Paragraph>
-                      </View>
-                      <View style={styles.meetupDetailRow}>
-                        <IconButton icon="map-marker" size={16} iconColor="#6b7280" />
-                        <Paragraph style={styles.meetupDetailText}>
-                          {post.meetupDetails.location}
-                        </Paragraph>
-                      </View>
-                      <View style={styles.meetupDetailRow}>
-                        <IconButton icon="account-group" size={16} iconColor="#6b7280" />
-                        <Paragraph style={styles.meetupDetailText}>
-                          {post.meetupDetails.currentPeople}/{post.meetupDetails.maxPeople} people
-                        </Paragraph>
-                      </View>
-                    </View>
+                  <Card.Content>
+                    <Title style={styles.meetupTitle}>{post.meetupDetails.title}</Title>
+                    <Paragraph style={styles.meetupDetails}>
+                      📅 {post.meetupDetails.date} • 📍 {post.meetupDetails.location}
+                    </Paragraph>
+                    <Paragraph style={styles.meetupPeople}>
+                      👥 {post.meetupDetails.currentPeople}/{post.meetupDetails.maxPeople} people
+                    </Paragraph>
                     <Button
-                      mode="contained"
+                      mode="outlined"
                       onPress={() => handleJoinMeetup(post.id)}
                       disabled={post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople}
                       style={styles.joinButton}
-                      contentStyle={styles.joinButtonContent}
-                      labelStyle={styles.joinButtonLabel}
                     >
-                      {post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople 
-                        ? 'Full' 
-                        : 'Join Meetup'
-                      }
+                      {post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople ? 'Full' : 'Join Meetup'}
                     </Button>
                   </Card.Content>
                 </Card>
               )}
 
-              {/* Modern Tags */}
-              <View style={styles.postTags}>
-                {post.tags.map((tag, index) => (
-                  <Chip key={index} style={styles.tagChip} textStyle={styles.tagText}>
-                    #{tag}
-                  </Chip>
-                ))}
-              </View>
-
               <Divider style={styles.divider} />
 
-              {/* Enhanced Action Buttons */}
               <View style={styles.postActions}>
                 <Button
                   mode="text"
                   onPress={() => handleLike(post.id)}
                   icon="heart"
-                  style={styles.actionButton}
                   labelStyle={styles.actionLabel}
                 >
                   {post.likes}
                 </Button>
                 <Button
                   mode="text"
-                  onPress={() => showToast('Comments feature coming soon!', 'info')}
                   icon="comment"
-                  style={styles.actionButton}
                   labelStyle={styles.actionLabel}
                 >
                   {post.comments}
                 </Button>
                 <Button
                   mode="text"
-                  onPress={() => showToast('Share feature coming soon!', 'info')}
                   icon="share"
-                  style={styles.actionButton}
                   labelStyle={styles.actionLabel}
                 >
                   Share
@@ -408,20 +419,6 @@ export const FeedScreen: React.FC = () => {
           </Card>
         ))}
       </ScrollView>
-
-      {/* Modern FAB */}
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => {
-          if (!user) {
-            showToast('Please sign in to create posts', 'info');
-          } else {
-            setModalVisible(true);
-          }
-        }}
-        color="#ffffff"
-      />
 
       {/* Enhanced Create Post Modal */}
       <Portal>
@@ -449,7 +446,7 @@ export const FeedScreen: React.FC = () => {
               {/* Enhanced Location Selection */}
               <Button
                 mode="outlined"
-                onPress={() => setLocationModalVisible(true)}
+                onPress={() => setLocationShareVisible(true)}
                 icon="map-marker"
                 style={styles.locationButton}
                 labelStyle={styles.locationButtonLabel}
@@ -475,18 +472,13 @@ export const FeedScreen: React.FC = () => {
                     onChangeText={(text) => setNewPost({ ...newPost, meetupTitle: text })}
                     style={styles.textInput}
                     mode="outlined"
-                    outlineColor="#e5e7eb"
-                    activeOutlineColor="#6366f1"
                   />
                   <TextInput
                     label="Date & Time"
                     value={newPost.meetupDate}
                     onChangeText={(text) => setNewPost({ ...newPost, meetupDate: text })}
-                    placeholder="e.g., Tomorrow, 2:00 PM"
                     style={styles.textInput}
                     mode="outlined"
-                    outlineColor="#e5e7eb"
-                    activeOutlineColor="#6366f1"
                   />
                   <TextInput
                     label="Location"
@@ -494,18 +486,14 @@ export const FeedScreen: React.FC = () => {
                     onChangeText={(text) => setNewPost({ ...newPost, meetupLocation: text })}
                     style={styles.textInput}
                     mode="outlined"
-                    outlineColor="#e5e7eb"
-                    activeOutlineColor="#6366f1"
                   />
                   <TextInput
                     label="Max People"
                     value={newPost.maxPeople.toString()}
                     onChangeText={(text) => setNewPost({ ...newPost, maxPeople: parseInt(text) || 4 })}
-                    keyboardType="numeric"
                     style={styles.textInput}
                     mode="outlined"
-                    outlineColor="#e5e7eb"
-                    activeOutlineColor="#6366f1"
+                    keyboardType="numeric"
                   />
                 </View>
               )}
@@ -515,17 +503,15 @@ export const FeedScreen: React.FC = () => {
                   mode="outlined"
                   onPress={() => setModalVisible(false)}
                   style={styles.modalButton}
-                  labelStyle={styles.modalButtonLabel}
                 >
                   Cancel
                 </Button>
                 <Button
                   mode="contained"
                   onPress={handleCreatePost}
-                  style={styles.modalButton}
-                  labelStyle={styles.modalButtonLabel}
+                  style={[styles.modalButton, styles.createButton]}
                 >
-                  Post
+                  Create Post
                 </Button>
               </View>
             </Card.Content>
@@ -533,44 +519,19 @@ export const FeedScreen: React.FC = () => {
         </Modal>
       </Portal>
 
-      {/* Enhanced Location Selection Modal */}
-      <Portal>
-        <Modal
-          visible={locationModalVisible}
-          onDismiss={() => setLocationModalVisible(false)}
-          contentContainerStyle={styles.modalContainer}
-        >
-          <Card style={styles.modalCard}>
-            <Card.Content>
-              <Title style={styles.modalTitle}>Choose Location</Title>
-              
-              <View style={styles.locationList}>
-                {popularLocations.map((location, index) => (
-                  <List.Item
-                    key={index}
-                    title={location.name}
-                    description={location.address}
-                    left={(props) => <List.Icon {...props} icon="map-marker" color="#6366f1" />}
-                    onPress={() => handleLocationSelect(location)}
-                    style={styles.locationItem}
-                    titleStyle={styles.locationItemTitle}
-                    descriptionStyle={styles.locationItemDescription}
-                  />
-                ))}
-              </View>
+      {/* Location Share Modal */}
+      <LocationShare
+        visible={locationShareVisible}
+        onDismiss={() => setLocationShareVisible(false)}
+        onLocationSelect={handleLocationSelect}
+        mode="select"
+      />
 
-              <Button
-                mode="outlined"
-                onPress={() => setLocationModalVisible(false)}
-                style={styles.modalButton}
-                labelStyle={styles.modalButtonLabel}
-              >
-                Cancel
-              </Button>
-            </Card.Content>
-          </Card>
-        </Modal>
-      </Portal>
+      <FAB
+        icon="plus"
+        style={styles.fab}
+        onPress={() => setModalVisible(true)}
+      />
 
       <Toast
         visible={toast.visible}
@@ -587,322 +548,179 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f8fafc',
   },
-  header: {
-    paddingTop: Platform.OS === 'web' ? 20 : 40,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: '#ffffff',
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-    position: 'relative',
-  },
-  headerContent: {
-    position: 'relative',
-    zIndex: 2,
-  },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#1e293b',
-    marginBottom: 4,
-    letterSpacing: -0.5,
-  },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#64748b',
-    fontWeight: '500',
-  },
-  headerDecoration: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    opacity: 0.05,
-    borderRadius: 20,
-  },
   scrollView: {
     flex: 1,
   },
-  postCard: {
-    marginHorizontal: 20,
-    marginBottom: 20,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 20,
-    borderRadius: 20,
+  guestCard: {
+    margin: 16,
+    borderRadius: 12,
+    backgroundColor: '#6366f1',
+  },
+  guestTitle: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  guestSubtitle: {
+    color: '#ffffff',
+    textAlign: 'center',
+    marginTop: 8,
+    opacity: 0.9,
+  },
+  guestButton: {
+    marginTop: 16,
     backgroundColor: '#ffffff',
   },
-  postContent: {
-    padding: 0,
+  postCard: {
+    margin: 16,
+    marginBottom: 8,
+    borderRadius: 12,
+    elevation: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
   },
   postHeader: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingTop: 20,
-  },
-  userAvatar: {
-    marginRight: 16,
-    borderWidth: 2,
-    borderColor: '#f1f5f9',
-  },
-  postInfo: {
-    flex: 1,
-  },
-  userName: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1e293b',
-    marginBottom: 4,
-  },
-  postMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  postMetaText: {
-    fontSize: 14,
-    color: '#64748b',
-    marginLeft: -8,
-    fontWeight: '500',
-  },
-  postText: {
-    fontSize: 16,
-    lineHeight: 26,
-    marginBottom: 20,
-    color: '#334155',
-    paddingHorizontal: 20,
-    fontWeight: '400',
-  },
-  locationCard: {
-    backgroundColor: '#f8fafc',
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 16,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-  },
-  locationCardContent: {
-    padding: 20,
-  },
-  locationHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  locationIcon: {
-    marginRight: 12,
-  },
-  locationInfo: {
-    flex: 1,
-  },
-  locationTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: '#1e293b',
-    marginBottom: 4,
-  },
-  locationAddress: {
-    fontSize: 14,
-    color: '#64748b',
-    fontWeight: '500',
-  },
-  mapButton: {
-    borderRadius: 12,
-    borderColor: '#6366f1',
-    borderWidth: 1.5,
-  },
-  mapButtonLabel: {
-    color: '#6366f1',
-    fontWeight: '600',
-  },
-  meetupCard: {
-    backgroundColor: '#eef2ff',
-    marginHorizontal: 20,
-    marginBottom: 20,
-    borderRadius: 16,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 10,
-  },
-  meetupCardContent: {
-    padding: 20,
-  },
-  meetupHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  meetupIcon: {
-    marginRight: 12,
-  },
-  meetupTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#1e293b',
-  },
-  meetupDetails: {
-    marginBottom: 20,
-  },
-  meetupDetailRow: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 12,
   },
-  meetupDetailText: {
-    fontSize: 14,
-    color: '#475569',
-    marginLeft: -8,
-    fontWeight: '500',
-  },
-  joinButton: {
-    borderRadius: 12,
-    backgroundColor: '#6366f1',
-  },
-  joinButtonContent: {
-    paddingVertical: 8,
-  },
-  joinButtonLabel: {
-    fontWeight: '600',
-  },
-  postTags: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 20,
-    paddingHorizontal: 20,
-  },
-  tagChip: {
-    marginRight: 8,
-    marginBottom: 8,
-    backgroundColor: '#f1f5f9',
-    borderRadius: 20,
-    borderWidth: 0,
-  },
-  tagText: {
-    fontSize: 12,
-    color: '#475569',
-    fontWeight: '600',
-  },
-  divider: {
-    marginVertical: 16,
-    backgroundColor: '#e2e8f0',
-    height: 1,
-  },
-  postActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingTop: 8,
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  actionButton: {
+  postHeaderInfo: {
+    marginLeft: 12,
     flex: 1,
-    borderRadius: 12,
   },
-  actionLabel: {
-    fontSize: 14,
-    color: '#64748b',
-    fontWeight: '600',
-  },
-  fab: {
-    position: 'absolute',
-    margin: 20,
-    right: 0,
-    bottom: 0,
-    backgroundColor: '#6366f1',
-    borderRadius: 28,
-    elevation: 8,
-    shadowColor: '#6366f1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-  },
-  modalCard: {
-    maxHeight: '80%',
-    borderRadius: 20,
-    elevation: 0,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 30,
-  },
-  modalTitle: {
-    marginBottom: 24,
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1e293b',
-  },
-  textInput: {
-    marginBottom: 16,
-    backgroundColor: '#ffffff',
-  },
-  locationButton: {
-    marginBottom: 16,
-    borderRadius: 12,
-    borderColor: '#e5e7eb',
-    borderWidth: 1.5,
-  },
-  locationButtonLabel: {
-    color: '#6366f1',
-    fontWeight: '600',
-  },
-  toggleButton: {
-    marginBottom: 16,
-    borderRadius: 12,
-    borderColor: '#e5e7eb',
-    borderWidth: 1.5,
-  },
-  toggleButtonLabel: {
-    color: '#6366f1',
-    fontWeight: '600',
-  },
-  meetupForm: {
-    marginBottom: 24,
-  },
-  modalActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 12,
-  },
-  modalButton: {
-    flex: 1,
-    borderRadius: 12,
-  },
-  modalButtonLabel: {
-    fontWeight: '600',
-  },
-  locationList: {
-    marginBottom: 24,
-  },
-  locationItem: {
-    borderRadius: 12,
-    marginBottom: 8,
-    backgroundColor: '#f8fafc',
-  },
-  locationItemTitle: {
+  postAuthor: {
     fontSize: 16,
     fontWeight: '600',
     color: '#1e293b',
   },
-  locationItemDescription: {
+  postMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+  postTime: {
+    fontSize: 12,
+    color: '#64748b',
+    marginRight: 8,
+  },
+  postLocation: {
+    fontSize: 12,
+    color: '#6366f1',
+    fontWeight: '500',
+  },
+  postContent: {
+    fontSize: 16,
+    lineHeight: 24,
+    color: '#1e293b',
+    marginBottom: 12,
+  },
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginBottom: 12,
+  },
+  tag: {
+    marginRight: 8,
+    marginBottom: 4,
+    backgroundColor: '#f1f5f9',
+  },
+  tagText: {
+    fontSize: 12,
+    color: '#6366f1',
+  },
+  meetupCard: {
+    backgroundColor: '#f8fafc',
+    marginBottom: 12,
+    borderRadius: 8,
+  },
+  meetupTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#1e293b',
+    marginBottom: 8,
+  },
+  meetupDetails: {
     fontSize: 14,
     color: '#64748b',
+    marginBottom: 4,
+  },
+  meetupPeople: {
+    fontSize: 14,
+    color: '#64748b',
+    marginBottom: 12,
+  },
+  joinButton: {
+    borderColor: '#6366f1',
+  },
+  divider: {
+    marginVertical: 12,
+  },
+  postActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  actionLabel: {
+    fontSize: 14,
+    color: '#64748b',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor: '#6366f1',
+  },
+  modalContainer: {
+    margin: 20,
+    maxHeight: '90%',
+  },
+  modalCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    maxHeight: '100%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1e293b',
+    marginBottom: 16,
+  },
+  textInput: {
+    marginBottom: 12,
+  },
+  locationButton: {
+    marginBottom: 12,
+    borderColor: '#6366f1',
+  },
+  locationButtonLabel: {
+    color: '#6366f1',
+  },
+  toggleButton: {
+    marginBottom: 12,
+    borderColor: '#6366f1',
+  },
+  toggleButtonLabel: {
+    color: '#6366f1',
+  },
+  meetupForm: {
+    marginTop: 12,
+    padding: 12,
+    backgroundColor: '#f8fafc',
+    borderRadius: 8,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 16,
+  },
+  modalButton: {
+    flex: 1,
+    marginHorizontal: 4,
+  },
+  createButton: {
+    backgroundColor: '#6366f1',
   },
 });

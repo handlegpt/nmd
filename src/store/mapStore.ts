@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { User, Location as LocationType, MapState } from '../types';
 import * as ExpoLocation from 'expo-location';
 import { useAuthStore } from './authStore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface MapStore extends MapState {
   getCurrentLocation: () => Promise<void>;
@@ -13,18 +14,64 @@ interface MapStore extends MapState {
   startLocationTracking: () => void;
   stopLocationTracking: () => void;
   updateLocationInterval: (interval: number) => void;
+  // New location sharing features
+  locationHistory: LocationHistory[];
+  addToLocationHistory: (location: LocationHistory) => Promise<void>;
+  getLocationHistory: () => Promise<LocationHistory[]>;
+  clearLocationHistory: () => Promise<void>;
+  shareSettings: ShareSettings;
+  updateShareSettings: (settings: Partial<ShareSettings>) => void;
+  startRealTimeSharing: () => void;
+  stopRealTimeSharing: () => void;
+  isRealTimeSharing: boolean;
+}
+
+interface LocationHistory {
+  id: string;
+  name: string;
+  address: string;
+  coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  timestamp: number;
+  isCurrent: boolean;
+  sharedWith: string[];
+  privacyLevel: 'private' | 'friends' | 'public';
+}
+
+interface ShareSettings {
+  shareRealTime: boolean;
+  sharePreciseLocation: boolean;
+  shareWithFriends: boolean;
+  shareWithPublic: boolean;
+  autoShare: boolean;
+  locationUpdateInterval: number; // in minutes
+  privacyLevel: 'private' | 'friends' | 'public';
 }
 
 let locationSubscription: ExpoLocation.LocationSubscription | null = null;
 let locationUpdateInterval: NodeJS.Timeout | null = null;
+let realTimeSharingInterval: NodeJS.Timeout | null = null;
 
 export const useMapStore = create<MapStore>((set, get) => ({
   currentLocation: null,
   nearbyUsers: [],
   selectedUser: null,
   loading: false,
+  locationHistory: [],
+  isRealTimeSharing: false,
+  shareSettings: {
+    shareRealTime: false,
+    sharePreciseLocation: true,
+    shareWithFriends: true,
+    shareWithPublic: false,
+    autoShare: false,
+    locationUpdateInterval: 5,
+    privacyLevel: 'friends',
+  },
 
-  // Get current user location
+  // Get current user location with enhanced accuracy
   getCurrentLocation: async () => {
     set({ loading: true });
     try {
@@ -33,8 +80,15 @@ export const useMapStore = create<MapStore>((set, get) => ({
         throw new Error('Location permission required');
       }
 
+      const { shareSettings } = get();
+      const accuracy = shareSettings.sharePreciseLocation 
+        ? ExpoLocation.Accuracy.High 
+        : ExpoLocation.Accuracy.Balanced;
+
       const location = await ExpoLocation.getCurrentPositionAsync({
-        accuracy: ExpoLocation.Accuracy.High,
+        accuracy,
+        timeInterval: 10000, // 10 seconds
+        distanceInterval: 10, // 10 meters
       });
       
       const currentLocation: LocationType = {
@@ -50,6 +104,20 @@ export const useMapStore = create<MapStore>((set, get) => ({
       const { user } = useAuthStore.getState();
       if (user) {
         await get().updateLocation(currentLocation);
+        
+        // Add to location history
+        const historyItem: LocationHistory = {
+          id: `current_${Date.now()}`,
+          name: 'Current Location',
+          address: `${currentLocation.city}, ${currentLocation.country}`,
+          coordinates: { latitude: currentLocation.latitude, longitude: currentLocation.longitude },
+          timestamp: Date.now(),
+          isCurrent: true,
+          sharedWith: [],
+          privacyLevel: get().shareSettings.privacyLevel,
+        };
+        
+        await get().addToLocationHistory(historyItem);
       }
     } catch (error) {
       console.error('Get location error:', error);
@@ -59,11 +127,19 @@ export const useMapStore = create<MapStore>((set, get) => ({
     }
   },
 
-  // Update location in database
+  // Update location in database with privacy controls
   updateLocation: async (location: LocationType) => {
     try {
       const { user } = useAuthStore.getState();
       if (!user) return;
+
+      const { shareSettings } = get();
+      
+      // Only update if sharing is enabled
+      if (!shareSettings.shareWithFriends && !shareSettings.shareWithPublic) {
+        console.log('Location sharing disabled');
+        return;
+      }
 
       const { error } = await supabase
         .from('user_locations')
@@ -73,6 +149,8 @@ export const useMapStore = create<MapStore>((set, get) => ({
           longitude: location.longitude,
           city: location.city,
           country: location.country,
+          privacy_level: shareSettings.privacyLevel,
+          shared_at: new Date().toISOString(),
         });
 
       if (error) {
@@ -83,7 +161,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
     }
   },
 
-  // Fetch nearby users
+  // Fetch nearby users with privacy filtering
   fetchNearbyUsers: async (latitude: number, longitude: number, radius: number) => {
     try {
       const { data: users, error } = await supabase
@@ -94,7 +172,9 @@ export const useMapStore = create<MapStore>((set, get) => ({
             latitude,
             longitude,
             city,
-            country
+            country,
+            privacy_level,
+            shared_at
           )
         `)
         .eq('is_visible', true);
@@ -104,7 +184,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
         return;
       }
 
-      // Filter users by distance
+      // Filter users by distance and privacy settings
       const nearbyUsers = users
         .filter(user => user.user_locations && user.user_locations.length > 0)
         .map(user => ({
@@ -112,6 +192,11 @@ export const useMapStore = create<MapStore>((set, get) => ({
           location: user.user_locations[0],
         }))
         .filter(user => {
+          // Check privacy level
+          const privacyLevel = user.location.privacy_level || 'friends';
+          if (privacyLevel === 'private') return false;
+          
+          // Calculate distance
           const distance = calculateDistance(
             latitude,
             longitude,
@@ -152,7 +237,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
     set({ loading });
   },
 
-  // Start location tracking
+  // Start location tracking with enhanced features
   startLocationTracking: () => {
     const updateLocation = async () => {
       try {
@@ -169,8 +254,11 @@ export const useMapStore = create<MapStore>((set, get) => ({
     // Initial location update
     updateLocation();
 
-    // Set up periodic location updates (every 5 minutes)
-    locationUpdateInterval = setInterval(updateLocation, 5 * 60 * 1000);
+    const { shareSettings } = get();
+    const interval = shareSettings.locationUpdateInterval * 60 * 1000; // Convert to milliseconds
+
+    // Set up periodic location updates
+    locationUpdateInterval = setInterval(updateLocation, interval);
   },
 
   // Stop location tracking
@@ -183,6 +271,11 @@ export const useMapStore = create<MapStore>((set, get) => ({
       locationSubscription.remove();
       locationSubscription = null;
     }
+    if (realTimeSharingInterval) {
+      clearInterval(realTimeSharingInterval);
+      realTimeSharingInterval = null;
+    }
+    set({ isRealTimeSharing: false });
   },
 
   // Update location tracking interval
@@ -205,26 +298,112 @@ export const useMapStore = create<MapStore>((set, get) => ({
     updateLocation();
 
     // Set up periodic location updates with new interval
-    locationUpdateInterval = setInterval(updateLocation, interval);
+    locationUpdateInterval = setInterval(updateLocation, interval * 60 * 1000);
+  },
+
+  // Location history management
+  addToLocationHistory: async (location: LocationHistory) => {
+    try {
+      const { locationHistory } = get();
+      const updatedHistory = [location, ...locationHistory.filter(item => !item.isCurrent)];
+      
+      // Keep only last 50 locations
+      const trimmedHistory = updatedHistory.slice(0, 50);
+      
+      set({ locationHistory: trimmedHistory });
+      
+      // Save to AsyncStorage
+      await AsyncStorage.setItem('location_history', JSON.stringify(trimmedHistory));
+    } catch (error) {
+      console.error('Error adding to location history:', error);
+    }
+  },
+
+  getLocationHistory: async () => {
+    try {
+      const history = await AsyncStorage.getItem('location_history');
+      if (history) {
+        const parsedHistory = JSON.parse(history);
+        set({ locationHistory: parsedHistory });
+        return parsedHistory;
+      }
+      return [];
+    } catch (error) {
+      console.error('Error getting location history:', error);
+      return [];
+    }
+  },
+
+  clearLocationHistory: async () => {
+    try {
+      await AsyncStorage.removeItem('location_history');
+      set({ locationHistory: [] });
+    } catch (error) {
+      console.error('Error clearing location history:', error);
+    }
+  },
+
+  // Share settings management
+  updateShareSettings: (settings: Partial<ShareSettings>) => {
+    const currentSettings = get().shareSettings;
+    const newSettings = { ...currentSettings, ...settings };
+    set({ shareSettings: newSettings });
+    
+    // Save settings to AsyncStorage
+    AsyncStorage.setItem('share_settings', JSON.stringify(newSettings));
+  },
+
+  // Real-time location sharing
+  startRealTimeSharing: () => {
+    const { shareSettings } = get();
+    
+    if (!shareSettings.shareRealTime) {
+      console.log('Real-time sharing not enabled');
+      return;
+    }
+
+    set({ isRealTimeSharing: true });
+
+    const shareLocation = async () => {
+      try {
+        await get().getCurrentLocation();
+        const { currentLocation } = get();
+        if (currentLocation) {
+          await get().updateLocation(currentLocation);
+        }
+      } catch (error) {
+        console.error('Real-time sharing error:', error);
+      }
+    };
+
+    // Share location every 30 seconds when real-time sharing is enabled
+    realTimeSharingInterval = setInterval(shareLocation, 30000);
+  },
+
+  stopRealTimeSharing: () => {
+    if (realTimeSharingInterval) {
+      clearInterval(realTimeSharingInterval);
+      realTimeSharingInterval = null;
+    }
+    set({ isRealTimeSharing: false });
   },
 }));
 
-// Calculate distance between two points
+// Calculate distance between two points using Haversine formula
 function calculateDistance(
   lat1: number,
   lon1: number,
   lat2: number,
   lon2: number
 ): number {
-  const R = 6371; // Earth's radius in kilometers
-  const dLat = (lat2 - lat1) * (Math.PI / 180);
-  const dLon = (lon2 - lon1) * (Math.PI / 180);
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+  const R = 6371; // Radius of the Earth in kilometers
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  const distance = R * c; // Distance in kilometers
+  return distance;
 } 
