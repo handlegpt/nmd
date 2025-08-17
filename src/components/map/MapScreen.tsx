@@ -510,10 +510,6 @@ const styles = StyleSheet.create({
     bottom: 0,
     backgroundColor: '#6366f1',
     borderRadius: 28,
-    elevation: 8,
-    shadowColor: '#6366f1',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 12,
+    ...shadowPresets.large,
   },
 }); 

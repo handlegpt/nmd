@@ -17,6 +17,7 @@ import {
 } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from '../../store/authStore';
+import { shadowPresets } from '../../utils/platformStyles';
 
 export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const { user, updateProfile, signOut } = useAuthStore();
@@ -267,7 +268,7 @@ const styles = StyleSheet.create({
   },
   card: {
     margin: 16,
-    elevation: 4,
+    ...shadowPresets.medium,
     borderRadius: 12,
   },
   header: {

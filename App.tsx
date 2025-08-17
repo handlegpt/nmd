@@ -9,6 +9,7 @@ import { supabase, isMockMode } from './src/lib/supabase';
 import { ErrorBoundary } from './src/components/common/ErrorBoundary';
 import { PerformanceMonitor } from './src/components/common/MobileOptimizations';
 import { useResponsive } from './src/utils/responsive';
+import './src/utils/cryptoPolyfill';
 
 export default function App() {
   const { setUser, setSession } = useAuthStore();

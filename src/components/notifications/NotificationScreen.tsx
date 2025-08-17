@@ -15,6 +15,7 @@ import {
   Button,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
+import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -338,7 +339,7 @@ const styles = StyleSheet.create({
   },
   notificationCard: {
     marginBottom: 8,
-    elevation: 2,
+    ...shadowPresets.small,
   },
   unreadCard: {
     backgroundColor: '#f0f8ff',
