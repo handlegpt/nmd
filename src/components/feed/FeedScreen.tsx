@@ -29,6 +29,7 @@ import { useAuthStore } from '../../store/authStore';
 import { LocationShare } from '../common/LocationShare';
 import { MediaPicker } from '../common/MediaPicker';
 import { PostEnhancer } from '../common/PostEnhancer';
+import { ResponsiveContainer } from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -338,7 +339,7 @@ export const FeedScreen: React.FC = () => {
 
   if (!user) {
     return (
-      <View style={styles.container}>
+      <ResponsiveContainer>
         <Card style={styles.guestCard}>
           <Card.Content>
             <Title style={styles.guestTitle}>Welcome to NomadNow!</Title>
@@ -452,12 +453,12 @@ export const FeedScreen: React.FC = () => {
             </Card>
           ))}
         </ScrollView>
-      </View>
+      </ResponsiveContainer>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <ResponsiveContainer>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {posts.map((post) => (
           <Card key={post.id} style={styles.postCard}>
@@ -692,7 +693,7 @@ export const FeedScreen: React.FC = () => {
         type={toast.type}
         onHide={hideToast}
       />
-    </View>
+    </ResponsiveContainer>
   );
 };
 

@@ -23,6 +23,7 @@ import {
 import { useMapStore } from '../../store/mapStore';
 import { useAuthStore } from '../../store/authStore';
 import { User } from '../../types';
+import { ResponsiveContainer } from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -167,7 +168,7 @@ export const MapScreen: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <ResponsiveContainer>
       {/* Header */}
       <Surface style={styles.header}>
         <View style={styles.headerContent}>
@@ -294,7 +295,7 @@ export const MapScreen: React.FC = () => {
         type={toast.type}
         onHide={hideToast}
       />
-    </View>
+    </ResponsiveContainer>
   );
 };
 
