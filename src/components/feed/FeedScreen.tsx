@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   StyleSheet,
@@ -31,9 +31,10 @@ import { LocationShare } from '../common/LocationShare';
 import { MediaPicker } from '../common/MediaPicker';
 import { PostEnhancer } from '../common/PostEnhancer';
 import { PlaceholderImage } from '../common/PlaceholderImage';
-import { ResponsiveContainer } from '../common/ResponsiveContainer';
+import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { debounce } from '../../utils/performance';
 
 const { width } = Dimensions.get('window');
 
@@ -77,11 +78,11 @@ interface Post {
   topic?: string;
 }
 
-export const FeedScreen: React.FC = () => {
+const FeedScreen: React.FC = () => {
   const { user } = useAuthStore();
-  const theme = useResponsive();
+  const { isPhone } = useResponsive();
 
-  const [posts, setPosts] = useState<Post[]>([
+  const [posts, setPosts] = useState<Post[]>(() => [
     {
       id: '1',
       userId: '1',
@@ -716,6 +717,8 @@ export const FeedScreen: React.FC = () => {
     </ResponsiveContainer>
   );
 };
+
+export default React.memo(FeedScreen);
 
 const styles = StyleSheet.create({
   container: {
