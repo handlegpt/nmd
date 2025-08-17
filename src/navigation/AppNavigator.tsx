@@ -33,9 +33,10 @@ const LoginPrompt = ({ navigation }: { navigation: any }) => (
     zIndex: 1000,
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
   }}>
-    <span>Sign in to access all features</span>
+    <span style={{ fontSize: '14px', fontWeight: '500' }}>Sign in to access all features</span>
     <button 
       onClick={() => navigation.navigate('Login')}
       style={{
@@ -45,7 +46,17 @@ const LoginPrompt = ({ navigation }: { navigation: any }) => (
         padding: '8px 16px',
         borderRadius: '4px',
         cursor: 'pointer',
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontSize: '14px',
+        transition: 'all 0.2s ease'
+      }}
+      onMouseOver={(e) => {
+        e.currentTarget.style.backgroundColor = '#f8fafc';
+        e.currentTarget.style.transform = 'translateY(-1px)';
+      }}
+      onMouseOut={(e) => {
+        e.currentTarget.style.backgroundColor = 'white';
+        e.currentTarget.style.transform = 'translateY(0)';
       }}
     >
       Sign In
@@ -61,7 +72,11 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
   return (
     <>
       {!user && <LoginPrompt navigation={navigation} />}
-      <Tab.Navigator
+      <div style={{ 
+        paddingTop: !user ? '60px' : '0px',
+        minHeight: '100vh'
+      }}>
+        <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
             let iconName: string;
@@ -142,6 +157,7 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
           }}
         />
       </Tab.Navigator>
+      </div>
     </>
   );
 };
