@@ -79,7 +79,6 @@ out
 .vuepress/dist
 
 # Security sensitive files
-*.sh
 *.bin
 *.out
 *.py
