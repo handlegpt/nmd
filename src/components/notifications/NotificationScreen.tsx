@@ -12,6 +12,7 @@ import {
   Chip,
   IconButton,
   Divider,
+  Button,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import Toast from '../common/Toast';
@@ -30,7 +31,32 @@ interface Notification {
 
 export const NotificationScreen: React.FC = () => {
   const { user } = useAuthStore();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([
+    {
+      id: '1',
+      type: 'activity',
+      title: 'New meetup invitation',
+      message: 'Alex invited you to join "Bali Digital Nomad Coffee Meetup"',
+      is_read: false,
+      created_at: '2 hours ago',
+    },
+    {
+      id: '2',
+      type: 'message',
+      title: 'New message from Sarah',
+      message: 'Hey! Are you still in Bali? Would love to meet up!',
+      is_read: true,
+      created_at: '1 day ago',
+    },
+    {
+      id: '3',
+      type: 'greeting',
+      title: 'New greeting from Mike',
+      message: 'Mike sent you a greeting',
+      is_read: false,
+      created_at: '2 days ago',
+    },
+  ]);
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
 
@@ -177,6 +203,57 @@ export const NotificationScreen: React.FC = () => {
     }
   };
 
+  // Handle mark as read
+  const handleMarkAsRead = (notificationId: string) => {
+    if (!user) {
+      showToast('Please sign in to manage notifications', 'info');
+      return;
+    }
+    
+    setNotifications(notifications.map(notification =>
+      notification.id === notificationId
+        ? { ...notification, is_read: true }
+        : notification
+    ));
+    showToast('Notification marked as read', 'success');
+  };
+
+  // Handle delete notification
+  const handleDeleteNotification = (notificationId: string) => {
+    if (!user) {
+      showToast('Please sign in to manage notifications', 'info');
+      return;
+    }
+    
+    setNotifications(notifications.filter(notification => notification.id !== notificationId));
+    showToast('Notification deleted', 'success');
+  };
+
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title style={styles.title}>Notifications</Title>
+            <Paragraph style={styles.subtitle}>
+              Sign in to view and manage your notifications
+            </Paragraph>
+            <Button 
+              mode="contained" 
+              onPress={() => {
+                // Navigate to login screen
+                console.log('Navigate to login');
+              }} 
+              style={styles.button}
+            >
+              Sign In
+            </Button>
+          </Card.Content>
+        </Card>
+      </View>
+    );
+  }
+
   // Render notification item
   const renderNotification = ({ item }: { item: Notification }) => (
     <Card style={[
@@ -294,6 +371,26 @@ const styles = StyleSheet.create({
   notificationActions: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  card: {
+    margin: 16,
+    padding: 20,
+    alignItems: 'center',
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  button: {
+    width: '100%',
+    paddingVertical: 10,
   },
 });
 

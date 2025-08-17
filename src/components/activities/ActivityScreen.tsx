@@ -146,6 +146,11 @@ export const ActivityScreen: React.FC = () => {
 
   // Handle join meetup
   const handleJoinMeetup = (meetupId: string) => {
+    if (!user) {
+      showToast('Please sign in to join meetups', 'info');
+      return;
+    }
+    
     setMeetups(meetups.map(meetup => {
       if (meetup.id === meetupId && meetup.currentParticipants < meetup.maxParticipants) {
         const newParticipant = {
@@ -166,6 +171,11 @@ export const ActivityScreen: React.FC = () => {
 
   // Handle leave meetup
   const handleLeaveMeetup = (meetupId: string) => {
+    if (!user) {
+      showToast('Please sign in to leave meetups', 'info');
+      return;
+    }
+    
     setMeetups(meetups.map(meetup => {
       if (meetup.id === meetupId) {
         return {
@@ -181,6 +191,11 @@ export const ActivityScreen: React.FC = () => {
 
   // Handle create meetup
   const handleCreateMeetup = () => {
+    if (!user) {
+      showToast('Please sign in to create meetups', 'info');
+      return;
+    }
+    
     if (!newMeetup.title.trim() || !newMeetup.description.trim() || !newMeetup.location.trim() || !newMeetup.date.trim() || !newMeetup.time.trim()) {
       showToast('Please fill in all fields', 'error');
       return;
@@ -330,11 +345,17 @@ export const ActivityScreen: React.FC = () => {
         ))}
       </ScrollView>
 
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => setModalVisible(true)}
-      />
+                        <FAB
+                    icon="plus"
+                    style={styles.fab}
+                    onPress={() => {
+                      if (!user) {
+                        showToast('Please sign in to create meetups', 'info');
+                      } else {
+                        setModalVisible(true);
+                      }
+                    }}
+                  />
 
       <Portal>
         <Modal

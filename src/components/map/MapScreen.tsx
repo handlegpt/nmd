@@ -69,6 +69,11 @@ export const MapScreen: React.FC = () => {
 
   // Handle greeting functionality
   const handleGreet = (user: User) => {
+    if (!useAuthStore.getState().user) {
+      showToast('Please sign in to greet users', 'info');
+      return;
+    }
+    
     if (Platform.OS === 'web') {
       // Web-specific greeting logic
       showToast(`Greeting sent to ${user.nickname}!`, 'success');
@@ -88,6 +93,10 @@ export const MapScreen: React.FC = () => {
 
   // Handle chat functionality
   const handleChat = (user: User) => {
+    if (!useAuthStore.getState().user) {
+      showToast('Please sign in to chat with users', 'info');
+      return;
+    }
     // Navigate to chat screen
     showToast(`Opening chat with ${user.nickname}...`, 'info');
   };

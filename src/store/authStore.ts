@@ -11,7 +11,7 @@ interface AuthStore extends AuthState {
   setLoading: (loading: boolean) => void;
 }
 
-// Default user data for immediate access
+// Default user data for when user signs in
 const defaultUser: User = {
   id: 'default-user-id',
   email: 'user@nomadnow.com',
@@ -29,8 +29,8 @@ const defaultUser: User = {
 };
 
 export const useAuthStore = create<AuthStore>((set, get) => ({
-  user: defaultUser, // Start with default user
-  session: { user: defaultUser },
+  user: null, // Start with no user (guest mode)
+  session: null,
   loading: false,
 
   // Sign in with email and password
@@ -71,7 +71,7 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     try {
       // Mock sign out
       await new Promise(resolve => setTimeout(resolve, 500));
-      set({ user: defaultUser, session: { user: defaultUser } });
+      set({ user: null, session: null });
     } catch (error) {
       console.error('Sign out error:', error);
       throw error;

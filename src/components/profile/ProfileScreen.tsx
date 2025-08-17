@@ -80,7 +80,24 @@ export const ProfileScreen: React.FC = () => {
   if (!user) {
     return (
       <View style={styles.container}>
-        <Paragraph>Please sign in first</Paragraph>
+        <Card style={styles.card}>
+          <Card.Content>
+            <Title style={styles.title}>Welcome to NomadNow</Title>
+            <Paragraph style={styles.subtitle}>
+              Sign in to access your profile and connect with fellow digital nomads
+            </Paragraph>
+            <Button 
+              mode="contained" 
+              onPress={() => {
+                // Navigate to login screen
+                console.log('Navigate to login');
+              }} 
+              style={styles.button}
+            >
+              Sign In
+            </Button>
+          </Card.Content>
+        </Card>
       </View>
     );
   }
@@ -320,5 +337,17 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     marginTop: 8,
+  },
+  title: {
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  subtitle: {
+    textAlign: 'center',
+    marginBottom: 20,
+    color: '#666',
+  },
+  button: {
+    marginTop: 10,
   },
 }); 

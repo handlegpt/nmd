@@ -204,6 +204,11 @@ export const FeedScreen: React.FC = () => {
 
   // Handle create post
   const handleCreatePost = () => {
+    if (!user) {
+      showToast('Please sign in to create posts', 'info');
+      return;
+    }
+
     if (!newPost.content.trim()) {
       showToast('Please write something to share', 'error');
       return;
@@ -280,7 +285,7 @@ export const FeedScreen: React.FC = () => {
                 </View>
               </View>
 
-              <Paragraph style={styles.postContent}>{post.content}</Paragraph>
+                                        <Paragraph style={styles.postText}>{post.content}</Paragraph>
 
               {/* Location Card */}
               {post.locationDetails && (
@@ -395,7 +400,13 @@ export const FeedScreen: React.FC = () => {
       <FAB
         icon="plus"
         style={styles.fab}
-        onPress={() => setModalVisible(true)}
+        onPress={() => {
+          if (!user) {
+            showToast('Please sign in to create posts', 'info');
+          } else {
+            setModalVisible(true);
+          }
+        }}
         color="#ffffff"
       />
 
@@ -609,7 +620,7 @@ const styles = StyleSheet.create({
     color: '#666',
     marginLeft: -8,
   },
-  postContent: {
+  postText: {
     fontSize: 16,
     lineHeight: 24,
     marginBottom: 16,
