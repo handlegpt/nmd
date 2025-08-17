@@ -5,8 +5,8 @@ import {
   Dimensions,
   Alert,
   Platform,
+  ScrollView,
 } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import {
   FAB,
   Card,
@@ -17,6 +17,7 @@ import {
   Button,
   IconButton,
   useTheme,
+  Divider,
 } from 'react-native-paper';
 import { useMapStore } from '../../store/mapStore';
 import { useAuthStore } from '../../store/authStore';
@@ -30,12 +31,6 @@ export const MapScreen: React.FC = () => {
   const { currentLocation, nearbyUsers, selectedUser, loading, getCurrentLocation, fetchNearbyUsers, setSelectedUser } = useMapStore();
   const { user } = useAuthStore();
   const theme = useTheme();
-  const [region, setRegion] = useState({
-    latitude: 39.9042, // Default to Beijing
-    longitude: 116.4074,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -58,13 +53,6 @@ export const MapScreen: React.FC = () => {
     try {
       await getCurrentLocation();
       if (currentLocation) {
-        const newRegion = {
-          latitude: currentLocation.latitude,
-          longitude: currentLocation.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        };
-        setRegion(newRegion);
         await fetchNearbyUsers(currentLocation.latitude, currentLocation.longitude, 10);
         showToast('Location updated successfully!', 'success');
       }
@@ -73,8 +61,8 @@ export const MapScreen: React.FC = () => {
     }
   };
 
-  // Handle marker press to show user details
-  const handleMarkerPress = (user: User) => {
+  // Handle user selection
+  const handleUserPress = (user: User) => {
     setSelectedUser(user);
   };
 
@@ -100,157 +88,158 @@ export const MapScreen: React.FC = () => {
   // Handle chat functionality
   const handleChat = (user: User) => {
     // Navigate to chat screen
-    showToast(`Opening chat with ${user.nickname}`, 'info');
+    showToast(`Opening chat with ${user.nickname}...`, 'info');
   };
 
   // Refresh nearby users
   const handleRefresh = async () => {
-    if (!currentLocation) {
-      showToast('Location not available. Please wait...', 'warning');
-      return;
-    }
-
     setIsRefreshing(true);
     try {
-      await fetchNearbyUsers(currentLocation.latitude, currentLocation.longitude, 10);
-      showToast('Nearby users refreshed!', 'success');
-    } catch (error) {
-      showToast('Failed to refresh nearby users', 'error');
+      await initializeMap();
     } finally {
       setIsRefreshing(false);
     }
   };
 
-  // Get user avatar or default
-  const getUserAvatar = (user: User) => {
-    return user.avatar_url || 'https://via.placeholder.com/50';
-  };
+  // Mock nearby users for demo
+  const mockNearbyUsers: User[] = [
+    {
+      id: '1',
+      email: 'alex@example.com',
+      nickname: 'Alex',
+      avatar_url: 'https://via.placeholder.com/60x60/4CAF50/ffffff?text=A',
+      bio: 'Full-stack developer from Berlin',
+      current_city: 'Bali, Indonesia',
+      languages: ['English', 'German'],
+      interests: ['Coding', 'Surfing', 'Coffee'],
+      is_visible: true,
+      is_available_for_meetup: true,
+      location: { latitude: -8.3405, longitude: 115.0920 },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: '2',
+      email: 'sarah@example.com',
+      nickname: 'Sarah',
+      avatar_url: 'https://via.placeholder.com/60x60/FF9800/ffffff?text=S',
+      bio: 'Digital nomad and yoga instructor',
+      current_city: 'Bali, Indonesia',
+      languages: ['English', 'Spanish'],
+      interests: ['Yoga', 'Travel', 'Photography'],
+      is_visible: true,
+      is_available_for_meetup: true,
+      location: { latitude: -8.3405, longitude: 115.0920 },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+    {
+      id: '3',
+      email: 'mike@example.com',
+      nickname: 'Mike',
+      avatar_url: 'https://via.placeholder.com/60x60/2196F3/ffffff?text=M',
+      bio: 'UX designer and coffee enthusiast',
+      current_city: 'Bali, Indonesia',
+      languages: ['English', 'French'],
+      interests: ['Design', 'Coffee', 'Music'],
+      is_visible: true,
+      is_available_for_meetup: true,
+      location: { latitude: -8.3405, longitude: 115.0920 },
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    },
+  ];
 
-  // Get distance from current location
-  const getDistance = (user: User) => {
-    if (!currentLocation || !user.location) return 'Unknown';
-    
-    const distance = Math.sqrt(
-      Math.pow(currentLocation.latitude - user.location.latitude, 2) +
-      Math.pow(currentLocation.longitude - user.location.longitude, 2)
-    ) * 111; // Rough conversion to km
-    
-    return distance < 1 ? `${Math.round(distance * 1000)}m` : `${Math.round(distance)}km`;
-  };
+  const displayUsers = nearbyUsers.length > 0 ? nearbyUsers : mockNearbyUsers;
+
+  if (loading) {
+    return <LoadingSpinner visible={true} message="Loading nearby nomads..." />;
+  }
 
   return (
     <View style={styles.container}>
-      <MapView
-        provider={PROVIDER_GOOGLE}
-        style={styles.map}
-        region={region}
-        onRegionChangeComplete={setRegion}
-        showsUserLocation
-        showsMyLocationButton
-        mapType="standard"
-        zoomEnabled
-        scrollEnabled
-        rotateEnabled
-        pitchEnabled
-      >
-        {/* Current user location marker */}
-        {currentLocation && (
-          <Marker
-            coordinate={{
-              latitude: currentLocation.latitude,
-              longitude: currentLocation.longitude,
-            }}
-            title="You are here"
-            description="Your current location"
-            pinColor="blue"
-          />
-        )}
-
-        {/* Nearby users markers */}
-        {nearbyUsers.map((user) => (
-          <Marker
-            key={user.id}
-            coordinate={{
-              latitude: user.location?.latitude || 0,
-              longitude: user.location?.longitude || 0,
-            }}
-            title={user.nickname}
-            description={user.current_city}
-            onPress={() => handleMarkerPress(user)}
-            pinColor="red"
-          />
-        ))}
-      </MapView>
-
-      {/* User details card */}
-      {selectedUser && (
-        <Card style={[styles.userCard, Platform.OS === 'web' && styles.webUserCard]}>
+      <ScrollView style={styles.scrollView}>
+        <Card style={styles.headerCard}>
           <Card.Content>
-            <View style={styles.userHeader}>
-              <Avatar.Image
-                size={50}
-                source={{ uri: getUserAvatar(selectedUser) }}
-              />
-              <View style={styles.userInfo}>
-                <Title>{selectedUser.nickname}</Title>
-                <Paragraph>{selectedUser.current_city}</Paragraph>
-                <Chip style={styles.distanceChip}>
-                  {getDistance(selectedUser)}
-                </Chip>
-              </View>
-              <IconButton
-                icon="close"
-                size={20}
-                onPress={() => setSelectedUser(null)}
-              />
-            </View>
-            
-            {selectedUser.bio && (
-              <Paragraph style={styles.bio}>{selectedUser.bio}</Paragraph>
-            )}
-
-            <View style={styles.userActions}>
-              <Button
-                mode="contained"
-                onPress={() => handleGreet(selectedUser)}
-                style={styles.actionButton}
-                icon="hand-wave"
-              >
-                Greet
-              </Button>
-              <Button
-                mode="outlined"
-                onPress={() => handleChat(selectedUser)}
-                style={styles.actionButton}
-                icon="message"
-              >
-                Chat
-              </Button>
+            <Title style={styles.title}>Discover Nearby Nomads</Title>
+            <Paragraph style={styles.subtitle}>
+              {currentLocation 
+                ? `You're in ${currentLocation.city}, ${currentLocation.country}`
+                : 'Location not available'
+              }
+            </Paragraph>
+            <View style={styles.statsContainer}>
+              <Chip icon="account-group" style={styles.statChip}>
+                {displayUsers.length} nomads nearby
+              </Chip>
+              <Chip icon="map-marker" style={styles.statChip}>
+                {currentLocation ? `${currentLocation.city}` : 'Unknown location'}
+              </Chip>
             </View>
           </Card.Content>
         </Card>
-      )}
 
-      {/* Refresh FAB */}
+        <View style={styles.usersContainer}>
+          {displayUsers.map((nomad) => (
+            <Card key={nomad.id} style={styles.userCard} onPress={() => handleUserPress(nomad)}>
+              <Card.Content>
+                <View style={styles.userHeader}>
+                  <Avatar.Image
+                    size={60}
+                    source={{ uri: nomad.avatar_url }}
+                  />
+                  <View style={styles.userInfo}>
+                    <Title style={styles.userName}>{nomad.nickname}</Title>
+                    <Paragraph style={styles.userBio}>{nomad.bio}</Paragraph>
+                    <View style={styles.userTags}>
+                      {nomad.interests.slice(0, 3).map((interest, index) => (
+                        <Chip key={index} style={styles.tagChip} textStyle={styles.tagText}>
+                          {interest}
+                        </Chip>
+                      ))}
+                    </View>
+                  </View>
+                </View>
+                
+                <Divider style={styles.divider} />
+                
+                <View style={styles.userActions}>
+                  <Button
+                    mode="outlined"
+                    onPress={() => handleGreet(nomad)}
+                    style={styles.actionButton}
+                    icon="hand-wave"
+                  >
+                    Greet
+                  </Button>
+                  <Button
+                    mode="contained"
+                    onPress={() => handleChat(nomad)}
+                    style={styles.actionButton}
+                    icon="chat"
+                  >
+                    Chat
+                  </Button>
+                </View>
+              </Card.Content>
+            </Card>
+          ))}
+        </View>
+      </ScrollView>
+
       <FAB
         icon="refresh"
-        style={[styles.fab, Platform.OS === 'web' && styles.webFab]}
+        style={styles.fab}
         onPress={handleRefresh}
         loading={isRefreshing}
-        disabled={loading || isRefreshing}
-        label={Platform.OS === 'web' ? 'Refresh' : undefined}
       />
 
-      {/* Toast for user feedback */}
       <Toast
         visible={toast.visible}
         message={toast.message}
         type={toast.type}
         onHide={hideToast}
       />
-
-      {/* Loading spinner */}
-      <LoadingSpinner visible={loading} message="Loading map..." />
     </View>
   );
 };
@@ -260,53 +249,79 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  map: {
+  scrollView: {
     flex: 1,
   },
-  userCard: {
-    position: 'absolute',
-    bottom: 80,
-    left: 16,
-    right: 16,
-    elevation: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.3,
-    shadowRadius: 4.65,
+  headerCard: {
+    margin: 16,
+    elevation: 4,
   },
-  webUserCard: {
-    maxWidth: 400,
-    left: '50%',
-    transform: [{ translateX: -200 }],
-    bottom: 100,
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 16,
+  },
+  statsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  statChip: {
+    marginRight: 8,
+  },
+  usersContainer: {
+    padding: 16,
+  },
+  userCard: {
+    marginBottom: 16,
+    elevation: 2,
   },
   userHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   userInfo: {
     flex: 1,
-    marginLeft: 12,
+    marginLeft: 16,
   },
-  distanceChip: {
-    alignSelf: 'flex-start',
-    marginTop: 4,
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 4,
   },
-  bio: {
-    marginBottom: 12,
-    fontStyle: 'italic',
+  userBio: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 8,
+  },
+  userTags: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 4,
+  },
+  tagChip: {
+    marginRight: 4,
+    marginBottom: 4,
+    backgroundColor: '#e3f2fd',
+  },
+  tagText: {
+    fontSize: 12,
+  },
+  divider: {
+    marginVertical: 12,
   },
   userActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    gap: 12,
   },
   actionButton: {
     flex: 1,
-    marginHorizontal: 4,
   },
   fab: {
     position: 'absolute',
@@ -314,10 +329,4 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
   },
-  webFab: {
-    right: 16,
-    bottom: 16,
-  },
-});
-
-export default MapScreen; 
+}); 
