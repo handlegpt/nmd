@@ -5,15 +5,12 @@ import * as SecureStore from 'expo-secure-store';
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('Missing Supabase environment variables:');
-  console.error('EXPO_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
-  console.error('EXPO_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing');
-  
-  // Show error in browser console
-  if (typeof window !== 'undefined') {
-    console.error('Please set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in your .env file');
-  }
+// Use mock mode if environment variables are not set
+const isMockMode = !supabaseUrl || !supabaseAnonKey;
+
+if (isMockMode) {
+  console.warn('Supabase environment variables not set. Running in mock mode.');
+  console.warn('To enable full functionality, set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY');
 }
 
 // Custom storage adapter for Expo SecureStore
@@ -31,8 +28,8 @@ const ExpoSecureStoreAdapter = {
 
 // Create Supabase client with fallback values
 export const supabase = createClient(
-  supabaseUrl || 'https://your-project.supabase.co',
-  supabaseAnonKey || 'your-anon-key',
+  supabaseUrl || 'https://mock.supabase.co',
+  supabaseAnonKey || 'mock-key',
   {
     auth: {
       storage: ExpoSecureStoreAdapter,
@@ -42,6 +39,9 @@ export const supabase = createClient(
     },
   }
 );
+
+// Export mock mode flag
+export { isMockMode };
 
 // Database schema SQL (execute in Supabase SQL editor)
 /*

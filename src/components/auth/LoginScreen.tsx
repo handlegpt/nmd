@@ -15,6 +15,7 @@ import {
   Paragraph,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
+import { isMockMode } from '../../lib/supabase';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -24,7 +25,7 @@ export const LoginScreen: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [nickname, setNickname] = useState('');
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
-  const { signIn, signUp, loading } = useAuthStore();
+  const { signIn, signUp, loading, setUser } = useAuthStore();
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -73,6 +74,32 @@ export const LoginScreen: React.FC = () => {
       console.error('Authentication error:', error);
       const errorMessage = error?.message || 'Authentication failed. Please try again.';
       showToast(errorMessage, 'error');
+    }
+  };
+
+  // Handle demo mode
+  const handleDemoMode = () => {
+    if (isMockMode) {
+      // Import mock user data
+      const mockUser = {
+        id: 'mock-user-id',
+        email: 'demo@nomadnow.com',
+        nickname: 'Demo Nomad',
+        avatar_url: 'https://via.placeholder.com/80x80/2196f3/ffffff?text=D',
+        bio: 'Digital nomad exploring the world!',
+        current_city: 'Bali, Indonesia',
+        languages: ['English', 'Spanish'],
+        interests: ['Coding', 'Travel', 'Coffee'],
+        is_visible: true,
+        is_available_for_meetup: true,
+        location: { latitude: -8.3405, longitude: 115.0920 },
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+      setUser(mockUser);
+      showToast('Welcome to NomadNow Demo!', 'success');
+    } else {
+      showToast('Demo mode only available when Supabase is not configured', 'info');
     }
   };
 
@@ -155,6 +182,16 @@ export const LoginScreen: React.FC = () => {
             >
               {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
             </Button>
+
+            {/* Demo mode button */}
+            <Button
+              mode="outlined"
+              onPress={handleDemoMode}
+              style={styles.demoButton}
+              disabled={loading}
+            >
+              {isMockMode ? 'Enter Demo Mode' : 'Demo Mode Unavailable'}
+            </Button>
           </Card.Content>
         </Card>
       </ScrollView>
@@ -213,6 +250,10 @@ const styles = StyleSheet.create({
   },
   toggleButton: {
     marginTop: 8,
+  },
+  demoButton: {
+    marginTop: 16,
+    paddingVertical: 8,
   },
 });
 
