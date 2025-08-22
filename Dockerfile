@@ -13,7 +13,7 @@ COPY package*.json ./
 # Install all dependencies (including dev dependencies for build)
 RUN npm ci && npm cache clean --force
 
-# Install Supabase client
+# Install Supabase client and fix package versions
 RUN npm install @supabase/supabase-js@^2.39.0
 
 # Copy source code
@@ -21,6 +21,12 @@ COPY . .
 
 # Install TypeScript and other required dependencies
 RUN npx expo install typescript@^5.3.0
+
+# Fix expo-camera version compatibility
+RUN npx expo install expo-camera@~14.1.3
+
+# Clean npm cache and verify installation
+RUN npm cache clean --force && npm ls expo-camera
 
 # Set production environment variables
 ENV NODE_ENV=production
