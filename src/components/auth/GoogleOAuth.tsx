@@ -60,6 +60,14 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   // Create auth request
   const [request, response, promptAsync] = AuthSession.useAuthRequest(googleConfig);
 
+  // Debug: Log request status
+  if (__DEV__) {
+    console.log('🔍 OAuth Request Status:', {
+      request: request ? 'Ready' : 'Loading',
+      response: response ? 'Received' : 'None',
+    });
+  }
+
   // Handle OAuth response
   useEffect(() => {
     if (response?.type === 'success') {
@@ -181,10 +189,22 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
       return;
     }
 
+    // Check if request is ready
+    if (!request) {
+      console.log('🔍 OAuth request not ready yet, waiting...');
+      Alert.alert(
+        'OAuth Not Ready',
+        'Please wait a moment and try again.',
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
+    }
+
     try {
       setIsLoading(true);
       console.log('🔍 Starting Google OAuth flow...');
       console.log('🔍 Redirect URI:', googleConfig.redirectUri);
+      console.log('🔍 Request ready:', !!request);
       
       const result = await promptAsync();
       console.log('🔍 OAuth result:', result);
@@ -196,6 +216,8 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     } catch (error) {
       console.error('🔍 Failed to start OAuth flow:', error);
       handleAuthError('Failed to start authentication');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -204,14 +226,15 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
       <Button
         mode="contained"
         onPress={handleLogin}
-        disabled={isLoading}
+        disabled={isLoading || !request}
         loading={isLoading}
         icon="google"
         style={styles.googleButton}
         contentStyle={styles.buttonContent}
         labelStyle={styles.buttonLabel}
       >
-        {isLoading ? 'Connecting to Google...' : 'Continue with Gmail'}
+        {isLoading ? 'Connecting to Google...' : 
+         !request ? 'Loading...' : 'Continue with Gmail'}
       </Button>
     </View>
   );
