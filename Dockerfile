@@ -13,11 +13,14 @@ COPY package*.json ./
 # Install all dependencies (including dev dependencies for build)
 RUN npm ci && npm cache clean --force
 
-# Install Supabase client and fix package versions
-RUN npm install @supabase/supabase-js@^2.39.0
+# Install Supabase client with compatible version
+RUN npm install @supabase/supabase-js@2.38.4
 
 # Fix Metro bundler compatibility issues
 RUN npm install --save-dev metro-config metro-resolver
+
+# Force reinstall to ensure proper module resolution
+RUN rm -rf node_modules/@supabase && npm install
 
 # Copy source code
 COPY . .
@@ -45,8 +48,8 @@ ENV EXPO_WEB_CACHE=true
 ENV EXPO_WEB_COMPRESS=true
 ENV EXPO_WEB_GZIP=true
 
-# Build the production web app
-RUN npm run build
+# Build the production web app with webpack
+RUN NODE_ENV=production npx expo export --platform web
 
 # Install serve for static file serving
 RUN npm install -g serve

@@ -9,7 +9,7 @@
     "web:prod": "npm run build",
     "android": "npx expo start --android",
     "ios": "npx expo start --ios",
-    "build": "NODE_ENV=production npx expo export",
+    "build": "NODE_ENV=production npx expo export --platform web",
     "export": "NODE_ENV=production npx expo export",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
@@ -53,7 +53,7 @@
     "expo-auth-session": "~5.4.0",
     "expo-crypto": "~12.8.0",
     "expo-web-browser": "~12.8.0",
-    "@supabase/supabase-js": "^2.39.0"
+    "@supabase/supabase-js": "2.38.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
