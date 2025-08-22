@@ -144,7 +144,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
       
       // Only update if sharing is enabled
       if (!shareSettings.shareWithFriends && !shareSettings.shareWithPublic) {
-        console.log('Location sharing disabled');
+        // Location sharing disabled (silent in production)
         return;
       }
 
@@ -365,7 +365,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
     const { shareSettings } = get();
     
     if (!shareSettings.shareRealTime) {
-      console.log('Real-time sharing not enabled');
+      // Real-time sharing not enabled (silent in production)
       return;
     }
 

@@ -57,7 +57,7 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
 
     // Here you would implement real email sending using the configured SMTP
     // For now, we'll simulate successful email sending
-    console.log(`📧 Email sent to ${email} with verification code: ${code}`);
+    // Email sent successfully (silent in production)
     return true;
 
   } catch (error) {

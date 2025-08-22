@@ -128,12 +128,12 @@ export class DatabaseService {
     // Try cache first
     const cachedPosts = await CacheService.getCachedPosts(page);
     if (cachedPosts) {
-      console.log('🔄 DatabaseService: Returning cached posts for page', page);
+              // Returning cached posts (silent in production)
       return cachedPosts;
     }
 
     try {
-      console.log('🔄 DatabaseService: Fetching posts from database for page', page);
+              // Fetching posts from database (silent in production)
       const { data, error } = await supabase
         .from('posts')
         .select(`
@@ -176,7 +176,7 @@ export class DatabaseService {
   // Comment operations
   static async createComment(commentData: Partial<Comment>): Promise<Comment | null> {
     try {
-      console.log('🔍 DatabaseService: Creating comment', commentData);
+              // Creating comment (silent in production)
       const { data, error } = await supabase
         .from('comments')
         .insert(commentData)
@@ -193,7 +193,7 @@ export class DatabaseService {
         await CacheService.invalidateCommentsCache(commentData.post_id);
       }
       
-      console.log('🔍 DatabaseService: Comment created successfully', data);
+              // Comment created successfully (silent in production)
       return data;
     } catch (error) {
       console.error('🔍 DatabaseService: Error creating comment:', error);
@@ -205,12 +205,12 @@ export class DatabaseService {
     // Try cache first
     const cachedComments = await CacheService.getCachedComments(postId);
     if (cachedComments) {
-      console.log('🔄 DatabaseService: Returning cached comments for post', postId);
+              // Returning cached comments (silent in production)
       return cachedComments;
     }
 
     try {
-      console.log('🔄 DatabaseService: Fetching comments from database for post', postId);
+              // Fetching comments from database (silent in production)
       const { data, error } = await supabase
         .from('comments')
         .select(`

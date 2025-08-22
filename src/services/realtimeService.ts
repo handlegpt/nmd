@@ -33,7 +33,7 @@ class RealtimeService {
   // Initialize realtime connections
   async initialize(userId?: string): Promise<void> {
     try {
-      console.log('🔄 RealtimeService: Initializing realtime connections');
+      // Initializing realtime connections (silent in production)
       
       // Subscribe to posts changes
       await this.subscribeToPostsChanges();
@@ -48,7 +48,7 @@ class RealtimeService {
       }
 
       this.isConnected = true;
-      console.log('✅ RealtimeService: Realtime connections established');
+              // Realtime connections established (silent in production)
     } catch (error) {
       console.error('❌ RealtimeService: Failed to initialize:', error);
     }
@@ -71,7 +71,7 @@ class RealtimeService {
           table: 'posts'
         },
         (payload) => {
-          console.log('🔄 RealtimeService: New post created', payload.new);
+          // New post created (silent in production)
           
           // Invalidate posts cache
           CacheService.invalidatePostsCache();
@@ -90,7 +90,7 @@ class RealtimeService {
           table: 'posts'
         },
         (payload) => {
-          console.log('🔄 RealtimeService: Post updated', payload.new);
+          // Post updated (silent in production)
           
           // Invalidate posts cache
           CacheService.invalidatePostsCache();
@@ -109,7 +109,7 @@ class RealtimeService {
           table: 'posts'
         },
         (payload) => {
-          console.log('🔄 RealtimeService: Post deleted', payload.old);
+          // Post deleted (silent in production)
           
           // Invalidate posts cache
           CacheService.invalidatePostsCache();
@@ -137,7 +137,7 @@ class RealtimeService {
           table: 'comments'
         },
         (payload) => {
-          console.log('🔄 RealtimeService: New comment created', payload.new);
+          // New comment created (silent in production)
           
           const comment = payload.new as Comment;
           
@@ -160,7 +160,7 @@ class RealtimeService {
           table: 'comments'
         },
         (payload) => {
-          console.log('🔄 RealtimeService: Comment updated', payload.new);
+          // Comment updated (silent in production)
           
           const comment = payload.new as Comment;
           
@@ -183,7 +183,7 @@ class RealtimeService {
           table: 'comments'
         },
         (payload) => {
-          console.log('🔄 RealtimeService: Comment deleted', payload.old);
+          // Comment deleted (silent in production)
           
           const oldComment = payload.old as Comment;
           
@@ -216,7 +216,7 @@ class RealtimeService {
           filter: `to_user_id=eq.${userId}`
         },
         (payload) => {
-          console.log('🔄 RealtimeService: New message received', payload.new);
+          // New message received (silent in production)
           
           const message = payload.new as Message;
           
@@ -237,17 +237,17 @@ class RealtimeService {
       .channel(`presence_${userId}`)
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState();
-        console.log('🔄 RealtimeService: Presence sync', state);
+        // Presence sync (silent in production)
       })
       .on('presence', { event: 'join' }, ({ key, newPresences }) => {
-        console.log('🔄 RealtimeService: User joined', key, newPresences);
+        // User joined (silent in production)
         
         if (this.eventHandlers.onUserOnline) {
           this.eventHandlers.onUserOnline(key);
         }
       })
       .on('presence', { event: 'leave' }, ({ key, leftPresences }) => {
-        console.log('🔄 RealtimeService: User left', key, leftPresences);
+        // User left (silent in production)
         
         if (this.eventHandlers.onUserOffline) {
           this.eventHandlers.onUserOffline(key);
@@ -286,7 +286,7 @@ class RealtimeService {
           filter: `post_id=eq.${postId}`
         },
         (payload) => {
-          console.log('🔄 RealtimeService: Post comment change', payload);
+          // Post comment change (silent in production)
           
           // Invalidate comments cache for this specific post
           CacheService.invalidateCommentsCache(postId);
@@ -314,7 +314,7 @@ class RealtimeService {
     if (channel) {
       await supabase.removeChannel(channel);
       this.channels.delete(channelName);
-      console.log('🔄 RealtimeService: Unsubscribed from post comments', postId);
+              // Unsubscribed from post comments (silent in production)
     }
   }
 
@@ -346,23 +346,23 @@ class RealtimeService {
 
   // Cleanup all connections
   async cleanup(): Promise<void> {
-    console.log('🔄 RealtimeService: Cleaning up realtime connections');
+          // Cleaning up realtime connections (silent in production)
     
     for (const [name, channel] of this.channels) {
       await supabase.removeChannel(channel);
-      console.log(`🔄 RealtimeService: Removed channel ${name}`);
+              // Removed channel (silent in production)
     }
     
     this.channels.clear();
     this.eventHandlers = {};
     this.isConnected = false;
     
-    console.log('✅ RealtimeService: Cleanup completed');
+          // Cleanup completed (silent in production)
   }
 
   // Reconnect all channels
   async reconnect(userId?: string): Promise<void> {
-    console.log('🔄 RealtimeService: Reconnecting...');
+          // Reconnecting (silent in production)
     await this.cleanup();
     await this.initialize(userId);
   }

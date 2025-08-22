@@ -34,20 +34,13 @@ export default function App() {
   const { isPhone } = useResponsive();
 
   useEffect(() => {
-    // Only log in development
-    if (__DEV__) {
-      console.log('Environment check:');
-      console.log('EXPO_PUBLIC_SUPABASE_URL:', process.env.EXPO_PUBLIC_SUPABASE_URL ? 'Set' : 'Missing');
-      console.log('EXPO_PUBLIC_SUPABASE_ANON_KEY:', process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ? 'Set' : 'Missing');
-    }
+    // Environment check (silent in production)
     
     // Listen for auth state changes
     if ('auth' in supabase) {
       const { data: { subscription } } = (supabase as any).auth.onAuthStateChange(
         async (event: any, session: any) => {
-          if (__DEV__) {
-            console.log('Auth state change:', event, session?.user?.id);
-          }
+          // Auth state change (silent in production)
           
           if (session?.user) {
             // Fetch user profile

@@ -167,11 +167,11 @@ const FeedScreen: React.FC = () => {
         topic: undefined,
       }));
 
-      console.log('🔍 FeedScreen: Loaded', transformedPosts.length, 'posts from database');
+      // Loaded posts from database (silent in production)
       
       // If no posts from database, use mock data
       if (transformedPosts.length === 0) {
-        console.log('🔍 FeedScreen: No posts in database, using mock data');
+        // No posts in database, using mock data (silent in production)
         setPosts([
           {
             id: '1',
@@ -346,7 +346,7 @@ const FeedScreen: React.FC = () => {
 
   // Load posts on component mount
   useEffect(() => {
-    console.log('🔍 FeedScreen: Loading posts...');
+    // Loading posts (silent in production)
     loadPosts();
   }, [loadPosts]);
 
@@ -388,31 +388,21 @@ const FeedScreen: React.FC = () => {
 
   // Handle add comment
   const handleAddComment = async () => {
-    console.log('🔍 handleAddComment called');
-    console.log('🔍 newComment:', newComment);
-    console.log('🔍 user:', user);
-    console.log('🔍 selectedPostId:', selectedPostId);
-    
     if (!newComment.trim()) {
-      console.log('🔍 Comment is empty');
       return;
     }
     
     if (!user) {
-      console.log('🔍 User not logged in');
       showToast('Please sign in to comment', 'warning');
       return;
     }
 
     try {
-      console.log('🔍 Creating comment...');
       const comment = await DatabaseService.createComment({
         post_id: selectedPostId,
         user_id: user.id,
         content: newComment.trim(),
       });
-
-      console.log('🔍 Comment created:', comment);
 
       if (comment) {
         setPosts(posts.map(post => {
@@ -436,7 +426,7 @@ const FeedScreen: React.FC = () => {
         }));
         setNewComment('');
         showToast('Comment added successfully!', 'success');
-        console.log('🔍 Comment added to UI');
+        // Comment added to UI (silent in production)
       }
     } catch (error) {
       console.error('🔍 Error adding comment:', error);
@@ -542,7 +532,7 @@ const FeedScreen: React.FC = () => {
   };
 
   if (loading) {
-    console.log('🔍 FeedScreen: Loading state, showing spinner');
+    // Loading state, showing spinner (silent in production)
     return (
       <ResponsiveContainer>
         <LoadingSpinner visible={true} />
@@ -550,7 +540,7 @@ const FeedScreen: React.FC = () => {
     );
   }
 
-  console.log('🔍 FeedScreen: Rendering with', posts.length, 'posts');
+      // Rendering with posts (silent in production)
 
   return (
     <ResponsiveContainer>

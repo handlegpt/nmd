@@ -48,25 +48,12 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     },
   };
 
-  // Debug: Log OAuth configuration
-  if (__DEV__) {
-    console.log('🔍 Google OAuth Config:', {
-      clientId: googleConfig.clientId ? 'Set' : 'Missing',
-      redirectUri: googleConfig.redirectUri,
-      hasClientSecret: !!process.env.EXPO_PUBLIC_GOOGLE_CLIENT_SECRET,
-    });
-  }
+  // OAuth configuration (silent in production)
 
   // Create auth request
   const [request, response, promptAsync] = AuthSession.useAuthRequest(googleConfig);
 
-  // Debug: Log request status
-  if (__DEV__) {
-    console.log('🔍 OAuth Request Status:', {
-      request: request ? 'Ready' : 'Loading',
-      response: response ? 'Received' : 'None',
-    });
-  }
+  // OAuth request status (silent in production)
 
   // Handle OAuth response
   useEffect(() => {
@@ -191,7 +178,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
     // Check if request is ready
     if (!request) {
-      console.log('🔍 OAuth request not ready yet, waiting...');
+      // OAuth request not ready yet (silent in production)
       Alert.alert(
         'OAuth Not Ready',
         'Please wait a moment and try again.',
@@ -202,12 +189,10 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
     try {
       setIsLoading(true);
-      console.log('🔍 Starting Google OAuth flow...');
-      console.log('🔍 Redirect URI:', googleConfig.redirectUri);
-      console.log('🔍 Request ready:', !!request);
+          // Starting Google OAuth flow (silent in production)
       
       const result = await promptAsync();
-      console.log('🔍 OAuth result:', result);
+      // OAuth result (silent in production)
       
       if (result.type === 'error') {
         console.error('🔍 OAuth error:', result.error);

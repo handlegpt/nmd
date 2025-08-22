@@ -110,7 +110,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
       }
       
       if (__DEV__) {
-        console.log('Performance Metrics:', metricsRef.current);
+        // Performance metrics (silent in production)
       }
     }, 5000);
 

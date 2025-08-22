@@ -185,7 +185,7 @@ export const LocationShare: React.FC<LocationShareProps> = ({
         settings: shareSettings,
       };
 
-      console.log('Sharing location:', shareData);
+      // Sharing location (silent in production)
       showToast('Location shared successfully!', 'success');
       
       // Add to history if not already there

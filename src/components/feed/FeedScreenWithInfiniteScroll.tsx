@@ -57,7 +57,7 @@ const FeedScreenWithInfiniteScroll: React.FC = () => {
   } = useInfiniteScroll({
     fetchFunction: async (page: number, limit: number) => {
       const offset = page * limit;
-      console.log('🔄 FeedScreen: Fetching page', page, 'offset', offset);
+      // Fetching page data (silent in production)
       const dbPosts = await DatabaseService.getPosts(limit, offset);
       
       // Transform database posts to match our interface

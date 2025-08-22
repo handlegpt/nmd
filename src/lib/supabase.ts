@@ -4,14 +4,7 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-// Debug: Log environment variables (only in development)
-if (__DEV__) {
-  console.log('🔍 Debug - Environment variables:');
-  console.log('EXPO_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
-  console.log('EXPO_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing');
-  console.log('URL value:', supabaseUrl);
-  console.log('Key starts with:', supabaseAnonKey?.substring(0, 20) + '...');
-}
+// Environment variables check (silent in production)
 
 // Check if Supabase credentials are configured
 const isSupabaseConfigured = supabaseUrl && supabaseAnonKey && 
@@ -31,7 +24,6 @@ if (!isSupabaseConfigured) {
 }
 
 // Create Supabase client
-console.log('🚀 Connecting to Supabase...');
 const supabase = createClient(supabaseUrl!, supabaseAnonKey!);
 
 export { supabase };

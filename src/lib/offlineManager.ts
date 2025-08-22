@@ -153,7 +153,7 @@ class OfflineManager {
   private async processAction(action: OfflineAction): Promise<void> {
     // This would typically make API calls to sync data
     // For now, we'll just log the action
-    console.log('Processing offline action:', action);
+    // Processing offline action (silent in production)
     
     // Example implementation:
     switch (action.type) {
