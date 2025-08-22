@@ -48,6 +48,15 @@ interface MediaItem {
   size: number;
 }
 
+interface Comment {
+  id: string;
+  userId: string;
+  userNickname: string;
+  userAvatar: string;
+  content: string;
+  createdAt: string;
+}
+
 interface Post {
   id: string;
   userId: string;
@@ -73,7 +82,7 @@ interface Post {
     currentPeople: number;
   };
   likes: number;
-  comments: number;
+  comments: Comment[];
   createdAt: string;
   tags: string[];
   emotion?: string;
@@ -101,7 +110,24 @@ const FeedScreen: React.FC = () => {
       media: [],
       isMeetupRequest: false,
       likes: 12,
-      comments: 3,
+      comments: [
+        {
+          id: '1',
+          userId: '2',
+          userNickname: 'Mike',
+          userAvatar: '',
+          content: 'Count me in! I\'ll bring my board 🏄‍♂️',
+          createdAt: '1 hour ago',
+        },
+        {
+          id: '2',
+          userId: '3',
+          userNickname: 'Emma',
+          userAvatar: '',
+          content: 'Sounds amazing! What time should we meet?',
+          createdAt: '30 minutes ago',
+        },
+      ],
       createdAt: '2 hours ago',
       tags: ['bali', 'surfing', 'beach'],
       emotion: 'excited',
@@ -129,7 +155,16 @@ const FeedScreen: React.FC = () => {
         currentPeople: 3,
       },
       likes: 8,
-      comments: 5,
+      comments: [
+        {
+          id: '3',
+          userId: '3',
+          userNickname: 'Emma',
+          userAvatar: '',
+          content: 'I\'ll be there! Looking forward to meeting everyone ☕️',
+          createdAt: '2 hours ago',
+        },
+      ],
       createdAt: '4 hours ago',
       tags: ['chiangmai', 'cafe', 'work'],
       emotion: 'productive',
@@ -150,7 +185,16 @@ const FeedScreen: React.FC = () => {
       media: [],
       isMeetupRequest: false,
       likes: 15,
-      comments: 2,
+      comments: [
+        {
+          id: '4',
+          userId: '1',
+          userNickname: 'Sarah',
+          userAvatar: '',
+          content: 'This looks incredible! What\'s the name of the place?',
+          createdAt: '1 hour ago',
+        },
+      ],
       createdAt: '6 hours ago',
       tags: ['bangkok', 'rooftop', 'sunset'],
       emotion: 'relaxed',
@@ -178,7 +222,24 @@ const FeedScreen: React.FC = () => {
         currentPeople: 6,
       },
       likes: 22,
-      comments: 8,
+      comments: [
+        {
+          id: '5',
+          userId: '1',
+          userNickname: 'Sarah',
+          userAvatar: '',
+          content: 'I\'d love to join! What\'s the tech stack you\'re working with?',
+          createdAt: '2 hours ago',
+        },
+        {
+          id: '6',
+          userId: '2',
+          userNickname: 'Mike',
+          userAvatar: '',
+          content: 'Great space! I\'ll definitely check it out next time I\'m in HCMC',
+          createdAt: '1 hour ago',
+        },
+      ],
       createdAt: '8 hours ago',
       tags: ['tech', 'coworking', 'networking'],
       emotion: 'productive',
@@ -188,6 +249,9 @@ const FeedScreen: React.FC = () => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [locationShareVisible, setLocationShareVisible] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [selectedPostId, setSelectedPostId] = useState<string>('');
+  const [newComment, setNewComment] = useState('');
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
   const [newPost, setNewPost] = useState({
     content: '',
@@ -227,6 +291,12 @@ const FeedScreen: React.FC = () => {
 
   // Handle join meetup
   const handleJoinMeetup = (postId: string) => {
+    if (!user) {
+      showToast('Please sign in to join meetups', 'warning');
+      (navigation as any).navigate('Login');
+      return;
+    }
+    
     setPosts(posts.map(post => {
       if (post.id === postId && post.meetupDetails) {
         return {
@@ -240,6 +310,49 @@ const FeedScreen: React.FC = () => {
       return post;
     }));
     showToast('Joined meetup!', 'success');
+  };
+
+  // Handle comment button click
+  const handleCommentClick = (postId: string) => {
+    if (!user) {
+      showToast('Please sign in to comment', 'warning');
+      (navigation as any).navigate('Login');
+      return;
+    }
+    
+    setSelectedPostId(postId);
+    setCommentModalVisible(true);
+  };
+
+  // Handle add comment
+  const handleAddComment = () => {
+    if (!newComment.trim()) {
+      showToast('Please enter a comment', 'warning');
+      return;
+    }
+
+    const comment: Comment = {
+      id: Date.now().toString(),
+      userId: user?.id || '',
+      userNickname: user?.nickname || 'Anonymous',
+      userAvatar: user?.avatar_url || '',
+      content: newComment,
+      createdAt: 'Just now',
+    };
+
+    setPosts(posts.map(post => {
+      if (post.id === selectedPostId) {
+        return {
+          ...post,
+          comments: [...post.comments, comment],
+        };
+      }
+      return post;
+    }));
+
+    setNewComment('');
+    setCommentModalVisible(false);
+    showToast('Comment added!', 'success');
   };
 
   // Handle location selection from LocationShare component
@@ -310,7 +423,7 @@ const FeedScreen: React.FC = () => {
         currentPeople: 1,
       } : undefined,
       likes: 0,
-      comments: 0,
+      comments: [],
       createdAt: 'Just now',
       tags: newPost.tags,
       emotion: newPost.emotion,
@@ -505,9 +618,10 @@ const FeedScreen: React.FC = () => {
                   <Button
                     mode="text"
                     icon="comment"
+                    onPress={() => handleCommentClick(post.id)}
                     labelStyle={styles.actionLabel}
                   >
-                    {post.comments}
+                    {post.comments.length}
                   </Button>
                   <Button
                     mode="text"
@@ -625,6 +739,48 @@ const FeedScreen: React.FC = () => {
           onLocationSelect={handleLocationSelect}
           mode="select"
         />
+
+        {/* Comment Modal */}
+        <Portal>
+          <Modal
+            visible={commentModalVisible}
+            onDismiss={() => setCommentModalVisible(false)}
+            contentContainerStyle={styles.modalContainer}
+          >
+            <Card style={styles.modalCard}>
+              <Card.Content>
+                <Title style={styles.modalTitle}>Add Comment</Title>
+                
+                <TextInput
+                  label="Write your comment..."
+                  value={newComment}
+                  onChangeText={setNewComment}
+                  mode="outlined"
+                  multiline
+                  numberOfLines={3}
+                  style={styles.textInput}
+                />
+
+                <View style={styles.modalActions}>
+                  <Button
+                    mode="outlined"
+                    onPress={() => setCommentModalVisible(false)}
+                    style={styles.modalButton}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    mode="contained"
+                    onPress={handleAddComment}
+                    style={[styles.modalButton, styles.createButton]}
+                  >
+                    Add Comment
+                  </Button>
+                </View>
+              </Card.Content>
+            </Card>
+          </Modal>
+        </Portal>
 
         <Toast
           visible={toast.visible}
