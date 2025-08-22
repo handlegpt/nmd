@@ -13,6 +13,9 @@ COPY package*.json ./
 # Install all dependencies (including dev dependencies for build)
 RUN npm ci && npm cache clean --force
 
+# Install Supabase client
+RUN npm install @supabase/supabase-js@^2.39.0
+
 # Copy source code
 COPY . .
 

@@ -12,7 +12,9 @@
     "build": "NODE_ENV=production npx expo export --web",
     "export": "NODE_ENV=production npx expo export --web",
     "test": "jest",
-    "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "verify-supabase": "node scripts/verify-supabase.js",
+    "test-db": "node scripts/test-database.js"
   },
   "dependencies": {
     "expo": "~50.0.0",
@@ -50,7 +52,8 @@
     "zustand": "^4.5.0",
     "expo-auth-session": "~5.4.0",
     "expo-crypto": "~12.8.0",
-    "expo-web-browser": "~12.8.0"
+    "expo-web-browser": "~12.8.0",
+    "@supabase/supabase-js": "^2.39.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

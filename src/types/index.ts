@@ -24,11 +24,53 @@ export interface Location {
   country: string;
 }
 
+export interface Post {
+  id: string;
+  user_id: string;
+  content: string;
+  media_urls?: string[];
+  location?: Location;
+  meetup_details?: {
+    title: string;
+    date_time: string;
+    location: Location;
+    max_participants: number;
+    current_participants: number;
+  };
+  likes: number;
+  comments: Comment[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Comment {
+  id: string;
+  post_id: string;
+  user_id: string;
+  content: string;
+  created_at: string;
+  user?: {
+    nickname: string;
+    avatar_url?: string;
+  };
+}
+
 export interface Message {
   id: string;
   from_user_id: string;
   to_user_id: string;
   content: string;
+  created_at: string;
+}
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  from_user_id?: string;
+  type: 'like' | 'comment' | 'message' | 'meetup_invite' | 'meetup_update';
+  title: string;
+  message: string;
+  is_read: boolean;
   created_at: string;
 }
 

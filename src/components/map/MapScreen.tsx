@@ -27,6 +27,7 @@ import ResponsiveContainer from '../common/ResponsiveContainer';
 import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { DatabaseService } from '../../services/databaseService';
 
 const { width, height } = Dimensions.get('window');
 
@@ -55,11 +56,23 @@ export const MapScreen: React.FC = () => {
   const initializeMap = async () => {
     try {
       await getCurrentLocation();
-      if (currentLocation) {
+      if (currentLocation && user) {
+        // Update user location in database
+        await DatabaseService.updateUserLocation(user.id, currentLocation);
+        
+        // Fetch nearby users from database
+        const nearbyUsersFromDB = await DatabaseService.getNearbyUsers(
+          currentLocation.latitude, 
+          currentLocation.longitude, 
+          10
+        );
+        
+        // Update local state with database results
         await fetchNearbyUsers(currentLocation.latitude, currentLocation.longitude, 10);
         showToast('Location updated successfully!', 'success');
       }
     } catch (error) {
+      console.error('Error initializing map:', error);
       showToast('Unable to get location. Please check permissions.', 'error');
     }
   };
@@ -70,37 +83,70 @@ export const MapScreen: React.FC = () => {
   };
 
   // Handle greeting functionality
-  const handleGreet = (user: User) => {
-    if (!useAuthStore.getState().user) {
+  const handleGreet = async (targetUser: User) => {
+    const currentUser = useAuthStore.getState().user;
+    if (!currentUser) {
       showToast('Please sign in to greet users', 'info');
       return;
     }
     
-    if (Platform.OS === 'web') {
-      // Web-specific greeting logic
-      showToast(`Greeting sent to ${user.nickname}!`, 'success');
-    } else {
-      Alert.alert(
-        'Greet User',
-        `Say hello to ${user.nickname}?`,
-        [
-          { text: 'Cancel', style: 'cancel' },
-          { text: 'OK', onPress: () => {
-            showToast(`Greeting sent to ${user.nickname}!`, 'success');
-          }},
-        ]
-      );
+    try {
+      // Create a notification for the greeted user
+      await DatabaseService.createNotification({
+        user_id: targetUser.id,
+        from_user_id: currentUser.id,
+        type: 'message',
+        title: 'New Greeting',
+        message: `${currentUser.nickname} sent you a greeting!`,
+        is_read: false,
+      });
+      
+      if (Platform.OS === 'web') {
+        // Web-specific greeting logic
+        showToast(`Greeting sent to ${targetUser.nickname}!`, 'success');
+      } else {
+        Alert.alert(
+          'Greet User',
+          `Say hello to ${targetUser.nickname}?`,
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'OK', onPress: () => {
+              showToast(`Greeting sent to ${targetUser.nickname}!`, 'success');
+            }},
+          ]
+        );
+      }
+    } catch (error) {
+      console.error('Error sending greeting:', error);
+      showToast('Failed to send greeting', 'error');
     }
   };
 
   // Handle chat functionality
-  const handleChat = (user: User) => {
-    if (!useAuthStore.getState().user) {
+  const handleChat = async (targetUser: User) => {
+    const currentUser = useAuthStore.getState().user;
+    if (!currentUser) {
       showToast('Please sign in to chat with users', 'info');
       return;
     }
-    // Navigate to chat screen
-    showToast(`Opening chat with ${user.nickname}...`, 'info');
+    
+    try {
+      // Create a notification for the user being chatted with
+      await DatabaseService.createNotification({
+        user_id: targetUser.id,
+        from_user_id: currentUser.id,
+        type: 'message',
+        title: 'New Message',
+        message: `${currentUser.nickname} wants to chat with you!`,
+        is_read: false,
+      });
+      
+      showToast(`Opening chat with ${targetUser.nickname}...`, 'info');
+      // TODO: Navigate to chat screen
+    } catch (error) {
+      console.error('Error opening chat:', error);
+      showToast('Failed to open chat', 'error');
+    }
   };
 
   // Refresh nearby users

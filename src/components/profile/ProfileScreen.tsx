@@ -20,6 +20,7 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from '../../store/authStore';
 import { shadowPresets } from '../../utils/platformStyles';
+import { DatabaseService } from '../../services/databaseService';
 
 export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const { user, updateProfile, signOut } = useAuthStore();
@@ -31,27 +32,68 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
   const [isAvailableForMeetup, setIsAvailableForMeetup] = useState(
     user?.is_available_for_meetup ?? true
   );
-  const [notificationCount, setNotificationCount] = useState(3); // Mock notification count
+  const [notificationCount, setNotificationCount] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  // Load notification count
+  const loadNotificationCount = async () => {
+    if (!user) return;
+    
+    try {
+      setLoading(true);
+      const notifications = await DatabaseService.getNotifications(user.id);
+      const unreadCount = notifications.filter(n => !n.is_read).length;
+      setNotificationCount(unreadCount);
+    } catch (error) {
+      console.error('Error loading notifications:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load notification count on component mount
+  React.useEffect(() => {
+    loadNotificationCount();
+  }, [user]);
 
   // Save profile changes
   const handleSave = async () => {
+    if (!user) return;
+    
     try {
-      await updateProfile({
+      // Update in database
+      const updatedUser = await DatabaseService.updateUser(user.id, {
         nickname,
         bio,
         current_city: currentCity,
         is_visible: isVisible,
         is_available_for_meetup: isAvailableForMeetup,
       });
-      setIsEditing(false);
-      Alert.alert('Success', 'Profile updated successfully');
+
+      if (updatedUser) {
+        // Update local state
+        await updateProfile({
+          nickname,
+          bio,
+          current_city: currentCity,
+          is_visible: isVisible,
+          is_available_for_meetup: isAvailableForMeetup,
+        });
+        setIsEditing(false);
+        Alert.alert('Success', 'Profile updated successfully');
+      } else {
+        Alert.alert('Error', 'Failed to update profile');
+      }
     } catch (error) {
+      console.error('Error updating profile:', error);
       Alert.alert('Error', 'Failed to update profile');
     }
   };
 
   // Handle image picker for avatar
   const handlePickImage = async () => {
+    if (!user) return;
+    
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -61,11 +103,31 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
       });
 
       if (!result.canceled && result.assets[0]) {
-        // TODO: Upload image to Supabase Storage
-        console.log('Selected image:', result.assets[0].uri);
+        // Create a file object from the image URI
+        const response = await fetch(result.assets[0].uri);
+        const blob = await response.blob();
+        const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+        
+        // Upload to database storage
+        const avatarUrl = await DatabaseService.uploadFile(file, `avatars/${user.id}/avatar.jpg`);
+        
+        if (avatarUrl) {
+          // Update user profile with new avatar URL
+          const updatedUser = await DatabaseService.updateUser(user.id, {
+            avatar_url: avatarUrl,
+          });
+          
+          if (updatedUser) {
+            await updateProfile({ avatar_url: avatarUrl });
+            Alert.alert('Success', 'Avatar updated successfully');
+          }
+        } else {
+          Alert.alert('Error', 'Failed to upload avatar');
+        }
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to select image');
+      console.error('Error uploading avatar:', error);
+      Alert.alert('Error', 'Failed to upload avatar');
     }
   };
 
@@ -145,7 +207,27 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
               <IconButton
                 icon="bell"
                 size={24}
-                onPress={() => Alert.alert('Notifications', 'You have 3 new notifications')}
+                onPress={async () => {
+                  if (!user) return;
+                  
+                  try {
+                    const notifications = await DatabaseService.getNotifications(user.id);
+                    const notificationList = notifications
+                      .slice(0, 5)
+                      .map(n => `${n.title}: ${n.message}`)
+                      .join('\n\n');
+                    
+                    Alert.alert(
+                      'Notifications', 
+                      notifications.length > 0 
+                        ? notificationList 
+                        : 'No notifications'
+                    );
+                  } catch (error) {
+                    console.error('Error loading notifications:', error);
+                    Alert.alert('Error', 'Failed to load notifications');
+                  }
+                }}
               />
               {notificationCount > 0 && (
                 <Badge

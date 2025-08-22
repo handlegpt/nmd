@@ -37,6 +37,7 @@ import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { debounce } from '../../utils/performance';
 import { useNavigation } from '@react-navigation/native';
+import { DatabaseService } from '../../services/databaseService';
 
 const { width } = Dimensions.get('window');
 
@@ -94,179 +95,14 @@ const FeedScreen: React.FC = () => {
   const { isPhone } = useResponsive();
   const navigation = useNavigation();
 
-  const [posts, setPosts] = useState<Post[]>(() => [
-    {
-      id: '1',
-      userId: '1',
-      userNickname: 'Sarah',
-      userAvatar: '',
-      content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session? 🏄‍♀️',
-      location: 'Canggu, Bali',
-      locationDetails: {
-        name: 'Canggu Beach',
-        address: 'Canggu, Bali, Indonesia',
-        coordinates: { latitude: -8.6500, longitude: 115.1333 },
-      },
-      media: [],
-      isMeetupRequest: false,
-      likes: 12,
-      comments: [
-        {
-          id: '1',
-          userId: '2',
-          userNickname: 'Mike',
-          userAvatar: '',
-          content: 'Count me in! I\'ll bring my board 🏄‍♂️',
-          createdAt: '1 hour ago',
-        },
-        {
-          id: '2',
-          userId: '3',
-          userNickname: 'Emma',
-          userAvatar: '',
-          content: 'Sounds amazing! What time should we meet?',
-          createdAt: '30 minutes ago',
-        },
-      ],
-      createdAt: '2 hours ago',
-      tags: ['bali', 'surfing', 'beach'],
-      emotion: 'excited',
-      topic: 'Travel',
-    },
-    {
-      id: '2',
-      userId: '2',
-      userNickname: 'Mike',
-      userAvatar: '',
-      content: 'Working from a cozy cafe in Chiang Mai. The coffee here is amazing and the wifi is super fast! ☕️',
-      location: 'Chiang Mai, Thailand',
-      locationDetails: {
-        name: 'Cafe Corner',
-        address: 'Nimman Road, Chiang Mai, Thailand',
-        coordinates: { latitude: 18.7883, longitude: 98.9853 },
-      },
-      media: [],
-      isMeetupRequest: true,
-      meetupDetails: {
-        title: 'Digital Nomad Meetup',
-        date: 'Tomorrow at 6 PM',
-        location: 'Cafe Corner, Nimman Road',
-        maxPeople: 8,
-        currentPeople: 3,
-      },
-      likes: 8,
-      comments: [
-        {
-          id: '3',
-          userId: '3',
-          userNickname: 'Emma',
-          userAvatar: '',
-          content: 'I\'ll be there! Looking forward to meeting everyone ☕️',
-          createdAt: '2 hours ago',
-        },
-      ],
-      createdAt: '4 hours ago',
-      tags: ['chiangmai', 'cafe', 'work'],
-      emotion: 'productive',
-      topic: 'Work',
-    },
-    {
-      id: '3',
-      userId: '3',
-      userNickname: 'Emma',
-      userAvatar: '',
-      content: 'Found this amazing rooftop bar in Bangkok with the best city views! Perfect for sunset drinks. 🌆',
-      location: 'Bangkok, Thailand',
-      locationDetails: {
-        name: 'Sky Bar',
-        address: 'Sukhumvit Road, Bangkok, Thailand',
-        coordinates: { latitude: 13.7563, longitude: 100.5018 },
-      },
-      media: [],
-      isMeetupRequest: false,
-      likes: 15,
-      comments: [
-        {
-          id: '4',
-          userId: '1',
-          userNickname: 'Sarah',
-          userAvatar: '',
-          content: 'This looks incredible! What\'s the name of the place?',
-          createdAt: '1 hour ago',
-        },
-      ],
-      createdAt: '6 hours ago',
-      tags: ['bangkok', 'rooftop', 'sunset'],
-      emotion: 'relaxed',
-      topic: 'Lifestyle',
-    },
-    {
-      id: '4',
-      userId: '4',
-      userNickname: 'Alex',
-      userAvatar: '',
-      content: 'Just finished a coding session at this amazing coworking space in Ho Chi Minh City. The energy here is incredible! 💻',
-      location: 'Ho Chi Minh City, Vietnam',
-      locationDetails: {
-        name: 'Saigon Coworking',
-        address: 'District 1, Ho Chi Minh City, Vietnam',
-        coordinates: { latitude: 10.8231, longitude: 106.6297 },
-      },
-      media: [],
-      isMeetupRequest: true,
-      meetupDetails: {
-        title: 'Tech Meetup & Networking',
-        date: 'This Friday at 7 PM',
-        location: 'Saigon Coworking, District 1',
-        maxPeople: 12,
-        currentPeople: 6,
-      },
-      likes: 22,
-      comments: [
-        {
-          id: '5',
-          userId: '1',
-          userNickname: 'Sarah',
-          userAvatar: '',
-          content: 'I\'d love to join! What\'s the tech stack you\'re working with?',
-          createdAt: '2 hours ago',
-        },
-        {
-          id: '6',
-          userId: '2',
-          userNickname: 'Mike',
-          userAvatar: '',
-          content: 'Great space! I\'ll definitely check it out next time I\'m in HCMC',
-          createdAt: '1 hour ago',
-        },
-      ],
-      createdAt: '8 hours ago',
-      tags: ['tech', 'coworking', 'networking'],
-      emotion: 'productive',
-      topic: 'Technology',
-    },
-  ]);
-
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [locationShareVisible, setLocationShareVisible] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string>('');
   const [newComment, setNewComment] = useState('');
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
-  const [newPost, setNewPost] = useState({
-    content: '',
-    isMeetupRequest: false,
-    meetupTitle: '',
-    meetupDate: '',
-    meetupLocation: '',
-    maxPeople: 4,
-    location: '',
-    locationDetails: null as any,
-    media: [] as MediaItem[],
-    tags: [] as string[],
-    emotion: '',
-    topic: '',
-  });
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -278,16 +114,155 @@ const FeedScreen: React.FC = () => {
     setToast({ visible: false, message: '', type: 'info' });
   };
 
-  // Handle like post
-  const handleLike = (postId: string) => {
-    setPosts(posts.map(post => {
-      if (post.id === postId) {
-        return { ...post, likes: post.likes + 1 };
-      }
-      return post;
-    }));
-    showToast('Post liked!', 'success');
-  };
+  // Load posts from database
+  const loadPosts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const dbPosts = await DatabaseService.getPosts(20, 0);
+      
+      // Transform database posts to match our interface
+      const transformedPosts: Post[] = dbPosts.map(dbPost => ({
+        id: dbPost.id,
+        userId: dbPost.user_id,
+        userNickname: dbPost.users?.nickname || 'Unknown User',
+        userAvatar: dbPost.users?.avatar_url || '',
+        content: dbPost.content,
+        location: dbPost.location?.city || 'Unknown Location',
+        locationDetails: dbPost.location ? {
+          name: dbPost.location.city,
+          address: `${dbPost.location.city}, ${dbPost.location.country}`,
+          coordinates: {
+            latitude: dbPost.location.latitude,
+            longitude: dbPost.location.longitude,
+          },
+        } : undefined,
+        media: dbPost.media_urls?.map((url, index) => ({
+          id: `${dbPost.id}-media-${index}`,
+          uri: url,
+          type: 'image' as const,
+          filename: `media-${index}.jpg`,
+          size: 0,
+        })) || [],
+        isMeetupRequest: !!dbPost.meetup_details,
+        meetupDetails: dbPost.meetup_details ? {
+          title: dbPost.meetup_details.title,
+          date: dbPost.meetup_details.date_time,
+          location: `${dbPost.meetup_details.location.city}, ${dbPost.meetup_details.location.country}`,
+          maxPeople: dbPost.meetup_details.max_participants,
+          currentPeople: dbPost.meetup_details.current_participants,
+        } : undefined,
+        likes: dbPost.likes,
+        comments: dbPost.comments?.map(comment => ({
+          id: comment.id,
+          userId: comment.user_id,
+          userNickname: comment.user?.nickname || 'Unknown User',
+          userAvatar: comment.user?.avatar_url || '',
+          content: comment.content,
+          createdAt: comment.created_at,
+        })) || [],
+        createdAt: dbPost.created_at,
+        tags: [], // TODO: Add tags support
+        emotion: undefined,
+        topic: undefined,
+      }));
+
+      setPosts(transformedPosts);
+    } catch (error) {
+      console.error('Error loading posts:', error);
+      // Fallback to mock data if database fails
+      setPosts([
+        {
+          id: '1',
+          userId: '1',
+          userNickname: 'Sarah',
+          userAvatar: '',
+          content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session? 🏄‍♀️',
+          location: 'Canggu, Bali',
+          locationDetails: {
+            name: 'Canggu Beach',
+            address: 'Canggu, Bali, Indonesia',
+            coordinates: { latitude: -8.6500, longitude: 115.1333 },
+          },
+          media: [],
+          isMeetupRequest: false,
+          likes: 12,
+          comments: [
+            {
+              id: '1',
+              userId: '2',
+              userNickname: 'Mike',
+              userAvatar: '',
+              content: 'Count me in! I\'ll bring my board 🏄‍♂️',
+              createdAt: '1 hour ago',
+            },
+            {
+              id: '2',
+              userId: '3',
+              userNickname: 'Emma',
+              userAvatar: '',
+              content: 'Sounds amazing! What time should we meet?',
+              createdAt: '30 minutes ago',
+            },
+          ],
+          createdAt: '2 hours ago',
+          tags: ['bali', 'surfing', 'beach'],
+          emotion: 'excited',
+          topic: 'Travel',
+        },
+        {
+          id: '2',
+          userId: '2',
+          userNickname: 'Mike',
+          userAvatar: '',
+          content: 'Working from a cozy cafe in Chiang Mai. The coffee here is amazing and the wifi is super fast! ☕️',
+          location: 'Chiang Mai, Thailand',
+          locationDetails: {
+            name: 'Cafe Corner',
+            address: 'Nimman Road, Chiang Mai, Thailand',
+            coordinates: { latitude: 18.7883, longitude: 98.9853 },
+          },
+          media: [],
+          isMeetupRequest: true,
+          meetupDetails: {
+            title: 'Digital Nomad Meetup',
+            date: 'Tomorrow at 6 PM',
+            location: 'Cafe Corner, Nimman Road',
+            maxPeople: 8,
+            currentPeople: 3,
+          },
+          likes: 8,
+          comments: [
+            {
+              id: '3',
+              userId: '3',
+              userNickname: 'Emma',
+              userAvatar: '',
+              content: 'I\'ll be there! Looking forward to meeting everyone ☕️',
+              createdAt: '2 hours ago',
+            },
+          ],
+          createdAt: '4 hours ago',
+          tags: ['chiangmai', 'cafe', 'work'],
+          emotion: 'productive',
+          topic: 'Work',
+        },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Load posts on component mount
+  useEffect(() => {
+    loadPosts();
+  }, [loadPosts]);
+
+  // Handle refresh
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadPosts();
+    setRefreshing(false);
+  }, [loadPosts]);
 
   // Handle join meetup
   const handleJoinMeetup = (postId: string) => {
@@ -309,332 +284,275 @@ const FeedScreen: React.FC = () => {
       }
       return post;
     }));
-    showToast('Joined meetup!', 'success');
+    showToast('Successfully joined the meetup!', 'success');
   };
 
-  // Handle comment button click
+  // Handle comment click
   const handleCommentClick = (postId: string) => {
-    if (!user) {
-      showToast('Please sign in to comment', 'warning');
-      (navigation as any).navigate('Login');
-      return;
-    }
-    
     setSelectedPostId(postId);
     setCommentModalVisible(true);
   };
 
   // Handle add comment
-  const handleAddComment = () => {
-    if (!newComment.trim()) {
-      showToast('Please enter a comment', 'warning');
-      return;
-    }
+  const handleAddComment = async () => {
+    if (!newComment.trim() || !user) return;
 
-    const comment: Comment = {
-      id: Date.now().toString(),
-      userId: user?.id || '',
-      userNickname: user?.nickname || 'Anonymous',
-      userAvatar: user?.avatar_url || '',
-      content: newComment,
-      createdAt: 'Just now',
-    };
+    try {
+      const comment = await DatabaseService.createComment({
+        post_id: selectedPostId,
+        user_id: user.id,
+        content: newComment.trim(),
+      });
 
-    setPosts(posts.map(post => {
-      if (post.id === selectedPostId) {
-        return {
-          ...post,
-          comments: [...post.comments, comment],
-        };
+      if (comment) {
+        setPosts(posts.map(post => {
+          if (post.id === selectedPostId) {
+            return {
+              ...post,
+              comments: [
+                ...post.comments,
+                {
+                  id: comment.id,
+                  userId: comment.user_id,
+                  userNickname: user.nickname,
+                  userAvatar: user.avatar_url || '',
+                  content: comment.content,
+                  createdAt: comment.created_at,
+                },
+              ],
+            };
+          }
+          return post;
+        }));
+        setNewComment('');
+        showToast('Comment added successfully!', 'success');
       }
-      return post;
-    }));
-
-    setNewComment('');
-    setCommentModalVisible(false);
-    showToast('Comment added!', 'success');
+    } catch (error) {
+      console.error('Error adding comment:', error);
+      showToast('Failed to add comment', 'error');
+    }
   };
 
-  // Handle location selection from LocationShare component
-  const handleLocationSelect = (location: any) => {
-    setNewPost({
-      ...newPost,
-      location: location.address,
-      locationDetails: location,
-    });
-    setLocationShareVisible(false);
-    showToast('Location selected!', 'success');
-  };
-
-  // Handle media selection
-  const handleMediaSelect = (media: MediaItem[]) => {
-    setNewPost({
-      ...newPost,
-      media,
-    });
-  };
-
-  // Handle tags change
-  const handleTagsChange = (tags: string[]) => {
-    setNewPost({
-      ...newPost,
-      tags,
-    });
-  };
-
-  // Handle emotion change
-  const handleEmotionChange = (emotion: string) => {
-    setNewPost({
-      ...newPost,
-      emotion,
-    });
-  };
-
-  // Handle topic change
-  const handleTopicChange = (topic: string) => {
-    setNewPost({
-      ...newPost,
-      topic,
-    });
+  // Handle like post
+  const handleLikePost = async (postId: string) => {
+    try {
+      const success = await DatabaseService.likePost(postId);
+      if (success) {
+        setPosts(posts.map(post => {
+          if (post.id === postId) {
+            return { ...post, likes: post.likes + 1 };
+          }
+          return post;
+        }));
+      }
+    } catch (error) {
+      console.error('Error liking post:', error);
+    }
   };
 
   // Handle create post
-  const handleCreatePost = () => {
-    if (!newPost.content.trim()) {
-      showToast('Please enter some content', 'warning');
-      return;
+  const handleCreatePost = async (postData: any) => {
+    if (!user) return;
+
+    try {
+      const newPost = await DatabaseService.createPost({
+        user_id: user.id,
+        content: postData.content,
+        media_urls: postData.media?.map((item: MediaItem) => item.uri) || [],
+        location: postData.locationDetails ? {
+          latitude: postData.locationDetails.coordinates.latitude,
+          longitude: postData.locationDetails.coordinates.longitude,
+          city: postData.locationDetails.name,
+          country: postData.locationDetails.address.split(', ').pop() || '',
+        } : undefined,
+        meetup_details: postData.isMeetupRequest ? {
+          title: postData.meetupDetails.title,
+          date_time: postData.meetupDetails.date,
+          location: {
+            latitude: postData.locationDetails?.coordinates?.latitude || 0,
+            longitude: postData.locationDetails?.coordinates?.longitude || 0,
+            city: postData.locationDetails?.name || '',
+            country: postData.locationDetails?.address?.split(', ').pop() || '',
+          },
+          max_participants: postData.meetupDetails.maxPeople,
+          current_participants: 1,
+        } : undefined,
+        likes: 0,
+        comments: [],
+      });
+
+      if (newPost) {
+        const transformedPost: Post = {
+          id: newPost.id,
+          userId: newPost.user_id,
+          userNickname: user.nickname,
+          userAvatar: user.avatar_url || '',
+          content: newPost.content,
+          location: newPost.location?.city || 'Unknown Location',
+          locationDetails: newPost.location ? {
+            name: newPost.location.city,
+            address: `${newPost.location.city}, ${newPost.location.country}`,
+            coordinates: {
+              latitude: newPost.location.latitude,
+              longitude: newPost.location.longitude,
+            },
+          } : undefined,
+          media: newPost.media_urls?.map((url, index) => ({
+            id: `${newPost.id}-media-${index}`,
+            uri: url,
+            type: 'image' as const,
+            filename: `media-${index}.jpg`,
+            size: 0,
+          })) || [],
+          isMeetupRequest: !!newPost.meetup_details,
+          meetupDetails: newPost.meetup_details ? {
+            title: newPost.meetup_details.title,
+            date: newPost.meetup_details.date_time,
+            location: `${newPost.meetup_details.location.city}, ${newPost.meetup_details.location.country}`,
+            maxPeople: newPost.meetup_details.max_participants,
+            currentPeople: newPost.meetup_details.current_participants,
+          } : undefined,
+          likes: newPost.likes,
+          comments: newPost.comments || [],
+          createdAt: newPost.created_at,
+          tags: [],
+          emotion: undefined,
+          topic: undefined,
+        };
+
+        setPosts([transformedPost, ...posts]);
+        setModalVisible(false);
+        showToast('Post created successfully!', 'success');
+      }
+    } catch (error) {
+      console.error('Error creating post:', error);
+      showToast('Failed to create post', 'error');
     }
-
-    const post: Post = {
-      id: Date.now().toString(),
-      userId: user?.id || '1',
-      userNickname: user?.nickname || 'Anonymous',
-      userAvatar: user?.avatar_url || '',
-      content: newPost.content,
-      location: newPost.location,
-      locationDetails: newPost.locationDetails,
-      media: newPost.media,
-      isMeetupRequest: newPost.isMeetupRequest,
-      meetupDetails: newPost.isMeetupRequest ? {
-        title: newPost.meetupTitle,
-        date: newPost.meetupDate,
-        location: newPost.meetupLocation,
-        maxPeople: newPost.maxPeople,
-        currentPeople: 1,
-      } : undefined,
-      likes: 0,
-      comments: [],
-      createdAt: 'Just now',
-      tags: newPost.tags,
-      emotion: newPost.emotion,
-      topic: newPost.topic,
-    };
-
-    setPosts([post, ...posts]);
-    setNewPost({
-      content: '',
-      isMeetupRequest: false,
-      meetupTitle: '',
-      meetupDate: '',
-      meetupLocation: '',
-      maxPeople: 4,
-      location: '',
-      locationDetails: null,
-      media: [],
-      tags: [],
-      emotion: '',
-      topic: '',
-    });
-    setModalVisible(false);
-    showToast('Post created successfully!', 'success');
   };
 
-  const renderMediaGrid = (media: MediaItem[]) => {
-    if (!media || media.length === 0) return null;
-
+  if (loading) {
     return (
-      <View style={styles.mediaGrid}>
-        {media.map((item, index) => (
-          <Surface key={item.id} style={styles.mediaItem}>
-            {item.uri ? (
-              <Image source={{ uri: item.uri }} style={styles.mediaImage} />
-            ) : (
-              <PlaceholderImage 
-                width={styles.mediaItem.width} 
-                height={styles.mediaItem.height}
-                text={item.filename || 'Media'}
-                backgroundColor="#f1f5f9"
-                textColor="#64748b"
-              />
-            )}
-            {item.type === 'video' && (
-              <View style={styles.videoOverlay}>
-                <IconButton icon="play" size={20} iconColor="#ffffff" />
-              </View>
-            )}
-          </Surface>
-        ))}
-      </View>
+      <ResponsiveContainer>
+        <LoadingSpinner visible={true} />
+      </ResponsiveContainer>
     );
-  };
-
-  const getEmotionEmoji = (emotion: string) => {
-    const emotionMap: Record<string, string> = {
-      happy: '😊',
-      excited: '🤩',
-      relaxed: '😌',
-      inspired: '✨',
-      grateful: '🙏',
-      adventurous: '🏔️',
-      productive: '💪',
-      creative: '🎨',
-    };
-    return emotionMap[emotion] || '';
-  };
+  }
 
   return (
-    <View style={styles.container}>
-      <ResponsiveContainer>
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-          {/* Guest Card for non-logged in users */}
-          {!user && (
-            <Card style={styles.guestCard}>
+    <ResponsiveContainer>
+      <View style={styles.container}>
+        <FlatList
+          data={posts}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <Card style={styles.postCard}>
               <Card.Content>
-                <Title style={styles.guestTitle}>Welcome to NomadNow! 🌍</Title>
-                <Paragraph style={styles.guestSubtitle}>
-                  Discover amazing digital nomads and connect with fellow travelers around the world
-                </Paragraph>
-                <Button
-                  mode="contained"
-                  onPress={() => (navigation as any).navigate('Login')}
-                  style={styles.guestButton}
-                  contentStyle={styles.guestButtonContent}
-                >
-                  Sign In to Start Sharing
-                </Button>
-              </Card.Content>
-            </Card>
-          )}
-
-          {/* Posts List */}
-          {posts.map((post) => (
-            <Card key={post.id} style={styles.postCard}>
-              <Card.Content>
-                {/* Post Header */}
                 <View style={styles.postHeader}>
-                  <Avatar.Text 
-                    size={48} 
-                    label={post.userNickname.charAt(0).toUpperCase()}
-                    style={{ backgroundColor: colors.primary }}
+                  <Avatar.Image
+                    size={40}
+                    source={item.userAvatar ? { uri: item.userAvatar } : undefined}
+                    style={styles.avatar}
                   />
-                  <View style={styles.postHeaderInfo}>
-                    <Text style={styles.postAuthor}>{post.userNickname}</Text>
-                    <View style={styles.postMeta}>
-                      <Text style={styles.postTime}>{post.createdAt}</Text>
-                      <Text style={styles.postLocation}>📍 {post.location}</Text>
-                      {post.emotion && (
-                        <Text style={styles.postEmotion}>
-                          {getEmotionEmoji(post.emotion)}
-                        </Text>
-                      )}
-                    </View>
+                  <View style={styles.userInfo}>
+                    <Title style={styles.userName}>{item.userNickname}</Title>
+                    <Paragraph style={styles.postMeta}>
+                      {item.location} • {item.createdAt}
+                    </Paragraph>
                   </View>
                 </View>
 
-                {/* Post Content */}
-                <Paragraph style={styles.postContent}>{post.content}</Paragraph>
+                <Paragraph style={styles.postContent}>{item.content}</Paragraph>
 
-                {/* Media Grid */}
-                {post.media && post.media.length > 0 && (
-                  <View style={styles.mediaGrid}>
-                    {post.media.map((media, index) => (
-                      <View key={index} style={styles.mediaItem}>
-                        <Image
-                          source={{ uri: media.uri }}
-                          style={styles.mediaImage}
-                          resizeMode="cover"
-                        />
-                      </View>
+                {item.media && item.media.length > 0 && (
+                  <View style={styles.mediaContainer}>
+                    {item.media.map((media) => (
+                      <Image
+                        key={media.id}
+                        source={{ uri: media.uri }}
+                        style={styles.mediaImage}
+                        resizeMode="cover"
+                      />
                     ))}
                   </View>
                 )}
 
-                {/* Meetup Card */}
-                {post.isMeetupRequest && post.meetupDetails && (
-                  <Card style={styles.meetupCard}>
-                    <Card.Content>
-                      <Title style={styles.meetupTitle}>{post.meetupDetails.title}</Title>
-                      <Paragraph style={styles.meetupDetails}>
-                        📅 {post.meetupDetails.date}
-                      </Paragraph>
-                      <Paragraph style={styles.meetupDetails}>
-                        📍 {post.meetupDetails.location}
-                      </Paragraph>
-                      <Paragraph style={styles.meetupPeople}>
-                        👥 {post.meetupDetails.currentPeople}/{post.meetupDetails.maxPeople} people
-                      </Paragraph>
-                      <Button
-                        mode="outlined"
-                        onPress={() => handleJoinMeetup(post.id)}
-                        disabled={post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople}
-                        style={styles.joinButton}
-                      >
-                        {post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople ? 'Full' : 'Join Meetup'}
-                      </Button>
-                    </Card.Content>
-                  </Card>
+                {item.isMeetupRequest && item.meetupDetails && (
+                  <Surface style={styles.meetupCard}>
+                    <Title style={styles.meetupTitle}>{item.meetupDetails.title}</Title>
+                    <Paragraph style={styles.meetupDetails}>
+                      📅 {item.meetupDetails.date}
+                    </Paragraph>
+                    <Paragraph style={styles.meetupDetails}>
+                      📍 {item.meetupDetails.location}
+                    </Paragraph>
+                    <Paragraph style={styles.meetupPeople}>
+                      👥 {item.meetupDetails.currentPeople}/{item.meetupDetails.maxPeople} people
+                    </Paragraph>
+                    <Button
+                      mode="outlined"
+                      onPress={() => handleJoinMeetup(item.id)}
+                      style={styles.joinButton}
+                      disabled={item.meetupDetails.currentPeople >= item.meetupDetails.maxPeople}
+                    >
+                      {item.meetupDetails.currentPeople >= item.meetupDetails.maxPeople
+                        ? 'Full'
+                        : 'Join Meetup'}
+                    </Button>
+                  </Surface>
                 )}
 
-                {/* Tags */}
-                {post.tags.length > 0 && (
+                {item.tags && item.tags.length > 0 && (
                   <View style={styles.tagsContainer}>
-                    {post.tags.map((tag, index) => (
-                      <Chip key={index} style={styles.tag} textStyle={styles.tagText}>
+                    {item.tags.map((tag) => (
+                      <Chip key={tag} style={styles.tag} textStyle={styles.tagText}>
                         #{tag}
                       </Chip>
                     ))}
                   </View>
                 )}
 
-                {/* Topic Badge */}
-                {post.topic && (
-                  <Chip icon="folder" style={styles.topicChip} textStyle={styles.topicText}>
-                    {post.topic}
-                  </Chip>
-                )}
-
                 <Divider style={styles.divider} />
 
-                {/* Post Actions */}
                 <View style={styles.postActions}>
                   <Button
                     mode="text"
-                    onPress={() => handleLike(post.id)}
+                    onPress={() => handleLikePost(item.id)}
                     icon="heart"
-                    labelStyle={styles.actionLabel}
+                    style={styles.actionButton}
                   >
-                    {post.likes}
+                    <Text style={styles.actionLabel}>{item.likes}</Text>
                   </Button>
                   <Button
                     mode="text"
+                    onPress={() => handleCommentClick(item.id)}
                     icon="comment"
-                    onPress={() => handleCommentClick(post.id)}
-                    labelStyle={styles.actionLabel}
+                    style={styles.actionButton}
                   >
-                    {post.comments.length}
+                    <Text style={styles.actionLabel}>{item.comments.length}</Text>
                   </Button>
                   <Button
                     mode="text"
+                    onPress={() => {}}
                     icon="share"
-                    labelStyle={styles.actionLabel}
+                    style={styles.actionButton}
                   >
-                    Share
+                    <Text style={styles.actionLabel}>Share</Text>
                   </Button>
                 </View>
               </Card.Content>
             </Card>
-          ))}
-        </ScrollView>
+          )}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+          }
+          contentContainerStyle={styles.listContainer}
+        />
+
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => setModalVisible(true)}
+        />
 
         {/* Create Post Modal */}
         <Portal>
@@ -646,99 +564,11 @@ const FeedScreen: React.FC = () => {
             <Card style={styles.modalCard}>
               <Card.Content>
                 <Title style={styles.modalTitle}>Create New Post</Title>
-                
-                <TextInput
-                  label="What's on your mind?"
-                  value={newPost.content}
-                  onChangeText={(text) => setNewPost({ ...newPost, content: text })}
-                  mode="outlined"
-                  multiline
-                  numberOfLines={4}
-                  style={styles.textInput}
-                />
-
-                <Button
-                  mode="outlined"
-                  onPress={() => setLocationShareVisible(true)}
-                  icon="map-marker"
-                  style={styles.locationButton}
-                  labelStyle={styles.locationButtonLabel}
-                >
-                  {newPost.location || 'Add Location'}
-                </Button>
-
-                <Button
-                  mode="outlined"
-                  onPress={() => setNewPost({ ...newPost, isMeetupRequest: !newPost.isMeetupRequest })}
-                  icon={newPost.isMeetupRequest ? "calendar-check" : "calendar-plus"}
-                  style={styles.toggleButton}
-                  labelStyle={styles.toggleButtonLabel}
-                >
-                  {newPost.isMeetupRequest ? 'Remove Meetup Request' : 'Add Meetup Request'}
-                </Button>
-
-                {newPost.isMeetupRequest && (
-                  <View style={styles.meetupForm}>
-                    <TextInput
-                      label="Meetup Title"
-                      value={newPost.meetupTitle}
-                      onChangeText={(text) => setNewPost({ ...newPost, meetupTitle: text })}
-                      mode="outlined"
-                      style={styles.textInput}
-                    />
-                    <TextInput
-                      label="Date & Time"
-                      value={newPost.meetupDate}
-                      onChangeText={(text) => setNewPost({ ...newPost, meetupDate: text })}
-                      mode="outlined"
-                      style={styles.textInput}
-                    />
-                    <TextInput
-                      label="Location"
-                      value={newPost.meetupLocation}
-                      onChangeText={(text) => setNewPost({ ...newPost, meetupLocation: text })}
-                      mode="outlined"
-                      style={styles.textInput}
-                    />
-                    <TextInput
-                      label="Max People"
-                      value={newPost.maxPeople.toString()}
-                      onChangeText={(text) => setNewPost({ ...newPost, maxPeople: parseInt(text) || 4 })}
-                      mode="outlined"
-                      keyboardType="numeric"
-                      style={styles.textInput}
-                    />
-                  </View>
-                )}
-
-                <View style={styles.modalActions}>
-                  <Button
-                    mode="outlined"
-                    onPress={() => setModalVisible(false)}
-                    style={styles.modalButton}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    mode="contained"
-                    onPress={handleCreatePost}
-                    style={[styles.modalButton, styles.createButton]}
-                  >
-                    Create Post
-                  </Button>
-                </View>
+                <PostEnhancer onSubmit={handleCreatePost} onCancel={() => setModalVisible(false)} />
               </Card.Content>
             </Card>
           </Modal>
         </Portal>
-
-        {/* Location Share Modal */}
-        <LocationShare
-          visible={locationShareVisible}
-          onDismiss={() => setLocationShareVisible(false)}
-          onLocationSelect={handleLocationSelect}
-          mode="select"
-        />
 
         {/* Comment Modal */}
         <Portal>
@@ -749,32 +579,37 @@ const FeedScreen: React.FC = () => {
           >
             <Card style={styles.modalCard}>
               <Card.Content>
-                <Title style={styles.modalTitle}>Add Comment</Title>
-                
-                <TextInput
-                  label="Write your comment..."
-                  value={newComment}
-                  onChangeText={setNewComment}
-                  mode="outlined"
-                  multiline
-                  numberOfLines={3}
-                  style={styles.textInput}
-                />
-
-                <View style={styles.modalActions}>
-                  <Button
-                    mode="outlined"
-                    onPress={() => setCommentModalVisible(false)}
-                    style={styles.modalButton}
-                  >
-                    Cancel
-                  </Button>
+                <Title style={styles.modalTitle}>Comments</Title>
+                <ScrollView style={{ maxHeight: 300 }}>
+                  {posts.find(p => p.id === selectedPostId)?.comments.map((comment) => (
+                    <View key={comment.id} style={styles.commentItem}>
+                      <Avatar.Image
+                        size={30}
+                        source={comment.userAvatar ? { uri: comment.userAvatar } : undefined}
+                        style={styles.commentAvatar}
+                      />
+                      <View style={styles.commentContent}>
+                        <Text style={styles.commentUser}>{comment.userNickname}</Text>
+                        <Text style={styles.commentText}>{comment.content}</Text>
+                        <Text style={styles.commentTime}>{comment.createdAt}</Text>
+                      </View>
+                    </View>
+                  ))}
+                </ScrollView>
+                <View style={styles.commentInput}>
+                  <TextInput
+                    value={newComment}
+                    onChangeText={setNewComment}
+                    placeholder="Add a comment..."
+                    style={styles.textInput}
+                  />
                   <Button
                     mode="contained"
                     onPress={handleAddComment}
-                    style={[styles.modalButton, styles.createButton]}
+                    disabled={!newComment.trim()}
+                    style={styles.addCommentButton}
                   >
-                    Add Comment
+                    Add
                   </Button>
                 </View>
               </Card.Content>
@@ -788,168 +623,78 @@ const FeedScreen: React.FC = () => {
           type={toast.type}
           onHide={hideToast}
         />
-      </ResponsiveContainer>
-
-      {/* FAB for creating posts - only show for logged in users */}
-      {user && (
-        <FAB
-          icon="plus"
-          style={styles.fab}
-          onPress={() => setModalVisible(true)}
-        />
-      )}
-    </View>
+      </View>
+    </ResponsiveContainer>
   );
 };
-
-export default React.memo(FeedScreen);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.gray50,
+    backgroundColor: colors.background,
   },
-  scrollView: {
-    flex: 1,
-  },
-  guestCard: {
-    margin: spacing.base,
-    marginBottom: spacing.lg,
-    borderRadius: borderRadius.xl,
-    backgroundColor: colors.primary,
-    ...shadowPresets.card,
-  },
-  guestTitle: {
-    color: colors.white,
-    textAlign: 'center',
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: spacing.sm,
-  },
-  guestSubtitle: {
-    color: colors.white,
-    textAlign: 'center',
-    marginTop: spacing.sm,
-    marginBottom: spacing.lg,
-    opacity: 0.9,
-    fontSize: 16,
-    lineHeight: 24,
-  },
-  guestButton: {
-    marginTop: spacing.base,
-    backgroundColor: colors.white,
-    color: colors.primary,
-    borderRadius: borderRadius.lg,
-    ...shadowPresets.small,
-  },
-  guestButtonContent: {
-    paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
+  listContainer: {
+    padding: spacing.base,
   },
   postCard: {
-    margin: spacing.base,
     marginBottom: spacing.lg,
-    borderRadius: borderRadius.xl,
-    backgroundColor: colors.white,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-    ...shadowPresets.card,
+    borderRadius: borderRadius.lg,
+    ...shadowPresets.medium,
   },
   postHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.base,
   },
-  postHeaderInfo: {
-    marginLeft: spacing.base,
-    flex: 1,
-  },
-  postAuthor: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: colors.textPrimary,
-    marginBottom: spacing.xs,
-  },
-  postMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  },
-  postTime: {
-    fontSize: 14,
-    color: colors.textSecondary,
-    marginRight: spacing.base,
-  },
-  postLocation: {
-    fontSize: 14,
-    color: colors.primary,
-    fontWeight: '500',
+  avatar: {
     marginRight: spacing.sm,
   },
-  postEmotion: {
-    fontSize: 18,
-    marginLeft: spacing.xs,
+  userInfo: {
+    flex: 1,
+  },
+  userName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  postMeta: {
+    fontSize: 12,
+    color: colors.textSecondary,
   },
   postContent: {
     fontSize: 16,
     lineHeight: 24,
     color: colors.textPrimary,
-    marginBottom: spacing.lg,
+    marginBottom: spacing.base,
   },
-  mediaGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: spacing.lg,
-  },
-  mediaItem: {
-    width: (width - spacing.base * 4) / 3,
-    height: (width - spacing.base * 4) / 3,
-    margin: 2,
-    borderRadius: borderRadius.base,
-    overflow: 'hidden',
+  mediaContainer: {
+    marginBottom: spacing.base,
   },
   mediaImage: {
     width: '100%',
-    height: '100%',
-  },
-  videoOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    height: 200,
+    borderRadius: borderRadius.md,
+    marginBottom: spacing.xs,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: spacing.lg,
+    marginBottom: spacing.base,
   },
   tag: {
-    marginRight: spacing.sm,
-    marginBottom: spacing.sm,
+    marginRight: spacing.xs,
+    marginBottom: spacing.xs,
     backgroundColor: colors.gray100,
   },
   tagText: {
     color: colors.textSecondary,
     fontSize: 12,
   },
-  topicChip: {
-    backgroundColor: colors.primary,
-    marginBottom: spacing.lg,
-  },
-  topicText: {
-    color: colors.white,
-    fontSize: 12,
-  },
   meetupCard: {
-    backgroundColor: colors.gray50,
-    marginBottom: spacing.lg,
+    padding: spacing.base,
+    marginBottom: spacing.base,
     borderRadius: borderRadius.lg,
-    borderLeftWidth: 4,
-    borderLeftColor: colors.primary,
+    backgroundColor: colors.gray50,
   },
   meetupTitle: {
     fontSize: 20,
@@ -979,6 +724,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-around',
     paddingTop: spacing.sm,
+  },
+  actionButton: {
+    flex: 1,
   },
   actionLabel: {
     fontSize: 14,
@@ -1010,42 +758,46 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     marginBottom: spacing.lg,
   },
-  textInput: {
-    marginBottom: spacing.base,
-  },
-  locationButton: {
-    marginBottom: spacing.base,
-    borderColor: colors.primary,
-    borderRadius: borderRadius.lg,
-  },
-  locationButtonLabel: {
-    color: colors.primary,
-  },
-  toggleButton: {
-    marginBottom: spacing.base,
-    borderColor: colors.primary,
-    borderRadius: borderRadius.lg,
-  },
-  toggleButtonLabel: {
-    color: colors.primary,
-  },
-  meetupForm: {
-    marginTop: spacing.base,
-    padding: spacing.base,
-    backgroundColor: colors.gray50,
-    borderRadius: borderRadius.lg,
-  },
-  modalActions: {
+  commentItem: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: spacing.lg,
+    marginBottom: spacing.base,
+    padding: spacing.sm,
+    backgroundColor: colors.gray50,
+    borderRadius: borderRadius.md,
   },
-  modalButton: {
+  commentAvatar: {
+    marginRight: spacing.sm,
+  },
+  commentContent: {
     flex: 1,
-    marginHorizontal: spacing.xs,
-    borderRadius: borderRadius.lg,
   },
-  createButton: {
-    backgroundColor: colors.primary,
+  commentUser: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.textPrimary,
+  },
+  commentText: {
+    fontSize: 14,
+    color: colors.textPrimary,
+    marginTop: spacing.xs,
+  },
+  commentTime: {
+    fontSize: 12,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+  },
+  commentInput: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: spacing.base,
+  },
+  textInput: {
+    flex: 1,
+    marginRight: spacing.sm,
+  },
+  addCommentButton: {
+    borderRadius: borderRadius.lg,
   },
 });
+
+export default FeedScreen;
