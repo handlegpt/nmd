@@ -4,60 +4,23 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-// Determine if we should use mock mode
-// Mock mode is enabled when:
-// 1. Supabase credentials are missing, OR
-// 2. NODE_ENV is 'development' and MOCK_MODE is explicitly set to 'true'
-const isMockMode = !supabaseUrl || !supabaseAnonKey || 
-  (process.env.NODE_ENV === 'development' && process.env.MOCK_MODE === 'true');
+// Check if Supabase credentials are configured
+const isSupabaseConfigured = supabaseUrl && supabaseAnonKey && 
+  supabaseUrl !== 'your-supabase-url' && 
+  supabaseAnonKey !== 'your-supabase-anon-key';
 
-// Mock Supabase client for development/testing
-const createMockClient = () => ({
-  auth: {
-    onAuthStateChange: (callback: any) => {
-      // Mock auth state change
-      return { data: { subscription: { unsubscribe: () => {} } } };
-    },
-    signOut: async () => ({ error: null }),
-    signInWithOAuth: async () => ({ data: null, error: null }),
-  },
-  from: (table: string) => ({
-    select: () => ({ 
-      eq: () => ({ single: () => ({ data: null, error: null }) }),
-      order: () => ({ range: () => ({ data: [], error: null }) }),
-      limit: () => ({ data: [], error: null }),
-    }),
-    insert: () => ({ data: null, error: null }),
-    update: () => ({ eq: () => ({ select: () => ({ single: () => ({ data: null, error: null }) }) }) }),
-    upsert: () => ({ data: null, error: null }),
-    delete: () => ({ eq: () => ({ data: null, error: null }) }),
-  }),
-  storage: {
-    from: () => ({
-      upload: async () => ({ data: null, error: null }),
-      download: () => ({ data: null, error: null }),
-      getPublicUrl: () => ({ data: { publicUrl: '' } }),
-    }),
-  },
-});
-
-// Create Supabase client
-let supabase: any;
-
-if (isMockMode) {
-  if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn('⚠️  Supabase credentials not found. Running in mock mode.');
-    console.warn('   To use real database, set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in your .env file');
-  } else {
-    console.log('🔧 Running in mock mode (MOCK_MODE=true in development)');
-  }
-  supabase = createMockClient();
-} else {
-  console.log('🚀 Connecting to Supabase...');
-  supabase = createClient(supabaseUrl!, supabaseAnonKey!);
+if (!isSupabaseConfigured) {
+  console.error('❌ Supabase credentials not configured!');
+  console.error('   Please set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in your .env file');
+  console.error('   Get these from: https://supabase.com/dashboard/project/[YOUR-PROJECT]/settings/api');
+  throw new Error('Supabase credentials not configured');
 }
 
-export { supabase, isMockMode };
+// Create Supabase client
+console.log('🚀 Connecting to Supabase...');
+const supabase = createClient(supabaseUrl!, supabaseAnonKey!);
+
+export { supabase };
 
 // Database types for better type safety
 export interface Database {

@@ -6,7 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, ActivityIndicator } from 'react-native';
 import AppNavigator from './src/navigation/AppNavigator';
 import { useAuthStore } from './src/store/authStore';
-import { supabase, isMockMode } from './src/lib/supabase';
+import { supabase } from './src/lib/supabase';
 import { ErrorBoundary } from './src/components/common/ErrorBoundary';
 import { PerformanceMonitor } from './src/components/common/MobileOptimizations';
 import { useResponsive } from './src/utils/responsive';
@@ -39,19 +39,10 @@ export default function App() {
       console.log('Environment check:');
       console.log('EXPO_PUBLIC_SUPABASE_URL:', process.env.EXPO_PUBLIC_SUPABASE_URL ? 'Set' : 'Missing');
       console.log('EXPO_PUBLIC_SUPABASE_ANON_KEY:', process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY ? 'Set' : 'Missing');
-      console.log('Running in mock mode:', isMockMode);
     }
     
-    // Skip auth state change listener in mock mode
-    if (isMockMode) {
-      if (__DEV__) {
-        console.log('Skipping auth state change listener in mock mode');
-      }
-      return;
-    }
-    
-    // Listen for auth state changes (only in non-mock mode)
-    if (!isMockMode && 'auth' in supabase) {
+    // Listen for auth state changes
+    if ('auth' in supabase) {
       const { data: { subscription } } = (supabase as any).auth.onAuthStateChange(
         async (event: any, session: any) => {
           if (__DEV__) {
