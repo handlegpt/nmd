@@ -4,6 +4,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { IconButton } from 'react-native-paper';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../store/authStore';
 import { useResponsive } from '../utils/responsive';
 import { shadowPresets } from '../utils/platformStyles';
@@ -42,12 +43,12 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName: string;
+          let iconName: keyof typeof MaterialCommunityIcons.glyphMap;
 
           if (route.name === 'Feed') {
             iconName = 'home';
           } else if (route.name === 'Map') {
-            iconName = 'map';
+            iconName = 'map-marker';
           } else if (route.name === 'Activities') {
             iconName = 'calendar';
           } else if (route.name === 'Cities') {
@@ -59,11 +60,10 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
           }
 
           return (
-            <IconButton
-              icon={iconName}
-              iconColor={focused ? colors.primary : colors.gray400}
+            <MaterialCommunityIcons
+              name={iconName}
               size={size}
-              style={{ margin: 0 }}
+              color={focused ? colors.primary : colors.gray400}
             />
           );
         },
