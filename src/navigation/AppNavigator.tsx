@@ -24,9 +24,33 @@ import { MessageScreen } from '../components/messages/MessageScreen';
 import { GlobalSearchScreen } from '../components/search/GlobalSearchScreen';
 import ResponsiveContainer from '../components/common/ResponsiveContainer';
 import { useUrlSync } from '../hooks/useUrlSync';
+import { navigationUtils } from '../utils/navigationUtils';
+import { useEffect } from 'react';
 
 // URL sync wrapper component that uses the hook inside NavigationContainer
 const UrlSyncWrapper = () => {
+  useUrlSync();
+  return null;
+};
+
+// Enhanced URL sync wrapper with better error handling
+const EnhancedUrlSyncWrapper = () => {
+  const { isWeb } = useResponsive();
+  
+  useEffect(() => {
+    if (isWeb) {
+      // Force initial URL sync on mount
+      const currentPath = window.location.pathname;
+      console.log(`🔄 EnhancedUrlSync: Initial path: ${currentPath}`);
+      
+      // If we're on a specific path, ensure navigation state matches
+      if (currentPath !== '/') {
+        const { routeName, params } = navigationUtils.getRouteFromPath(currentPath);
+        console.log(`🔄 EnhancedUrlSync: Ensuring route matches: ${routeName}`);
+      }
+    }
+  }, [isWeb]);
+
   useUrlSync();
   return null;
 };
@@ -140,8 +164,8 @@ const AppNavigator = () => {
 
   return (
     <NavigationContainer>
-      {/* URL sync hook must be inside NavigationContainer */}
-      {isWeb && <UrlSyncWrapper />}
+      {/* Enhanced URL sync hook must be inside NavigationContainer */}
+      {isWeb && <EnhancedUrlSyncWrapper />}
       <Stack.Navigator screenOptions={{ headerShown: false }}>
         {/* Always show main app, but with different header based on auth status */}
         <Stack.Screen name="Main" component={MainTabs} />

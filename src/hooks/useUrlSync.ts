@@ -2,12 +2,14 @@ import { useEffect, useRef } from 'react';
 import { useNavigationState } from '@react-navigation/native';
 import { useNavigation } from '@react-navigation/native';
 import { useResponsive } from '../utils/responsive';
+import { navigationUtils } from '../utils/navigationUtils';
 
 export const useUrlSync = () => {
   const navigationState = useNavigationState(state => state);
   const navigation = useNavigation();
   const { isWeb } = useResponsive();
   const isNavigatingRef = useRef(false);
+  const lastPathRef = useRef('');
 
   useEffect(() => {
     if (!isWeb || !navigationState) return;
@@ -24,47 +26,23 @@ export const useUrlSync = () => {
     const currentRoute = getCurrentRoute(navigationState);
     
     if (currentRoute && !isNavigatingRef.current) {
+      // Validate navigation state
+      if (!navigationUtils.validateNavigationState(navigationState)) {
+        return;
+      }
+
+      // Debug navigation state
+      navigationUtils.debugNavigationState(navigationState);
+
       // Update URL based on current route
-      const updateUrl = () => {
-        const baseUrl = window.location.origin;
-        let path = '/';
-        
-        switch (currentRoute.name) {
-          case 'Feed':
-            path = '/feed';
-            break;
-          case 'Map':
-            path = '/discover';
-            break;
-          case 'Activities':
-            path = '/meetups';
-            break;
-          case 'Cities':
-            path = '/cities';
-            break;
-          case 'Profile':
-            path = '/profile';
-            break;
-          case 'Login':
-            path = '/login';
-            break;
-          case 'Settings':
-            path = '/settings';
-            break;
-          case 'Chat':
-            path = `/chat/${currentRoute.params?.userId || ''}`;
-            break;
-          default:
-            path = '/';
-        }
-
-        // Update URL without page reload
-        if (window.location.pathname !== path) {
-          window.history.pushState({}, '', path);
-        }
-      };
-
-      updateUrl();
+      const path = navigationUtils.getPathForRoute(currentRoute.name, currentRoute.params);
+      
+      // Update URL without page reload
+      if (window.location.pathname !== path) {
+        console.log(`🔄 URL Sync: Updating URL from ${window.location.pathname} to ${path}`);
+        navigationUtils.updateUrl(path);
+        lastPathRef.current = path;
+      }
     }
   }, [navigationState, isWeb]);
 
@@ -76,32 +54,14 @@ export const useUrlSync = () => {
       isNavigatingRef.current = true;
       
       const path = window.location.pathname;
-      let routeName = 'Feed';
-      let params = {};
+      console.log(`🔄 Browser Navigation: ${path}`);
 
-      // Parse URL to determine route
-      if (path === '/feed' || path === '/') {
-        routeName = 'Feed';
-      } else if (path === '/discover') {
-        routeName = 'Map';
-      } else if (path === '/meetups') {
-        routeName = 'Activities';
-      } else if (path === '/cities') {
-        routeName = 'Cities';
-      } else if (path === '/profile') {
-        routeName = 'Profile';
-      } else if (path === '/login') {
-        routeName = 'Login';
-      } else if (path === '/settings') {
-        routeName = 'Settings';
-      } else if (path.startsWith('/chat/')) {
-        routeName = 'Chat';
-        const userId = path.split('/chat/')[1];
-        params = { userId };
-      }
+      // Parse URL to determine route using navigation utils
+      const { routeName, params } = navigationUtils.getRouteFromPath(path);
+      console.log(`🔄 Navigating to: ${routeName}`, params);
 
       // Navigate to the correct route
-      if (routeName === 'Feed' || routeName === 'Map' || routeName === 'Activities' || routeName === 'Cities' || routeName === 'Profile') {
+      if (routeName === 'Feed' || routeName === 'Map' || routeName === 'Activities' || routeName === 'Cities' || routeName === 'Notifications' || routeName === 'Profile') {
         // For tab navigation, we need to navigate to Main first, then to the specific tab
         (navigation as any).navigate('Main', { screen: routeName });
       } else {
@@ -120,4 +80,15 @@ export const useUrlSync = () => {
       window.removeEventListener('popstate', handlePopState);
     };
   }, [isWeb, navigation]);
+
+  // Initialize URL on first load
+  useEffect(() => {
+    if (!isWeb) return;
+
+    const currentPath = window.location.pathname;
+    if (currentPath !== '/' && currentPath !== lastPathRef.current) {
+      console.log(`🔄 Initial URL Sync: ${currentPath}`);
+      lastPathRef.current = currentPath;
+    }
+  }, [isWeb]);
 };
