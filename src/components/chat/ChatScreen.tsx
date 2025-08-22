@@ -21,7 +21,7 @@ import { Message, User } from '../../types';
 import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { supabase, isMockMode } from '../../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 export const ChatScreen: React.FC<any> = ({ route }) => {
   const { selectedUser } = route?.params || {};
@@ -47,7 +47,7 @@ export const ChatScreen: React.FC<any> = ({ route }) => {
       loadMessages();
       
       // Set up real-time subscription (only in non-mock mode)
-      if (!isMockMode && 'channel' in supabase) {
+      if ('channel' in supabase) {
         const subscription = (supabase as any)
           .channel('messages')
           .on('postgres_changes', {

@@ -21,11 +21,6 @@ export class DatabaseService {
   }
 
   static async updateUser(userId: string, updates: Partial<User>): Promise<User | null> {
-    if (isMockMode) {
-      console.log('Mock: Updating user', userId, updates);
-      return { id: userId, ...updates } as User;
-    }
-
     try {
       const { data, error } = await supabase
         .from('users')
@@ -43,11 +38,6 @@ export class DatabaseService {
   }
 
   static async getUser(userId: string): Promise<User | null> {
-    if (isMockMode) {
-      console.log('Mock: Getting user', userId);
-      return null;
-    }
-
     try {
       const { data, error } = await supabase
         .from('users')
@@ -65,11 +55,6 @@ export class DatabaseService {
 
   // Location operations
   static async updateUserLocation(userId: string, location: Location): Promise<boolean> {
-    if (isMockMode) {
-      console.log('Mock: Updating user location', userId, location);
-      return true;
-    }
-
     try {
       const { error } = await supabase
         .from('user_locations')
@@ -90,11 +75,6 @@ export class DatabaseService {
   }
 
   static async getNearbyUsers(latitude: number, longitude: number, radius: number = 10): Promise<User[]> {
-    if (isMockMode) {
-      console.log('Mock: Getting nearby users');
-      return [];
-    }
-
     try {
       // Simple distance calculation (in production, use PostGIS for better performance)
       const { data, error } = await supabase
@@ -122,11 +102,6 @@ export class DatabaseService {
 
   // Post operations
   static async createPost(postData: Partial<Post>): Promise<Post | null> {
-    if (isMockMode) {
-      console.log('Mock: Creating post', postData);
-      return postData as Post;
-    }
-
     try {
       const { data, error } = await supabase
         .from('posts')
@@ -143,11 +118,6 @@ export class DatabaseService {
   }
 
   static async getPosts(limit: number = 20, offset: number = 0): Promise<Post[]> {
-    if (isMockMode) {
-      console.log('Mock: Getting posts');
-      return [];
-    }
-
     try {
       const { data, error } = await supabase
         .from('posts')
@@ -168,11 +138,6 @@ export class DatabaseService {
   }
 
   static async likePost(postId: string): Promise<boolean> {
-    if (isMockMode) {
-      console.log('Mock: Liking post', postId);
-      return true;
-    }
-
     try {
       const { error } = await supabase
         .from('posts')
@@ -211,11 +176,6 @@ export class DatabaseService {
   }
 
   static async getComments(postId: string): Promise<Comment[]> {
-    if (isMockMode) {
-      console.log('Mock: Getting comments for post', postId);
-      return [];
-    }
-
     try {
       const { data, error } = await supabase
         .from('comments')
@@ -236,11 +196,6 @@ export class DatabaseService {
 
   // Message operations
   static async sendMessage(messageData: Partial<Message>): Promise<Message | null> {
-    if (isMockMode) {
-      console.log('Mock: Sending message', messageData);
-      return messageData as Message;
-    }
-
     try {
       const { data, error } = await supabase
         .from('messages')
@@ -257,11 +212,6 @@ export class DatabaseService {
   }
 
   static async getMessages(userId1: string, userId2: string): Promise<Message[]> {
-    if (isMockMode) {
-      console.log('Mock: Getting messages between users', userId1, userId2);
-      return [];
-    }
-
     try {
       const { data, error } = await supabase
         .from('messages')
@@ -283,11 +233,6 @@ export class DatabaseService {
 
   // Notification operations
   static async createNotification(notificationData: Partial<Notification>): Promise<Notification | null> {
-    if (isMockMode) {
-      console.log('Mock: Creating notification', notificationData);
-      return notificationData as Notification;
-    }
-
     try {
       const { data, error } = await supabase
         .from('notifications')
@@ -304,11 +249,6 @@ export class DatabaseService {
   }
 
   static async getNotifications(userId: string): Promise<Notification[]> {
-    if (isMockMode) {
-      console.log('Mock: Getting notifications for user', userId);
-      return [];
-    }
-
     try {
       const { data, error } = await supabase
         .from('notifications')
@@ -328,11 +268,6 @@ export class DatabaseService {
   }
 
   static async markNotificationAsRead(notificationId: string): Promise<boolean> {
-    if (isMockMode) {
-      console.log('Mock: Marking notification as read', notificationId);
-      return true;
-    }
-
     try {
       const { error } = await supabase
         .from('notifications')
@@ -349,11 +284,6 @@ export class DatabaseService {
 
   // File upload operations
   static async uploadFile(file: File, path: string): Promise<string | null> {
-    if (isMockMode) {
-      console.log('Mock: Uploading file', path);
-      return 'mock-file-url';
-    }
-
     try {
       const { data, error } = await supabase.storage
         .from('uploads')
