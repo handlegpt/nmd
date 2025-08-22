@@ -21,6 +21,7 @@ import NotificationScreen from '../components/notifications/NotificationScreen';
 import { SettingsScreen } from '../components/settings/SettingsScreen';
 import { ChatScreen } from '../components/chat/ChatScreen';
 import { MessageScreen } from '../components/messages/MessageScreen';
+import { GlobalSearchScreen } from '../components/search/GlobalSearchScreen';
 import ResponsiveContainer from '../components/common/ResponsiveContainer';
 import { useUrlSync } from '../hooks/useUrlSync';
 
