@@ -159,56 +159,8 @@ export const MapScreen: React.FC = () => {
     }
   };
 
-  // Mock nearby users for demo
-  const mockNearbyUsers: User[] = [
-    {
-      id: '1',
-      email: 'alex@example.com',
-      nickname: 'Alex',
-      avatar_url: '',
-      bio: 'Full-stack developer from Berlin',
-      current_city: 'Bali, Indonesia',
-      languages: ['English', 'German'],
-      interests: ['Coding', 'Surfing', 'Coffee'],
-      is_visible: true,
-      is_available_for_meetup: true,
-      location: { latitude: -8.3405, longitude: 115.0920 },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: '2',
-      email: 'sarah@example.com',
-      nickname: 'Sarah',
-      avatar_url: '',
-      bio: 'Digital nomad and yoga instructor',
-      current_city: 'Bali, Indonesia',
-      languages: ['English', 'Spanish'],
-      interests: ['Yoga', 'Travel', 'Photography'],
-      is_visible: true,
-      is_available_for_meetup: true,
-      location: { latitude: -8.3405, longitude: 115.0920 },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-    {
-      id: '3',
-      email: 'mike@example.com',
-      nickname: 'Mike',
-      avatar_url: '',
-      bio: 'UX designer and coffee enthusiast',
-      current_city: 'Bali, Indonesia',
-      languages: ['English', 'French'],
-      interests: ['Design', 'Coffee', 'Music'],
-      is_visible: true,
-      is_available_for_meetup: true,
-      location: { latitude: -8.3405, longitude: 115.0920 },
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    },
-  ];
-
-  const displayUsers = nearbyUsers.length > 0 ? nearbyUsers : mockNearbyUsers;
+  // Use real nearby users or fallback to empty array
+  const displayUsers = nearbyUsers.length > 0 ? nearbyUsers : [];
 
   if (loading) {
     return <LoadingSpinner visible={true} message="Loading nearby nomads..." />;

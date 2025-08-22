@@ -16,6 +16,7 @@ import {
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { Message } from '../../types';
+import { DatabaseService } from '../../services/databaseService';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
@@ -46,25 +47,9 @@ export const MessageScreen: React.FC = () => {
 
     setLoading(true);
     try {
-      // TODO: Implement actual message loading from Supabase
-      // For now, using mock data
-      const mockMessages: Message[] = [
-        {
-          id: '1',
-          from_user_id: user.id,
-          to_user_id: 'other-user-id',
-          content: 'Hi! I saw you\'re also a digital nomad in this area.',
-          created_at: new Date(Date.now() - 3600000).toISOString(),
-        },
-        {
-          id: '2',
-          from_user_id: 'other-user-id',
-          to_user_id: user.id,
-          content: 'Hey! Yes, I\'ve been here for a few weeks. How about you?',
-          created_at: new Date(Date.now() - 1800000).toISOString(),
-        },
-      ];
-      setMessages(mockMessages);
+      // Get all conversations for the user
+      const conversations = await DatabaseService.getConversations(user.id);
+      setMessages(conversations);
     } catch (error) {
       showToast('Failed to load messages', 'error');
     } finally {
@@ -76,19 +61,10 @@ export const MessageScreen: React.FC = () => {
   const sendMessage = async () => {
     if (!newMessage.trim() || !user) return;
 
-    const message: Message = {
-      id: Date.now().toString(),
-      from_user_id: user.id,
-      to_user_id: 'other-user-id',
-      content: newMessage.trim(),
-      created_at: new Date().toISOString(),
-    };
-
     try {
-      // TODO: Implement actual message sending to Supabase
-      setMessages(prev => [...prev, message]);
-      setNewMessage('');
-      showToast('Message sent!', 'success');
+      // For now, this is a placeholder since we need a recipient
+      // In a real app, this would be handled by selecting a user to message
+      showToast('Please select a user to message', 'warning');
     } catch (error) {
       showToast('Failed to send message', 'error');
     }

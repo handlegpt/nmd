@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { User, AuthState } from '../types';
+import { supabase } from '../lib/supabase';
 
 interface AuthStore extends AuthState {
   signIn: (email: string, password: string) => Promise<void>;
@@ -21,6 +22,7 @@ const defaultUser: User = {
   current_city: 'Bali, Indonesia',
   languages: ['English', 'Spanish'],
   interests: ['Coding', 'Travel', 'Coffee'],
+  skills: ['JavaScript', 'React', 'Travel Planning'],
   is_visible: true,
   is_available_for_meetup: true,
   location: { latitude: -8.3405, longitude: 115.0920 },
@@ -37,10 +39,26 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signIn: async (email: string, password: string) => {
     set({ loading: true });
     try {
-      // Mock sign in
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const userWithEmail = { ...defaultUser, email, nickname: email.split('@')[0] };
-      set({ user: userWithEmail, session: { user: userWithEmail } });
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        // Get user profile from database
+        const { data: userData } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', data.user.id)
+          .single();
+
+        set({ 
+          user: userData || { ...defaultUser, id: data.user.id, email: data.user.email || email },
+          session: data.session 
+        });
+      }
     } catch (error) {
       console.error('Sign in error:', error);
       throw error;
@@ -53,10 +71,43 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signUp: async (email: string, password: string, nickname: string) => {
     set({ loading: true });
     try {
-      // Mock sign up
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const newUser = { ...defaultUser, email, nickname };
-      set({ user: newUser, session: { user: newUser } });
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            nickname,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      if (data.user) {
+        // Create user profile in database
+        const { error: profileError } = await supabase
+          .from('users')
+          .insert({
+            id: data.user.id,
+            email,
+            nickname,
+            current_city: 'Unknown City',
+            languages: ['English'],
+            interests: [],
+            skills: [],
+            is_visible: true,
+            is_available_for_meetup: true,
+          });
+
+        if (profileError) {
+          console.error('Profile creation error:', profileError);
+        }
+
+        set({ 
+          user: { ...defaultUser, id: data.user.id, email, nickname },
+          session: data.session 
+        });
+      }
     } catch (error) {
       console.error('Sign up error:', error);
       throw error;
@@ -69,8 +120,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
   signOut: async () => {
     set({ loading: true });
     try {
-      // Mock sign out
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
       set({ user: null, session: null });
     } catch (error) {
       console.error('Sign out error:', error);
@@ -87,9 +138,16 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
     
     set({ loading: true });
     try {
-      // Mock profile update
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const updatedUser = { ...user, ...updates, updated_at: new Date().toISOString() };
+      const { data, error } = await supabase
+        .from('users')
+        .update(updates)
+        .eq('id', user.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      const updatedUser = { ...user, ...data, updated_at: new Date().toISOString() };
       set({ user: updatedUser });
     } catch (error) {
       console.error('Update profile error:', error);

@@ -19,6 +19,8 @@ import {
 import { useAuthStore } from '../../store/authStore';
 import { Message, User } from '../../types';
 import { shadowPresets } from '../../utils/platformStyles';
+import { DatabaseService } from '../../services/databaseService';
+import { NotificationService } from '../../services/notificationService';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { supabase } from '../../lib/supabase';
@@ -87,32 +89,8 @@ export const ChatScreen: React.FC<any> = ({ route }) => {
 
     setLoading(true);
     try {
-      // TODO: Implement actual message loading from Supabase
-      // For now, using mock data
-      const mockMessages: Message[] = [
-        {
-          id: '1',
-          from_user_id: selectedUser.id,
-          to_user_id: user.id,
-          content: 'Hi! I saw you\'re also a digital nomad in this area.',
-          created_at: new Date(Date.now() - 3600000).toISOString(),
-        },
-        {
-          id: '2',
-          from_user_id: user.id,
-          to_user_id: selectedUser.id,
-          content: 'Hey! Yes, I\'ve been here for a few weeks. How about you?',
-          created_at: new Date(Date.now() - 1800000).toISOString(),
-        },
-        {
-          id: '3',
-          from_user_id: selectedUser.id,
-          to_user_id: user.id,
-          content: 'Great! Would you like to meet for coffee sometime?',
-          created_at: new Date(Date.now() - 900000).toISOString(),
-        },
-      ];
-      setMessages(mockMessages);
+      const dbMessages = await DatabaseService.getMessages(user.id, selectedUser.id);
+      setMessages(dbMessages);
     } catch (error) {
       showToast('Failed to load messages', 'error');
     } finally {
@@ -125,20 +103,31 @@ export const ChatScreen: React.FC<any> = ({ route }) => {
     if (!newMessage.trim() || !user || !selectedUser) return;
 
     setSending(true);
-    const message: Message = {
-      id: Date.now().toString(),
-      from_user_id: user.id,
-      to_user_id: selectedUser.id,
-      content: newMessage.trim(),
-      created_at: new Date().toISOString(),
-    };
+    const messageContent = newMessage.trim();
 
     try {
-      // TODO: Implement actual message sending to Supabase
-      setMessages(prev => [...prev, message]);
-      setNewMessage('');
-      showToast('Message sent!', 'success');
-      scrollToBottom();
+      const message = await DatabaseService.sendMessage({
+        from_user_id: user.id,
+        to_user_id: selectedUser.id,
+        content: messageContent,
+      });
+
+      if (message) {
+        setMessages(prev => [...prev, message]);
+        setNewMessage('');
+        showToast('Message sent!', 'success');
+        scrollToBottom();
+
+        // Send notification to recipient
+        await NotificationService.notifyNewMessage(
+          selectedUser.id,
+          user.id,
+          user.nickname || 'Unknown User',
+          messageContent
+        );
+      } else {
+        showToast('Failed to send message', 'error');
+      }
     } catch (error) {
       showToast('Failed to send message', 'error');
     } finally {

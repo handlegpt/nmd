@@ -271,6 +271,37 @@ export class DatabaseService {
     }
   }
 
+  static async getConversations(userId: string): Promise<Message[]> {
+    try {
+      // Get the latest message from each conversation
+      const { data, error } = await supabase
+        .from('messages')
+        .select(`
+          *,
+          from_user:users!from_user_id(id, nickname, avatar_url),
+          to_user:users!to_user_id(id, nickname, avatar_url)
+        `)
+        .or(`from_user_id.eq.${userId},to_user_id.eq.${userId}`)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      // Group by conversation and get the latest message from each
+      const conversations = new Map<string, Message>();
+      data?.forEach(message => {
+        const otherUserId = message.from_user_id === userId ? message.to_user_id : message.from_user_id;
+        if (!conversations.has(otherUserId)) {
+          conversations.set(otherUserId, message);
+        }
+      });
+
+      return Array.from(conversations.values());
+    } catch (error) {
+      console.error('Error getting conversations:', error);
+      return [];
+    }
+  }
+
   // Notification operations
   static async createNotification(notificationData: Partial<Notification>): Promise<Notification | null> {
     try {
