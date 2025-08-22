@@ -36,8 +36,8 @@ export const useUrlSync = () => {
           case 'Activities':
             path = '/meetups';
             break;
-          case 'Notifications':
-            path = '/notifications';
+          case 'Cities':
+            path = '/cities';
             break;
           case 'Profile':
             path = '/profile';
