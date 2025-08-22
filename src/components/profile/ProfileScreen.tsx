@@ -53,10 +53,10 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
   const [toast, setToast] = useState({
     visible: false,
     message: '',
-    type: 'success' as 'success' | 'error' | 'warning'
+    type: 'success' as 'success' | 'error' | 'warning' | 'info'
   });
 
-  const showToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'success') => {
     setToast({ visible: true, message, type });
   };
 
@@ -219,22 +219,167 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
   if (!user) {
     return (
       <View style={styles.container}>
-        <Card style={styles.card}>
-          <Card.Content>
-            <Title style={styles.title}>Welcome to NomadNow</Title>
-            <Paragraph style={styles.subtitle}>
-              Sign in to access your profile and connect with fellow digital nomads
-            </Paragraph>
-            <Button 
-              mode="contained" 
-              onPress={handleSignIn} 
-              style={styles.button}
-              contentStyle={styles.buttonContent}
-            >
-              Sign In
-            </Button>
-          </Card.Content>
-        </Card>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Hero Section */}
+          <Card style={styles.heroCard}>
+            <Card.Content style={styles.heroContent}>
+              <View style={styles.heroIcon}>
+                <MaterialCommunityIcons 
+                  name="account-group" 
+                  size={80} 
+                  color="#6366f1" 
+                />
+              </View>
+              <Title style={styles.heroTitle}>Join the Nomad Community</Title>
+              <Paragraph style={styles.heroSubtitle}>
+                Connect with digital nomads worldwide, share experiences, and discover amazing places together
+              </Paragraph>
+            </Card.Content>
+          </Card>
+
+          {/* Features Section */}
+          <Card style={styles.featuresCard}>
+            <Card.Content>
+              <Title style={styles.sectionTitle}>Why Join NomadNow?</Title>
+              
+              <View style={styles.featureItem}>
+                <MaterialCommunityIcons name="map-marker-radius" size={24} color="#6366f1" />
+                <View style={styles.featureText}>
+                  <Title style={styles.featureTitle}>Discover Amazing Places</Title>
+                  <Paragraph style={styles.featureDescription}>
+                    Find the best cities for digital nomads with detailed guides and community insights
+                  </Paragraph>
+                </View>
+              </View>
+
+              <View style={styles.featureItem}>
+                <MaterialCommunityIcons name="account-multiple" size={24} color="#6366f1" />
+                <View style={styles.featureText}>
+                  <Title style={styles.featureTitle}>Connect with Nomads</Title>
+                  <Paragraph style={styles.featureDescription}>
+                    Meet fellow travelers, share experiences, and build meaningful connections
+                  </Paragraph>
+                </View>
+              </View>
+
+              <View style={styles.featureItem}>
+                <MaterialCommunityIcons name="calendar-multiple" size={24} color="#6366f1" />
+                <View style={styles.featureText}>
+                  <Title style={styles.featureTitle}>Join Meetups & Events</Title>
+                  <Paragraph style={styles.featureDescription}>
+                    Participate in local meetups, coworking sessions, and community events
+                  </Paragraph>
+                </View>
+              </View>
+
+              <View style={styles.featureItem}>
+                <MaterialCommunityIcons name="share-variant" size={24} color="#6366f1" />
+                <View style={styles.featureText}>
+                  <Title style={styles.featureTitle}>Share Your Journey</Title>
+                  <Paragraph style={styles.featureDescription}>
+                    Document your travels, share tips, and inspire others with your stories
+                  </Paragraph>
+                </View>
+              </View>
+            </Card.Content>
+          </Card>
+
+          {/* Community Stats */}
+          <Card style={styles.statsCard}>
+            <Card.Content>
+              <Title style={styles.sectionTitle}>Our Community</Title>
+              <View style={styles.communityStats}>
+                <View style={styles.statItem}>
+                  <Title style={styles.statNumber}>10K+</Title>
+                  <Paragraph style={styles.statLabel}>Nomads</Paragraph>
+                </View>
+                <View style={styles.statItem}>
+                  <Title style={styles.statNumber}>150+</Title>
+                  <Paragraph style={styles.statLabel}>Cities</Paragraph>
+                </View>
+                <View style={styles.statItem}>
+                  <Title style={styles.statNumber}>500+</Title>
+                  <Paragraph style={styles.statLabel}>Meetups</Paragraph>
+                </View>
+                <View style={styles.statItem}>
+                  <Title style={styles.statNumber}>50+</Title>
+                  <Paragraph style={styles.statLabel}>Countries</Paragraph>
+                </View>
+              </View>
+            </Card.Content>
+          </Card>
+
+          {/* Testimonials */}
+          <Card style={styles.testimonialsCard}>
+            <Card.Content>
+              <Title style={styles.sectionTitle}>What Nomads Say</Title>
+              
+              <View style={styles.testimonialItem}>
+                <Avatar.Text size={40} label="S" style={{ backgroundColor: '#6366f1' }} />
+                <View style={styles.testimonialContent}>
+                  <Paragraph style={styles.testimonialText}>
+                    "NomadNow helped me find amazing communities in every city I visited. The meetups are incredible!"
+                  </Paragraph>
+                  <Title style={styles.testimonialAuthor}>- Sarah, Digital Nomad</Title>
+                </View>
+              </View>
+
+              <View style={styles.testimonialItem}>
+                <Avatar.Text size={40} label="M" style={{ backgroundColor: '#10b981' }} />
+                <View style={styles.testimonialContent}>
+                  <Paragraph style={styles.testimonialText}>
+                    "Finally found a platform that connects real nomads. The city guides are spot on!"
+                  </Paragraph>
+                  <Title style={styles.testimonialAuthor}>- Mike, Remote Developer</Title>
+                </View>
+              </View>
+            </Card.Content>
+          </Card>
+
+          {/* Call to Action */}
+          <Card style={styles.ctaCard}>
+            <Card.Content style={styles.ctaContent}>
+              <Title style={styles.ctaTitle}>Ready to Start Your Journey?</Title>
+              <Paragraph style={styles.ctaSubtitle}>
+                Join thousands of digital nomads and start exploring the world together
+              </Paragraph>
+              
+              <View style={styles.ctaButtons}>
+                <Button 
+                  mode="contained" 
+                  onPress={handleSignIn} 
+                  style={styles.ctaButton}
+                  contentStyle={styles.ctaButtonContent}
+                  icon="account-plus"
+                >
+                  Create Account
+                </Button>
+                
+                <Button 
+                  mode="outlined" 
+                  onPress={() => navigation?.navigate('Login')} 
+                  style={styles.ctaButton}
+                  contentStyle={styles.ctaButtonContent}
+                  icon="login"
+                >
+                  Sign In
+                </Button>
+              </View>
+
+              <View style={styles.socialLogin}>
+                <Button 
+                  mode="outlined" 
+                  onPress={() => showToast('Google login coming soon', 'info')} 
+                  style={styles.socialButton}
+                  contentStyle={styles.socialButtonContent}
+                  icon="google"
+                >
+                  Continue with Google
+                </Button>
+              </View>
+            </Card.Content>
+          </Card>
+        </ScrollView>
       </View>
     );
   }
@@ -766,5 +911,128 @@ const styles = StyleSheet.create({
     margin: 16,
     ...shadowPresets.medium,
     borderRadius: 12,
+  },
+  heroCard: {
+    margin: 16,
+    ...shadowPresets.medium,
+    borderRadius: 12,
+  },
+  heroContent: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  heroIcon: {
+    marginBottom: 10,
+  },
+  heroTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  heroSubtitle: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginHorizontal: 20,
+  },
+  featuresCard: {
+    margin: 16,
+    ...shadowPresets.medium,
+    borderRadius: 12,
+  },
+  featureItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  featureText: {
+    marginLeft: 15,
+  },
+  featureTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  featureDescription: {
+    fontSize: 14,
+    color: '#666',
+  },
+  statsCard: {
+    margin: 16,
+    ...shadowPresets.medium,
+    borderRadius: 12,
+  },
+  communityStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  testimonialsCard: {
+    margin: 16,
+    ...shadowPresets.medium,
+    borderRadius: 12,
+  },
+  testimonialItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  testimonialContent: {
+    marginLeft: 15,
+  },
+  testimonialText: {
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 5,
+  },
+  testimonialAuthor: {
+    fontSize: 14,
+    fontStyle: 'italic',
+    color: '#666',
+  },
+  ctaCard: {
+    margin: 16,
+    ...shadowPresets.medium,
+    borderRadius: 12,
+  },
+  ctaContent: {
+    alignItems: 'center',
+    paddingVertical: 20,
+  },
+  ctaTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
+  ctaSubtitle: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 20,
+    textAlign: 'center',
+    marginHorizontal: 20,
+  },
+  ctaButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginBottom: 20,
+    width: '100%',
+  },
+  ctaButton: {
+    flex: 1,
+    marginHorizontal: 5,
+  },
+  ctaButtonContent: {
+    height: 50,
+  },
+  socialLogin: {
+    width: '100%',
+  },
+  socialButton: {
+    marginTop: 10,
+  },
+  socialButtonContent: {
+    height: 50,
   },
 });
