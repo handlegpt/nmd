@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Text } from 'react-native';
+import { View, StyleSheet, Animated, Text, ScrollView } from 'react-native';
 import { Surface, IconButton } from 'react-native-paper';
 import { shadowPresets } from '../../utils/platformStyles';
 import { colors, spacing, borderRadius } from '../../utils/responsive';
@@ -100,7 +100,13 @@ const Toast: React.FC<ToastProps> = ({
             size={20}
             style={styles.icon}
           />
-          <Text style={styles.message}>{message}</Text>
+          <ScrollView 
+            style={styles.messageContainer}
+            showsVerticalScrollIndicator={false}
+            nestedScrollEnabled={true}
+          >
+            <Text style={styles.message}>{message}</Text>
+          </ScrollView>
         </View>
         <IconButton
           icon="close"
@@ -141,11 +147,15 @@ const styles = StyleSheet.create({
     margin: 0,
     marginRight: spacing.sm,
   },
-  message: {
+  messageContainer: {
     flex: 1,
+    maxHeight: 200,
+  },
+  message: {
     color: colors.white,
     fontSize: 14,
     fontWeight: '500',
+    lineHeight: 20,
   },
   closeButton: {
     margin: 0,

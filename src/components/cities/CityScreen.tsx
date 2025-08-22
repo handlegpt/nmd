@@ -22,6 +22,7 @@ import { colors, spacing, borderRadius } from '../../utils/responsive';
 import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { useResponsive } from '../../utils/responsive';
 
 interface NomadCity {
   id: string;
@@ -48,6 +49,7 @@ interface NomadCity {
 
 export const CityScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const { user } = useAuthStore();
+  const { isWeb } = useResponsive();
   const [cities, setCities] = useState<NomadCity[]>([]);
   const [filteredCities, setFilteredCities] = useState<NomadCity[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -64,6 +66,50 @@ export const CityScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   useEffect(() => {
     filterCities();
   }, [cities, searchQuery, selectedContinent]);
+
+  // URL sync for web
+  useEffect(() => {
+    if (isWeb && typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      const searchParam = url.searchParams.get('search');
+      const continentParam = url.searchParams.get('continent');
+      const cityParam = url.searchParams.get('city');
+      
+      if (searchParam) setSearchQuery(searchParam);
+      if (continentParam && continents.includes(continentParam)) {
+        setSelectedContinent(continentParam);
+      }
+      
+      // Show city details if city parameter is present
+      if (cityParam) {
+        const city = cities.find(c => c.id === cityParam);
+        if (city) {
+          handleLearnMore(city);
+        }
+      }
+    }
+  }, [isWeb, cities]);
+
+  // Update URL when filters change
+  useEffect(() => {
+    if (isWeb && typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      
+      if (searchQuery) {
+        url.searchParams.set('search', searchQuery);
+      } else {
+        url.searchParams.delete('search');
+      }
+      
+      if (selectedContinent !== 'All') {
+        url.searchParams.set('continent', selectedContinent);
+      } else {
+        url.searchParams.delete('continent');
+      }
+      
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [searchQuery, selectedContinent, isWeb]);
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -232,6 +278,41 @@ export const CityScreen: React.FC = ({ navigation }: { navigation?: any }) => {
     );
   };
 
+  // Handle learn more button
+  const handleLearnMore = (city: NomadCity) => {
+    if (isWeb) {
+      // For web, update URL to show city details
+      const url = new URL(window.location.href);
+      url.searchParams.set('city', city.id);
+      window.history.pushState({}, '', url.toString());
+    }
+    
+    // Show detailed city information
+    const totalBudget = Object.values(city.monthlyBudget).reduce((sum, cost) => sum + cost, 0);
+    const message = `
+🏙️ ${city.name}, ${city.country}
+
+📊 Nomad Score: ${city.nomadScore}/10
+💰 Cost of Living: ${city.costOfLiving}
+🌐 Internet: ${city.internetSpeed} Mbps
+🌤️ Weather: ${city.weather}
+🕐 Timezone: ${city.timezone}
+
+💵 Monthly Budget: $${totalBudget}
+   • Accommodation: $${city.monthlyBudget.accommodation}
+   • Food: $${city.monthlyBudget.food}
+   • Transport: $${city.monthlyBudget.transport}
+   • Entertainment: $${city.monthlyBudget.entertainment}
+
+✨ Highlights: ${city.highlights.join(', ')}
+⚠️ Considerations: ${city.cons.join(', ')}
+
+${city.description}
+    `;
+    
+    showToast(message, 'info');
+  };
+
   // Get cost of living color
   const getCostColor = (cost: string) => {
     switch (cost) {
@@ -326,7 +407,7 @@ export const CityScreen: React.FC = ({ navigation }: { navigation?: any }) => {
 
         <Button
           mode="contained"
-          onPress={() => showToast(`Learn more about ${item.name}`, 'info')}
+          onPress={() => handleLearnMore(item)}
           style={styles.learnMoreButton}
         >
           Learn More
