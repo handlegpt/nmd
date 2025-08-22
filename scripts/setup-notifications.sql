@@ -98,7 +98,3 @@ GROUP BY user_id;
 
 -- Grant access to the view
 GRANT SELECT ON notification_stats TO authenticated;
-
--- Create RLS policy for the view
-CREATE POLICY "Users can view their own notification stats" ON notification_stats
-  FOR SELECT USING (auth.uid() = user_id);
