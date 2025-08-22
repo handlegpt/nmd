@@ -254,6 +254,7 @@ const FeedScreen: React.FC = () => {
 
   // Load posts on component mount
   useEffect(() => {
+    console.log('🔍 FeedScreen: Loading posts...');
     loadPosts();
   }, [loadPosts]);
 
@@ -431,12 +432,15 @@ const FeedScreen: React.FC = () => {
   };
 
   if (loading) {
+    console.log('🔍 FeedScreen: Loading state, showing spinner');
     return (
       <ResponsiveContainer>
         <LoadingSpinner visible={true} />
       </ResponsiveContainer>
     );
   }
+
+  console.log('🔍 FeedScreen: Rendering with', posts.length, 'posts');
 
   return (
     <ResponsiveContainer>
