@@ -10,6 +10,8 @@ const FeedScreen: React.FC = () => {
   const { user } = useAuthStore();
   const navigation = useNavigation();
 
+  console.log('FeedScreen rendering, user:', user);
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
@@ -32,10 +34,16 @@ const FeedScreen: React.FC = () => {
           </Card>
         )}
 
+        {/* Debug info */}
+        <View style={styles.debugInfo}>
+          <Text style={styles.debugText}>Debug: FeedScreen is rendering</Text>
+          <Text style={styles.debugText}>User logged in: {user ? 'Yes' : 'No'}</Text>
+        </View>
+
         {/* Simple test content */}
         <Card style={styles.postCard}>
           <Card.Content>
-            <Title style={styles.postTitle}>Test Post</Title>
+            <Title style={styles.postTitle}>Test Post 1</Title>
             <Paragraph style={styles.postContent}>
               This is a test post to verify that the FeedScreen is rendering correctly.
             </Paragraph>
@@ -45,11 +53,21 @@ const FeedScreen: React.FC = () => {
 
         <Card style={styles.postCard}>
           <Card.Content>
-            <Title style={styles.postTitle}>Another Test Post</Title>
+            <Title style={styles.postTitle}>Test Post 2</Title>
             <Paragraph style={styles.postContent}>
               This is another test post to ensure the component is working properly.
             </Paragraph>
             <Text style={styles.postMeta}>Posted by Another User • 4 hours ago</Text>
+          </Card.Content>
+        </Card>
+
+        <Card style={styles.postCard}>
+          <Card.Content>
+            <Title style={styles.postTitle}>Test Post 3</Title>
+            <Paragraph style={styles.postContent}>
+              This is a third test post with different content to make sure everything is visible.
+            </Paragraph>
+            <Text style={styles.postMeta}>Posted by Third User • 6 hours ago</Text>
           </Card.Content>
         </Card>
       </View>
@@ -100,6 +118,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
     borderRadius: borderRadius.xl,
     backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray200,
     ...shadowPresets.card,
   },
   postTitle: {
@@ -117,5 +137,18 @@ const styles = StyleSheet.create({
   postMeta: {
     fontSize: 14,
     color: colors.textSecondary,
+  },
+  debugInfo: {
+    marginTop: spacing.lg,
+    padding: spacing.base,
+    backgroundColor: colors.gray100,
+    borderRadius: borderRadius.base,
+    borderWidth: 1,
+    borderColor: colors.gray200,
+  },
+  debugText: {
+    fontSize: 14,
+    color: colors.textSecondary,
+    marginBottom: spacing.sm,
   },
 });
