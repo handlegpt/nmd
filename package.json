@@ -4,9 +4,9 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "npx expo start --web",
-    "start:prod": "NODE_ENV=production npx expo start --web --port 19006 --host 0.0.0.0",
+    "start:prod": "NODE_ENV=production npx expo start --web --port 19006 --host lan",
     "web": "npx expo start --web",
-    "web:prod": "NODE_ENV=production npx expo start --web --port 19006 --host 0.0.0.0",
+    "web:prod": "NODE_ENV=production npx expo start --web --port 19006 --host lan",
     "android": "npx expo start --android",
     "ios": "npx expo start --ios",
     "build": "NODE_ENV=production npx expo export --web",
