@@ -382,6 +382,13 @@ const FeedScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       <ResponsiveContainer>
+        {/* Debug info */}
+        <View style={{ padding: 20, backgroundColor: 'yellow' }}>
+          <Text>Debug: User = {user ? 'Logged in' : 'Not logged in'}</Text>
+          <Text>Debug: Posts count = {posts.length}</Text>
+          <Text>Debug: Container height = 100%</Text>
+        </View>
+        
         <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
           {/* Guest Card for non-logged in users */}
           {!user && (
