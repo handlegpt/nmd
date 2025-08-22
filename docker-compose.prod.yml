@@ -10,7 +10,7 @@ services:
     ports:
       - "19006:19006"
     environment:
-      # 生产环境变量
+      # Production environment variables
       - NODE_ENV=production
       - EXPO_WEB_OPTIMIZE=true
       - EXPO_WEB_MINIFY=true
@@ -22,21 +22,21 @@ services:
       - EXPO_WEB_COMPRESS=true
       - EXPO_WEB_GZIP=true
       
-      # Google OAuth 配置 (需要设置实际值)
+      # Google OAuth configuration (set actual values)
       - EXPO_PUBLIC_GOOGLE_CLIENT_ID=${EXPO_PUBLIC_GOOGLE_CLIENT_ID}
       - EXPO_PUBLIC_GOOGLE_CLIENT_SECRET=${EXPO_PUBLIC_GOOGLE_CLIENT_SECRET}
       - EXPO_PUBLIC_GOOGLE_REDIRECT_URI=${EXPO_PUBLIC_GOOGLE_REDIRECT_URI}
       
-      # Supabase 配置 (需要设置实际值)
+      # Supabase configuration (set actual values)
       - EXPO_PUBLIC_SUPABASE_URL=${EXPO_PUBLIC_SUPABASE_URL}
       - EXPO_PUBLIC_SUPABASE_ANON_KEY=${EXPO_PUBLIC_SUPABASE_ANON_KEY}
       
-      # 应用配置
+      # App configuration
       - EXPO_PUBLIC_APP_NAME=NomadNow
       - EXPO_PUBLIC_APP_DOMAIN=${EXPO_PUBLIC_APP_DOMAIN:-nomad.now}
       - EXPO_PUBLIC_APP_VERSION=1.0.0
       
-      # 邮件服务配置 (需要设置实际值)
+      # Email service configuration (set actual values)
       - EXPO_PUBLIC_SMTP_HOST=${EXPO_PUBLIC_SMTP_HOST}
       - EXPO_PUBLIC_SMTP_PORT=${EXPO_PUBLIC_SMTP_PORT}
       - EXPO_PUBLIC_SMTP_USER=${EXPO_PUBLIC_SMTP_USER}
@@ -44,7 +44,7 @@ services:
       - EXPO_PUBLIC_FROM_EMAIL=${EXPO_PUBLIC_FROM_EMAIL}
       - EXPO_PUBLIC_FROM_NAME=${EXPO_PUBLIC_FROM_NAME}
     
-    # 资源限制
+    # Resource limits
     deploy:
       resources:
         limits:
@@ -54,7 +54,7 @@ services:
           memory: 512M
           cpus: '0.25'
     
-    # 健康检查
+    # Health check
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:19006/"]
       interval: 30s
@@ -62,14 +62,14 @@ services:
       retries: 3
       start_period: 40s
     
-    # 日志配置
+    # Logging configuration
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "3"
     
-    # 网络配置
+    # Network configuration
     networks:
       - nomadnow-network
 

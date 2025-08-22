@@ -1,17 +1,17 @@
-# 使用 Node.js 18 Alpine 镜像作为基础镜像
+# Use Node.js 18 Alpine image for smaller size and security
 FROM node:18-alpine AS base
 
-# 设置工作目录
+# Set working directory
 WORKDIR /app
 
-# 安装依赖
+# Install dependencies
 COPY package*.json ./
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --omit=dev && npm cache clean --force
 
-# 复制源代码
+# Copy source code
 COPY . .
 
-# 设置生产环境变量
+# Set production environment variables
 ENV NODE_ENV=production
 ENV EXPO_WEB_OPTIMIZE=true
 ENV EXPO_WEB_MINIFY=true
@@ -23,15 +23,15 @@ ENV EXPO_WEB_CACHE=true
 ENV EXPO_WEB_COMPRESS=true
 ENV EXPO_WEB_GZIP=true
 
-# 构建生产版本
+# Build production version
 RUN npm run build
 
-# 暴露端口
+# Expose port
 EXPOSE 19006
 
-# 健康检查
+# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:19006/ || exit 1
 
-# 启动生产服务器
+# Start production server
 CMD ["npm", "run", "start:prod"] 
