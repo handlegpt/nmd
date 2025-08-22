@@ -161,17 +161,30 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   // Handle login button press
   const handleLogin = async () => {
     if (!googleConfig.clientId) {
-      console.warn('Google OAuth not configured - using mock mode');
-      // In development/mock mode, simulate successful login
-      const mockUser = {
-        id: 'mock-google-user',
-        email: 'user@gmail.com',
-        name: 'Mock Google User',
-        picture: 'https://via.placeholder.com/80x80/4285f4/ffffff?text=G',
-        given_name: 'Mock',
-        family_name: 'User',
-      };
-      onSuccess?.(mockUser);
+      Alert.alert(
+        'Google OAuth Not Configured',
+        'Please configure Google OAuth credentials in your .env file:\n\n' +
+        'EXPO_PUBLIC_GOOGLE_CLIENT_ID=your-client-id\n' +
+        'EXPO_PUBLIC_GOOGLE_CLIENT_SECRET=your-client-secret\n\n' +
+        'Get these from: https://console.cloud.google.com/',
+        [
+          { text: 'OK', style: 'default' },
+          { 
+            text: 'Use Demo Mode', 
+            onPress: () => {
+              const mockUser = {
+                id: 'mock-google-user',
+                email: 'user@gmail.com',
+                name: 'Mock Google User',
+                picture: 'https://via.placeholder.com/80x80/4285f4/ffffff?text=G',
+                given_name: 'Mock',
+                family_name: 'User',
+              };
+              onSuccess?.(mockUser);
+            }
+          }
+        ]
+      );
       return;
     }
 
@@ -197,7 +210,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         labelStyle={styles.buttonLabel}
       >
         {isLoading ? 'Connecting to Google...' : 
-         !googleConfig.clientId ? 'Continue with Gmail (Demo)' : 'Continue with Gmail'}
+         !googleConfig.clientId ? 'Continue with Gmail (Demo Mode)' : 'Continue with Gmail'}
       </Button>
     </View>
   );
