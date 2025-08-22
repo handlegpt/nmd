@@ -387,14 +387,31 @@ const FeedScreen: React.FC = () => {
 
   // Handle add comment
   const handleAddComment = async () => {
-    if (!newComment.trim() || !user) return;
+    console.log('🔍 handleAddComment called');
+    console.log('🔍 newComment:', newComment);
+    console.log('🔍 user:', user);
+    console.log('🔍 selectedPostId:', selectedPostId);
+    
+    if (!newComment.trim()) {
+      console.log('🔍 Comment is empty');
+      return;
+    }
+    
+    if (!user) {
+      console.log('🔍 User not logged in');
+      showToast('Please sign in to comment', 'warning');
+      return;
+    }
 
     try {
+      console.log('🔍 Creating comment...');
       const comment = await DatabaseService.createComment({
         post_id: selectedPostId,
         user_id: user.id,
         content: newComment.trim(),
       });
+
+      console.log('🔍 Comment created:', comment);
 
       if (comment) {
         setPosts(posts.map(post => {
@@ -418,9 +435,10 @@ const FeedScreen: React.FC = () => {
         }));
         setNewComment('');
         showToast('Comment added successfully!', 'success');
+        console.log('🔍 Comment added to UI');
       }
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error('🔍 Error adding comment:', error);
       showToast('Failed to add comment', 'error');
     }
   };

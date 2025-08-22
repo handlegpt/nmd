@@ -1,15 +1,10 @@
-import { supabase, isMockMode } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 import { User, Location, Message, Post, Comment, Notification } from '../types';
 
 // Database service for handling all database operations
 export class DatabaseService {
   // User operations
   static async createUser(userData: Partial<User>): Promise<User | null> {
-    if (isMockMode) {
-      console.log('Mock: Creating user', userData);
-      return userData as User;
-    }
-
     try {
       const { data, error } = await supabase
         .from('users')
@@ -194,22 +189,23 @@ export class DatabaseService {
 
   // Comment operations
   static async createComment(commentData: Partial<Comment>): Promise<Comment | null> {
-    if (isMockMode) {
-      console.log('Mock: Creating comment', commentData);
-      return commentData as Comment;
-    }
-
     try {
+      console.log('🔍 DatabaseService: Creating comment', commentData);
       const { data, error } = await supabase
         .from('comments')
         .insert(commentData)
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('🔍 DatabaseService: Comment creation error', error);
+        throw error;
+      }
+      
+      console.log('🔍 DatabaseService: Comment created successfully', data);
       return data;
     } catch (error) {
-      console.error('Error creating comment:', error);
+      console.error('🔍 DatabaseService: Error creating comment:', error);
       return null;
     }
   }
