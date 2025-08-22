@@ -6,21 +6,12 @@ services:
     container_name: nomadnow-prod
     restart: unless-stopped
     ports:
-      - "19006:19006"
+      - "80:80"
     env_file:
       - .env
     environment:
       # Production environment variables
       - NODE_ENV=production
-      - EXPO_WEB_OPTIMIZE=true
-      - EXPO_WEB_MINIFY=true
-      - EXPO_DEBUG=false
-      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
-      - EXPO_WEB_BUNDLE_ANALYZER=false
-      - EXPO_WEB_SOURCE_MAPS=false
-      - EXPO_WEB_CACHE=true
-      - EXPO_WEB_COMPRESS=true
-      - EXPO_WEB_GZIP=true
       
       # Google OAuth configuration (set actual values)
       - EXPO_PUBLIC_GOOGLE_CLIENT_ID=${EXPO_PUBLIC_GOOGLE_CLIENT_ID}
@@ -56,7 +47,7 @@ services:
     
     # Health check
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:19006/"]
+      test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
