@@ -4,6 +4,7 @@ import { User, Location as LocationType, MapState } from '../types';
 import * as ExpoLocation from 'expo-location';
 import { useAuthStore } from './authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { reverseGeocode } from '../utils/geocoding';
 
 interface MapStore extends MapState {
   getCurrentLocation: () => Promise<void>;
@@ -91,11 +92,17 @@ export const useMapStore = create<MapStore>((set, get) => ({
         distanceInterval: 10, // 10 meters
       });
       
+      // Get location details using reverse geocoding
+      const geocodingResult = await reverseGeocode(
+        location.coords.latitude,
+        location.coords.longitude
+      );
+
       const currentLocation: LocationType = {
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
-        city: 'Unknown City', // Can be enhanced with reverse geocoding
-        country: 'Unknown Country',
+        city: geocodingResult.city,
+        country: geocodingResult.country,
       };
 
       set({ currentLocation });
