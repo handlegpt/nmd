@@ -5,18 +5,28 @@ const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 // Determine if we should use mock mode
-const isMockMode = !supabaseUrl || !supabaseAnonKey;
+// Mock mode is enabled when:
+// 1. Supabase credentials are missing, OR
+// 2. NODE_ENV is 'development' and MOCK_MODE is explicitly set to 'true'
+const isMockMode = !supabaseUrl || !supabaseAnonKey || 
+  (process.env.NODE_ENV === 'development' && process.env.MOCK_MODE === 'true');
 
 // Mock Supabase client for development/testing
 const createMockClient = () => ({
   auth: {
-    signInWithPassword: async () => ({ data: null, error: null }),
-    signUp: async () => ({ data: null, error: null }),
+    onAuthStateChange: (callback: any) => {
+      // Mock auth state change
+      return { data: { subscription: { unsubscribe: () => {} } } };
+    },
     signOut: async () => ({ error: null }),
-    onAuthStateChange: () => ({ data: { subscription: { unsubscribe: () => {} } } }),
+    signInWithOAuth: async () => ({ data: null, error: null }),
   },
-  from: () => ({
-    select: () => ({ eq: () => ({ single: () => ({ data: null, error: null }) }) }),
+  from: (table: string) => ({
+    select: () => ({ 
+      eq: () => ({ single: () => ({ data: null, error: null }) }),
+      order: () => ({ range: () => ({ data: [], error: null }) }),
+      limit: () => ({ data: [], error: null }),
+    }),
     insert: () => ({ data: null, error: null }),
     update: () => ({ eq: () => ({ select: () => ({ single: () => ({ data: null, error: null }) }) }) }),
     upsert: () => ({ data: null, error: null }),
@@ -35,16 +45,21 @@ const createMockClient = () => ({
 let supabase: any;
 
 if (isMockMode) {
-  console.log('Running in mock mode. All Supabase functionality will be simulated.');
+  if (!supabaseUrl || !supabaseAnonKey) {
+    console.warn('⚠️  Supabase credentials not found. Running in mock mode.');
+    console.warn('   To use real database, set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in your .env file');
+  } else {
+    console.log('🔧 Running in mock mode (MOCK_MODE=true in development)');
+  }
   supabase = createMockClient();
 } else {
-  console.log('Connecting to Supabase...');
+  console.log('🚀 Connecting to Supabase...');
   supabase = createClient(supabaseUrl!, supabaseAnonKey!);
 }
 
 export { supabase, isMockMode };
 
-// Database types
+// Database types for better type safety
 export interface Database {
   public: {
     Tables: {
@@ -53,29 +68,27 @@ export interface Database {
           id: string;
           email: string;
           nickname: string;
-          avatar_url: string | null;
-          bio: string | null;
+          avatar_url?: string;
+          bio?: string;
           current_city: string;
           languages: string[];
           interests: string[];
           is_visible: boolean;
           is_available_for_meetup: boolean;
-          location: any | null;
           created_at: string;
           updated_at: string;
         };
         Insert: {
-          id: string;
+          id?: string;
           email: string;
           nickname: string;
-          avatar_url?: string | null;
-          bio?: string | null;
-          current_city: string;
+          avatar_url?: string;
+          bio?: string;
+          current_city?: string;
           languages?: string[];
           interests?: string[];
           is_visible?: boolean;
           is_available_for_meetup?: boolean;
-          location?: any | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -83,14 +96,13 @@ export interface Database {
           id?: string;
           email?: string;
           nickname?: string;
-          avatar_url?: string | null;
-          bio?: string | null;
+          avatar_url?: string;
+          bio?: string;
           current_city?: string;
           languages?: string[];
           interests?: string[];
           is_visible?: boolean;
           is_available_for_meetup?: boolean;
-          location?: any | null;
           created_at?: string;
           updated_at?: string;
         };
@@ -101,18 +113,20 @@ export interface Database {
           user_id: string;
           latitude: number;
           longitude: number;
-          city: string;
-          country: string;
+          city?: string;
+          country?: string;
           created_at: string;
+          updated_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
           latitude: number;
           longitude: number;
-          city: string;
-          country: string;
+          city?: string;
+          country?: string;
           created_at?: string;
+          updated_at?: string;
         };
         Update: {
           id?: string;
@@ -121,6 +135,65 @@ export interface Database {
           longitude?: number;
           city?: string;
           country?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      posts: {
+        Row: {
+          id: string;
+          user_id: string;
+          content: string;
+          media_urls?: string[];
+          location?: any;
+          meetup_details?: any;
+          likes: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          content: string;
+          media_urls?: string[];
+          location?: any;
+          meetup_details?: any;
+          likes?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          content?: string;
+          media_urls?: string[];
+          location?: any;
+          meetup_details?: any;
+          likes?: number;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      comments: {
+        Row: {
+          id: string;
+          post_id: string;
+          user_id: string;
+          content: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          post_id: string;
+          user_id: string;
+          content: string;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          post_id?: string;
+          user_id?: string;
+          content?: string;
           created_at?: string;
         };
       };
@@ -147,104 +220,34 @@ export interface Database {
           created_at?: string;
         };
       };
-      posts: {
-        Row: {
-          id: string;
-          user_id: string;
-          content: string;
-          location: string | null;
-          location_details: any | null;
-          media: any[] | null;
-          is_meetup_request: boolean;
-          meetup_details: any | null;
-          likes: number;
-          created_at: string;
-          tags: string[];
-          emotion: string | null;
-          topic: string | null;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          content: string;
-          location?: string | null;
-          location_details?: any | null;
-          media?: any[] | null;
-          is_meetup_request?: boolean;
-          meetup_details?: any | null;
-          likes?: number;
-          created_at?: string;
-          tags?: string[];
-          emotion?: string | null;
-          topic?: string | null;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          content?: string;
-          location?: string | null;
-          location_details?: any | null;
-          media?: any[] | null;
-          is_meetup_request?: boolean;
-          meetup_details?: any | null;
-          likes?: number;
-          created_at?: string;
-          tags?: string[];
-          emotion?: string | null;
-          topic?: string | null;
-        };
-      };
-      comments: {
-        Row: {
-          id: string;
-          post_id: string;
-          user_id: string;
-          content: string;
-          created_at: string;
-        };
-        Insert: {
-          id?: string;
-          post_id: string;
-          user_id: string;
-          content: string;
-          created_at?: string;
-        };
-        Update: {
-          id?: string;
-          post_id?: string;
-          user_id?: string;
-          content?: string;
-          created_at?: string;
-        };
-      };
       notifications: {
         Row: {
           id: string;
           user_id: string;
-          type: string;
+          from_user_id?: string;
+          type: 'like' | 'comment' | 'message' | 'meetup_invite' | 'meetup_update';
           title: string;
           message: string;
-          from_user_id: string | null;
           is_read: boolean;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id: string;
-          type: string;
+          from_user_id?: string;
+          type: 'like' | 'comment' | 'message' | 'meetup_invite' | 'meetup_update';
           title: string;
           message: string;
-          from_user_id?: string | null;
           is_read?: boolean;
           created_at?: string;
         };
         Update: {
           id?: string;
           user_id?: string;
-          type?: string;
+          from_user_id?: string;
+          type?: 'like' | 'comment' | 'message' | 'meetup_invite' | 'meetup_update';
           title?: string;
           message?: string;
-          from_user_id?: string | null;
           is_read?: boolean;
           created_at?: string;
         };
