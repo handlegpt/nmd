@@ -13,7 +13,7 @@ import { colors, spacing, borderRadius } from '../utils/responsive';
 import FeedScreen from '../components/feed/FeedScreen';
 import { MapScreen } from '../components/map/MapScreen';
 import { ActivityScreen } from '../components/activities/ActivityScreen';
-import { NotificationScreen } from '../components/notifications/NotificationScreen';
+import { CityScreen } from '../components/cities/CityScreen';
 import { ProfileScreen } from '../components/profile/ProfileScreen';
 import { LoginScreen } from '../components/auth/LoginScreen';
 import { SettingsScreen } from '../components/settings/SettingsScreen';
@@ -50,8 +50,8 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
             iconName = 'map';
           } else if (route.name === 'Activities') {
             iconName = 'calendar';
-          } else if (route.name === 'Notifications') {
-            iconName = 'bell';
+          } else if (route.name === 'Cities') {
+            iconName = 'city';
           } else if (route.name === 'Profile') {
             iconName = 'account';
           } else {
@@ -101,9 +101,9 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
         options={{ title: 'Meetups' }}
       />
       <Tab.Screen 
-        name="Notifications" 
-        component={NotificationScreen}
-        options={{ title: 'Notifications' }}
+        name="Cities" 
+        component={CityScreen}
+        options={{ title: 'Cities' }}
       />
       <Tab.Screen 
         name="Profile"

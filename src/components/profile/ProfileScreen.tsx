@@ -14,6 +14,8 @@ import {
   Switch,
   TextInput,
   Chip,
+  IconButton,
+  Badge,
 } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { useAuthStore } from '../../store/authStore';
@@ -29,6 +31,7 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
   const [isAvailableForMeetup, setIsAvailableForMeetup] = useState(
     user?.is_available_for_meetup ?? true
   );
+  const [notificationCount, setNotificationCount] = useState(3); // Mock notification count
 
   // Save profile changes
   const handleSave = async () => {
@@ -113,28 +116,45 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
       <Card style={styles.card}>
         <Card.Content>
           <View style={styles.header}>
-            {user.avatar_url ? (
-              <Avatar.Image
-                size={80}
-                source={{ uri: user.avatar_url }}
+            <View style={styles.avatarSection}>
+              {user.avatar_url ? (
+                <Avatar.Image
+                  size={80}
+                  source={{ uri: user.avatar_url }}
+                />
+              ) : (
+                <Avatar.Text
+                  size={80}
+                  label={user.nickname.charAt(0).toUpperCase()}
+                  style={{ backgroundColor: '#6366f1' }}
+                />
+              )}
+              <View style={styles.headerInfo}>
+                <Title>{user.nickname}</Title>
+                <Paragraph>{user.current_city}</Paragraph>
+                <Button
+                  mode="text"
+                  onPress={handlePickImage}
+                  style={styles.changeAvatarButton}
+                >
+                  Change Avatar
+                </Button>
+              </View>
+            </View>
+            <View style={styles.notificationSection}>
+              <IconButton
+                icon="bell"
+                size={24}
+                onPress={() => Alert.alert('Notifications', 'You have 3 new notifications')}
               />
-            ) : (
-              <Avatar.Text
-                size={80}
-                label={user.nickname.charAt(0).toUpperCase()}
-                style={{ backgroundColor: '#6366f1' }}
-              />
-            )}
-            <View style={styles.headerInfo}>
-              <Title>{user.nickname}</Title>
-              <Paragraph>{user.current_city}</Paragraph>
-              <Button
-                mode="text"
-                onPress={handlePickImage}
-                style={styles.changeAvatarButton}
-              >
-                Change Avatar
-              </Button>
+              {notificationCount > 0 && (
+                <Badge
+                  size={20}
+                  style={styles.notificationBadge}
+                >
+                  {notificationCount}
+                </Badge>
+              )}
             </View>
           </View>
 
@@ -277,8 +297,23 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
     marginBottom: 20,
+  },
+  avatarSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  notificationSection: {
+    position: 'relative',
+  },
+  notificationBadge: {
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    backgroundColor: '#F44336',
   },
   headerInfo: {
     marginLeft: 16,
