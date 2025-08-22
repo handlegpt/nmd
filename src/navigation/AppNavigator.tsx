@@ -39,94 +39,88 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
   const { isPhone } = useResponsive();
   
   return (
-    <>
-      <div style={{ 
-        minHeight: '100vh'
-      }}>
-        <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName: string;
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName: string;
 
-            if (route.name === 'Feed') {
-              iconName = 'home';
-            } else if (route.name === 'Map') {
-              iconName = 'map';
-            } else if (route.name === 'Activities') {
-              iconName = 'calendar';
-            } else if (route.name === 'Notifications') {
-              iconName = 'bell';
-            } else if (route.name === 'Profile') {
-              iconName = 'account';
-            } else {
-              iconName = 'circle';
-            }
+          if (route.name === 'Feed') {
+            iconName = 'home';
+          } else if (route.name === 'Map') {
+            iconName = 'map';
+          } else if (route.name === 'Activities') {
+            iconName = 'calendar';
+          } else if (route.name === 'Notifications') {
+            iconName = 'bell';
+          } else if (route.name === 'Profile') {
+            iconName = 'account';
+          } else {
+            iconName = 'circle';
+          }
 
-            return (
-              <IconButton
-                icon={iconName}
-                iconColor={focused ? colors.primary : colors.gray400}
-                size={size}
-                style={{ margin: 0 }}
-              />
-            );
-          },
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.gray400,
-          tabBarStyle: {
-            backgroundColor: colors.white,
-            borderTopColor: colors.gray200,
-            borderTopWidth: 1,
-            paddingBottom: isPhone ? 0 : 10,
-            paddingTop: 10,
-            height: isPhone ? 60 : 80,
-            ...shadowPresets.small,
-          },
-          tabBarLabelStyle: {
-            fontSize: 12,
-            fontWeight: '600',
-            marginTop: 4,
-          },
-          headerShown: false,
-        })}>
-        <Tab.Screen 
-          name="Feed" 
-          component={FeedScreen}
-          options={{ title: 'Home' }}
-        />
-        <Tab.Screen 
-          name="Map" 
-          component={MapScreen}
-          options={{ title: 'Discover' }}
-        />
-        <Tab.Screen 
-          name="Activities" 
-          component={ActivityScreen}
-          options={{ title: 'Meetups' }}
-        />
-        <Tab.Screen 
-          name="Notifications" 
-          component={NotificationScreen}
-          options={{ title: 'Notifications' }}
-        />
-        <Tab.Screen 
-          name="Profile"
-          component={ProfileScreen}
-          options={{ 
-            title: 'Profile',
-            headerRight: () => (
-              <IconButton
-                icon="cog"
-                iconColor={colors.white}
-                size={24}
-                onPress={() => navigation.navigate('Settings')}
-              />
-            ),
-          }}
-        />
-      </Tab.Navigator>
-      </div>
-    </>
+          return (
+            <IconButton
+              icon={iconName}
+              iconColor={focused ? colors.primary : colors.gray400}
+              size={size}
+              style={{ margin: 0 }}
+            />
+          );
+        },
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.gray400,
+        tabBarStyle: {
+          backgroundColor: colors.white,
+          borderTopColor: colors.gray200,
+          borderTopWidth: 1,
+          paddingBottom: isPhone ? 0 : 10,
+          paddingTop: 10,
+          height: isPhone ? 60 : 80,
+          ...shadowPresets.small,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '600',
+          marginTop: 4,
+        },
+        headerShown: false,
+      })}>
+      <Tab.Screen 
+        name="Feed" 
+        component={FeedScreen}
+        options={{ title: 'Home' }}
+      />
+      <Tab.Screen 
+        name="Map" 
+        component={MapScreen}
+        options={{ title: 'Discover' }}
+      />
+      <Tab.Screen 
+        name="Activities" 
+        component={ActivityScreen}
+        options={{ title: 'Meetups' }}
+      />
+      <Tab.Screen 
+        name="Notifications" 
+        component={NotificationScreen}
+        options={{ title: 'Notifications' }}
+      />
+      <Tab.Screen 
+        name="Profile"
+        component={ProfileScreen}
+        options={{ 
+          title: 'Profile',
+          headerRight: () => (
+            <IconButton
+              icon="cog"
+              iconColor={colors.white}
+              size={24}
+              onPress={() => navigation.navigate('Settings')}
+            />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
