@@ -88,67 +88,143 @@ ALTER TABLE messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
 -- User policies
-CREATE POLICY IF NOT EXISTS "Users can view visible users" ON users
-  FOR SELECT USING (is_visible = true);
+DO $$ BEGIN
+    CREATE POLICY "Users can view visible users" ON users
+      FOR SELECT USING (is_visible = true);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can update own profile" ON users
-  FOR UPDATE USING (auth.uid() = id);
+DO $$ BEGIN
+    CREATE POLICY "Users can update own profile" ON users
+      FOR UPDATE USING (auth.uid() = id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can insert own profile" ON users
-  FOR INSERT WITH CHECK (auth.uid() = id);
+DO $$ BEGIN
+    CREATE POLICY "Users can insert own profile" ON users
+      FOR INSERT WITH CHECK (auth.uid() = id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Location policies
-CREATE POLICY IF NOT EXISTS "Users can view nearby locations" ON user_locations
-  FOR SELECT USING (true);
+DO $$ BEGIN
+    CREATE POLICY "Users can view nearby locations" ON user_locations
+      FOR SELECT USING (true);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can update own location" ON user_locations
-  FOR UPDATE USING (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can update own location" ON user_locations
+      FOR UPDATE USING (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can insert own location" ON user_locations
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can insert own location" ON user_locations
+      FOR INSERT WITH CHECK (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Post policies
-CREATE POLICY IF NOT EXISTS "Users can view all posts" ON posts
-  FOR SELECT USING (true);
+DO $$ BEGIN
+    CREATE POLICY "Users can view all posts" ON posts
+      FOR SELECT USING (true);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can create posts" ON posts
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can create posts" ON posts
+      FOR INSERT WITH CHECK (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can update own posts" ON posts
-  FOR UPDATE USING (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can update own posts" ON posts
+      FOR UPDATE USING (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can delete own posts" ON posts
-  FOR DELETE USING (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can delete own posts" ON posts
+      FOR DELETE USING (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Comment policies
-CREATE POLICY IF NOT EXISTS "Users can view all comments" ON comments
-  FOR SELECT USING (true);
+DO $$ BEGIN
+    CREATE POLICY "Users can view all comments" ON comments
+      FOR SELECT USING (true);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can create comments" ON comments
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can create comments" ON comments
+      FOR INSERT WITH CHECK (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can update own comments" ON comments
-  FOR UPDATE USING (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can update own comments" ON comments
+      FOR UPDATE USING (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can delete own comments" ON comments
-  FOR DELETE USING (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can delete own comments" ON comments
+      FOR DELETE USING (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Message policies
-CREATE POLICY IF NOT EXISTS "Users can view own messages" ON messages
-  FOR SELECT USING (auth.uid() = from_user_id OR auth.uid() = to_user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can view own messages" ON messages
+      FOR SELECT USING (auth.uid() = from_user_id OR auth.uid() = to_user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can insert messages" ON messages
-  FOR INSERT WITH CHECK (auth.uid() = from_user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can insert messages" ON messages
+      FOR INSERT WITH CHECK (auth.uid() = from_user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Notification policies
-CREATE POLICY IF NOT EXISTS "Users can view own notifications" ON notifications
-  FOR SELECT USING (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can view own notifications" ON notifications
+      FOR SELECT USING (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can update own notifications" ON notifications
-  FOR UPDATE USING (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can update own notifications" ON notifications
+      FOR UPDATE USING (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can insert notifications" ON notifications
-  FOR INSERT WITH CHECK (auth.uid() = user_id);
+DO $$ BEGIN
+    CREATE POLICY "Users can insert notifications" ON notifications
+      FOR INSERT WITH CHECK (auth.uid() = user_id);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 -- Create indexes for better performance
 CREATE INDEX IF NOT EXISTS idx_user_locations_user_id ON user_locations(user_id);
@@ -166,14 +242,30 @@ VALUES ('uploads', 'uploads', true)
 ON CONFLICT (id) DO NOTHING;
 
 -- Storage policies
-CREATE POLICY IF NOT EXISTS "Public read access" ON storage.objects
-  FOR SELECT USING (bucket_id = 'uploads');
+DO $$ BEGIN
+    CREATE POLICY "Public read access" ON storage.objects
+      FOR SELECT USING (bucket_id = 'uploads');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Authenticated users can upload" ON storage.objects
-  FOR INSERT WITH CHECK (bucket_id = 'uploads' AND auth.role() = 'authenticated');
+DO $$ BEGIN
+    CREATE POLICY "Authenticated users can upload" ON storage.objects
+      FOR INSERT WITH CHECK (bucket_id = 'uploads' AND auth.role() = 'authenticated');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can update own files" ON storage.objects
-  FOR UPDATE USING (bucket_id = 'uploads' AND auth.uid()::text = (storage.foldername(name))[1]);
+DO $$ BEGIN
+    CREATE POLICY "Users can update own files" ON storage.objects
+      FOR UPDATE USING (bucket_id = 'uploads' AND auth.uid()::text = (storage.foldername(name))[1]);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE POLICY IF NOT EXISTS "Users can delete own files" ON storage.objects
-  FOR DELETE USING (bucket_id = 'uploads' AND auth.uid()::text = (storage.foldername(name))[1]);
+DO $$ BEGIN
+    CREATE POLICY "Users can delete own files" ON storage.objects
+      FOR DELETE USING (bucket_id = 'uploads' AND auth.uid()::text = (storage.foldername(name))[1]);
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
