@@ -5,6 +5,7 @@ import * as ExpoLocation from 'expo-location';
 import { useAuthStore } from './authStore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { reverseGeocode } from '../utils/geocoding';
+import { LocationPermissionManager } from '../utils/locationPermission';
 
 interface MapStore extends MapState {
   getCurrentLocation: () => Promise<void>;
@@ -76,21 +77,16 @@ export const useMapStore = create<MapStore>((set, get) => ({
   getCurrentLocation: async () => {
     set({ loading: true });
     try {
-      const { status } = await ExpoLocation.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        throw new Error('Location permission required');
+      // Use the new location permission manager
+      const location = await LocationPermissionManager.getCurrentLocation();
+      if (!location) {
+        throw new Error('Unable to get current location');
       }
 
       const { shareSettings } = get();
       const accuracy = shareSettings.sharePreciseLocation 
         ? ExpoLocation.Accuracy.High 
         : ExpoLocation.Accuracy.Balanced;
-
-      const location = await ExpoLocation.getCurrentPositionAsync({
-        accuracy,
-        timeInterval: 10000, // 10 seconds
-        distanceInterval: 10, // 10 meters
-      });
       
       // Get location details using reverse geocoding
       const geocodingResult = await reverseGeocode(

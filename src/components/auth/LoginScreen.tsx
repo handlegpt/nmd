@@ -20,7 +20,7 @@ import { useAuthStore } from '../../store/authStore';
 import { shadowPresets } from '../../utils/platformStyles';
 import { colors, spacing, borderRadius } from '../../utils/responsive';
 import ResponsiveContainer from '../common/ResponsiveContainer';
-import Toast from '../common/Toast';
+import { ToastOptimized } from '../common/ToastOptimized';
 import LoadingSpinner from '../common/LoadingSpinner';
 import GoogleOAuth from './GoogleOAuth';
 import { 
@@ -312,7 +312,7 @@ export const LoginScreen: React.FC = () => {
           </Card>
         </ScrollView>
 
-        <Toast
+        <ToastOptimized
           visible={toast.visible}
           message={toast.message}
           type={toast.type}
