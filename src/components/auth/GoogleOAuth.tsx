@@ -167,23 +167,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         'EXPO_PUBLIC_GOOGLE_CLIENT_ID=your-client-id\n' +
         'EXPO_PUBLIC_GOOGLE_CLIENT_SECRET=your-client-secret\n\n' +
         'Get these from: https://console.cloud.google.com/',
-        [
-          { text: 'OK', style: 'default' },
-          { 
-            text: 'Use Demo Mode', 
-            onPress: () => {
-              const mockUser = {
-                id: 'mock-google-user',
-                email: 'user@gmail.com',
-                name: 'Mock Google User',
-                picture: 'https://via.placeholder.com/80x80/4285f4/ffffff?text=G',
-                given_name: 'Mock',
-                family_name: 'User',
-              };
-              onSuccess?.(mockUser);
-            }
-          }
-        ]
+        [{ text: 'OK', style: 'default' }]
       );
       return;
     }
@@ -209,8 +193,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         contentStyle={styles.buttonContent}
         labelStyle={styles.buttonLabel}
       >
-        {isLoading ? 'Connecting to Google...' : 
-         !googleConfig.clientId ? 'Continue with Gmail (Demo Mode)' : 'Continue with Gmail'}
+        {isLoading ? 'Connecting to Google...' : 'Continue with Gmail'}
       </Button>
     </View>
   );
