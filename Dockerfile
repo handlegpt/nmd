@@ -1,5 +1,5 @@
 # Use Node.js 18 Alpine image for smaller size and security
-FROM node:18-alpine AS base
+FROM node:18-alpine
 
 # Install system dependencies
 RUN apk add --no-cache curl
@@ -7,12 +7,17 @@ RUN apk add --no-cache curl
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy package files
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci && npm cache clean --force
 
 # Copy source code
 COPY . .
+
+# Install TypeScript and other required dependencies
+RUN npx expo install typescript@^5.3.0
 
 # Set production environment variables
 ENV NODE_ENV=production
