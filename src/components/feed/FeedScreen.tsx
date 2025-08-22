@@ -38,6 +38,7 @@ import LoadingSpinner from '../common/LoadingSpinner';
 import { debounce } from '../../utils/performance';
 import { useNavigation } from '@react-navigation/native';
 import { DatabaseService } from '../../services/databaseService';
+import { PostService, Post } from '../../services/postService';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import { NotificationService } from '../../services/notificationService';
 
@@ -60,37 +61,7 @@ interface Comment {
   createdAt: string;
 }
 
-interface Post {
-  id: string;
-  userId: string;
-  userNickname: string;
-  userAvatar: string;
-  content: string;
-  location: string;
-  locationDetails?: {
-    name: string;
-    address: string;
-    coordinates?: {
-      latitude: number;
-      longitude: number;
-    };
-  };
-  media?: MediaItem[];
-  isMeetupRequest: boolean;
-  meetupDetails?: {
-    title: string;
-    date: string;
-    location: string;
-    maxPeople: number;
-    currentPeople: number;
-  };
-  likes: number;
-  comments: Comment[];
-  createdAt: string;
-  tags: string[];
-  emotion?: string;
-  topic?: string;
-}
+// Using Post interface from PostService
 
 const FeedScreen: React.FC = () => {
   const { user } = useAuthStore();
@@ -116,230 +87,15 @@ const FeedScreen: React.FC = () => {
     setToast({ visible: false, message: '', type: 'info' });
   };
 
-  // Load posts from database
+  // Load posts from PostService
   const loadPosts = useCallback(async () => {
     try {
       setLoading(true);
-      const dbPosts = await DatabaseService.getPosts(20, 0);
-      
-      // Transform database posts to match our interface
-      const transformedPosts: Post[] = dbPosts.map(dbPost => ({
-        id: dbPost.id,
-        userId: dbPost.user_id,
-        userNickname: dbPost.users?.nickname || 'Unknown User',
-        userAvatar: dbPost.users?.avatar_url || '',
-        content: dbPost.content,
-        location: dbPost.location?.city || 'Unknown Location',
-        locationDetails: dbPost.location ? {
-          name: dbPost.location.city,
-          address: `${dbPost.location.city}, ${dbPost.location.country}`,
-          coordinates: {
-            latitude: dbPost.location.latitude,
-            longitude: dbPost.location.longitude,
-          },
-        } : undefined,
-        media: dbPost.media_urls?.map((url, index) => ({
-          id: `${dbPost.id}-media-${index}`,
-          uri: url,
-          type: 'image' as const,
-          filename: `media-${index}.jpg`,
-          size: 0,
-        })) || [],
-        isMeetupRequest: !!dbPost.meetup_details,
-        meetupDetails: dbPost.meetup_details ? {
-          title: dbPost.meetup_details.title,
-          date: dbPost.meetup_details.date_time,
-          location: `${dbPost.meetup_details.location.city}, ${dbPost.meetup_details.location.country}`,
-          maxPeople: dbPost.meetup_details.max_participants,
-          currentPeople: dbPost.meetup_details.current_participants,
-        } : undefined,
-        likes: dbPost.likes,
-        comments: dbPost.comments?.map(comment => ({
-          id: comment.id,
-          userId: comment.user_id,
-          userNickname: comment.user?.nickname || 'Unknown User',
-          userAvatar: comment.user?.avatar_url || '',
-          content: comment.content,
-          createdAt: comment.created_at,
-        })) || [],
-        createdAt: dbPost.created_at,
-        tags: [], // TODO: Add tags support
-        emotion: undefined,
-        topic: undefined,
-      }));
-
-      // Loaded posts from database (silent in production)
-      
-      // If no posts from database, use mock data
-      if (transformedPosts.length === 0) {
-        // No posts in database, using mock data (silent in production)
-        setPosts([
-          {
-            id: '1',
-            userId: '1',
-            userNickname: 'Sarah',
-            userAvatar: '',
-            content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session? 🏄‍♀️',
-            location: 'Bali, Indonesia',
-            locationDetails: {
-              name: 'Canggu Beach',
-              address: 'Canggu, Bali, Indonesia',
-              coordinates: { latitude: -8.6500, longitude: 115.1333 },
-            },
-            media: [],
-            isMeetupRequest: true,
-            meetupDetails: {
-              title: 'Sunset Surf Session',
-              date: 'Today at 5 PM',
-              location: 'Canggu Beach, Bali',
-              maxPeople: 6,
-              currentPeople: 2,
-            },
-            likes: 12,
-            comments: [
-              {
-                id: '1',
-                userId: '2',
-                userNickname: 'Mike',
-                userAvatar: '',
-                content: 'I\'m in! What time should we meet?',
-                createdAt: '1 hour ago',
-              },
-              {
-                id: '2',
-                userId: '3',
-                userNickname: 'Emma',
-                userAvatar: '',
-                content: 'Sounds amazing! What time should we meet?',
-                createdAt: '30 minutes ago',
-              },
-            ],
-            createdAt: '2 hours ago',
-            tags: ['bali', 'surfing', 'beach'],
-            emotion: 'excited',
-            topic: 'Travel',
-          },
-          {
-            id: '2',
-            userId: '2',
-            userNickname: 'Mike',
-            userAvatar: '',
-            content: 'Working from a cozy cafe in Chiang Mai. The coffee here is amazing and the wifi is super fast! ☕️',
-            location: 'Chiang Mai, Thailand',
-            locationDetails: {
-              name: 'Cafe Corner',
-              address: 'Nimman Road, Chiang Mai, Thailand',
-              coordinates: { latitude: 18.7883, longitude: 98.9853 },
-            },
-            media: [],
-            isMeetupRequest: true,
-            meetupDetails: {
-              title: 'Digital Nomad Meetup',
-              date: 'Tomorrow at 6 PM',
-              location: 'Cafe Corner, Nimman Road',
-              maxPeople: 8,
-              currentPeople: 3,
-            },
-            likes: 8,
-            comments: [
-              {
-                id: '3',
-                userId: '3',
-                userNickname: 'Emma',
-                userAvatar: '',
-                content: 'I\'ll be there! Looking forward to meeting everyone ☕️',
-                createdAt: '2 hours ago',
-              },
-            ],
-            createdAt: '4 hours ago',
-            tags: ['chiangmai', 'cafe', 'work'],
-            emotion: 'productive',
-            topic: 'Work',
-          },
-        ]);
-      } else {
-        setPosts(transformedPosts);
-      }
+      const postsData = await PostService.getPosts();
+      setPosts(postsData);
     } catch (error) {
       console.error('Error loading posts:', error);
-      // Fallback to mock data if database fails
-      setPosts([
-        {
-          id: '1',
-          userId: '1',
-          userNickname: 'Sarah',
-          userAvatar: '',
-          content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session? 🏄‍♀️',
-          location: 'Canggu, Bali',
-          locationDetails: {
-            name: 'Canggu Beach',
-            address: 'Canggu, Bali, Indonesia',
-            coordinates: { latitude: -8.6500, longitude: 115.1333 },
-          },
-          media: [],
-          isMeetupRequest: false,
-          likes: 12,
-          comments: [
-            {
-              id: '1',
-              userId: '2',
-              userNickname: 'Mike',
-              userAvatar: '',
-              content: 'Count me in! I\'ll bring my board 🏄‍♂️',
-              createdAt: '1 hour ago',
-            },
-            {
-              id: '2',
-              userId: '3',
-              userNickname: 'Emma',
-              userAvatar: '',
-              content: 'Sounds amazing! What time should we meet?',
-              createdAt: '30 minutes ago',
-            },
-          ],
-          createdAt: '2 hours ago',
-          tags: ['bali', 'surfing', 'beach'],
-          emotion: 'excited',
-          topic: 'Travel',
-        },
-        {
-          id: '2',
-          userId: '2',
-          userNickname: 'Mike',
-          userAvatar: '',
-          content: 'Working from a cozy cafe in Chiang Mai. The coffee here is amazing and the wifi is super fast! ☕️',
-          location: 'Chiang Mai, Thailand',
-          locationDetails: {
-            name: 'Cafe Corner',
-            address: 'Nimman Road, Chiang Mai, Thailand',
-            coordinates: { latitude: 18.7883, longitude: 98.9853 },
-          },
-          media: [],
-          isMeetupRequest: true,
-          meetupDetails: {
-            title: 'Digital Nomad Meetup',
-            date: 'Tomorrow at 6 PM',
-            location: 'Cafe Corner, Nimman Road',
-            maxPeople: 8,
-            currentPeople: 3,
-          },
-          likes: 8,
-          comments: [
-            {
-              id: '3',
-              userId: '3',
-              userNickname: 'Emma',
-              userAvatar: '',
-              content: 'I\'ll be there! Looking forward to meeting everyone ☕️',
-              createdAt: '2 hours ago',
-            },
-          ],
-          createdAt: '4 hours ago',
-          tags: ['chiangmai', 'cafe', 'work'],
-          emotion: 'productive',
-          topic: 'Work',
-        },
-      ]);
+      showToast('Failed to load posts', 'error');
     } finally {
       setLoading(false);
     }
