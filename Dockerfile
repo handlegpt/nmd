@@ -2,7 +2,7 @@
 FROM node:18-alpine
 
 # Install system dependencies
-RUN apk add --no-cache curl nginx
+RUN apk add --no-cache curl
 
 # Set working directory
 WORKDIR /app
@@ -42,40 +42,15 @@ ENV EXPO_WEB_GZIP=true
 # Build the production web app
 RUN npm run build
 
-# Create nginx configuration
-RUN echo 'server { \
-    listen 80; \
-    server_name localhost; \
-    root /app/web-build; \
-    index index.html; \
-    \
-    location / { \
-        try_files $uri $uri/ /index.html; \
-    } \
-    \
-    location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg)$ { \
-        expires 1y; \
-        add_header Cache-Control "public, immutable"; \
-    } \
-    \
-    location /_expo/ { \
-        proxy_pass http://localhost:19006; \
-        proxy_http_version 1.1; \
-        proxy_set_header Upgrade $http_upgrade; \
-        proxy_set_header Connection "upgrade"; \
-        proxy_set_header Host $host; \
-        proxy_set_header X-Real-IP $remote_addr; \
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
-        proxy_set_header X-Forwarded-Proto $scheme; \
-    } \
-}' > /etc/nginx/http.d/default.conf
+# Install serve for static file serving
+RUN npm install -g serve
 
 # Expose port
-EXPOSE 80
+EXPOSE 19006
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost/ || exit 1
+  CMD curl -f http://localhost:19006/ || exit 1
 
-# Start nginx
-CMD ["nginx", "-g", "daemon off;"] 
+# Start static file server
+CMD ["serve", "-s", "web-build", "-l", "19006"] 
