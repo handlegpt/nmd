@@ -21,6 +21,7 @@ import { shadowPresets } from '../../utils/platformStyles';
 import { DatabaseService } from '../../services/databaseService';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { NotificationsHeader } from '../common/ModernHeader';
 
 interface Notification {
   id: string;
@@ -304,6 +305,8 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
 
   return (
     <View style={styles.container}>
+      <NotificationsHeader notificationCount={notifications.filter(n => !n.is_read).length} />
+      
       <FlatList
         data={notifications}
         renderItem={renderNotification}

@@ -24,6 +24,7 @@ import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useResponsive } from '../../utils/responsive';
+import { CitiesHeader } from '../common/ModernHeader';
 
 // Using NomadCity interface from CityService
 
@@ -287,12 +288,7 @@ ${city.description}
   return (
     <ResponsiveContainer>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Title style={styles.title}>Nomad Cities</Title>
-          <Paragraph style={styles.subtitle}>
-            Discover the best cities for digital nomads
-          </Paragraph>
-        </View>
+        <CitiesHeader cityCount={cities.length} />
 
         <Searchbar
           placeholder="Search cities..."

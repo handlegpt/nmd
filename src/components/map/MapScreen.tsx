@@ -28,6 +28,7 @@ import { shadowPresets } from '../../utils/platformStyles';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { DatabaseService } from '../../services/databaseService';
+import { DiscoverHeader } from '../common/ModernHeader';
 
 const { width, height } = Dimensions.get('window');
 
@@ -168,14 +169,8 @@ export const MapScreen: React.FC = () => {
 
   return (
     <ResponsiveContainer>
-      {/* Header */}
-      <Surface style={styles.header}>
-        <View style={styles.headerContent}>
-          <Title style={styles.headerTitle}>Discover Nomads</Title>
-          <Paragraph style={styles.headerSubtitle}>Find fellow travelers nearby</Paragraph>
-        </View>
-        <View style={styles.headerDecoration} />
-      </Surface>
+      {/* Modern Header */}
+      <DiscoverHeader userCount={displayUsers.length} />
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {/* Enhanced Location Card */}

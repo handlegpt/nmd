@@ -27,6 +27,7 @@ import { shadowPresets } from '../../utils/platformStyles';
 import { ActivityService, Meetup } from '../../services/activityService';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
+import { MeetupsHeader } from '../common/ModernHeader';
 
 // Using Meetup interface from ActivityService
 
@@ -176,13 +177,7 @@ export const ActivityScreen: React.FC = () => {
   return (
     <View style={styles.container}>
       {/* Modern Header */}
-      <Surface style={styles.header}>
-        <View style={styles.headerContent}>
-          <Title style={styles.headerTitle}>Meetups</Title>
-          <Paragraph style={styles.headerSubtitle}>Join exciting activities with fellow nomads</Paragraph>
-        </View>
-        <View style={styles.headerDecoration} />
-      </Surface>
+      <MeetupsHeader meetupCount={meetups.length} />
 
       <ScrollView style={styles.scrollView}>
         {meetups.map((meetup) => (
