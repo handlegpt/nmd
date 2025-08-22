@@ -4,7 +4,7 @@ services:
   nomadnow:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.prod
     container_name: nomadnow-prod
     restart: unless-stopped
     ports:

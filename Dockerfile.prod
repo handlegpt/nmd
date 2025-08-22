@@ -1,5 +1,5 @@
 # Use Node.js 18 Alpine image for smaller size and security
-FROM node:18-alpine AS base
+FROM node:18-alpine
 
 # Install system dependencies
 RUN apk add --no-cache curl
@@ -7,9 +7,11 @@ RUN apk add --no-cache curl
 # Set working directory
 WORKDIR /app
 
-# Install dependencies
+# Copy package files
 COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci && npm cache clean --force
 
 # Copy source code
 COPY . .
@@ -34,4 +36,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:19006/ || exit 1
 
 # Start production server
-CMD ["npm", "run", "start:prod"] 
+CMD ["npm", "run", "start:prod"]

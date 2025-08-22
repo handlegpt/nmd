@@ -4,12 +4,12 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "npx expo start --web",
-    "start:prod": "NODE_ENV=production npx expo start --web",
+    "start:prod": "NODE_ENV=production npx expo start --web --port 19006 --host 0.0.0.0",
     "web": "npx expo start --web",
-    "web:prod": "NODE_ENV=production npx expo start --web",
+    "web:prod": "NODE_ENV=production npx expo start --web --port 19006 --host 0.0.0.0",
     "android": "npx expo start --android",
     "ios": "npx expo start --ios",
-    "build": "NODE_ENV=production npx expo build --web",
+    "build": "NODE_ENV=production npx expo export --web",
     "export": "NODE_ENV=production npx expo export --web",
     "test": "jest",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
