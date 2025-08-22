@@ -72,7 +72,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Grant permissions
 GRANT ALL ON notifications TO authenticated;
-GRANT USAGE ON SEQUENCE notifications_id_seq TO authenticated;
 
 -- Insert some sample notifications for testing (optional)
 -- Uncomment the following lines if you want to add sample data
