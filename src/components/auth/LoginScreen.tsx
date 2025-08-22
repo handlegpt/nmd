@@ -22,6 +22,7 @@ import { colors, spacing, borderRadius } from '../../utils/responsive';
 import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
+import GoogleOAuth from './GoogleOAuth';
 
 export const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -74,38 +75,14 @@ export const LoginScreen: React.FC = () => {
     return true;
   };
 
-  // Handle Gmail login
-  const handleGmailLogin = async () => {
-    try {
-      // Mock Gmail login - in real app, this would use Google OAuth
-      const gmailUser = {
-        id: 'gmail-user-id',
-        email: 'user@gmail.com',
-        nickname: 'Gmail User',
-        avatar_url: 'https://via.placeholder.com/80x80/4285f4/ffffff?text=G',
-        bio: 'Digital nomad exploring the world!',
-        current_city: 'Bali, Indonesia',
-        languages: ['English', 'Spanish'],
-        interests: ['Coding', 'Travel', 'Coffee'],
-        is_visible: true,
-        is_available_for_meetup: true,
-        location: { latitude: -8.3405, longitude: 115.0920 },
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      };
-      
-      // Simulate Gmail login process
-      showToast('Connecting to Gmail...', 'info');
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Set user and session
-      setUser(gmailUser);
-      setSession({ user: gmailUser });
-      showToast('Successfully signed in with Gmail!', 'success');
-    } catch (error: any) {
-      console.error('Gmail login error:', error);
-      showToast('Gmail login failed. Please try again.', 'error');
-    }
+  // Handle Google OAuth success
+  const handleGoogleSuccess = (user: any) => {
+    showToast('Successfully signed in with Gmail!', 'success');
+  };
+
+  // Handle Google OAuth error
+  const handleGoogleError = (error: string) => {
+    showToast(`Gmail login failed: ${error}`, 'error');
   };
 
   // Handle form submission for login/signup
@@ -178,165 +155,149 @@ export const LoginScreen: React.FC = () => {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
           <Card style={styles.card}>
-          <Card.Content>
-            <Title style={styles.title}>
-              {showVerification ? 'Verify Your Email' : (isLogin ? 'Welcome Back' : 'Join NomadNow')}
-            </Title>
-            <Paragraph style={styles.subtitle}>
-              {showVerification 
-                ? 'Enter the 6-digit code sent to your email'
-                : (isLogin
-                  ? 'Sign in to discover nearby digital nomads'
-                  : 'Create your account and start your journey')
-              }
-            </Paragraph>
+            <Card.Content>
+              <Title style={styles.title}>
+                {showVerification ? 'Verify Your Email' : (isLogin ? 'Welcome Back' : 'Join NomadNow')}
+              </Title>
+              
+              <Paragraph style={styles.subtitle}>
+                {showVerification 
+                  ? 'Enter the verification code sent to your email'
+                  : (isLogin 
+                    ? 'Sign in to continue your journey' 
+                    : 'Create your account to start exploring'
+                  )
+                }
+              </Paragraph>
 
-            {!showVerification ? (
-              <>
-                <TextInput
-                  label="Email"
-                  value={email}
-                  onChangeText={setEmail}
-                  mode="outlined"
-                  style={styles.input}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  outlineColor={colors.gray300}
-                  activeOutlineColor={colors.primary}
-                />
+              {!showVerification && (
+                <>
+                  {/* Google OAuth Button */}
+                  <GoogleOAuth
+                    onSuccess={handleGoogleSuccess}
+                    onError={handleGoogleError}
+                    style={styles.googleButton}
+                  />
 
-                <TextInput
-                  label="Password"
-                  value={password}
-                  onChangeText={setPassword}
-                  mode="outlined"
-                  style={styles.input}
-                  secureTextEntry
-                  outlineColor={colors.gray300}
-                  activeOutlineColor={colors.primary}
-                />
+                  <View style={styles.dividerContainer}>
+                    <Divider style={styles.divider} />
+                    <Text style={styles.dividerText}>or</Text>
+                    <Divider style={styles.divider} />
+                  </View>
 
-                {!isLogin && (
+                  {/* Email/Password Form */}
                   <TextInput
-                    label="Nickname"
-                    value={nickname}
-                    onChangeText={setNickname}
+                    label="Email"
+                    value={email}
+                    onChangeText={setEmail}
                     mode="outlined"
+                    keyboardType="email-address"
+                    autoCapitalize="none"
                     style={styles.input}
-                    placeholder="Enter your preferred nickname"
                     outlineColor={colors.gray300}
                     activeOutlineColor={colors.primary}
                   />
-                )}
 
-                <Button
-                  mode="contained"
-                  onPress={handleSubmit}
-                  style={styles.button}
-                  loading={loading}
-                  disabled={loading}
-                  contentStyle={styles.buttonContent}
-                >
-                  {isLogin ? 'Sign In' : 'Continue'}
-                </Button>
+                  <TextInput
+                    label="Password"
+                    value={password}
+                    onChangeText={setPassword}
+                    mode="outlined"
+                    secureTextEntry
+                    style={styles.input}
+                    outlineColor={colors.gray300}
+                    activeOutlineColor={colors.primary}
+                  />
 
-                {/* Gmail Login Button */}
-                <Button
-                  mode="outlined"
-                  onPress={handleGmailLogin}
-                  style={[styles.button, styles.gmailButton]}
-                  disabled={loading}
-                  contentStyle={styles.buttonContent}
-                  icon="google"
-                >
-                  Continue with Gmail
-                </Button>
+                  {!isLogin && (
+                    <TextInput
+                      label="Nickname"
+                      value={nickname}
+                      onChangeText={setNickname}
+                      mode="outlined"
+                      style={styles.input}
+                      outlineColor={colors.gray300}
+                      activeOutlineColor={colors.primary}
+                    />
+                  )}
 
-                <Button
-                  mode="text"
-                  onPress={handleToggleMode}
-                  style={styles.toggleButton}
-                  disabled={loading}
-                >
-                  {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
-                </Button>
-              </>
-            ) : (
-              <>
-                <View style={styles.verificationContainer}>
-                  <Paragraph style={styles.verificationText}>
-                    We've sent a verification code to:
-                  </Paragraph>
-                  <Chip style={styles.emailChip} textStyle={styles.emailChipText}>
-                    {email}
-                  </Chip>
-                </View>
+                  <Button
+                    mode="contained"
+                    onPress={handleSubmit}
+                    style={styles.submitButton}
+                    contentStyle={styles.submitButtonContent}
+                    disabled={loading}
+                  >
+                    {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+                  </Button>
 
-                <TextInput
-                  label="Verification Code"
-                  value={verificationCode}
-                  onChangeText={setVerificationCode}
-                  mode="outlined"
-                  style={styles.input}
-                  keyboardType="numeric"
-                  maxLength={6}
-                  placeholder="Enter 6-digit code"
-                  outlineColor={colors.gray300}
-                  activeOutlineColor={colors.primary}
-                />
+                  <Button
+                    mode="text"
+                    onPress={handleToggleMode}
+                    style={styles.toggleButton}
+                  >
+                    {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
+                  </Button>
+                </>
+              )}
 
-                <Button
-                  mode="contained"
-                  onPress={handleVerification}
-                  style={styles.button}
-                  loading={loading}
-                  disabled={loading}
-                  contentStyle={styles.buttonContent}
-                >
-                  Verify & Create Account
-                </Button>
+              {showVerification && (
+                <>
+                  <TextInput
+                    label="Verification Code"
+                    value={verificationCode}
+                    onChangeText={setVerificationCode}
+                    mode="outlined"
+                    keyboardType="numeric"
+                    style={styles.input}
+                    outlineColor={colors.gray300}
+                    activeOutlineColor={colors.primary}
+                  />
 
-                <Divider style={styles.divider} />
+                  <Button
+                    mode="contained"
+                    onPress={handleVerification}
+                    style={styles.submitButton}
+                    contentStyle={styles.submitButtonContent}
+                  >
+                    Verify Code
+                  </Button>
 
-                <View style={styles.verificationActions}>
                   <Button
                     mode="text"
                     onPress={handleResendCode}
-                    style={styles.actionButton}
-                    disabled={loading}
+                    style={styles.resendButton}
                   >
                     Resend Code
                   </Button>
+
                   <Button
                     mode="text"
                     onPress={handleBackToSignup}
-                    style={styles.actionButton}
-                    disabled={loading}
+                    style={styles.backButton}
                   >
                     Back to Sign Up
                   </Button>
-                </View>
+                </>
+              )}
+            </Card.Content>
+          </Card>
+        </ScrollView>
 
-                <View style={styles.verificationInfo}>
-                  <Paragraph style={styles.infoText}>
-                    💡 Demo code: <Text style={styles.codeText}>123456</Text>
-                  </Paragraph>
-                </View>
-              </>
-            )}
-          </Card.Content>
-        </Card>
-      </ScrollView>
+        <Toast
+          visible={toast.visible}
+          message={toast.message}
+          type={toast.type}
+          onHide={hideToast}
+        />
 
-      <Toast
-        visible={toast.visible}
-        message={toast.message}
-        type={toast.type}
-        onHide={hideToast}
-      />
-    </KeyboardAvoidingView>
+        <LoadingSpinner visible={loading} />
+      </KeyboardAvoidingView>
     </ResponsiveContainer>
   );
 };
@@ -346,7 +307,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.gray50,
   },
-  scrollContainer: {
+  scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
     padding: spacing.base,
@@ -375,68 +336,45 @@ const styles = StyleSheet.create({
     marginBottom: spacing.base,
     backgroundColor: colors.white,
   },
-  button: {
+  submitButton: {
     marginTop: spacing.sm,
     paddingVertical: spacing.sm,
     borderRadius: borderRadius.lg,
     backgroundColor: colors.primary,
   },
-  buttonContent: {
+  submitButtonContent: {
     paddingVertical: spacing.sm,
   },
   toggleButton: {
     marginTop: spacing.sm,
     paddingVertical: spacing.sm,
   },
-  gmailButton: {
+  googleButton: {
     marginTop: spacing.sm,
     borderColor: '#4285f4',
     borderWidth: 2,
   },
-  verificationContainer: {
-    marginBottom: spacing.base,
+  dividerContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-  },
-  verificationText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    marginBottom: spacing.sm,
-    textAlign: 'center',
-  },
-  emailChip: {
-    backgroundColor: colors.primaryLight + '20', // 20% opacity
-    borderRadius: borderRadius.full,
-  },
-  emailChipText: {
-    color: colors.primary,
-    fontWeight: '600',
+    marginVertical: spacing.base,
   },
   divider: {
-    marginVertical: spacing.base,
+    flex: 1,
     backgroundColor: colors.gray200,
   },
-  verificationActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: spacing.base,
-  },
-  actionButton: {
-    flex: 1,
-  },
-  verificationInfo: {
-    backgroundColor: colors.gray50,
-    padding: spacing.base,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.gray200,
-  },
-  infoText: {
-    fontSize: 14,
+  dividerText: {
     color: colors.textSecondary,
-    textAlign: 'center',
+    fontSize: 14,
+    fontWeight: '500',
+    marginHorizontal: spacing.base,
   },
-  codeText: {
-    fontWeight: '700',
-    color: colors.primary,
+  resendButton: {
+    marginTop: spacing.sm,
+    paddingVertical: spacing.sm,
+  },
+  backButton: {
+    marginTop: spacing.sm,
+    paddingVertical: spacing.sm,
   },
 }); 

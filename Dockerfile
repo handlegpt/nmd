@@ -44,6 +44,21 @@ ENV EXPO_WEB_PORT=19006
 ENV EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
 ENV NODE_ENV=development
 
+# Google OAuth Environment Variables
+ENV EXPO_PUBLIC_GOOGLE_CLIENT_ID=""
+ENV EXPO_PUBLIC_GOOGLE_CLIENT_SECRET=""
+ENV EXPO_PUBLIC_GOOGLE_REDIRECT_URI="https://nomad.now/auth/callback"
+ENV EXPO_PUBLIC_GOOGLE_DEV_REDIRECT_URI="http://localhost:19006/auth/callback"
+
+# Supabase Environment Variables (for production)
+ENV EXPO_PUBLIC_SUPABASE_URL=""
+ENV EXPO_PUBLIC_SUPABASE_ANON_KEY=""
+
+# App Configuration
+ENV EXPO_PUBLIC_APP_NAME="NomadNow"
+ENV EXPO_PUBLIC_APP_DOMAIN="nomad.now"
+ENV EXPO_PUBLIC_APP_VERSION="1.0.0"
+
 # Expose web port
 EXPOSE 19006
 
