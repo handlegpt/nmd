@@ -42,6 +42,9 @@ CREATE INDEX IF NOT EXISTS idx_cities_cost_of_living ON cities(cost_of_living);
 CREATE INDEX IF NOT EXISTS idx_cities_name ON cities(name);
 CREATE INDEX IF NOT EXISTS idx_cities_location ON cities(latitude, longitude);
 
+-- Create unique constraint for city name and country combination
+CREATE UNIQUE INDEX IF NOT EXISTS idx_cities_name_country_unique ON cities(name, country);
+
 -- ========================================
 -- MEETUPS TABLE
 -- ========================================
