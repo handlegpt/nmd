@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  nomadnow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nomadnow-prod
+    restart: unless-stopped
+    ports:
+      - "19006:19006"
+    environment:
+      # 生产环境变量
+      - NODE_ENV=production
+      - EXPO_WEB_OPTIMIZE=true
+      - EXPO_WEB_MINIFY=true
+      - EXPO_DEBUG=false
+      - EXPO_DEVTOOLS_LISTEN_ADDRESS=0.0.0.0
+      - EXPO_WEB_BUNDLE_ANALYZER=false
+      - EXPO_WEB_SOURCE_MAPS=false
+      - EXPO_WEB_CACHE=true
+      - EXPO_WEB_COMPRESS=true
+      - EXPO_WEB_GZIP=true
+      
+      # Google OAuth 配置 (需要设置实际值)
+      - EXPO_PUBLIC_GOOGLE_CLIENT_ID=${EXPO_PUBLIC_GOOGLE_CLIENT_ID}
+      - EXPO_PUBLIC_GOOGLE_CLIENT_SECRET=${EXPO_PUBLIC_GOOGLE_CLIENT_SECRET}
+      - EXPO_PUBLIC_GOOGLE_REDIRECT_URI=${EXPO_PUBLIC_GOOGLE_REDIRECT_URI}
+      
+      # Supabase 配置 (需要设置实际值)
+      - EXPO_PUBLIC_SUPABASE_URL=${EXPO_PUBLIC_SUPABASE_URL}
+      - EXPO_PUBLIC_SUPABASE_ANON_KEY=${EXPO_PUBLIC_SUPABASE_ANON_KEY}
+      
+      # 应用配置
+      - EXPO_PUBLIC_APP_NAME=NomadNow
+      - EXPO_PUBLIC_APP_DOMAIN=${EXPO_PUBLIC_APP_DOMAIN:-nomad.now}
+      - EXPO_PUBLIC_APP_VERSION=1.0.0
+      
+      # 邮件服务配置 (需要设置实际值)
+      - EXPO_PUBLIC_SMTP_HOST=${EXPO_PUBLIC_SMTP_HOST}
+      - EXPO_PUBLIC_SMTP_PORT=${EXPO_PUBLIC_SMTP_PORT}
+      - EXPO_PUBLIC_SMTP_USER=${EXPO_PUBLIC_SMTP_USER}
+      - EXPO_PUBLIC_SMTP_PASS=${EXPO_PUBLIC_SMTP_PASS}
+      - EXPO_PUBLIC_FROM_EMAIL=${EXPO_PUBLIC_FROM_EMAIL}
+      - EXPO_PUBLIC_FROM_NAME=${EXPO_PUBLIC_FROM_NAME}
+    
+    # 资源限制
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+    
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:19006/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    
+    # 日志配置
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    # 网络配置
+    networks:
+      - nomadnow-network
+
+networks:
+  nomadnow-network:
+    driver: bridge

@@ -1,171 +1,54 @@
-# Dependencies - should be rebuilt in container
+# Dependencies
 node_modules
-npm-debug.log
-yarn-debug.log
-yarn-error.log
-pnpm-debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Version control
+# Development files
 .git
 .gitignore
-.gitattributes
-.gitmodules
-
-# Documentation
 README.md
-*.md
-DEPLOYMENT.md
-CHANGELOG.md
-LICENSE
-CONTRIBUTING.md
-
-# Environment and secrets
 .env
-.env.*
-*.env
 .env.local
 .env.development
 .env.test
-.env.production
+*.log
 
-# IDE and editor files
+# IDE files
 .vscode
 .idea
 *.swp
 *.swo
-*~
-.vscode-server
 
-# OS generated files
+# OS files
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
-desktop.ini
 
-# Temporary and cache files
+# Expo development files
+.expo
+.expo-shared
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Build outputs
+dist
+build
+web-build
+
+# Test files
+coverage
+.nyc_output
+*.test.js
+*.spec.js
+
+# Temporary files
 tmp
 temp
 *.tmp
-*.temp
-.cache
-.nyc_output
-coverage
-.coverage
-.parcel-cache
-.next
-.nuxt
-.cache
 
-# Logs
-*.log
-logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
-
-# Build artifacts
-dist
-build
-.expo
-web-build
-out
-.next
-.nuxt
-.vuepress/dist
-
-# Security sensitive files
-*.bin
-*.out
-*.py
-*.key
-*.pem
-*.p12
-*.pfx
-*.crt
-*.csr
-*.pem
-*.key
-*.crt
-*.csr
-*.p12
-*.pfx
-id_rsa
-id_rsa.pub
-id_ed25519
-id_ed25519.pub
-known_hosts
-
-# Upload and export directories
-uploads
-exports
-downloads
-public/uploads
-static/uploads
-
-# Test files
-test
-tests
-__tests__
-*.test.js
-*.test.ts
-*.test.jsx
-*.test.tsx
-*.spec.js
-*.spec.ts
-*.spec.jsx
-*.spec.tsx
-jest.config.*
-cypress
-cypress.json
-cypress.config.*
-
-# Development tools
-.eslintrc*
-.prettierrc*
-jest.config.*
-babel.config.*
-webpack.config.*
-rollup.config.*
-vite.config.*
-tsconfig.json
-tsconfig.*.json
-
-# Docker files
-Dockerfile*
-docker-compose*
-.dockerignore
-
-# CI/CD files
-.github
-.gitlab-ci.yml
-.travis.yml
-.circleci
-azure-pipelines.yml
-Jenkinsfile
-
-# Backup files
-*.bak
-*.backup
-*.old
-*.orig
-
-# Compressed files
-*.zip
-*.tar.gz
-*.rar
-*.7z
-
-# Database files
-*.db
-*.sqlite
-*.sqlite3
-
-# Local development
-.local
-.localhost
-localhost 
+# Development scripts
+start-prod.sh
+start.sh 
