@@ -98,73 +98,69 @@ const FeedScreen: React.FC = () => {
         address: 'Canggu, Bali, Indonesia',
         coordinates: { latitude: -8.6500, longitude: 115.1333 },
       },
-      media: [
-        {
-          id: '1',
-          uri: '',
-          type: 'image',
-          filename: 'beach_view.jpg',
-          size: 1024000,
-        },
-      ],
+      media: [],
       isMeetupRequest: false,
-      likes: 15,
-      comments: 5,
+      likes: 12,
+      comments: 3,
       createdAt: '2 hours ago',
-      tags: ['Bali', 'Beach', 'Surfing'],
+      tags: ['bali', 'surfing', 'beach'],
       emotion: 'excited',
-      topic: 'travel',
+      topic: 'Travel',
     },
     {
       id: '2',
       userId: '2',
-      userNickname: 'Alex',
+      userNickname: 'Mike',
       userAvatar: '',
-      content: 'Working from this amazing coworking space with ocean views. The wifi is lightning fast!',
-      location: 'Uluwatu, Bali',
+      content: 'Working from a cozy cafe in Chiang Mai. The coffee here is amazing and the wifi is super fast!',
+      location: 'Chiang Mai, Thailand',
       locationDetails: {
-        name: 'Uluwatu Beach',
-        address: 'Uluwatu, Bali, Indonesia',
-        coordinates: { latitude: -8.8167, longitude: 115.0833 },
+        name: 'Cafe Corner',
+        address: 'Nimman Road, Chiang Mai, Thailand',
+        coordinates: { latitude: 18.7883, longitude: 98.9853 },
       },
-      isMeetupRequest: false,
-      likes: 24,
-      comments: 8,
+      media: [],
+      isMeetupRequest: true,
+      meetupDetails: {
+        title: 'Digital Nomad Meetup',
+        date: 'Tomorrow at 6 PM',
+        location: 'Cafe Corner, Nimman Road',
+        maxPeople: 8,
+        currentPeople: 3,
+      },
+      likes: 8,
+      comments: 5,
       createdAt: '4 hours ago',
-      tags: ['Coworking', 'Ocean View', 'Uluwatu'],
+      tags: ['chiangmai', 'cafe', 'work'],
       emotion: 'productive',
-      topic: 'work',
+      topic: 'Work',
     },
     {
       id: '3',
       userId: '3',
-      userNickname: 'Mike',
+      userNickname: 'Emma',
       userAvatar: '',
-      content: 'Working from a beautiful cafe in Seminyak. Great coffee and even better wifi! Anyone want to join for lunch?',
-      location: 'Seminyak, Bali',
+      content: 'Found this amazing rooftop bar in Bangkok with the best city views! Perfect for sunset drinks.',
+      location: 'Bangkok, Thailand',
       locationDetails: {
-        name: 'Seminyak Cafe',
-        address: 'Seminyak, Bali, Indonesia',
-        coordinates: { latitude: -8.6833, longitude: 115.1667 },
+        name: 'Sky Bar',
+        address: 'Sukhumvit Road, Bangkok, Thailand',
+        coordinates: { latitude: 13.7563, longitude: 100.5018 },
       },
-      isMeetupRequest: true,
-      meetupDetails: {
-        title: 'Lunch Meetup',
-        date: 'Today, 1:00 PM',
-        location: 'Seminyak Cafe',
-        maxPeople: 4,
-        currentPeople: 1,
-      },
-      likes: 8,
-      comments: 3,
+      media: [],
+      isMeetupRequest: false,
+      likes: 15,
+      comments: 2,
       createdAt: '6 hours ago',
-      tags: ['Cafe', 'Lunch', 'Seminyak'],
-      emotion: 'happy',
-      topic: 'food',
+      tags: ['bangkok', 'rooftop', 'sunset'],
+      emotion: 'relaxed',
+      topic: 'Lifestyle',
     },
   ]);
+
   const [modalVisible, setModalVisible] = useState(false);
   const [locationShareVisible, setLocationShareVisible] = useState(false);
+  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
   const [newPost, setNewPost] = useState({
     content: '',
     isMeetupRequest: false,
@@ -179,7 +175,6 @@ const FeedScreen: React.FC = () => {
     emotion: '',
     topic: '',
   });
-  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -188,14 +183,17 @@ const FeedScreen: React.FC = () => {
 
   // Hide toast message
   const hideToast = () => {
-    setToast({ ...toast, visible: false });
+    setToast({ visible: false, message: '', type: 'info' });
   };
 
   // Handle like post
   const handleLike = (postId: string) => {
-    setPosts(posts.map(post => 
-      post.id === postId ? { ...post, likes: post.likes + 1 } : post
-    ));
+    setPosts(posts.map(post => {
+      if (post.id === postId) {
+        return { ...post, likes: post.likes + 1 };
+      }
+      return post;
+    }));
     showToast('Post liked!', 'success');
   };
 
@@ -270,7 +268,7 @@ const FeedScreen: React.FC = () => {
       id: Date.now().toString(),
       userId: user?.id || '1',
       userNickname: user?.nickname || 'Anonymous',
-              userAvatar: user?.avatar_url || '',
+      userAvatar: user?.avatar_url || '',
       content: newPost.content,
       location: newPost.location,
       locationDetails: newPost.locationDetails,
@@ -353,134 +351,6 @@ const FeedScreen: React.FC = () => {
     return emotionMap[emotion] || '';
   };
 
-  if (!user) {
-    return (
-      <ResponsiveContainer>
-        <Card style={styles.guestCard}>
-          <Card.Content>
-            <Title style={styles.guestTitle}>Welcome to NomadNow!</Title>
-            <Paragraph style={styles.guestSubtitle}>
-              Join our community of digital nomads to discover amazing places, connect with fellow travelers, and share your adventures.
-            </Paragraph>
-            <Button
-              mode="contained"
-              onPress={() => (navigation as any).navigate('Login')}
-              style={styles.guestButton}
-            >
-              Sign In to Start Sharing
-            </Button>
-          </Card.Content>
-        </Card>
-
-        <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-          {posts.map((post) => (
-            <Card key={post.id} style={styles.postCard}>
-              <Card.Content>
-                <View style={styles.postHeader}>
-                  {post.userAvatar ? (
-                    <Avatar.Image size={40} source={{ uri: post.userAvatar }} />
-                  ) : (
-                    <Avatar.Text 
-                      size={40} 
-                      label={post.userNickname.charAt(0).toUpperCase()}
-                      style={{ backgroundColor: '#6366f1' }}
-                    />
-                  )}
-                  <View style={styles.postHeaderInfo}>
-                    <Title style={styles.postAuthor}>{post.userNickname}</Title>
-                    <View style={styles.postMeta}>
-                      <Paragraph style={styles.postTime}>{post.createdAt}</Paragraph>
-                      {post.location && (
-                        <Paragraph style={styles.postLocation}>📍 {post.location}</Paragraph>
-                      )}
-                      {post.emotion && (
-                        <Paragraph style={styles.postEmotion}>
-                          {getEmotionEmoji(post.emotion)}
-                        </Paragraph>
-                      )}
-                    </View>
-                  </View>
-                </View>
-
-                <Paragraph style={styles.postContent}>{post.content}</Paragraph>
-
-                {/* Media Grid */}
-                {renderMediaGrid(post.media || [])}
-
-                {/* Tags */}
-                {post.tags.length > 0 && (
-                  <View style={styles.tagsContainer}>
-                    {post.tags.map((tag, index) => (
-                      <Chip key={index} style={styles.tag} textStyle={styles.tagText}>
-                        #{tag}
-                      </Chip>
-                    ))}
-                  </View>
-                )}
-
-                {/* Topic Badge */}
-                {post.topic && (
-                  <Chip icon="folder" style={styles.topicChip} textStyle={styles.topicText}>
-                    {post.topic}
-                  </Chip>
-                )}
-
-                {post.isMeetupRequest && post.meetupDetails && (
-                  <Card style={styles.meetupCard}>
-                    <Card.Content>
-                      <Title style={styles.meetupTitle}>{post.meetupDetails.title}</Title>
-                      <Paragraph style={styles.meetupDetails}>
-                        📅 {post.meetupDetails.date} • 📍 {post.meetupDetails.location}
-                      </Paragraph>
-                      <Paragraph style={styles.meetupPeople}>
-                        👥 {post.meetupDetails.currentPeople}/{post.meetupDetails.maxPeople} people
-                      </Paragraph>
-                      <Button
-                        mode="outlined"
-                        onPress={() => handleJoinMeetup(post.id)}
-                        disabled={post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople}
-                        style={styles.joinButton}
-                      >
-                        {post.meetupDetails.currentPeople >= post.meetupDetails.maxPeople ? 'Full' : 'Join Meetup'}
-                      </Button>
-                    </Card.Content>
-                  </Card>
-                )}
-
-                <Divider style={styles.divider} />
-
-                <View style={styles.postActions}>
-                  <Button
-                    mode="text"
-                    onPress={() => handleLike(post.id)}
-                    icon="heart"
-                    labelStyle={styles.actionLabel}
-                  >
-                    {post.likes}
-                  </Button>
-                  <Button
-                    mode="text"
-                    icon="comment"
-                    labelStyle={styles.actionLabel}
-                  >
-                    {post.comments}
-                  </Button>
-                  <Button
-                    mode="text"
-                    icon="share"
-                    labelStyle={styles.actionLabel}
-                  >
-                    Share
-                  </Button>
-                </View>
-              </Card.Content>
-            </Card>
-          ))}
-        </ScrollView>
-      </ResponsiveContainer>
-    );
-  }
-
   return (
     <View style={styles.container}>
       <ResponsiveContainer>
@@ -523,9 +393,7 @@ const FeedScreen: React.FC = () => {
                       <Text style={styles.postLocation}>📍 {post.location}</Text>
                       {post.emotion && (
                         <Text style={styles.postEmotion}>
-                          {post.emotion === 'happy' ? '😊' : 
-                           post.emotion === 'productive' ? '💪' : 
-                           post.emotion === 'relaxed' ? '😌' : '😊'}
+                          {getEmotionEmoji(post.emotion)}
                         </Text>
                       )}
                     </View>
@@ -729,11 +597,14 @@ const FeedScreen: React.FC = () => {
         />
       </ResponsiveContainer>
 
-      <FAB
-        icon="plus"
-        style={styles.fab}
-        onPress={() => setModalVisible(true)}
-      />
+      {/* FAB for creating posts - only show for logged in users */}
+      {user && (
+        <FAB
+          icon="plus"
+          style={styles.fab}
+          onPress={() => setModalVisible(true)}
+        />
+      )}
     </View>
   );
 };
@@ -839,7 +710,7 @@ const styles = StyleSheet.create({
     width: (width - spacing.base * 4) / 3,
     height: (width - spacing.base * 4) / 3,
     margin: 2,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.base,
     overflow: 'hidden',
   },
   mediaImage: {
@@ -899,7 +770,7 @@ const styles = StyleSheet.create({
   meetupPeople: {
     fontSize: 14,
     color: colors.textSecondary,
-    marginBottom: spacing.md,
+    marginBottom: spacing.base,
   },
   joinButton: {
     borderColor: colors.primary,
@@ -945,10 +816,10 @@ const styles = StyleSheet.create({
     marginBottom: spacing.lg,
   },
   textInput: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.base,
   },
   locationButton: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.base,
     borderColor: colors.primary,
     borderRadius: borderRadius.lg,
   },
@@ -956,7 +827,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   toggleButton: {
-    marginBottom: spacing.md,
+    marginBottom: spacing.base,
     borderColor: colors.primary,
     borderRadius: borderRadius.lg,
   },
@@ -964,8 +835,8 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   meetupForm: {
-    marginTop: spacing.md,
-    padding: spacing.md,
+    marginTop: spacing.base,
+    padding: spacing.base,
     backgroundColor: colors.gray50,
     borderRadius: borderRadius.lg,
   },
