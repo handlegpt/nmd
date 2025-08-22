@@ -62,4 +62,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:19006/ || exit 1
 
 # Start static file server
-CMD ["serve", "-s", "web-build", "-l", "19006"] 
+CMD ["serve", "-s", "dist", "-l", "19006"] 
