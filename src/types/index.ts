@@ -13,8 +13,98 @@ export interface User {
     latitude: number;
     longitude: number;
   };
+  // 新增用户资料字段
+  full_name?: string;
+  phone?: string;
+  website?: string;
+  social_links?: {
+    linkedin?: string;
+    twitter?: string;
+    instagram?: string;
+    github?: string;
+    portfolio?: string;
+  };
+  skills: string[];
+  work_experience?: WorkExperience[];
+  education?: Education[];
+  travel_history?: TravelHistory[];
+  preferences?: UserPreferences;
+  stats?: UserStats;
   created_at: string;
   updated_at: string;
+}
+
+export interface WorkExperience {
+  id: string;
+  company: string;
+  position: string;
+  description?: string;
+  start_date: string;
+  end_date?: string;
+  is_current: boolean;
+  location?: string;
+  skills_used: string[];
+}
+
+export interface Education {
+  id: string;
+  institution: string;
+  degree: string;
+  field_of_study: string;
+  start_date: string;
+  end_date?: string;
+  is_current: boolean;
+  location?: string;
+  description?: string;
+}
+
+export interface TravelHistory {
+  id: string;
+  city: string;
+  country: string;
+  start_date: string;
+  end_date?: string;
+  is_current: boolean;
+  description?: string;
+  photos?: string[];
+}
+
+export interface UserPreferences {
+  privacy_level: 'public' | 'friends' | 'private';
+  notification_settings: {
+    messages: boolean;
+    meetups: boolean;
+    likes: boolean;
+    comments: boolean;
+    new_followers: boolean;
+    location_updates: boolean;
+  };
+  language_preference: string;
+  timezone: string;
+  currency: string;
+  distance_unit: 'km' | 'miles';
+}
+
+export interface UserStats {
+  posts_count: number;
+  followers_count: number;
+  following_count: number;
+  meetups_attended: number;
+  meetups_created: number;
+  countries_visited: number;
+  cities_visited: number;
+  total_distance_traveled: number;
+  member_since: string;
+  last_active: string;
+}
+
+export interface FollowRelationship {
+  id: string;
+  follower_id: string;
+  following_id: string;
+  created_at: string;
+  follower?: User;
+  following?: User;
 }
 
 export interface Location {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -16,44 +16,89 @@ import {
   Chip,
   IconButton,
   Badge,
+  Surface,
+  Portal,
+  Modal,
 } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAuthStore } from '../../store/authStore';
 import { shadowPresets } from '../../utils/platformStyles';
 import { DatabaseService } from '../../services/databaseService';
+import Toast from '../common/Toast';
+import LoadingSpinner from '../common/LoadingSpinner';
 
 export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const { user, updateProfile, signOut } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
-  const [nickname, setNickname] = useState(user?.nickname || '');
-  const [bio, setBio] = useState(user?.bio || '');
-  const [currentCity, setCurrentCity] = useState(user?.current_city || '');
-  const [isVisible, setIsVisible] = useState(user?.is_visible ?? true);
-  const [isAvailableForMeetup, setIsAvailableForMeetup] = useState(
-    user?.is_available_for_meetup ?? true
-  );
-  const [notificationCount, setNotificationCount] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [followers, setFollowers] = useState<any[]>([]);
+  const [following, setFollowing] = useState<any[]>([]);
+  const [showFollowersModal, setShowFollowersModal] = useState(false);
+  const [showFollowingModal, setShowFollowingModal] = useState(false);
 
-  // Load notification count
-  const loadNotificationCount = async () => {
+  // Form states
+  const [formData, setFormData] = useState({
+    nickname: '',
+    full_name: '',
+    bio: '',
+    current_city: '',
+    phone: '',
+    website: '',
+    skills: [] as string[],
+  });
+
+  // Toast state
+  const [toast, setToast] = useState({
+    visible: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'warning'
+  });
+
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+    setToast({ visible: true, message, type });
+  };
+
+  const hideToast = () => {
+    setToast(prev => ({ ...prev, visible: false }));
+  };
+
+  // Load user profile data
+  const loadUserProfile = async () => {
     if (!user) return;
     
     try {
       setLoading(true);
-      const notifications = await DatabaseService.getNotifications(user.id);
-      const unreadCount = notifications.filter(n => !n.is_read).length;
-      setNotificationCount(unreadCount);
+      const profile = await DatabaseService.getUserProfile(user.id);
+      const followersList = await DatabaseService.getFollowers(user.id);
+      const followingList = await DatabaseService.getFollowing(user.id);
+
+      if (profile) {
+        setUserProfile(profile);
+        setFormData({
+          nickname: profile.nickname || '',
+          full_name: profile.full_name || '',
+          bio: profile.bio || '',
+          current_city: profile.current_city || '',
+          phone: profile.phone || '',
+          website: profile.website || '',
+          skills: profile.skills || [],
+        });
+      }
+
+      setFollowers(followersList);
+      setFollowing(followingList);
     } catch (error) {
-      console.error('Error loading notifications:', error);
+      console.error('Error loading user profile:', error);
+      showToast('Failed to load profile data', 'error');
     } finally {
       setLoading(false);
     }
   };
 
-  // Load notification count on component mount
-  React.useEffect(() => {
-    loadNotificationCount();
+  useEffect(() => {
+    loadUserProfile();
   }, [user]);
 
   // Save profile changes
@@ -61,32 +106,30 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
     if (!user) return;
     
     try {
-      // Update in database
-      const updatedUser = await DatabaseService.updateUser(user.id, {
-        nickname,
-        bio,
-        current_city: currentCity,
-        is_visible: isVisible,
-        is_available_for_meetup: isAvailableForMeetup,
+      setLoading(true);
+      const updatedUser = await DatabaseService.updateUserProfile(user.id, {
+        nickname: formData.nickname,
+        full_name: formData.full_name,
+        bio: formData.bio,
+        current_city: formData.current_city,
+        phone: formData.phone,
+        website: formData.website,
+        skills: formData.skills,
       });
 
       if (updatedUser) {
-        // Update local state
-        await updateProfile({
-          nickname,
-          bio,
-          current_city: currentCity,
-          is_visible: isVisible,
-          is_available_for_meetup: isAvailableForMeetup,
-        });
+        await updateProfile(updatedUser);
+        setUserProfile(updatedUser);
         setIsEditing(false);
-        Alert.alert('Success', 'Profile updated successfully');
+        showToast('Profile updated successfully');
       } else {
-        Alert.alert('Error', 'Failed to update profile');
+        showToast('Failed to update profile', 'error');
       }
     } catch (error) {
       console.error('Error updating profile:', error);
-      Alert.alert('Error', 'Failed to update profile');
+      showToast('Failed to update profile', 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -103,31 +146,54 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
       });
 
       if (!result.canceled && result.assets[0]) {
-        // Create a file object from the image URI
         const response = await fetch(result.assets[0].uri);
         const blob = await response.blob();
         const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
         
-        // Upload to database storage
         const avatarUrl = await DatabaseService.uploadFile(file, `avatars/${user.id}/avatar.jpg`);
         
         if (avatarUrl) {
-          // Update user profile with new avatar URL
           const updatedUser = await DatabaseService.updateUser(user.id, {
             avatar_url: avatarUrl,
           });
           
           if (updatedUser) {
             await updateProfile({ avatar_url: avatarUrl });
-            Alert.alert('Success', 'Avatar updated successfully');
+            showToast('Avatar updated successfully');
           }
         } else {
-          Alert.alert('Error', 'Failed to upload avatar');
+          showToast('Failed to upload avatar', 'error');
         }
       }
     } catch (error) {
       console.error('Error uploading avatar:', error);
-      Alert.alert('Error', 'Failed to upload avatar');
+      showToast('Failed to upload avatar', 'error');
+    }
+  };
+
+  // Handle follow/unfollow
+  const handleFollowToggle = async (targetUserId: string) => {
+    if (!user) return;
+
+    try {
+      const isFollowing = await DatabaseService.isFollowing(user.id, targetUserId);
+      
+      if (isFollowing) {
+        const success = await DatabaseService.unfollowUser(user.id, targetUserId);
+        if (success) {
+          showToast('Unfollowed successfully');
+          loadUserProfile();
+        }
+      } else {
+        const follow = await DatabaseService.followUser(user.id, targetUserId);
+        if (follow) {
+          showToast('Followed successfully');
+          loadUserProfile();
+        }
+      }
+    } catch (error) {
+      console.error('Error toggling follow:', error);
+      showToast('Failed to update follow status', 'error');
     }
   };
 
@@ -173,197 +239,351 @@ export const ProfileScreen: React.FC = ({ navigation }: { navigation?: any }) =>
     );
   }
 
+  if (loading) {
+    return <LoadingSpinner visible={true} />;
+  }
+
   return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.card}>
-        <Card.Content>
-          <View style={styles.header}>
-            <View style={styles.avatarSection}>
-              {user.avatar_url ? (
-                <Avatar.Image
-                  size={80}
-                  source={{ uri: user.avatar_url }}
-                />
-              ) : (
-                <Avatar.Text
-                  size={80}
-                  label={user.nickname.charAt(0).toUpperCase()}
-                  style={{ backgroundColor: '#6366f1' }}
-                />
-              )}
-              <View style={styles.headerInfo}>
-                <Title>{user.nickname}</Title>
-                <Paragraph>{user.current_city}</Paragraph>
-                <Button
-                  mode="text"
-                  onPress={handlePickImage}
-                  style={styles.changeAvatarButton}
-                >
-                  Change Avatar
-                </Button>
-              </View>
-            </View>
-            <View style={styles.notificationSection}>
-              <IconButton
-                icon="bell"
-                size={24}
-                onPress={async () => {
-                  if (!user) return;
-                  
-                  try {
-                    const notifications = await DatabaseService.getNotifications(user.id);
-                    const notificationList = notifications
-                      .slice(0, 5)
-                      .map(n => `${n.title}: ${n.message}`)
-                      .join('\n\n');
-                    
-                    Alert.alert(
-                      'Notifications', 
-                      notifications.length > 0 
-                        ? notificationList 
-                        : 'No notifications'
-                    );
-                  } catch (error) {
-                    console.error('Error loading notifications:', error);
-                    Alert.alert('Error', 'Failed to load notifications');
-                  }
-                }}
-              />
-              {notificationCount > 0 && (
-                <Badge
+    <View style={styles.container}>
+      <ScrollView>
+        {/* Header Section */}
+        <Card style={styles.headerCard}>
+          <Card.Content>
+            <View style={styles.header}>
+              <View style={styles.avatarSection}>
+                {user.avatar_url ? (
+                  <Avatar.Image
+                    size={100}
+                    source={{ uri: user.avatar_url }}
+                  />
+                ) : (
+                  <Avatar.Text
+                    size={100}
+                    label={user.nickname.charAt(0).toUpperCase()}
+                    style={{ backgroundColor: '#6366f1' }}
+                  />
+                )}
+                <IconButton
+                  icon="camera"
                   size={20}
-                  style={styles.notificationBadge}
-                >
-                  {notificationCount}
-                </Badge>
-              )}
-            </View>
-          </View>
-
-          {isEditing ? (
-            <View style={styles.editForm}>
-              <TextInput
-                label="Nickname"
-                value={nickname}
-                onChangeText={setNickname}
-                style={styles.input}
-                mode="outlined"
-              />
-
-              <TextInput
-                label="Bio"
-                value={bio}
-                onChangeText={setBio}
-                style={styles.input}
-                mode="outlined"
-                multiline
-                numberOfLines={3}
-              />
-
-              <TextInput
-                label="Current City"
-                value={currentCity}
-                onChangeText={setCurrentCity}
-                style={styles.input}
-                mode="outlined"
-              />
-
-              <View style={styles.switchContainer}>
-                <Paragraph>Visible on Map</Paragraph>
-                <Switch
-                  value={isVisible}
-                  onValueChange={setIsVisible}
+                  style={styles.cameraButton}
+                  onPress={handlePickImage}
                 />
               </View>
-
-              <View style={styles.switchContainer}>
-                <Paragraph>Available for Meetup</Paragraph>
-                <Switch
-                  value={isAvailableForMeetup}
-                  onValueChange={setIsAvailableForMeetup}
-                />
-              </View>
-
-              <View style={styles.editActions}>
-                <Button
-                  mode="contained"
-                  onPress={handleSave}
-                  style={styles.saveButton}
-                >
-                  Save
-                </Button>
-                <Button
-                  mode="outlined"
-                  onPress={() => setIsEditing(false)}
-                >
-                  Cancel
-                </Button>
+              
+              <View style={styles.headerInfo}>
+                <Title style={styles.userName}>
+                  {userProfile?.full_name || user.nickname}
+                </Title>
+                <Paragraph style={styles.userLocation}>
+                  {userProfile?.current_city || user.current_city}
+                </Paragraph>
+                {userProfile?.website && (
+                  <Button
+                    mode="text"
+                    onPress={() => showToast('Website link coming soon', 'warning')}
+                    icon="web"
+                    style={styles.websiteButton}
+                  >
+                    Website
+                  </Button>
+                )}
               </View>
             </View>
-          ) : (
-            <View style={styles.info}>
-              {user.bio && (
-                <Paragraph style={styles.bio}>{user.bio}</Paragraph>
-              )}
 
-              <View style={styles.languagesContainer}>
+            {/* Bio Section */}
+            {userProfile?.bio && (
+              <View style={styles.bioSection}>
+                <Paragraph style={styles.bio}>{userProfile.bio}</Paragraph>
+              </View>
+            )}
+
+            {/* Stats Section */}
+            <View style={styles.statsSection}>
+              <View style={styles.statItem}>
+                <Title style={styles.statNumber}>0</Title>
+                <Paragraph style={styles.statLabel}>Posts</Paragraph>
+              </View>
+              <View style={styles.statItem}>
+                <Title style={styles.statNumber}>{followers.length}</Title>
+                <Paragraph style={styles.statLabel}>Followers</Paragraph>
+              </View>
+              <View style={styles.statItem}>
+                <Title style={styles.statNumber}>{following.length}</Title>
+                <Paragraph style={styles.statLabel}>Following</Paragraph>
+              </View>
+              <View style={styles.statItem}>
+                <Title style={styles.statNumber}>0</Title>
+                <Paragraph style={styles.statLabel}>Countries</Paragraph>
+              </View>
+            </View>
+
+            {/* Action Buttons */}
+            <View style={styles.actionButtons}>
+              <Button
+                mode="contained"
+                onPress={() => setIsEditing(true)}
+                style={styles.editButton}
+                icon="pencil"
+              >
+                Edit Profile
+              </Button>
+              
+              <Button
+                mode="outlined"
+                onPress={() => setShowFollowersModal(true)}
+                style={styles.followButton}
+                icon="account-group"
+              >
+                Followers ({followers.length})
+              </Button>
+              
+              <Button
+                mode="outlined"
+                onPress={() => setShowFollowingModal(true)}
+                style={styles.followButton}
+                icon="account-multiple"
+              >
+                Following ({following.length})
+              </Button>
+            </View>
+          </Card.Content>
+        </Card>
+
+        {/* Profile Content */}
+        <Card style={styles.contentCard}>
+          <Card.Content>
+            {/* Skills Section */}
+            {userProfile?.skills && userProfile.skills.length > 0 && (
+              <View style={styles.section}>
+                <Title style={styles.sectionTitle}>Skills</Title>
+                <View style={styles.chipContainer}>
+                  {userProfile.skills.map((skill: string, index: number) => (
+                    <Chip key={index} style={styles.chip} mode="outlined">
+                      {skill}
+                    </Chip>
+                  ))}
+                </View>
+              </View>
+            )}
+
+            {/* Languages Section */}
+            {user.languages && user.languages.length > 0 && (
+              <View style={styles.section}>
                 <Title style={styles.sectionTitle}>Languages</Title>
                 <View style={styles.chipContainer}>
-                  {user.languages.map((lang, index) => (
+                  {user.languages.map((lang: string, index: number) => (
                     <Chip key={index} style={styles.chip}>
                       {lang}
                     </Chip>
                   ))}
                 </View>
               </View>
+            )}
 
-              <View style={styles.interestsContainer}>
+            {/* Interests Section */}
+            {user.interests && user.interests.length > 0 && (
+              <View style={styles.section}>
                 <Title style={styles.sectionTitle}>Interests</Title>
                 <View style={styles.chipContainer}>
-                  {user.interests.map((interest, index) => (
+                  {user.interests.map((interest: string, index: number) => (
                     <Chip key={index} style={styles.chip} mode="outlined">
                       {interest}
                     </Chip>
                   ))}
                 </View>
               </View>
+            )}
 
-              <View style={styles.statusContainer}>
-                <View style={styles.statusItem}>
-                  <Paragraph>Map Visible</Paragraph>
-                  <Switch value={user.is_visible} disabled />
-                </View>
-                <View style={styles.statusItem}>
-                  <Paragraph>Available for Meetup</Paragraph>
-                  <Switch value={user.is_available_for_meetup} disabled />
-                </View>
+            {/* Privacy Settings */}
+            <View style={styles.section}>
+              <Title style={styles.sectionTitle}>Privacy Settings</Title>
+              <View style={styles.settingItem}>
+                <Paragraph>Visible on Map</Paragraph>
+                <Switch value={user.is_visible} disabled />
               </View>
+              <View style={styles.settingItem}>
+                <Paragraph>Available for Meetup</Paragraph>
+                <Switch value={user.is_available_for_meetup} disabled />
+              </View>
+            </View>
 
+            {/* Sign Out Button */}
+            <Button
+              mode="outlined"
+              onPress={handleSignOut}
+              style={styles.signOutButton}
+              icon="logout"
+            >
+              Sign Out
+            </Button>
+          </Card.Content>
+        </Card>
+      </ScrollView>
+
+      {/* Edit Profile Modal */}
+      <Portal>
+        <Modal
+          visible={isEditing}
+          onDismiss={() => setIsEditing(false)}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <ScrollView>
+            <Title style={styles.modalTitle}>Edit Profile</Title>
+            
+            <TextInput
+              label="Nickname"
+              value={formData.nickname}
+              onChangeText={(text) => setFormData(prev => ({ ...prev, nickname: text }))}
+              style={styles.modalInput}
+              mode="outlined"
+            />
+
+            <TextInput
+              label="Full Name"
+              value={formData.full_name}
+              onChangeText={(text) => setFormData(prev => ({ ...prev, full_name: text }))}
+              style={styles.modalInput}
+              mode="outlined"
+            />
+
+            <TextInput
+              label="Bio"
+              value={formData.bio}
+              onChangeText={(text) => setFormData(prev => ({ ...prev, bio: text }))}
+              style={styles.modalInput}
+              mode="outlined"
+              multiline
+              numberOfLines={3}
+            />
+
+            <TextInput
+              label="Current City"
+              value={formData.current_city}
+              onChangeText={(text) => setFormData(prev => ({ ...prev, current_city: text }))}
+              style={styles.modalInput}
+              mode="outlined"
+            />
+
+            <TextInput
+              label="Phone"
+              value={formData.phone}
+              onChangeText={(text) => setFormData(prev => ({ ...prev, phone: text }))}
+              style={styles.modalInput}
+              mode="outlined"
+              keyboardType="phone-pad"
+            />
+
+            <TextInput
+              label="Website"
+              value={formData.website}
+              onChangeText={(text) => setFormData(prev => ({ ...prev, website: text }))}
+              style={styles.modalInput}
+              mode="outlined"
+              keyboardType="url"
+            />
+
+            <View style={styles.modalActions}>
               <Button
                 mode="contained"
-                onPress={() => setIsEditing(true)}
-                style={styles.editButton}
+                onPress={handleSave}
+                style={styles.modalSaveButton}
+                loading={loading}
               >
-                Edit Profile
+                Save
+              </Button>
+              <Button
+                mode="outlined"
+                onPress={() => setIsEditing(false)}
+              >
+                Cancel
               </Button>
             </View>
-          )}
-        </Card.Content>
-      </Card>
+          </ScrollView>
+        </Modal>
+      </Portal>
 
-      <Card style={styles.card}>
-        <Card.Content>
-          <Title>Account Settings</Title>
-          <Button
-            mode="outlined"
-            onPress={handleSignOut}
-            style={styles.signOutButton}
-          >
-            Sign Out
-          </Button>
-        </Card.Content>
-      </Card>
-    </ScrollView>
+      {/* Followers Modal */}
+      <Portal>
+        <Modal
+          visible={showFollowersModal}
+          onDismiss={() => setShowFollowersModal(false)}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Title style={styles.modalTitle}>Followers ({followers.length})</Title>
+          <ScrollView>
+            {followers.length > 0 ? (
+              followers.map((follower: any) => (
+                <Surface key={follower.id} style={styles.userItem}>
+                  <View style={styles.userItemContent}>
+                    <Avatar.Image
+                      size={40}
+                      source={{ uri: follower.avatar_url }}
+                    />
+                    <View style={styles.userItemInfo}>
+                      <Title style={styles.userItemName}>{follower.nickname}</Title>
+                      <Paragraph style={styles.userItemLocation}>{follower.current_city}</Paragraph>
+                    </View>
+                    <Button
+                      mode="outlined"
+                      onPress={() => handleFollowToggle(follower.id)}
+                    >
+                      Following
+                    </Button>
+                  </View>
+                </Surface>
+              ))
+            ) : (
+              <Paragraph style={styles.emptyText}>No followers yet</Paragraph>
+            )}
+          </ScrollView>
+        </Modal>
+      </Portal>
+
+      {/* Following Modal */}
+      <Portal>
+        <Modal
+          visible={showFollowingModal}
+          onDismiss={() => setShowFollowingModal(false)}
+          contentContainerStyle={styles.modalContainer}
+        >
+          <Title style={styles.modalTitle}>Following ({following.length})</Title>
+          <ScrollView>
+            {following.length > 0 ? (
+              following.map((followed: any) => (
+                <Surface key={followed.id} style={styles.userItem}>
+                  <View style={styles.userItemContent}>
+                    <Avatar.Image
+                      size={40}
+                      source={{ uri: followed.avatar_url }}
+                    />
+                    <View style={styles.userItemInfo}>
+                      <Title style={styles.userItemName}>{followed.nickname}</Title>
+                      <Paragraph style={styles.userItemLocation}>{followed.current_city}</Paragraph>
+                    </View>
+                    <Button
+                      mode="outlined"
+                      onPress={() => handleFollowToggle(followed.id)}
+                    >
+                      Unfollow
+                    </Button>
+                  </View>
+                </Surface>
+              ))
+            ) : (
+              <Paragraph style={styles.emptyText}>Not following anyone yet</Paragraph>
+            )}
+          </ScrollView>
+        </Modal>
+      </Portal>
+
+      <Toast
+        visible={toast.visible}
+        message={toast.message}
+        type={toast.type}
+        onHide={hideToast}
+      />
+    </View>
   );
 };
 
@@ -372,98 +592,160 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f5f5f5',
   },
-  card: {
+  headerCard: {
     margin: 16,
     ...shadowPresets.medium,
     borderRadius: 12,
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 20,
+    marginBottom: 16,
   },
   avatarSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  notificationSection: {
     position: 'relative',
   },
-  notificationBadge: {
+  cameraButton: {
     position: 'absolute',
-    top: 0,
+    bottom: 0,
     right: 0,
-    backgroundColor: '#F44336',
+    backgroundColor: '#6366f1',
   },
   headerInfo: {
+    flex: 1,
     marginLeft: 16,
-    flex: 1,
   },
-  changeAvatarButton: {
-    marginTop: 8,
+  userName: {
+    fontSize: 24,
+    fontWeight: 'bold',
   },
-  editForm: {
-    marginTop: 16,
-  },
-  input: {
-    marginBottom: 16,
-  },
-  switchContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  editActions: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 16,
-  },
-  saveButton: {
-    flex: 1,
-    marginRight: 8,
-  },
-  info: {
-    marginTop: 16,
-  },
-  bio: {
-    marginBottom: 16,
-    fontStyle: 'italic',
-  },
-  sectionTitle: {
-    fontSize: 16,
+  userLocation: {
+    color: '#666',
     marginBottom: 8,
   },
-  languagesContainer: {
+  websiteButton: {
+    alignSelf: 'flex-start',
+  },
+  bioSection: {
     marginBottom: 16,
   },
-  interestsContainer: {
+  bio: {
+    fontStyle: 'italic',
+    lineHeight: 20,
+  },
+  statsSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginBottom: 16,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  statItem: {
+    alignItems: 'center',
+  },
+  statNumber: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#6366f1',
+  },
+  statLabel: {
+    fontSize: 12,
+    color: '#666',
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 8,
+  },
+  editButton: {
+    flex: 1,
+  },
+  followButton: {
+    flex: 1,
+  },
+  contentCard: {
+    marginHorizontal: 16,
+    marginBottom: 16,
+    ...shadowPresets.small,
+    borderRadius: 12,
+  },
+  section: {
+    marginBottom: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 12,
   },
   chipContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
+    gap: 8,
   },
   chip: {
-    marginRight: 8,
     marginBottom: 4,
   },
-  statusContainer: {
-    marginBottom: 16,
-  },
-  statusItem: {
+  settingItem: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
-  },
-  editButton: {
-    marginTop: 8,
+    marginBottom: 12,
   },
   signOutButton: {
-    marginTop: 8,
+    marginTop: 16,
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    margin: 20,
+    borderRadius: 12,
+    padding: 20,
+    maxHeight: '80%',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  modalInput: {
+    marginBottom: 16,
+  },
+  modalActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 20,
+  },
+  modalSaveButton: {
+    flex: 1,
+    marginRight: 8,
+  },
+  userItem: {
+    padding: 12,
+    marginBottom: 8,
+    borderRadius: 8,
+    ...shadowPresets.small,
+  },
+  userItemContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  userItemInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+  userItemName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  userItemLocation: {
+    fontSize: 12,
+    color: '#666',
+  },
+  emptyText: {
+    textAlign: 'center',
+    color: '#666',
+    marginTop: 20,
   },
   title: {
     textAlign: 'center',
@@ -480,4 +762,9 @@ const styles = StyleSheet.create({
   buttonContent: {
     height: 50,
   },
-}); 
+  card: {
+    margin: 16,
+    ...shadowPresets.medium,
+    borderRadius: 12,
+  },
+});

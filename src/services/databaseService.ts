@@ -341,4 +341,342 @@ export class DatabaseService {
       return null;
     }
   }
+
+  // User profile methods
+  static async getUserProfile(userId: string): Promise<User | null> {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select(`
+          *,
+          work_experience(*),
+          education(*),
+          travel_history(*),
+          preferences(*),
+          stats(*)
+        `)
+        .eq('id', userId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error getting user profile:', error);
+      return null;
+    }
+  }
+
+  static async updateUserProfile(userId: string, profileData: Partial<User>): Promise<User | null> {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .update(profileData)
+        .eq('id', userId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating user profile:', error);
+      return null;
+    }
+  }
+
+  static async addWorkExperience(userId: string, experience: Omit<WorkExperience, 'id'>): Promise<WorkExperience | null> {
+    try {
+      const { data, error } = await supabase
+        .from('work_experience')
+        .insert({ ...experience, user_id: userId })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error adding work experience:', error);
+      return null;
+    }
+  }
+
+  static async updateWorkExperience(experienceId: string, experience: Partial<WorkExperience>): Promise<WorkExperience | null> {
+    try {
+      const { data, error } = await supabase
+        .from('work_experience')
+        .update(experience)
+        .eq('id', experienceId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating work experience:', error);
+      return null;
+    }
+  }
+
+  static async deleteWorkExperience(experienceId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('work_experience')
+        .delete()
+        .eq('id', experienceId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error deleting work experience:', error);
+      return false;
+    }
+  }
+
+  static async addEducation(userId: string, education: Omit<Education, 'id'>): Promise<Education | null> {
+    try {
+      const { data, error } = await supabase
+        .from('education')
+        .insert({ ...education, user_id: userId })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error adding education:', error);
+      return null;
+    }
+  }
+
+  static async updateEducation(educationId: string, education: Partial<Education>): Promise<Education | null> {
+    try {
+      const { data, error } = await supabase
+        .from('education')
+        .update(education)
+        .eq('id', educationId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating education:', error);
+      return null;
+    }
+  }
+
+  static async deleteEducation(educationId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('education')
+        .delete()
+        .eq('id', educationId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error deleting education:', error);
+      return false;
+    }
+  }
+
+  static async addTravelHistory(userId: string, travel: Omit<TravelHistory, 'id'>): Promise<TravelHistory | null> {
+    try {
+      const { data, error } = await supabase
+        .from('travel_history')
+        .insert({ ...travel, user_id: userId })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error adding travel history:', error);
+      return null;
+    }
+  }
+
+  static async updateTravelHistory(travelId: string, travel: Partial<TravelHistory>): Promise<TravelHistory | null> {
+    try {
+      const { data, error } = await supabase
+        .from('travel_history')
+        .update(travel)
+        .eq('id', travelId)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating travel history:', error);
+      return null;
+    }
+  }
+
+  static async deleteTravelHistory(travelId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('travel_history')
+        .delete()
+        .eq('id', travelId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error deleting travel history:', error);
+      return false;
+    }
+  }
+
+  // Follow/Unfollow methods
+  static async followUser(followerId: string, followingId: string): Promise<FollowRelationship | null> {
+    try {
+      const { data, error } = await supabase
+        .from('follow_relationships')
+        .insert({
+          follower_id: followerId,
+          following_id: followingId,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error following user:', error);
+      return null;
+    }
+  }
+
+  static async unfollowUser(followerId: string, followingId: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('follow_relationships')
+        .delete()
+        .eq('follower_id', followerId)
+        .eq('following_id', followingId);
+
+      if (error) throw error;
+      return true;
+    } catch (error) {
+      console.error('Error unfollowing user:', error);
+      return false;
+    }
+  }
+
+  static async getFollowers(userId: string): Promise<User[]> {
+    try {
+      const { data, error } = await supabase
+        .from('follow_relationships')
+        .select(`
+          follower:users!follower_id(*)
+        `)
+        .eq('following_id', userId);
+
+      if (error) throw error;
+      return data?.map(item => item.follower).filter(Boolean) || [];
+    } catch (error) {
+      console.error('Error getting followers:', error);
+      return [];
+    }
+  }
+
+  static async getFollowing(userId: string): Promise<User[]> {
+    try {
+      const { data, error } = await supabase
+        .from('follow_relationships')
+        .select(`
+          following:users!following_id(*)
+        `)
+        .eq('follower_id', userId);
+
+      if (error) throw error;
+      return data?.map(item => item.following).filter(Boolean) || [];
+    } catch (error) {
+      console.error('Error getting following:', error);
+      return [];
+    }
+  }
+
+  static async isFollowing(followerId: string, followingId: string): Promise<boolean> {
+    try {
+      const { data, error } = await supabase
+        .from('follow_relationships')
+        .select('id')
+        .eq('follower_id', followerId)
+        .eq('following_id', followingId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+      return !!data;
+    } catch (error) {
+      console.error('Error checking follow status:', error);
+      return false;
+    }
+  }
+
+  // User stats methods
+  static async getUserStats(userId: string): Promise<UserStats | null> {
+    try {
+      const { data, error } = await supabase
+        .from('user_stats')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error getting user stats:', error);
+      return null;
+    }
+  }
+
+  static async updateUserStats(userId: string, stats: Partial<UserStats>): Promise<UserStats | null> {
+    try {
+      const { data, error } = await supabase
+        .from('user_stats')
+        .upsert({ user_id: userId, ...stats })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating user stats:', error);
+      return null;
+    }
+  }
+
+  // User preferences methods
+  static async getUserPreferences(userId: string): Promise<UserPreferences | null> {
+    try {
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error getting user preferences:', error);
+      return null;
+    }
+  }
+
+  static async updateUserPreferences(userId: string, preferences: Partial<UserPreferences>): Promise<UserPreferences | null> {
+    try {
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .upsert({ user_id: userId, ...preferences })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error updating user preferences:', error);
+      return null;
+    }
+  }
 }
