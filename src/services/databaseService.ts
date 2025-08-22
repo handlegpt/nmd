@@ -1,5 +1,6 @@
 import { supabase } from '../lib/supabase';
 import { User, Location, Message, Post, Comment, Notification } from '../types';
+import CacheService from './cacheService';
 
 // Database service for handling all database operations
 export class DatabaseService {
@@ -110,6 +111,10 @@ export class DatabaseService {
         .single();
 
       if (error) throw error;
+      
+      // Invalidate posts cache when new post is created
+      CacheService.invalidatePostsCache();
+      
       return data;
     } catch (error) {
       console.error('Error creating post:', error);
@@ -118,7 +123,17 @@ export class DatabaseService {
   }
 
   static async getPosts(limit: number = 20, offset: number = 0): Promise<Post[]> {
+    const page = Math.floor(offset / limit);
+    
+    // Try cache first
+    const cachedPosts = await CacheService.getCachedPosts(page);
+    if (cachedPosts) {
+      console.log('🔄 DatabaseService: Returning cached posts for page', page);
+      return cachedPosts;
+    }
+
     try {
+      console.log('🔄 DatabaseService: Fetching posts from database for page', page);
       const { data, error } = await supabase
         .from('posts')
         .select(`
@@ -130,7 +145,13 @@ export class DatabaseService {
         .range(offset, offset + limit - 1);
 
       if (error) throw error;
-      return data || [];
+      
+      const posts = data || [];
+      
+      // Cache the results
+      await CacheService.cachePosts(posts, page);
+      
+      return posts;
     } catch (error) {
       console.error('Error getting posts:', error);
       return [];
@@ -167,6 +188,11 @@ export class DatabaseService {
         throw error;
       }
       
+      // Invalidate comments cache for this post
+      if (commentData.post_id) {
+        await CacheService.invalidateCommentsCache(commentData.post_id);
+      }
+      
       console.log('🔍 DatabaseService: Comment created successfully', data);
       return data;
     } catch (error) {
@@ -176,7 +202,15 @@ export class DatabaseService {
   }
 
   static async getComments(postId: string): Promise<Comment[]> {
+    // Try cache first
+    const cachedComments = await CacheService.getCachedComments(postId);
+    if (cachedComments) {
+      console.log('🔄 DatabaseService: Returning cached comments for post', postId);
+      return cachedComments;
+    }
+
     try {
+      console.log('🔄 DatabaseService: Fetching comments from database for post', postId);
       const { data, error } = await supabase
         .from('comments')
         .select(`
@@ -187,7 +221,13 @@ export class DatabaseService {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      return data || [];
+      
+      const comments = data || [];
+      
+      // Cache the results
+      await CacheService.cacheComments(postId, comments);
+      
+      return comments;
     } catch (error) {
       console.error('Error getting comments:', error);
       return [];

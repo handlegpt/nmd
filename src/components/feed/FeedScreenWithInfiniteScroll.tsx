@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   View,
   StyleSheet,
-  ScrollView,
   FlatList,
   RefreshControl,
   Dimensions,
@@ -16,113 +15,53 @@ import {
   Avatar,
   Button,
   FAB,
-  IconButton,
   Surface,
   Chip,
   Divider,
   Portal,
   Modal,
   TextInput,
+  ActivityIndicator,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { useResponsive } from '../../utils/responsive';
 import { shadowPresets } from '../../utils/platformStyles';
 import { colors, spacing, borderRadius } from '../../utils/responsive';
-import { LocationShare } from '../common/LocationShare';
-import { MediaPicker } from '../common/MediaPicker';
 import { PostEnhancer } from '../common/PostEnhancer';
-import { PlaceholderImage } from '../common/PlaceholderImage';
 import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { debounce } from '../../utils/performance';
 import { useNavigation } from '@react-navigation/native';
 import { DatabaseService } from '../../services/databaseService';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
+import { Post, Comment, MediaItem } from '../../types';
 
-const { width } = Dimensions.get('window');
-
-interface MediaItem {
-  id: string;
-  uri: string;
-  type: 'image' | 'video';
-  filename: string;
-  size: number;
-}
-
-interface Comment {
-  id: string;
-  userId: string;
-  userNickname: string;
-  userAvatar: string;
-  content: string;
-  createdAt: string;
-}
-
-interface Post {
-  id: string;
-  userId: string;
-  userNickname: string;
-  userAvatar: string;
-  content: string;
-  location: string;
-  locationDetails?: {
-    name: string;
-    address: string;
-    coordinates?: {
-      latitude: number;
-      longitude: number;
-    };
-  };
-  media?: MediaItem[];
-  isMeetupRequest: boolean;
-  meetupDetails?: {
-    title: string;
-    date: string;
-    location: string;
-    maxPeople: number;
-    currentPeople: number;
-  };
-  likes: number;
-  comments: Comment[];
-  createdAt: string;
-  tags: string[];
-  emotion?: string;
-  topic?: string;
-}
-
-const FeedScreen: React.FC = () => {
+const FeedScreenWithInfiniteScroll: React.FC = () => {
   const { user } = useAuthStore();
   const { isPhone } = useResponsive();
   const navigation = useNavigation();
 
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [selectedPostId, setSelectedPostId] = useState<string>('');
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
   const [newComment, setNewComment] = useState('');
-  const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
-
-  // Show toast message
-  const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
-    setToast({ visible: true, message, type });
-  };
-
-  // Hide toast message
-  const hideToast = () => {
-    setToast({ visible: false, message: '', type: 'info' });
-  };
-
-  // Load posts from database
-  const loadPosts = useCallback(async () => {
-    try {
-      setLoading(true);
-      const dbPosts = await DatabaseService.getPosts(20, 0);
+  const [modalVisible, setModalVisible] = useState(false);
+  
+  // Use infinite scroll for posts
+  const {
+    data: posts,
+    loading,
+    error,
+    hasMore,
+    loadMore,
+    refresh
+  } = useInfiniteScroll({
+    fetchFunction: async (page: number, limit: number) => {
+      const offset = page * limit;
+      console.log('🔄 FeedScreen: Fetching page', page, 'offset', offset);
+      const dbPosts = await DatabaseService.getPosts(limit, offset);
       
       // Transform database posts to match our interface
-      const transformedPosts: Post[] = dbPosts.map(dbPost => ({
+      return dbPosts.map(dbPost => ({
         id: dbPost.id,
         userId: dbPost.user_id,
         userNickname: dbPost.users?.nickname || 'Unknown User',
@@ -166,196 +105,24 @@ const FeedScreen: React.FC = () => {
         emotion: undefined,
         topic: undefined,
       }));
+    },
+    limit: 10
+  });
+  
+  // Toast state
+  const [toast, setToast] = useState({
+    visible: false,
+    message: '',
+    type: 'success' as 'success' | 'error' | 'warning'
+  });
 
-      console.log('🔍 FeedScreen: Loaded', transformedPosts.length, 'posts from database');
-      
-      // If no posts from database, use mock data
-      if (transformedPosts.length === 0) {
-        console.log('🔍 FeedScreen: No posts in database, using mock data');
-        setPosts([
-          {
-            id: '1',
-            userId: '1',
-            userNickname: 'Sarah',
-            userAvatar: '',
-            content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session? 🏄‍♀️',
-            location: 'Bali, Indonesia',
-            locationDetails: {
-              name: 'Canggu Beach',
-              address: 'Canggu, Bali, Indonesia',
-              coordinates: { latitude: -8.6500, longitude: 115.1333 },
-            },
-            media: [],
-            isMeetupRequest: true,
-            meetupDetails: {
-              title: 'Sunset Surf Session',
-              date: 'Today at 5 PM',
-              location: 'Canggu Beach, Bali',
-              maxPeople: 6,
-              currentPeople: 2,
-            },
-            likes: 12,
-            comments: [
-              {
-                id: '1',
-                userId: '2',
-                userNickname: 'Mike',
-                userAvatar: '',
-                content: 'I\'m in! What time should we meet?',
-                createdAt: '1 hour ago',
-              },
-              {
-                id: '2',
-                userId: '3',
-                userNickname: 'Emma',
-                userAvatar: '',
-                content: 'Sounds amazing! What time should we meet?',
-                createdAt: '30 minutes ago',
-              },
-            ],
-            createdAt: '2 hours ago',
-            tags: ['bali', 'surfing', 'beach'],
-            emotion: 'excited',
-            topic: 'Travel',
-          },
-          {
-            id: '2',
-            userId: '2',
-            userNickname: 'Mike',
-            userAvatar: '',
-            content: 'Working from a cozy cafe in Chiang Mai. The coffee here is amazing and the wifi is super fast! ☕️',
-            location: 'Chiang Mai, Thailand',
-            locationDetails: {
-              name: 'Cafe Corner',
-              address: 'Nimman Road, Chiang Mai, Thailand',
-              coordinates: { latitude: 18.7883, longitude: 98.9853 },
-            },
-            media: [],
-            isMeetupRequest: true,
-            meetupDetails: {
-              title: 'Digital Nomad Meetup',
-              date: 'Tomorrow at 6 PM',
-              location: 'Cafe Corner, Nimman Road',
-              maxPeople: 8,
-              currentPeople: 3,
-            },
-            likes: 8,
-            comments: [
-              {
-                id: '3',
-                userId: '3',
-                userNickname: 'Emma',
-                userAvatar: '',
-                content: 'I\'ll be there! Looking forward to meeting everyone ☕️',
-                createdAt: '2 hours ago',
-              },
-            ],
-            createdAt: '4 hours ago',
-            tags: ['chiangmai', 'cafe', 'work'],
-            emotion: 'productive',
-            topic: 'Work',
-          },
-        ]);
-      } else {
-        setPosts(transformedPosts);
-      }
-    } catch (error) {
-      console.error('Error loading posts:', error);
-      // Fallback to mock data if database fails
-      setPosts([
-        {
-          id: '1',
-          userId: '1',
-          userNickname: 'Sarah',
-          userAvatar: '',
-          content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session? 🏄‍♀️',
-          location: 'Canggu, Bali',
-          locationDetails: {
-            name: 'Canggu Beach',
-            address: 'Canggu, Bali, Indonesia',
-            coordinates: { latitude: -8.6500, longitude: 115.1333 },
-          },
-          media: [],
-          isMeetupRequest: false,
-          likes: 12,
-          comments: [
-            {
-              id: '1',
-              userId: '2',
-              userNickname: 'Mike',
-              userAvatar: '',
-              content: 'Count me in! I\'ll bring my board 🏄‍♂️',
-              createdAt: '1 hour ago',
-            },
-            {
-              id: '2',
-              userId: '3',
-              userNickname: 'Emma',
-              userAvatar: '',
-              content: 'Sounds amazing! What time should we meet?',
-              createdAt: '30 minutes ago',
-            },
-          ],
-          createdAt: '2 hours ago',
-          tags: ['bali', 'surfing', 'beach'],
-          emotion: 'excited',
-          topic: 'Travel',
-        },
-        {
-          id: '2',
-          userId: '2',
-          userNickname: 'Mike',
-          userAvatar: '',
-          content: 'Working from a cozy cafe in Chiang Mai. The coffee here is amazing and the wifi is super fast! ☕️',
-          location: 'Chiang Mai, Thailand',
-          locationDetails: {
-            name: 'Cafe Corner',
-            address: 'Nimman Road, Chiang Mai, Thailand',
-            coordinates: { latitude: 18.7883, longitude: 98.9853 },
-          },
-          media: [],
-          isMeetupRequest: true,
-          meetupDetails: {
-            title: 'Digital Nomad Meetup',
-            date: 'Tomorrow at 6 PM',
-            location: 'Cafe Corner, Nimman Road',
-            maxPeople: 8,
-            currentPeople: 3,
-          },
-          likes: 8,
-          comments: [
-            {
-              id: '3',
-              userId: '3',
-              userNickname: 'Emma',
-              userAvatar: '',
-              content: 'I\'ll be there! Looking forward to meeting everyone ☕️',
-              createdAt: '2 hours ago',
-            },
-          ],
-          createdAt: '4 hours ago',
-          tags: ['chiangmai', 'cafe', 'work'],
-          emotion: 'productive',
-          topic: 'Work',
-        },
-      ]);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' = 'success') => {
+    setToast({ visible: true, message, type });
+  };
 
-  // Load posts on component mount
-  useEffect(() => {
-    console.log('🔍 FeedScreen: Loading posts...');
-    loadPosts();
-  }, [loadPosts]);
-
-  // Handle refresh
-  const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    await loadPosts();
-    setRefreshing(false);
-  }, [loadPosts]);
+  const hideToast = () => {
+    setToast(prev => ({ ...prev, visible: false }));
+  };
 
   // Handle join meetup
   const handleJoinMeetup = (postId: string) => {
@@ -365,18 +132,7 @@ const FeedScreen: React.FC = () => {
       return;
     }
     
-    setPosts(posts.map(post => {
-      if (post.id === postId && post.meetupDetails) {
-        return {
-          ...post,
-          meetupDetails: {
-            ...post.meetupDetails,
-            currentPeople: Math.min(post.meetupDetails.currentPeople + 1, post.meetupDetails.maxPeople),
-          },
-        };
-      }
-      return post;
-    }));
+    // TODO: Update posts state in infinite scroll hook
     showToast('Successfully joined the meetup!', 'success');
   };
 
@@ -388,58 +144,25 @@ const FeedScreen: React.FC = () => {
 
   // Handle add comment
   const handleAddComment = async () => {
-    console.log('🔍 handleAddComment called');
-    console.log('🔍 newComment:', newComment);
-    console.log('🔍 user:', user);
-    console.log('🔍 selectedPostId:', selectedPostId);
-    
-    if (!newComment.trim()) {
-      console.log('🔍 Comment is empty');
-      return;
-    }
-    
-    if (!user) {
-      console.log('🔍 User not logged in');
-      showToast('Please sign in to comment', 'warning');
+    if (!newComment.trim() || !user) {
+      showToast('Please enter a comment and sign in', 'warning');
       return;
     }
 
     try {
-      console.log('🔍 Creating comment...');
       const comment = await DatabaseService.createComment({
         post_id: selectedPostId,
         user_id: user.id,
         content: newComment.trim(),
       });
 
-      console.log('🔍 Comment created:', comment);
-
       if (comment) {
-        setPosts(posts.map(post => {
-          if (post.id === selectedPostId) {
-            return {
-              ...post,
-              comments: [
-                ...post.comments,
-                {
-                  id: comment.id,
-                  userId: comment.user_id,
-                  userNickname: user.nickname,
-                  userAvatar: user.avatar_url || '',
-                  content: comment.content,
-                  createdAt: comment.created_at,
-                },
-              ],
-            };
-          }
-          return post;
-        }));
+        // TODO: Update posts state in infinite scroll hook
         setNewComment('');
         showToast('Comment added successfully!', 'success');
-        console.log('🔍 Comment added to UI');
       }
     } catch (error) {
-      console.error('🔍 Error adding comment:', error);
+      console.error('Error adding comment:', error);
       showToast('Failed to add comment', 'error');
     }
   };
@@ -449,12 +172,8 @@ const FeedScreen: React.FC = () => {
     try {
       const success = await DatabaseService.likePost(postId);
       if (success) {
-        setPosts(posts.map(post => {
-          if (post.id === postId) {
-            return { ...post, likes: post.likes + 1 };
-          }
-          return post;
-        }));
+        // TODO: Update posts state in infinite scroll hook
+        showToast('Post liked!', 'success');
       }
     } catch (error) {
       console.error('Error liking post:', error);
@@ -493,47 +212,10 @@ const FeedScreen: React.FC = () => {
       });
 
       if (newPost) {
-        const transformedPost: Post = {
-          id: newPost.id,
-          userId: newPost.user_id,
-          userNickname: user.nickname,
-          userAvatar: user.avatar_url || '',
-          content: newPost.content,
-          location: newPost.location?.city || 'Unknown Location',
-          locationDetails: newPost.location ? {
-            name: newPost.location.city,
-            address: `${newPost.location.city}, ${newPost.location.country}`,
-            coordinates: {
-              latitude: newPost.location.latitude,
-              longitude: newPost.location.longitude,
-            },
-          } : undefined,
-          media: newPost.media_urls?.map((url, index) => ({
-            id: `${newPost.id}-media-${index}`,
-            uri: url,
-            type: 'image' as const,
-            filename: `media-${index}.jpg`,
-            size: 0,
-          })) || [],
-          isMeetupRequest: !!newPost.meetup_details,
-          meetupDetails: newPost.meetup_details ? {
-            title: newPost.meetup_details.title,
-            date: newPost.meetup_details.date_time,
-            location: `${newPost.meetup_details.location.city}, ${newPost.meetup_details.location.country}`,
-            maxPeople: newPost.meetup_details.max_participants,
-            currentPeople: newPost.meetup_details.current_participants,
-          } : undefined,
-          likes: newPost.likes,
-          comments: newPost.comments || [],
-          createdAt: newPost.created_at,
-          tags: [],
-          emotion: undefined,
-          topic: undefined,
-        };
-
-        setPosts([transformedPost, ...posts]);
         setModalVisible(false);
         showToast('Post created successfully!', 'success');
+        // Refresh to show new post
+        await refresh();
       }
     } catch (error) {
       console.error('Error creating post:', error);
@@ -541,8 +223,36 @@ const FeedScreen: React.FC = () => {
     }
   };
 
-  if (loading) {
-    console.log('🔍 FeedScreen: Loading state, showing spinner');
+  // Handle end reached for infinite scroll
+  const handleEndReached = useCallback(() => {
+    if (hasMore && !loading) {
+      loadMore();
+    }
+  }, [hasMore, loading, loadMore]);
+
+  // Render footer for loading more
+  const renderFooter = () => {
+    if (!hasMore) {
+      return (
+        <View style={styles.footerContainer}>
+          <Text style={styles.footerText}>No more posts to load</Text>
+        </View>
+      );
+    }
+
+    if (loading && posts.length > 0) {
+      return (
+        <View style={styles.footerContainer}>
+          <ActivityIndicator size="small" color={colors.primary} />
+          <Text style={styles.footerText}>Loading more posts...</Text>
+        </View>
+      );
+    }
+
+    return null;
+  };
+
+  if (loading && posts.length === 0) {
     return (
       <ResponsiveContainer>
         <LoadingSpinner visible={true} />
@@ -550,7 +260,18 @@ const FeedScreen: React.FC = () => {
     );
   }
 
-  console.log('🔍 FeedScreen: Rendering with', posts.length, 'posts');
+  if (error && posts.length === 0) {
+    return (
+      <ResponsiveContainer>
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+          <Button mode="contained" onPress={refresh} style={styles.retryButton}>
+            Retry
+          </Button>
+        </View>
+      </ResponsiveContainer>
+    );
+  }
 
   return (
     <ResponsiveContainer>
@@ -657,9 +378,16 @@ const FeedScreen: React.FC = () => {
             </Card>
           )}
           refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+            <RefreshControl refreshing={loading && posts.length === 0} onRefresh={refresh} />
           }
           contentContainerStyle={styles.listContainer}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={renderFooter}
+          removeClippedSubviews={true}
+          maxToRenderPerBatch={5}
+          windowSize={10}
+          initialNumToRender={5}
         />
 
         <FAB
@@ -694,22 +422,26 @@ const FeedScreen: React.FC = () => {
             <Card style={styles.modalCard}>
               <Card.Content>
                 <Title style={styles.modalTitle}>Comments</Title>
-                <ScrollView style={{ maxHeight: 300 }}>
-                  {posts.find(p => p.id === selectedPostId)?.comments.map((comment) => (
-                    <View key={comment.id} style={styles.commentItem}>
-                      <Avatar.Image
-                        size={30}
-                        source={comment.userAvatar ? { uri: comment.userAvatar } : undefined}
-                        style={styles.commentAvatar}
-                      />
-                      <View style={styles.commentContent}>
-                        <Text style={styles.commentUser}>{comment.userNickname}</Text>
-                        <Text style={styles.commentText}>{comment.content}</Text>
-                        <Text style={styles.commentTime}>{comment.createdAt}</Text>
+                <View style={{ maxHeight: 300 }}>
+                  <FlatList
+                    data={posts.find(p => p.id === selectedPostId)?.comments || []}
+                    keyExtractor={(comment) => comment.id}
+                    renderItem={({ item: comment }) => (
+                      <View style={styles.commentItem}>
+                        <Avatar.Image
+                          size={30}
+                          source={comment.userAvatar ? { uri: comment.userAvatar } : undefined}
+                          style={styles.commentAvatar}
+                        />
+                        <View style={styles.commentContent}>
+                          <Text style={styles.commentUser}>{comment.userNickname}</Text>
+                          <Text style={styles.commentText}>{comment.content}</Text>
+                          <Text style={styles.commentTime}>{comment.createdAt}</Text>
+                        </View>
                       </View>
-                    </View>
-                  ))}
-                </ScrollView>
+                    )}
+                  />
+                </View>
                 <View style={styles.commentInput}>
                   <TextInput
                     value={newComment}
@@ -787,7 +519,7 @@ const styles = StyleSheet.create({
   mediaImage: {
     width: '100%',
     height: 200,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.base,
     marginBottom: spacing.xs,
   },
   tagsContainer: {
@@ -877,7 +609,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.base,
     padding: spacing.sm,
     backgroundColor: colors.gray50,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.base,
   },
   commentAvatar: {
     marginRight: spacing.sm,
@@ -912,6 +644,32 @@ const styles = StyleSheet.create({
   addCommentButton: {
     borderRadius: borderRadius.lg,
   },
+  footerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
+  },
+  footerText: {
+    marginLeft: spacing.sm,
+    color: colors.textSecondary,
+    fontSize: 14,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: spacing.lg,
+  },
+  errorText: {
+    color: colors.error,
+    fontSize: 16,
+    marginBottom: spacing.base,
+    textAlign: 'center',
+  },
+  retryButton: {
+    marginTop: spacing.base,
+  },
 });
 
-export default FeedScreen;
+export default FeedScreenWithInfiniteScroll;
