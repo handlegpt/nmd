@@ -17,6 +17,7 @@ import { ActivityScreen } from '../components/activities/ActivityScreen';
 import { CityScreen } from '../components/cities/CityScreen';
 import { ProfileScreen } from '../components/profile/ProfileScreen';
 import { LoginScreen } from '../components/auth/LoginScreen';
+import NotificationScreen from '../components/notifications/NotificationScreen';
 import { SettingsScreen } from '../components/settings/SettingsScreen';
 import { ChatScreen } from '../components/chat/ChatScreen';
 import { MessageScreen } from '../components/messages/MessageScreen';
@@ -53,6 +54,8 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
             iconName = 'calendar';
           } else if (route.name === 'Cities') {
             iconName = 'city';
+          } else if (route.name === 'Notifications') {
+            iconName = 'bell';
           } else if (route.name === 'Profile') {
             iconName = 'account';
           } else {
@@ -104,6 +107,11 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
         name="Cities" 
         component={CityScreen}
         options={{ title: 'Cities' }}
+      />
+      <Tab.Screen 
+        name="Notifications" 
+        component={NotificationScreen}
+        options={{ title: 'Notifications' }}
       />
       <Tab.Screen 
         name="Profile"

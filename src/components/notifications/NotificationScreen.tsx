@@ -3,6 +3,7 @@ import {
   View,
   StyleSheet,
   FlatList,
+  RefreshControl,
 } from 'react-native';
 import {
   Card,
@@ -13,57 +14,41 @@ import {
   IconButton,
   Divider,
   Button,
+  FAB,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { shadowPresets } from '../../utils/platformStyles';
+import { DatabaseService } from '../../services/databaseService';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
 interface Notification {
   id: string;
-  type: 'greeting' | 'message' | 'activity' | 'system';
+  type: 'greeting' | 'message' | 'activity' | 'system' | 'like' | 'comment' | 'meetup_invite' | 'meetup_update';
   title: string;
   message: string;
   from_user_id?: string;
   from_user_nickname?: string;
+  from_user?: {
+    nickname: string;
+    avatar_url?: string;
+  };
   created_at: string;
   is_read: boolean;
 }
 
 export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const { user } = useAuthStore();
-  const [notifications, setNotifications] = useState<Notification[]>([
-    {
-      id: '1',
-      type: 'activity',
-      title: 'New meetup invitation',
-      message: 'Alex invited you to join "Bali Digital Nomad Coffee Meetup"',
-      is_read: false,
-      created_at: '2 hours ago',
-    },
-    {
-      id: '2',
-      type: 'message',
-      title: 'New message from Sarah',
-      message: 'Hey! Are you still in Bali? Would love to meet up!',
-      is_read: true,
-      created_at: '1 day ago',
-    },
-    {
-      id: '3',
-      type: 'greeting',
-      title: 'New greeting from Mike',
-      message: 'Mike sent you a greeting',
-      is_read: false,
-      created_at: '2 days ago',
-    },
-  ]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
 
   useEffect(() => {
-    loadNotifications();
-  }, []);
+    if (user) {
+      loadNotifications();
+    }
+  }, [user]);
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -77,49 +62,12 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
 
   // Load notifications from database
   const loadNotifications = async () => {
+    if (!user) return;
+    
     setLoading(true);
     try {
-      // TODO: Implement actual notification loading from Supabase
-      // For now, using mock data
-      const mockNotifications: Notification[] = [
-        {
-          id: '1',
-          type: 'greeting',
-          title: 'New Greeting',
-          message: 'John Doe sent you a greeting!',
-          from_user_id: 'user-1',
-          from_user_nickname: 'John Doe',
-          created_at: new Date(Date.now() - 300000).toISOString(),
-          is_read: false,
-        },
-        {
-          id: '2',
-          type: 'message',
-          title: 'New Message',
-          message: 'Jane Smith sent you a message',
-          from_user_id: 'user-2',
-          from_user_nickname: 'Jane Smith',
-          created_at: new Date(Date.now() - 600000).toISOString(),
-          is_read: true,
-        },
-        {
-          id: '3',
-          type: 'activity',
-          title: 'Activity Update',
-          message: 'Digital Nomad Meetup starts in 2 hours',
-          created_at: new Date(Date.now() - 900000).toISOString(),
-          is_read: false,
-        },
-        {
-          id: '4',
-          type: 'system',
-          title: 'Welcome to NomadNow!',
-          message: 'Your account has been successfully created',
-          created_at: new Date(Date.now() - 3600000).toISOString(),
-          is_read: true,
-        },
-      ];
-      setNotifications(mockNotifications);
+      const dbNotifications = await DatabaseService.getNotifications(user.id);
+      setNotifications(dbNotifications);
     } catch (error) {
       showToast('Failed to load notifications', 'error');
     } finally {
@@ -127,18 +75,29 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
     }
   };
 
+  // Refresh notifications
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadNotifications();
+    setRefreshing(false);
+  };
+
   // Mark notification as read
   const markAsRead = async (notificationId: string) => {
     try {
-      // TODO: Implement actual mark as read in Supabase
-      setNotifications(prev =>
-        prev.map(notification =>
-          notification.id === notificationId
-            ? { ...notification, is_read: true }
-            : notification
-        )
-      );
-      showToast('Marked as read', 'success');
+      const success = await DatabaseService.markNotificationAsRead(notificationId);
+      if (success) {
+        setNotifications(prev =>
+          prev.map(notification =>
+            notification.id === notificationId
+              ? { ...notification, is_read: true }
+              : notification
+          )
+        );
+        showToast('Marked as read', 'success');
+      } else {
+        showToast('Failed to mark as read', 'error');
+      }
     } catch (error) {
       showToast('Failed to mark as read', 'error');
     }
@@ -147,13 +106,36 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
   // Delete notification
   const deleteNotification = async (notificationId: string) => {
     try {
-      // TODO: Implement actual deletion in Supabase
-      setNotifications(prev =>
-        prev.filter(notification => notification.id !== notificationId)
-      );
-      showToast('Notification deleted', 'success');
+      const success = await DatabaseService.deleteNotification(notificationId);
+      if (success) {
+        setNotifications(prev =>
+          prev.filter(notification => notification.id !== notificationId)
+        );
+        showToast('Notification deleted', 'success');
+      } else {
+        showToast('Failed to delete notification', 'error');
+      }
     } catch (error) {
       showToast('Failed to delete notification', 'error');
+    }
+  };
+
+  // Mark all notifications as read
+  const markAllAsRead = async () => {
+    if (!user) return;
+    
+    try {
+      const success = await DatabaseService.markAllNotificationsAsRead(user.id);
+      if (success) {
+        setNotifications(prev =>
+          prev.map(notification => ({ ...notification, is_read: true }))
+        );
+        showToast('All notifications marked as read', 'success');
+      } else {
+        showToast('Failed to mark all as read', 'error');
+      }
+    } catch (error) {
+      showToast('Failed to mark all as read', 'error');
     }
   };
 
@@ -183,6 +165,14 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
         return 'calendar';
       case 'system':
         return 'cog';
+      case 'like':
+        return 'heart';
+      case 'comment':
+        return 'comment';
+      case 'meetup_invite':
+        return 'account-plus';
+      case 'meetup_update':
+        return 'calendar-clock';
       default:
         return 'bell';
     }
@@ -199,6 +189,14 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
         return '#FF9800';
       case 'system':
         return '#9C27B0';
+      case 'like':
+        return '#E91E63';
+      case 'comment':
+        return '#00BCD4';
+      case 'meetup_invite':
+        return '#8BC34A';
+      case 'meetup_update':
+        return '#FF5722';
       default:
         return '#757575';
     }
@@ -211,12 +209,7 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
       return;
     }
     
-    setNotifications(notifications.map(notification =>
-      notification.id === notificationId
-        ? { ...notification, is_read: true }
-        : notification
-    ));
-    showToast('Notification marked as read', 'success');
+    markAsRead(notificationId);
   };
 
   // Handle delete notification
@@ -226,8 +219,7 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
       return;
     }
     
-    setNotifications(notifications.filter(notification => notification.id !== notificationId));
-    showToast('Notification deleted', 'success');
+    deleteNotification(notificationId);
   };
 
   // Handle sign in navigation
@@ -268,6 +260,13 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
     ]}>
       <Card.Content>
         <View style={styles.notificationHeader}>
+          {item.from_user && (
+            <Avatar.Image
+              size={40}
+              source={{ uri: item.from_user.avatar_url || 'https://via.placeholder.com/40' }}
+              style={styles.avatar}
+            />
+          )}
           <View style={styles.notificationInfo}>
             <Title style={styles.notificationTitle}>{item.title}</Title>
             <Paragraph style={styles.notificationMessage}>{item.message}</Paragraph>
@@ -289,13 +288,13 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
               <IconButton
                 icon="check"
                 size={20}
-                onPress={() => markAsRead(item.id)}
+                onPress={() => handleMarkAsRead(item.id)}
               />
             )}
             <IconButton
               icon="delete"
               size={20}
-              onPress={() => deleteNotification(item.id)}
+              onPress={() => handleDeleteNotification(item.id)}
             />
           </View>
         </View>
@@ -312,7 +311,36 @@ export const NotificationScreen: React.FC = ({ navigation }: { navigation?: any 
         style={styles.list}
         showsVerticalScrollIndicator={false}
         ItemSeparatorComponent={() => <Divider />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#2196F3']}
+          />
+        }
+        ListEmptyComponent={
+          !loading ? (
+            <Card style={styles.emptyCard}>
+              <Card.Content>
+                <Title style={styles.emptyTitle}>No notifications</Title>
+                <Paragraph style={styles.emptyMessage}>
+                  You're all caught up! Check back later for new updates.
+                </Paragraph>
+              </Card.Content>
+            </Card>
+          ) : null
+        }
       />
+
+      {/* FAB for mark all as read */}
+      {notifications.some(n => !n.is_read) && (
+        <FAB
+          icon="check-all"
+          style={styles.fab}
+          onPress={markAllAsRead}
+          label="Mark all as read"
+        />
+      )}
 
       {/* Toast for user feedback */}
       <Toast
@@ -350,6 +378,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
+  avatar: {
+    marginRight: 12,
+  },
   notificationInfo: {
     flex: 1,
   },
@@ -377,6 +408,27 @@ const styles = StyleSheet.create({
   notificationActions: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  emptyCard: {
+    margin: 16,
+    padding: 20,
+    alignItems: 'center',
+  },
+  emptyTitle: {
+    fontSize: 18,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptyMessage: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
   },
   card: {
     margin: 16,

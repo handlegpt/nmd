@@ -39,6 +39,7 @@ import { debounce } from '../../utils/performance';
 import { useNavigation } from '@react-navigation/native';
 import { DatabaseService } from '../../services/databaseService';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
+import { NotificationService } from '../../services/notificationService';
 
 const { width } = Dimensions.get('window');
 
@@ -424,6 +425,19 @@ const FeedScreen: React.FC = () => {
           }
           return post;
         }));
+
+        // Send notification to post owner
+        const selectedPost = posts.find(post => post.id === selectedPostId);
+        if (selectedPost && selectedPost.userId !== user?.id) {
+          await NotificationService.notifyPostComment(
+            selectedPostId,
+            selectedPost.userId,
+            user?.id || '',
+            user?.nickname || 'Unknown User',
+            newComment.trim()
+          );
+        }
+
         setNewComment('');
         showToast('Comment added successfully!', 'success');
         // Comment added to UI (silent in production)
