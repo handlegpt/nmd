@@ -16,6 +16,9 @@ RUN npm ci && npm cache clean --force
 # Install Supabase client and fix package versions
 RUN npm install @supabase/supabase-js@^2.39.0
 
+# Fix Metro bundler compatibility issues
+RUN npm install --save-dev metro-config metro-resolver
+
 # Copy source code
 COPY . .
 
@@ -27,6 +30,9 @@ RUN npx expo install expo-camera@~14.1.3
 
 # Clean npm cache and verify installation
 RUN npm cache clean --force && npm ls expo-camera
+
+# Verify Metro configuration
+RUN node -e "console.log('Metro config loaded successfully'); require('./metro.config.js');"
 
 # Set production environment variables
 ENV NODE_ENV=production
