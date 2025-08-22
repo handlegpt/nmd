@@ -166,7 +166,98 @@ const FeedScreen: React.FC = () => {
         topic: undefined,
       }));
 
-      setPosts(transformedPosts);
+      console.log('🔍 FeedScreen: Loaded', transformedPosts.length, 'posts from database');
+      
+      // If no posts from database, use mock data
+      if (transformedPosts.length === 0) {
+        console.log('🔍 FeedScreen: No posts in database, using mock data');
+        setPosts([
+          {
+            id: '1',
+            userId: '1',
+            userNickname: 'Sarah',
+            userAvatar: '',
+            content: 'Just arrived in Bali! The weather is perfect for some beach time. Anyone up for a sunset surf session? 🏄‍♀️',
+            location: 'Bali, Indonesia',
+            locationDetails: {
+              name: 'Canggu Beach',
+              address: 'Canggu, Bali, Indonesia',
+              coordinates: { latitude: -8.6500, longitude: 115.1333 },
+            },
+            media: [],
+            isMeetupRequest: true,
+            meetupDetails: {
+              title: 'Sunset Surf Session',
+              date: 'Today at 5 PM',
+              location: 'Canggu Beach, Bali',
+              maxPeople: 6,
+              currentPeople: 2,
+            },
+            likes: 12,
+            comments: [
+              {
+                id: '1',
+                userId: '2',
+                userNickname: 'Mike',
+                userAvatar: '',
+                content: 'I\'m in! What time should we meet?',
+                createdAt: '1 hour ago',
+              },
+              {
+                id: '2',
+                userId: '3',
+                userNickname: 'Emma',
+                userAvatar: '',
+                content: 'Sounds amazing! What time should we meet?',
+                createdAt: '30 minutes ago',
+              },
+            ],
+            createdAt: '2 hours ago',
+            tags: ['bali', 'surfing', 'beach'],
+            emotion: 'excited',
+            topic: 'Travel',
+          },
+          {
+            id: '2',
+            userId: '2',
+            userNickname: 'Mike',
+            userAvatar: '',
+            content: 'Working from a cozy cafe in Chiang Mai. The coffee here is amazing and the wifi is super fast! ☕️',
+            location: 'Chiang Mai, Thailand',
+            locationDetails: {
+              name: 'Cafe Corner',
+              address: 'Nimman Road, Chiang Mai, Thailand',
+              coordinates: { latitude: 18.7883, longitude: 98.9853 },
+            },
+            media: [],
+            isMeetupRequest: true,
+            meetupDetails: {
+              title: 'Digital Nomad Meetup',
+              date: 'Tomorrow at 6 PM',
+              location: 'Cafe Corner, Nimman Road',
+              maxPeople: 8,
+              currentPeople: 3,
+            },
+            likes: 8,
+            comments: [
+              {
+                id: '3',
+                userId: '3',
+                userNickname: 'Emma',
+                userAvatar: '',
+                content: 'I\'ll be there! Looking forward to meeting everyone ☕️',
+                createdAt: '2 hours ago',
+              },
+            ],
+            createdAt: '4 hours ago',
+            tags: ['chiangmai', 'cafe', 'work'],
+            emotion: 'productive',
+            topic: 'Work',
+          },
+        ]);
+      } else {
+        setPosts(transformedPosts);
+      }
     } catch (error) {
       console.error('Error loading posts:', error);
       // Fallback to mock data if database fails
