@@ -23,6 +23,12 @@ import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 import GoogleOAuth from './GoogleOAuth';
+import { 
+  sendVerificationEmail, 
+  verifyCode, 
+  resendVerificationCode,
+  generateVerificationCode
+} from '../../utils/emailService';
 
 export const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -94,9 +100,15 @@ export const LoginScreen: React.FC = () => {
         await signIn(email, password);
         showToast('Successfully signed in!', 'success');
       } else {
-        // For signup, show verification step
-        setShowVerification(true);
-        showToast('Verification code sent to your email!', 'success');
+        // For signup, send verification email
+        const code = generateVerificationCode();
+        const success = await sendVerificationEmail(email, code);
+        if (success) {
+          setShowVerification(true);
+          showToast('Verification code sent to your email!', 'success');
+        } else {
+          showToast('Failed to send verification code. Please try again.', 'error');
+        }
       }
     } catch (error: any) {
       console.error('Authentication error:', error);
@@ -113,14 +125,15 @@ export const LoginScreen: React.FC = () => {
     }
 
     try {
-      // Mock verification - in real app, this would verify with backend
-      if (verificationCode === '123456') { // Mock code
+      // Verify the code using email service
+      const isValid = verifyCode(email, verificationCode);
+      if (isValid) {
         await signUp(email, password, nickname);
         showToast('Account created successfully!', 'success');
         setShowVerification(false);
         setVerificationCode('');
       } else {
-        showToast('Invalid verification code. Please try again.', 'error');
+        showToast('Invalid or expired verification code. Please try again.', 'error');
       }
     } catch (error: any) {
       console.error('Verification error:', error);
@@ -129,8 +142,18 @@ export const LoginScreen: React.FC = () => {
   };
 
   // Handle resend verification code
-  const handleResendCode = () => {
-    showToast('Verification code resent to your email!', 'success');
+  const handleResendCode = async () => {
+    try {
+      const success = await resendVerificationCode(email);
+      if (success) {
+        showToast('Verification code resent to your email!', 'success');
+      } else {
+        showToast('Failed to resend verification code. Please try again.', 'error');
+      }
+    } catch (error) {
+      console.error('Resend error:', error);
+      showToast('Failed to resend verification code. Please try again.', 'error');
+    }
   };
 
   // Clear form when switching between login/signup
