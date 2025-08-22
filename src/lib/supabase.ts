@@ -4,15 +4,29 @@ import { createClient } from '@supabase/supabase-js';
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
+// Debug: Log environment variables (only in development)
+if (__DEV__) {
+  console.log('🔍 Debug - Environment variables:');
+  console.log('EXPO_PUBLIC_SUPABASE_URL:', supabaseUrl ? 'Set' : 'Missing');
+  console.log('EXPO_PUBLIC_SUPABASE_ANON_KEY:', supabaseAnonKey ? 'Set' : 'Missing');
+  console.log('URL value:', supabaseUrl);
+  console.log('Key starts with:', supabaseAnonKey?.substring(0, 20) + '...');
+}
+
 // Check if Supabase credentials are configured
 const isSupabaseConfigured = supabaseUrl && supabaseAnonKey && 
   supabaseUrl !== 'your-supabase-url' && 
-  supabaseAnonKey !== 'your-supabase-anon-key';
+  supabaseAnonKey !== 'your-supabase-anon-key' &&
+  supabaseUrl.length > 0 &&
+  supabaseAnonKey.length > 0;
 
 if (!isSupabaseConfigured) {
   console.error('❌ Supabase credentials not configured!');
   console.error('   Please set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in your .env file');
   console.error('   Get these from: https://supabase.com/dashboard/project/[YOUR-PROJECT]/settings/api');
+  console.error('   Current values:');
+  console.error('   URL:', supabaseUrl || 'undefined');
+  console.error('   Key:', supabaseAnonKey ? supabaseAnonKey.substring(0, 20) + '...' : 'undefined');
   throw new Error('Supabase credentials not configured');
 }
 
