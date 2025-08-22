@@ -19,33 +19,13 @@ import {
 import { useAuthStore } from '../../store/authStore';
 import { shadowPresets } from '../../utils/platformStyles';
 import { colors, spacing, borderRadius } from '../../utils/responsive';
+import { CityService, NomadCity } from '../../services/cityService';
 import ResponsiveContainer from '../common/ResponsiveContainer';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { useResponsive } from '../../utils/responsive';
 
-interface NomadCity {
-  id: string;
-  name: string;
-  country: string;
-  continent: string;
-  image: string;
-  description: string;
-  costOfLiving: 'Low' | 'Medium' | 'High';
-  internetSpeed: number; // Mbps
-  weather: string;
-  timezone: string;
-  nomadScore: number; // 1-10
-  monthlyBudget: {
-    accommodation: number;
-    food: number;
-    transport: number;
-    entertainment: number;
-  };
-  highlights: string[];
-  cons: string[];
-  isFavorite: boolean;
-}
+// Using NomadCity interface from CityService
 
 export const CityScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const { user } = useAuthStore();
@@ -125,120 +105,8 @@ export const CityScreen: React.FC = ({ navigation }: { navigation?: any }) => {
   const loadCities = async () => {
     setLoading(true);
     try {
-      // Mock data - in production, this would come from API
-      const mockCities: NomadCity[] = [
-        {
-          id: '1',
-          name: 'Bali',
-          country: 'Indonesia',
-          continent: 'Asia',
-          image: 'https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=800',
-          description: 'Tropical paradise with vibrant digital nomad community, affordable living, and stunning beaches.',
-          costOfLiving: 'Low',
-          internetSpeed: 25,
-          weather: 'Tropical (25-32°C)',
-          timezone: 'GMT+8',
-          nomadScore: 9.2,
-          monthlyBudget: {
-            accommodation: 800,
-            food: 400,
-            transport: 150,
-            entertainment: 300,
-          },
-          highlights: ['Affordable living', 'Great community', 'Beautiful beaches', 'Rich culture'],
-          cons: ['Rainy season', 'Traffic congestion', 'Limited public transport'],
-          isFavorite: false,
-        },
-        {
-          id: '2',
-          name: 'Chiang Mai',
-          country: 'Thailand',
-          continent: 'Asia',
-          image: 'https://images.unsplash.com/photo-1552465011-b4e21bf6e79a?w=800',
-          description: 'Cultural hub with excellent food, affordable living, and strong digital nomad scene.',
-          costOfLiving: 'Low',
-          internetSpeed: 30,
-          weather: 'Tropical (20-35°C)',
-          timezone: 'GMT+7',
-          nomadScore: 8.8,
-          monthlyBudget: {
-            accommodation: 600,
-            food: 300,
-            transport: 100,
-            entertainment: 250,
-          },
-          highlights: ['Excellent food', 'Cultural sites', 'Affordable', 'Good community'],
-          cons: ['Burning season', 'Limited nightlife', 'Language barrier'],
-          isFavorite: false,
-        },
-        {
-          id: '3',
-          name: 'Lisbon',
-          country: 'Portugal',
-          continent: 'Europe',
-          image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800',
-          description: 'Charming European city with great weather, food, and growing tech scene.',
-          costOfLiving: 'Medium',
-          internetSpeed: 100,
-          weather: 'Mediterranean (15-28°C)',
-          timezone: 'GMT+0',
-          nomadScore: 8.5,
-          monthlyBudget: {
-            accommodation: 1200,
-            food: 500,
-            transport: 200,
-            entertainment: 400,
-          },
-          highlights: ['Great weather', 'European culture', 'Good food', 'Safe city'],
-          cons: ['Higher cost', 'Tourist crowds', 'Hilly terrain'],
-          isFavorite: false,
-        },
-        {
-          id: '4',
-          name: 'Mexico City',
-          country: 'Mexico',
-          continent: 'Americas',
-          image: 'https://images.unsplash.com/photo-1522083165195-3424ed129620?w=800',
-          description: 'Vibrant metropolis with rich culture, excellent food, and affordable living.',
-          costOfLiving: 'Medium',
-          internetSpeed: 50,
-          weather: 'Subtropical (12-30°C)',
-          timezone: 'GMT-6',
-          nomadScore: 8.0,
-          monthlyBudget: {
-            accommodation: 1000,
-            food: 400,
-            transport: 150,
-            entertainment: 300,
-          },
-          highlights: ['Rich culture', 'Excellent food', 'Affordable', 'Vibrant city'],
-          cons: ['Air pollution', 'Safety concerns', 'Traffic'],
-          isFavorite: false,
-        },
-        {
-          id: '5',
-          name: 'Porto',
-          country: 'Portugal',
-          continent: 'Europe',
-          image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=800',
-          description: 'Charming Portuguese city with wine culture, affordable living, and great weather.',
-          costOfLiving: 'Medium',
-          internetSpeed: 100,
-          weather: 'Mediterranean (10-25°C)',
-          timezone: 'GMT+0',
-          nomadScore: 8.3,
-          monthlyBudget: {
-            accommodation: 1000,
-            food: 450,
-            transport: 150,
-            entertainment: 350,
-          },
-          highlights: ['Wine culture', 'Affordable', 'Good weather', 'Less crowded'],
-          cons: ['Smaller city', 'Limited international flights', 'Language barrier'],
-          isFavorite: false,
-        },
-      ];
-      setCities(mockCities);
+      const citiesData = await CityService.getCities();
+      setCities(citiesData);
     } catch (error) {
       showToast('Failed to load cities', 'error');
     } finally {

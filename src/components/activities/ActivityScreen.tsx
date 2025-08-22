@@ -24,107 +24,17 @@ import {
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { shadowPresets } from '../../utils/platformStyles';
+import { ActivityService, Meetup } from '../../services/activityService';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
 
-interface Meetup {
-  id: string;
-  title: string;
-  description: string;
-  location: string;
-  date: string;
-  time: string;
-  maxParticipants: number;
-  currentParticipants: number;
-  createdBy: {
-    id: string;
-    nickname: string;
-    avatar: string;
-  };
-  participants: Array<{
-    id: string;
-    nickname: string;
-    avatar: string;
-  }>;
-  tags: string[];
-  status: 'upcoming' | 'ongoing' | 'completed';
-  createdAt: string;
-}
+// Using Meetup interface from ActivityService
 
 export const ActivityScreen: React.FC = () => {
   const { user } = useAuthStore();
   const theme = useTheme();
-  const [meetups, setMeetups] = useState<Meetup[]>([
-    {
-      id: '1',
-      title: 'Bali Digital Nomad Coffee Meetup',
-      description: 'Let\'s grab coffee and share our digital nomad experiences! Perfect for networking and making new friends.',
-      location: 'Canggu Coworking Space, Bali',
-      date: 'Tomorrow',
-      time: '10:00 AM',
-      maxParticipants: 8,
-      currentParticipants: 3,
-      createdBy: {
-        id: '1',
-        nickname: 'Alex',
-        avatar: '',
-      },
-      participants: [
-        { id: '1', nickname: 'Alex', avatar: '' },
-        { id: '2', nickname: 'Sarah', avatar: '' },
-        { id: '3', nickname: 'Mike', avatar: '' },
-      ],
-      tags: ['Coffee', 'Networking', 'Coworking'],
-      status: 'upcoming',
-      createdAt: '2 hours ago',
-    },
-    {
-      id: '2',
-      title: 'Surfing Session at Uluwatu',
-      description: 'Early morning surf session! All levels welcome. Let\'s catch some waves together.',
-      location: 'Uluwatu Beach, Bali',
-      date: 'Today',
-      time: '6:00 AM',
-      maxParticipants: 6,
-      currentParticipants: 4,
-      createdBy: {
-        id: '2',
-        nickname: 'Sarah',
-        avatar: '',
-      },
-      participants: [
-        { id: '2', nickname: 'Sarah', avatar: '' },
-        { id: '4', nickname: 'Tom', avatar: '' },
-        { id: '5', nickname: 'Emma', avatar: '' },
-        { id: '6', nickname: 'David', avatar: '' },
-      ],
-      tags: ['Surfing', 'Beach', 'Morning'],
-      status: 'upcoming',
-      createdAt: '1 day ago',
-    },
-    {
-      id: '3',
-      title: 'Lunch at Seminyak Cafe',
-      description: 'Casual lunch meetup! Great food and conversation guaranteed.',
-      location: 'Seminyak Cafe, Bali',
-      date: 'Today',
-      time: '1:00 PM',
-      maxParticipants: 4,
-      currentParticipants: 2,
-      createdBy: {
-        id: '3',
-        nickname: 'Mike',
-        avatar: '',
-      },
-      participants: [
-        { id: '3', nickname: 'Mike', avatar: '' },
-        { id: '7', nickname: 'Lisa', avatar: '' },
-      ],
-      tags: ['Lunch', 'Food', 'Casual'],
-      status: 'upcoming',
-      createdAt: '3 hours ago',
-    },
-  ]);
+  const [meetups, setMeetups] = useState<Meetup[]>([]);
+  const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [newMeetup, setNewMeetup] = useState({
     title: '',
@@ -135,6 +45,24 @@ export const ActivityScreen: React.FC = () => {
     maxParticipants: 4,
   });
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
+
+  // Load meetups on component mount
+  React.useEffect(() => {
+    loadMeetups();
+  }, []);
+
+  // Load meetups from service
+  const loadMeetups = async () => {
+    setLoading(true);
+    try {
+      const meetupsData = await ActivityService.getMeetups();
+      setMeetups(meetupsData);
+    } catch (error) {
+      showToast('Failed to load meetups', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
