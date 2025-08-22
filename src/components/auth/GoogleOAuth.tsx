@@ -48,6 +48,15 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     },
   };
 
+  // Debug: Log OAuth configuration
+  if (__DEV__) {
+    console.log('🔍 Google OAuth Config:', {
+      clientId: googleConfig.clientId ? 'Set' : 'Missing',
+      redirectUri: googleConfig.redirectUri,
+      hasClientSecret: !!process.env.EXPO_PUBLIC_GOOGLE_CLIENT_SECRET,
+    });
+  }
+
   // Create auth request
   const [request, response, promptAsync] = AuthSession.useAuthRequest(googleConfig);
 
@@ -174,9 +183,18 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
     try {
       setIsLoading(true);
-      await promptAsync();
+      console.log('🔍 Starting Google OAuth flow...');
+      console.log('🔍 Redirect URI:', googleConfig.redirectUri);
+      
+      const result = await promptAsync();
+      console.log('🔍 OAuth result:', result);
+      
+      if (result.type === 'error') {
+        console.error('🔍 OAuth error:', result.error);
+        handleAuthError(`OAuth error: ${result.error?.message || 'Unknown error'}`);
+      }
     } catch (error) {
-      console.error('Failed to start OAuth flow:', error);
+      console.error('🔍 Failed to start OAuth flow:', error);
       handleAuthError('Failed to start authentication');
     }
   };
