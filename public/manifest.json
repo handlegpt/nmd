@@ -1,0 +1,70 @@
+{
+  "short_name": "NomadNow",
+  "name": "NomadNow - Connect with Digital Nomads Worldwide",
+  "description": "Discover the best cities for digital nomads, connect with fellow remote workers, and find your next destination.",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "logo192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#6366f1",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["social", "travel", "lifestyle", "business"],
+  "screenshots": [
+    {
+      "src": "screenshot1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "screenshot2.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Discover Cities",
+      "short_name": "Cities",
+      "description": "Browse nomad-friendly cities",
+      "url": "/cities",
+      "icons": [
+        {
+          "src": "icon-city.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Find Meetups",
+      "short_name": "Meetups",
+      "description": "Find local meetups and events",
+      "url": "/meetups",
+      "icons": [
+        {
+          "src": "icon-meetup.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

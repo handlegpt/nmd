@@ -1,6 +1,8 @@
 const path = require('path');
 const TerserPlugin = require('terser-webpack-plugin');
 const CompressionPlugin = require('compression-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -36,6 +38,31 @@ module.exports = {
   },
   
   plugins: [
+    // HTML Webpack Plugin for better SEO
+    new HtmlWebpackPlugin({
+      template: './public/index.html',
+      filename: 'index.html',
+      minify: process.env.NODE_ENV === 'production' ? {
+        removeComments: true,
+        collapseWhitespace: true,
+        removeRedundantAttributes: true,
+        useShortDoctype: true,
+        removeEmptyAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        keepClosingSlash: true,
+        minifyJS: true,
+        minifyCSS: true,
+        minifyURLs: true,
+      } : false,
+    }),
+    
+    // Extract CSS for better performance
+    new MiniCssExtractPlugin({
+      filename: process.env.NODE_ENV === 'production' 
+        ? 'static/css/[name].[contenthash:8].css' 
+        : 'static/css/[name].css',
+    }),
+    
     // Gzip compression for production
     ...(process.env.NODE_ENV === 'production' ? [
       new CompressionPlugin({
