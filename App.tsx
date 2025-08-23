@@ -16,6 +16,7 @@ import './src/utils/warnings'; // Import warning suppression
 import { optimizeForProduction } from './src/utils/productionOptimizer';
 import { runAllSecurityMeasures } from './src/utils/securityManager';
 import { initializeCSRFProtection } from './src/utils/csrfProtection';
+import PageRefreshHandler from './src/components/common/PageRefreshHandler';
 
 // Note: Lazy loading is commented out due to TypeScript module configuration
 // const LazyAppNavigator = React.lazy(() => import('./src/navigation/AppNavigator'));
@@ -80,7 +81,9 @@ export default function App() {
           <PaperProvider>
             <PerformanceMonitor enableMonitoring={__DEV__}>
               <Suspense fallback={<LoadingFallback />}>
-                <AppNavigator />
+                <PageRefreshHandler>
+                  <AppNavigator />
+                </PageRefreshHandler>
               </Suspense>
               <StatusBar style="auto" />
             </PerformanceMonitor>

@@ -10,6 +10,32 @@ export const useUrlSync = () => {
   const { isWeb } = useResponsive();
   const isNavigatingRef = useRef(false);
   const lastPathRef = useRef('');
+  const hasInitializedRef = useRef(false);
+
+  // Handle page refresh and initial load
+  useEffect(() => {
+    if (!isWeb || hasInitializedRef.current) return;
+
+    hasInitializedRef.current = true;
+    const currentPath = window.location.pathname;
+    
+    console.log(`🔄 URL Sync: Initial load, path: ${currentPath}`);
+    
+    // If we're on a specific path (not root), we need to restore navigation state
+    if (currentPath !== '/') {
+      const { routeName, params } = navigationUtils.getRouteFromPath(currentPath);
+      console.log(`🔄 URL Sync: Restoring navigation to ${routeName}`);
+      
+      // Use setTimeout to ensure navigation is ready
+      setTimeout(() => {
+        if (routeName === 'Feed' || routeName === 'Map' || routeName === 'Activities' || routeName === 'Cities' || routeName === 'Notifications' || routeName === 'Profile') {
+          (navigation as any).navigate('Main', { screen: routeName });
+        } else {
+          (navigation as any).navigate(routeName, params);
+        }
+      }, 100);
+    }
+  }, [isWeb, navigation]);
 
   useEffect(() => {
     if (!isWeb || !navigationState) return;
@@ -81,14 +107,22 @@ export const useUrlSync = () => {
     };
   }, [isWeb, navigation]);
 
-  // Initialize URL on first load
+  // Handle beforeunload to store current state
   useEffect(() => {
     if (!isWeb) return;
 
-    const currentPath = window.location.pathname;
-    if (currentPath !== '/' && currentPath !== lastPathRef.current) {
-      console.log(`🔄 Initial URL Sync: ${currentPath}`);
-      lastPathRef.current = currentPath;
-    }
+    const handleBeforeUnload = () => {
+      const currentPath = window.location.pathname;
+      if (currentPath !== '/') {
+        sessionStorage.setItem('nomadnow_last_path', currentPath);
+        console.log(`🔄 URL Sync: Storing path before unload: ${currentPath}`);
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, [isWeb]);
 };

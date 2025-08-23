@@ -25,28 +25,26 @@ import { GlobalSearchScreen } from '../components/search/GlobalSearchScreen';
 import ResponsiveContainer from '../components/common/ResponsiveContainer';
 import { useUrlSync } from '../hooks/useUrlSync';
 import { navigationUtils } from '../utils/navigationUtils';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
-// URL sync wrapper component that uses the hook inside NavigationContainer
-const UrlSyncWrapper = () => {
-  useUrlSync();
-  return null;
-};
-
-// Enhanced URL sync wrapper with better error handling
+// Enhanced URL sync wrapper with page refresh handling
 const EnhancedUrlSyncWrapper = () => {
   const { isWeb } = useResponsive();
+  const hasInitializedRef = useRef(false);
   
   useEffect(() => {
-    if (isWeb) {
-      // Force initial URL sync on mount
-      const currentPath = window.location.pathname;
-      console.log(`🔄 EnhancedUrlSync: Initial path: ${currentPath}`);
+    if (isWeb && !hasInitializedRef.current) {
+      hasInitializedRef.current = true;
       
-      // If we're on a specific path, ensure navigation state matches
+      // Handle page refresh - restore navigation state from URL
+      const currentPath = window.location.pathname;
+      console.log(`🔄 EnhancedUrlSync: Page refresh detected, path: ${currentPath}`);
+      
+      // Store the current path for navigation restoration
       if (currentPath !== '/') {
-        const { routeName, params } = navigationUtils.getRouteFromPath(currentPath);
-        console.log(`🔄 EnhancedUrlSync: Ensuring route matches: ${routeName}`);
+        // Use sessionStorage to persist the path across refreshes
+        sessionStorage.setItem('nomadnow_last_path', currentPath);
+        console.log(`🔄 EnhancedUrlSync: Stored path: ${currentPath}`);
       }
     }
   }, [isWeb]);
@@ -57,8 +55,6 @@ const EnhancedUrlSyncWrapper = () => {
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
-
-
 
 // Main app tabs
 const MainTabs = ({ navigation }: { navigation: any }) => {
@@ -99,20 +95,20 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
         tabBarInactiveTintColor: colors.gray400,
         tabBarStyle: {
           backgroundColor: colors.white,
-          borderTopColor: colors.gray200,
           borderTopWidth: 1,
-          paddingBottom: isPhone ? 0 : 10,
-          paddingTop: 10,
-          height: isPhone ? 60 : 80,
-          ...shadowPresets.small,
+          borderTopColor: colors.gray200,
+          paddingBottom: isPhone ? 5 : 10,
+          paddingTop: isPhone ? 5 : 10,
+          height: isPhone ? 60 : 70,
+          ...shadowPresets.medium,
         },
         tabBarLabelStyle: {
-          fontSize: 12,
-          fontWeight: '600',
-          marginTop: 4,
+          fontSize: isPhone ? 10 : 12,
+          fontWeight: '500',
         },
         headerShown: false,
-      })}>
+      })}
+    >
       <Tab.Screen 
         name="Feed" 
         component={FeedScreenOptimized}
