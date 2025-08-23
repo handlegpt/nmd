@@ -326,30 +326,37 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
   return (
     <View style={[styles.container, style]}>
-      <TouchableOpacity
-        style={[
-          styles.googleButton,
-          isButtonDisabled() && styles.googleButtonDisabled
-        ]}
+      <Button
+        mode="outlined"
         onPress={() => {
-          console.log('🔍 TouchableOpacity pressed');
+          console.log('🔍 Button pressed');
           handleLogin();
         }}
         disabled={isButtonDisabled()}
-        activeOpacity={0.8}
-      >
-        <View style={styles.buttonContent}>
-          {/* Google Icon */}
+        loading={isLoading}
+        style={styles.googleButton}
+        contentStyle={styles.buttonContent}
+        labelStyle={styles.buttonLabel}
+        icon={() => (
           <View style={styles.googleIcon}>
             <Text style={styles.googleIconText}>G</Text>
           </View>
-          
-          {/* Button Text */}
-          <Text style={styles.buttonLabel}>
-            {getButtonText()}
-          </Text>
-        </View>
-      </TouchableOpacity>
+        )}
+      >
+        {getButtonText()}
+      </Button>
+      
+      {/* Test button to verify click events work */}
+      <Button
+        mode="text"
+        onPress={() => {
+          console.log('🔍 Test button clicked');
+          Alert.alert('Test', 'Test button works!');
+        }}
+        style={{ marginTop: 10 }}
+      >
+        Test Click
+      </Button>
     </View>
   );
 };
@@ -370,17 +377,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     minHeight: 48,
-    // Remove any focus/selection styling
-    outline: 'none',
-    // Ensure no web-specific focus styles
-    ...(typeof window !== 'undefined' && {
-      outline: 'none',
-      border: '1px solid #d1d5db',
-      ':focus': {
-        outline: 'none',
-        border: '1px solid #d1d5db',
-      },
-    }),
   },
   googleButtonDisabled: {
     opacity: 0.6,
