@@ -84,7 +84,11 @@ export const LoginScreen: React.FC = () => {
 
   // Handle Google OAuth success
   const handleGoogleSuccess = (user: any) => {
+    console.log('🔍 Google OAuth success:', user);
     showToast('Successfully signed in with Gmail!', 'success');
+    
+    // The user object should already be set in the auth store by GoogleOAuth component
+    // We just need to show success message
   };
 
   // Handle Google OAuth error

@@ -216,10 +216,12 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   // Handle login button press
   const handleLogin = async () => {
     console.log('🔍 Google OAuth button clicked');
+    console.log('🔍 Button click timestamp:', new Date().toISOString());
     console.log('🔍 Client ID:', googleConfig.clientId ? 'Set' : 'Missing');
     console.log('🔍 Redirect URI:', googleConfig.redirectUri);
     console.log('🔍 Request object:', request ? 'Available' : 'Missing');
     console.log('🔍 Request ready:', isRequestReady);
+    console.log('🔍 Button disabled:', isButtonDisabled());
     
     if (!googleConfig.clientId) {
       const errorMsg = 'Google OAuth not configured. Please check server environment variables.';
@@ -299,12 +301,6 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   // Check if button should be disabled
   const isButtonDisabled = () => {
     const disabled = isLoading || !googleConfig.clientId || !isRequestReady;
-    console.log('🔍 Button disabled:', {
-      isLoading,
-      hasClientId: !!googleConfig.clientId,
-      isRequestReady,
-      disabled
-    });
     return disabled;
   };
 
@@ -347,6 +343,17 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         style={styles.debugButton}
       >
         Debug Info
+      </Button>
+      
+      <Button
+        mode="outlined"
+        onPress={() => {
+          console.log('🔍 Test button clicked at:', new Date().toISOString());
+          Alert.alert('Test', 'Test button works!');
+        }}
+        style={styles.debugButton}
+      >
+        Test Button Click
       </Button>
     </View>
   );
