@@ -86,8 +86,7 @@ EXPOSE 19006 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:19006/ || exit 1
 
-# Copy and set up startup script
-COPY start.sh /app/start.sh
+# Set up startup script permissions
 RUN chmod +x /app/start.sh
 
 # Start both servers
