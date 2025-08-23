@@ -202,7 +202,7 @@ export const LoginScreen: React.FC = () => {
               {!showVerification && (
                 <>
                                                   {/* Google OAuth Button */}
-                  <GoogleOAuthTest
+                  <GoogleOAuth
                     onSuccess={handleGoogleSuccess}
                     onError={handleGoogleError}
                     style={styles.googleButton}

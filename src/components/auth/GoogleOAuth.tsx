@@ -48,6 +48,11 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
       access_type: 'offline',
       prompt: 'consent',
     },
+    // Add extra configuration for better compatibility
+    extraParams: {
+      access_type: 'offline',
+      prompt: 'consent',
+    },
   };
 
   // Debug configuration
@@ -213,6 +218,8 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     console.log('🔍 Google OAuth button clicked');
     console.log('🔍 Client ID:', googleConfig.clientId ? 'Set' : 'Missing');
     console.log('🔍 Redirect URI:', googleConfig.redirectUri);
+    console.log('🔍 Request object:', request ? 'Available' : 'Missing');
+    console.log('🔍 Request ready:', isRequestReady);
     
     if (!googleConfig.clientId) {
       const errorMsg = 'Google OAuth not configured. Please check server environment variables.';
@@ -227,11 +234,21 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     }
 
     // Check if request is ready
-    if (!request || !isRequestReady) {
-      console.log('🔍 OAuth request not ready, retrying...');
+    if (!request) {
+      console.log('🔍 OAuth request object is missing');
       Alert.alert(
         'OAuth Not Ready',
-        'Please wait a moment and try again.',
+        'OAuth request object is missing. Please refresh the page and try again.',
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
+    }
+
+    if (!isRequestReady) {
+      console.log('🔍 OAuth request not ready, waiting...');
+      Alert.alert(
+        'OAuth Not Ready',
+        'Please wait a moment for OAuth to initialize and try again.',
         [{ text: 'OK', style: 'default' }]
       );
       return;
@@ -240,17 +257,26 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     try {
       setIsLoading(true);
       console.log('🔍 Starting Google OAuth flow...');
+      console.log('🔍 Using request:', request);
       
       const result = await promptAsync();
-      console.log('🔍 OAuth result:', result.type);
+      console.log('🔍 OAuth result:', result);
       
-      if (result.type === 'error') {
+      if (result.type === 'success') {
+        console.log('🔍 OAuth success, code received');
+        handleAuthSuccess(result.params.code);
+      } else if (result.type === 'error') {
         console.error('🔍 OAuth error:', result.error);
         handleAuthError(`OAuth error: ${result.error?.message || 'Unknown error'}`);
+      } else if (result.type === 'cancel') {
+        console.log('🔍 OAuth cancelled by user');
+        // Don't show error for user cancellation
+      } else {
+        console.log('🔍 OAuth result type:', result.type);
       }
     } catch (error) {
       console.error('🔍 Failed to start OAuth flow:', error);
-      handleAuthError('Failed to start authentication');
+      handleAuthError(`Failed to start authentication: ${error.message || 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
@@ -302,8 +328,20 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         onPress={() => {
           Alert.alert(
             'Debug Info',
-            `Client ID: ${googleConfig.clientId ? 'Set' : 'Missing'}\nRedirect URI: ${googleConfig.redirectUri}\nHostname: ${typeof window !== 'undefined' ? window.location.hostname : 'unknown'}\nRequest Ready: ${isRequestReady}\nLoading: ${isLoading}`,
-            [{ text: 'OK' }]
+            `Client ID: ${googleConfig.clientId ? 'Set' : 'Missing'}\nRedirect URI: ${googleConfig.redirectUri}\nHostname: ${typeof window !== 'undefined' ? window.location.hostname : 'unknown'}\nRequest Object: ${request ? 'Available' : 'Missing'}\nRequest Ready: ${isRequestReady}\nLoading: ${isLoading}\n\nClick OK to see detailed config in console.`,
+            [{ 
+              text: 'OK',
+              onPress: () => {
+                console.log('🔍 Detailed OAuth Config:', {
+                  clientId: googleConfig.clientId,
+                  redirectUri: googleConfig.redirectUri,
+                  scopes: googleConfig.scopes,
+                  request: request,
+                  isRequestReady,
+                  isLoading
+                });
+              }
+            }]
           );
         }}
         style={styles.debugButton}
