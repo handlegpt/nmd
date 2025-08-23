@@ -50,5 +50,4 @@ temp
 *.tmp
 
 # Development scripts
-start-prod.sh
-start.sh 
+start-prod.sh 
