@@ -20,6 +20,16 @@ const emailConfig: EmailConfig = {
   fromName: process.env.EXPO_PUBLIC_FROM_NAME || 'NomadNow',
 };
 
+// Debug: Log email configuration on load
+console.log('📧 Email config loaded:', {
+  smtpHost: emailConfig.smtpHost,
+  smtpPort: emailConfig.smtpPort,
+  smtpUser: emailConfig.smtpUser ? 'Set' : 'Missing',
+  smtpPass: emailConfig.smtpPass ? 'Set' : 'Missing',
+  fromEmail: emailConfig.fromEmail,
+  fromName: emailConfig.fromName
+});
+
 // Simple email sending function using SendGrid API or SMTP
 const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
   try {
@@ -136,6 +146,14 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
     const hasSendGrid = process.env.EXPO_PUBLIC_SENDGRID_API_KEY;
     const hasSMTP = emailConfig.smtpUser && emailConfig.smtpPass;
     const hasEmailJS = process.env.EXPO_PUBLIC_EMAILJS_SERVICE_ID;
+    
+    // Debug: Log email configuration status
+    console.log('📧 Email configuration debug:');
+    console.log('📧 SMTP User:', emailConfig.smtpUser ? 'Set' : 'Missing');
+    console.log('📧 SMTP Pass:', emailConfig.smtpPass ? 'Set' : 'Missing');
+    console.log('📧 SendGrid API Key:', hasSendGrid ? 'Set' : 'Missing');
+    console.log('📧 EmailJS Service ID:', hasEmailJS ? 'Set' : 'Missing');
+    console.log('📧 Has SMTP:', hasSMTP);
     
     if (!hasSendGrid && !hasSMTP && !hasEmailJS) {
       console.error('Email service not configured. Please set up SendGrid API key, SMTP credentials, or EmailJS in .env file');
