@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
 import { Button } from 'react-native-paper';
 import * as AuthSession from 'expo-auth-session';
 import * as WebBrowser from 'expo-web-browser';
@@ -326,18 +326,27 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
   return (
     <View style={[styles.container, style]}>
-      <Button
-        mode="outlined"
+      <TouchableOpacity
+        style={[
+          styles.googleButton,
+          isButtonDisabled() && styles.googleButtonDisabled
+        ]}
         onPress={handleLogin}
         disabled={isButtonDisabled()}
-        loading={isLoading}
-        icon="google"
-        style={styles.googleButton}
-        contentStyle={styles.buttonContent}
-        labelStyle={styles.buttonLabel}
+        activeOpacity={0.8}
       >
-        {getButtonText()}
-      </Button>
+        <View style={styles.buttonContent}>
+          {/* Google Icon */}
+          <View style={styles.googleIcon}>
+            <Text style={styles.googleIconText}>G</Text>
+          </View>
+          
+          {/* Button Text */}
+          <Text style={styles.buttonLabel}>
+            {getButtonText()}
+          </Text>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -357,6 +366,11 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    minHeight: 48,
+  },
+  googleButtonDisabled: {
+    opacity: 0.6,
+    backgroundColor: colors.gray100,
   },
   buttonContent: {
     paddingVertical: spacing.sm,
@@ -365,11 +379,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  googleIcon: {
+    width: 18,
+    height: 18,
+    borderRadius: 2,
+    backgroundColor: '#4285f4',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: spacing.sm,
+  },
+  googleIconText: {
+    color: colors.white,
+    fontSize: 12,
+    fontWeight: 'bold',
+    fontFamily: 'Roboto, sans-serif',
+  },
   buttonLabel: {
     fontSize: 14,
     fontWeight: '500',
     color: colors.gray700,
-    marginLeft: spacing.sm,
   },
 });
 
