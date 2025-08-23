@@ -65,7 +65,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({
       setComments(commentsData);
     } catch (error) {
       console.error('Error loading comments:', error);
-      showToast('加载评论失败', 'error');
+      showToast('Failed to load comments', 'error');
     } finally {
       setLoading(false);
     }
@@ -81,7 +81,7 @@ export const CommentModal: React.FC<CommentModalProps> = ({
   // Submit comment
   const handleSubmitComment = async () => {
     if (!user || !post || !newComment.trim()) {
-      showToast('请先登录并输入评论内容', 'warning');
+      showToast('Please login and enter comment content', 'warning');
       return;
     }
 

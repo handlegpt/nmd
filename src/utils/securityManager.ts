@@ -144,7 +144,9 @@ export class SecurityManager {
         "'self'",
         'https://*.supabase.co',
         'https://www.google-analytics.com',
-        'wss://*.supabase.co'
+        'wss://*.supabase.co',
+        'https://nominatim.openstreetmap.org',
+        'https://*.openstreetmap.org'
       ],
       'media-src': [
         "'self'",

@@ -231,7 +231,7 @@ export class DatabaseService {
         .from('comments')
         .select(`
           *,
-          users!inner(nickname, avatar_url)
+          users(nickname, avatar_url)
         `)
         .eq('post_id', postId)
         .order('created_at', { ascending: true });
@@ -246,6 +246,7 @@ export class DatabaseService {
       return comments;
     } catch (error) {
       console.error('Error getting comments:', error);
+      console.error('Post ID:', postId);
       return [];
     }
   }
