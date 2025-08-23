@@ -236,11 +236,11 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
   // Handle login button press
   const handleLogin = async () => {
-    if (__DEV__) {
-      console.log('🔍 Google OAuth button clicked');
-      console.log('🔍 Client ID:', googleConfig.clientId ? 'Set' : 'Missing');
-      console.log('🔍 Request ready:', isRequestReady);
-    }
+    console.log('🔍 Google OAuth button clicked');
+    console.log('🔍 Client ID:', googleConfig.clientId ? 'Set' : 'Missing');
+    console.log('🔍 Request ready:', isRequestReady);
+    console.log('🔍 Button disabled:', isButtonDisabled());
+    console.log('🔍 Request object:', request ? 'Available' : 'Missing');
     
     if (!googleConfig.clientId) {
       const errorMsg = 'Google OAuth not configured. Please check server environment variables.';
@@ -331,7 +331,10 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
           styles.googleButton,
           isButtonDisabled() && styles.googleButtonDisabled
         ]}
-        onPress={handleLogin}
+        onPress={() => {
+          console.log('🔍 TouchableOpacity pressed');
+          handleLogin();
+        }}
         disabled={isButtonDisabled()}
         activeOpacity={0.8}
       >
@@ -367,6 +370,17 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 2,
     minHeight: 48,
+    // Remove any focus/selection styling
+    outline: 'none',
+    // Ensure no web-specific focus styles
+    ...(typeof window !== 'undefined' && {
+      outline: 'none',
+      border: '1px solid #d1d5db',
+      ':focus': {
+        outline: 'none',
+        border: '1px solid #d1d5db',
+      },
+    }),
   },
   googleButtonDisabled: {
     opacity: 0.6,
