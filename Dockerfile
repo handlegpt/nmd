@@ -31,6 +31,9 @@ RUN npx expo install typescript@^5.3.0
 # Fix expo-camera version compatibility
 RUN npx expo install expo-camera@~14.1.3
 
+# Install additional dependencies for new features
+RUN npx expo install expo-clipboard expo-sharing
+
 # Clean npm cache and verify installation
 RUN npm cache clean --force && npm ls expo-camera
 

@@ -18,6 +18,8 @@ import { DatabaseService } from '../../services/databaseService';
 import { PostService, Post } from '../../services/postService';
 import { FeedCardOptimized } from './FeedCardOptimized';
 import { CreatePostOptimized } from './CreatePostOptimized';
+import CommentModal from './CommentModal';
+import ShareModal from './ShareModal';
 
 const FeedScreenOptimized: React.FC = () => {
   const { user } = useAuthStore();
@@ -27,6 +29,9 @@ const FeedScreenOptimized: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [shareModalVisible, setShareModalVisible] = useState(false);
+  const [selectedPost, setSelectedPost] = useState<Post | null>(null);
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
 
   // Show toast message
@@ -65,6 +70,11 @@ const FeedScreenOptimized: React.FC = () => {
 
   // Handle like post
   const handleLikePost = async (postId: string) => {
+    if (!user) {
+      showToast('请先登录后点赞', 'warning');
+      return;
+    }
+
     try {
       const success = await DatabaseService.likePost(postId);
       if (success) {
@@ -84,12 +94,20 @@ const FeedScreenOptimized: React.FC = () => {
 
   // Handle comment
   const handleComment = (postId: string) => {
-    showToast('评论功能开发中', 'info');
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      setSelectedPost(post);
+      setCommentModalVisible(true);
+    }
   };
 
   // Handle share
   const handleShare = (postId: string) => {
-    showToast('分享功能开发中', 'info');
+    const post = posts.find(p => p.id === postId);
+    if (post) {
+      setSelectedPost(post);
+      setShareModalVisible(true);
+    }
   };
 
   // Handle create post
@@ -227,6 +245,28 @@ const FeedScreenOptimized: React.FC = () => {
           onClose={() => setModalVisible(false)}
           onSubmit={handleCreatePost}
           loading={false}
+        />
+
+        <CommentModal
+          visible={commentModalVisible}
+          post={selectedPost}
+          onDismiss={() => {
+            setCommentModalVisible(false);
+            setSelectedPost(null);
+          }}
+          onCommentAdded={() => {
+            // Refresh posts to show new comment count
+            loadPosts();
+          }}
+        />
+
+        <ShareModal
+          visible={shareModalVisible}
+          post={selectedPost}
+          onDismiss={() => {
+            setShareModalVisible(false);
+            setSelectedPost(null);
+          }}
         />
 
         <ToastOptimized
