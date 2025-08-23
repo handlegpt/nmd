@@ -86,13 +86,9 @@ EXPOSE 19006 3001
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:19006/ || exit 1
 
-# Create startup script
-RUN echo '#!/bin/sh\n\
-# Start SMTP server in background\n\
-node server/smtp-server.js &\n\
-# Start static file server\n\
-serve -s dist -l 19006\n\
-' > /app/start.sh && chmod +x /app/start.sh
+# Copy and set up startup script
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
 # Start both servers
 CMD ["/app/start.sh"] 
