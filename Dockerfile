@@ -34,8 +34,8 @@ RUN npx expo install expo-camera@~14.1.3
 # Install additional dependencies for new features
 RUN npx expo install expo-clipboard expo-sharing
 
-# Install nodemailer for email functionality
-RUN npm install nodemailer@^6.9.7
+# Install nodemailer and server dependencies for email functionality
+RUN npm install nodemailer@^6.9.7 express@^4.18.2 cors@^2.8.5
 
 # Clean npm cache and verify installation
 RUN npm cache clean --force && npm ls expo-camera
@@ -79,12 +79,20 @@ RUN NODE_ENV=production npx expo export --platform web
 # Install serve for static file serving
 RUN npm install -g serve
 
-# Expose port
-EXPOSE 19006
+# Expose ports
+EXPOSE 19006 3001
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:19006/ || exit 1
 
-# Start static file server
-CMD ["serve", "-s", "dist", "-l", "19006"] 
+# Create startup script
+RUN echo '#!/bin/sh\n\
+# Start SMTP server in background\n\
+node server/smtp-server.js &\n\
+# Start static file server\n\
+serve -s dist -l 19006\n\
+' > /app/start.sh && chmod +x /app/start.sh
+
+# Start both servers
+CMD ["/app/start.sh"] 

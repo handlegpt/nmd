@@ -20,7 +20,7 @@ const emailConfig: EmailConfig = {
   fromName: process.env.EXPO_PUBLIC_FROM_NAME || 'NomadNow',
 };
 
-// Simple email sending function using SendGrid API
+// Simple email sending function using SendGrid API or SMTP
 const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
   try {
     const sendGridApiKey = process.env.EXPO_PUBLIC_SENDGRID_API_KEY;
@@ -47,6 +47,42 @@ const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string)
       } else {
         const errorText = await sendGridResponse.text();
         console.error('📧 SendGrid error:', errorText);
+        return false;
+      }
+    }
+    
+    // Fallback: SMTP via backend API
+    if (emailConfig.smtpUser && emailConfig.smtpPass) {
+      try {
+        const smtpResponse = await fetch('http://localhost:3001/api/send-smtp-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            to: to,
+            from: emailConfig.fromEmail,
+            subject: subject,
+            html: htmlContent,
+            smtp: {
+              host: emailConfig.smtpHost,
+              port: emailConfig.smtpPort,
+              user: emailConfig.smtpUser,
+              pass: emailConfig.smtpPass
+            }
+          })
+        });
+        
+        if (smtpResponse.ok) {
+          console.log('📧 Email sent via SMTP successfully');
+          return true;
+        } else {
+          const errorText = await smtpResponse.text();
+          console.error('📧 SMTP error:', errorText);
+          return false;
+        }
+      } catch (error) {
+        console.error('📧 SMTP connection error:', error);
         return false;
       }
     }
