@@ -215,23 +215,25 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
   // Handle login button press
   const handleLogin = async () => {
+    console.log('🔍 Google OAuth button clicked');
+    console.log('🔍 Client ID:', googleConfig.clientId ? 'Set' : 'Missing');
+    console.log('🔍 Redirect URI:', googleConfig.redirectUri);
+    
     if (!googleConfig.clientId) {
+      const errorMsg = 'Google OAuth not configured. Please check server environment variables.';
+      console.error('🔍', errorMsg);
       Alert.alert(
-        'Google OAuth Not Configured',
-        'Please configure Google OAuth credentials in your .env file:\n\n' +
-        'EXPO_PUBLIC_GOOGLE_CLIENT_ID=your-client-id\n' +
-        'EXPO_PUBLIC_GOOGLE_CLIENT_SECRET=your-client-secret\n\n' +
-        'Get these from: https://console.cloud.google.com/',
+        'Configuration Error',
+        errorMsg + '\n\nRequired:\nEXPO_PUBLIC_GOOGLE_CLIENT_ID\nEXPO_PUBLIC_GOOGLE_CLIENT_SECRET',
         [{ text: 'OK', style: 'default' }]
       );
+      onError?.(errorMsg);
       return;
     }
 
     // Check if request is ready
     if (!request || !isRequestReady) {
-      if (__DEV__) {
-        console.log('🔍 OAuth request not ready, retrying...');
-      }
+      console.log('🔍 OAuth request not ready, retrying...');
       Alert.alert(
         'OAuth Not Ready',
         'Please wait a moment and try again.',
@@ -242,16 +244,10 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
     try {
       setIsLoading(true);
-      
-      if (__DEV__) {
-        console.log('🔍 Starting Google OAuth flow...');
-      }
+      console.log('🔍 Starting Google OAuth flow...');
       
       const result = await promptAsync();
-      
-      if (__DEV__) {
-        console.log('🔍 OAuth result:', result.type);
-      }
+      console.log('🔍 OAuth result:', result.type);
       
       if (result.type === 'error') {
         console.error('🔍 OAuth error:', result.error);
@@ -274,7 +270,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
       return 'Google OAuth Not Configured';
     }
     if (!isRequestReady) {
-      return 'Loading...';
+      return 'Initializing...';
     }
     return 'Continue with Gmail';
   };
@@ -299,21 +295,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         {getButtonText()}
       </Button>
       
-      {__DEV__ && !googleConfig.clientId && (
-        <Button
-          mode="text"
-          onPress={() => {
-            Alert.alert(
-              'Debug Info',
-              `Client ID: ${googleConfig.clientId ? 'Set' : 'Missing'}\nRedirect URI: ${googleConfig.redirectUri}`,
-              [{ text: 'OK' }]
-            );
-          }}
-          style={styles.debugButton}
-        >
-          Debug Config
-        </Button>
-      )}
+
     </View>
   );
 };
