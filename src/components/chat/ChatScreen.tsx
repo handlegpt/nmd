@@ -1,337 +1,389 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   StyleSheet,
   FlatList,
   KeyboardAvoidingView,
   Platform,
+  Dimensions,
 } from 'react-native';
 import {
-  TextInput,
-  Button,
-  Card,
+  Surface,
   Title,
   Paragraph,
+  TextInput,
+  Button,
   Avatar,
   IconButton,
   Divider,
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
-import { Message, User } from '../../types';
+import { colors, spacing, borderRadius } from '../../utils/responsive';
 import { shadowPresets } from '../../utils/platformStyles';
-import { DatabaseService } from '../../services/databaseService';
-import { NotificationService } from '../../services/notificationService';
-import Toast from '../common/Toast';
+import { ToastOptimized } from '../common/ToastOptimized';
 import LoadingSpinner from '../common/LoadingSpinner';
-import { supabase } from '../../lib/supabase';
+import { DatabaseService } from '../../services/databaseService';
 
-export const ChatScreen: React.FC<any> = ({ route }) => {
-  const { selectedUser } = route?.params || {};
+const { width, height } = Dimensions.get('window');
+
+interface ChatMessage {
+  id: string;
+  content: string;
+  sender_id: string;
+  receiver_id: string;
+  created_at: string;
+  is_read: boolean;
+}
+
+interface ChatUser {
+  id: string;
+  nickname: string;
+  avatar_url?: string;
+  is_online: boolean;
+  last_seen: string;
+}
+
+interface ChatScreenProps {
+  route?: {
+    params?: {
+      userId?: string;
+      userNickname?: string;
+      userAvatar?: string;
+    };
+  };
+  navigation?: any;
+}
+
+export const ChatScreen: React.FC<ChatScreenProps> = ({ route, navigation }) => {
   const { user } = useAuthStore();
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [sending, setSending] = useState(false);
+  const [chatUser, setChatUser] = useState<ChatUser | null>(null);
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
-  const flatListRef = useRef<FlatList>(null);
 
-  // Scroll to bottom
-  const scrollToBottom = useCallback(() => {
-    const timer = setTimeout(() => {
-      flatListRef.current?.scrollToEnd({ animated: true });
-    }, 100);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  const flatListRef = useRef<FlatList<ChatMessage>>(null);
 
-  useEffect(() => {
-    if (selectedUser) {
-      loadMessages();
-      
-      // Set up real-time subscription (only in non-mock mode)
-      if ('channel' in supabase) {
-        const subscription = (supabase as any)
-          .channel('messages')
-          .on('postgres_changes', {
-            event: 'INSERT',
-            schema: 'public',
-            table: 'messages',
-            filter: `from_user_id=eq.${user?.id} OR to_user_id=eq.${user?.id}`,
-          }, (payload: any) => {
-            const newMessage = payload.new as Message;
-            if (newMessage.from_user_id === selectedUser.id || newMessage.to_user_id === selectedUser.id) {
-              setMessages(prev => [...prev, newMessage]);
-              scrollToBottom();
-            }
-          })
-          .subscribe();
-
-        return () => {
-          subscription.unsubscribe();
-        };
-      }
-    }
-  }, [selectedUser?.id, user?.id, scrollToBottom]);
-
-  // Show toast message
+  // Show toast
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
     setToast({ visible: true, message, type });
   };
 
-  // Hide toast message
+  // Hide toast
   const hideToast = () => {
-    setToast({ ...toast, visible: false });
+    setToast(prev => ({ ...prev, visible: false }));
   };
 
-  // Load messages from database
+  // Initialize chat user from route params
+  useEffect(() => {
+    if (route?.params?.userId) {
+      setChatUser({
+        id: route.params.userId,
+        nickname: route.params.userNickname || 'Unknown User',
+        avatar_url: route.params.userAvatar,
+        is_online: true,
+        last_seen: new Date().toISOString(),
+      });
+    }
+  }, [route?.params]);
+
+  // Load messages
   const loadMessages = async () => {
-    if (!user || !selectedUser) return;
+    if (!user || !chatUser) return;
 
     setLoading(true);
     try {
-      const dbMessages = await DatabaseService.getMessages(user.id, selectedUser.id);
-      setMessages(dbMessages);
+      // Get messages between current user and chat user
+      const messagesData = await DatabaseService.getMessages(user.id, chatUser.id);
+      setMessages(messagesData);
+      
+      // Scroll to bottom
+      setTimeout(() => {
+        flatListRef.current?.scrollToEnd({ animated: true });
+      }, 100);
     } catch (error) {
+      console.error('Error loading messages:', error);
       showToast('Failed to load messages', 'error');
     } finally {
       setLoading(false);
     }
   };
 
+  // Load messages on mount and when chat user changes
+  useEffect(() => {
+    loadMessages();
+  }, [user, chatUser]);
+
   // Send message
   const sendMessage = async () => {
-    if (!newMessage.trim() || !user || !selectedUser) return;
+    if (!newMessage.trim() || !user || !chatUser || sending) return;
 
     setSending(true);
-    const messageContent = newMessage.trim();
-
     try {
-      const message = await DatabaseService.sendMessage({
+      const messageData = {
         from_user_id: user.id,
-        to_user_id: selectedUser.id,
-        content: messageContent,
-      });
+        to_user_id: chatUser.id,
+        content: newMessage.trim(),
+      };
 
-      if (message) {
-        setMessages(prev => [...prev, message]);
+      const newMsg = await DatabaseService.sendMessage(messageData);
+      
+      if (newMsg) {
+        setMessages(prev => [...prev, newMsg]);
         setNewMessage('');
-        showToast('Message sent!', 'success');
-        scrollToBottom();
-
-        // Send notification to recipient
-        await NotificationService.notifyNewMessage(
-          selectedUser.id,
-          user.id,
-          user.nickname || 'Unknown User',
-          messageContent
-        );
-      } else {
-        showToast('Failed to send message', 'error');
+        
+        // Scroll to bottom
+        setTimeout(() => {
+          flatListRef.current?.scrollToEnd({ animated: true });
+        }, 100);
       }
     } catch (error) {
+      console.error('Error sending message:', error);
       showToast('Failed to send message', 'error');
     } finally {
       setSending(false);
     }
   };
 
-  // Format timestamp
+  // Format time
   const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    return `${days}d ago`;
-  };
-
-  // Check if message is from current user
-  const isFromCurrentUser = (message: Message) => {
-    return message.from_user_id === user?.id;
+    try {
+      const date = new Date(timestamp);
+      return date.toLocaleTimeString('zh-CN', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+    } catch {
+      return '--:--';
+    }
   };
 
   // Render message item
-  const renderMessage = ({ item }: { item: Message }) => (
-    <View style={[
-      styles.messageContainer,
-      isFromCurrentUser(item) ? styles.sentMessage : styles.receivedMessage
-    ]}>
-      <Card style={[
-        styles.messageCard,
-        isFromCurrentUser(item) ? styles.sentCard : styles.receivedCard
+  const renderMessage = ({ item }: { item: ChatMessage }) => {
+    const isOwnMessage = item.sender_id === user?.id;
+    
+    return (
+      <View style={[
+        styles.messageContainer,
+        isOwnMessage ? styles.ownMessage : styles.otherMessage
       ]}>
-        <Card.Content style={styles.messageContent}>
-          <Paragraph style={styles.messageText}>{item.content}</Paragraph>
-          <Paragraph style={styles.timestamp}>
+        <Surface style={[
+          styles.messageBubble,
+          isOwnMessage ? styles.ownBubble : styles.otherBubble
+        ]}>
+          <Paragraph style={[
+            styles.messageText,
+            isOwnMessage ? styles.ownMessageText : styles.otherMessageText
+          ]}>
+            {item.content}
+          </Paragraph>
+          <Paragraph style={[
+            styles.messageTime,
+            isOwnMessage ? styles.ownMessageTime : styles.otherMessageTime
+          ]}>
             {formatTime(item.created_at)}
           </Paragraph>
-        </Card.Content>
-      </Card>
-    </View>
+        </Surface>
+      </View>
+    );
+  };
+
+  // Render header
+  const renderHeader = () => (
+    <Surface style={styles.header}>
+      <View style={styles.headerContent}>
+        <IconButton
+          icon="arrow-left"
+          size={24}
+          onPress={() => navigation?.goBack()}
+          style={styles.backButton}
+        />
+        
+        <Avatar.Image
+          size={40}
+          source={chatUser?.avatar_url ? { uri: chatUser.avatar_url } : undefined}
+          style={styles.headerAvatar}
+        />
+        
+        <View style={styles.headerInfo}>
+          <Title style={styles.headerTitle}>{chatUser?.nickname}</Title>
+          <Paragraph style={styles.headerStatus}>
+            {chatUser?.is_online ? '在线' : '离线'}
+          </Paragraph>
+        </View>
+        
+        <IconButton
+          icon="dots-vertical"
+          size={24}
+          onPress={() => showToast('更多选项功能开发中', 'info')}
+        />
+      </View>
+    </Surface>
   );
 
-  if (!selectedUser) {
+  if (loading) {
     return (
       <View style={styles.container}>
-        <Card style={styles.headerCard}>
-          <Card.Content>
-            <Title>No User Selected</Title>
-            <Paragraph>Please select a user to start chatting.</Paragraph>
-          </Card.Content>
-        </Card>
+        {renderHeader()}
+        <LoadingSpinner visible={true} message="加载消息中..." />
       </View>
     );
   }
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-    >
-      {/* Header */}
-      <Card style={styles.headerCard}>
-        <Card.Content style={styles.headerContent}>
-          {selectedUser.avatar_url ? (
-            <Avatar.Image
-              size={40}
-              source={{ uri: selectedUser.avatar_url }}
-            />
-          ) : (
-            <Avatar.Text
-              size={40}
-              label={selectedUser.nickname.charAt(0).toUpperCase()}
-              style={{ backgroundColor: '#6366f1' }}
-            />
-          )}
-          <View style={styles.headerInfo}>
-            <Title style={styles.headerTitle}>{selectedUser.nickname}</Title>
-            <Paragraph style={styles.headerSubtitle}>{selectedUser.current_city}</Paragraph>
-          </View>
-        </Card.Content>
-      </Card>
-
-      {/* Messages */}
+    <View style={styles.container}>
+      {renderHeader()}
+      
       <FlatList
         ref={flatListRef}
         data={messages}
+        keyExtractor={(item) => item.id}
         renderItem={renderMessage}
-        keyExtractor={item => item.id}
         style={styles.messagesList}
+        contentContainerStyle={styles.messagesContent}
         showsVerticalScrollIndicator={false}
-        onContentSizeChange={scrollToBottom}
-        onLayout={scrollToBottom}
+        onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
       />
+      
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.inputContainer}
+      >
+        <Surface style={styles.inputSurface}>
+          <TextInput
+            mode="outlined"
+            placeholder="输入消息..."
+            value={newMessage}
+            onChangeText={setNewMessage}
+            style={styles.textInput}
+            outlineStyle={styles.textInputOutline}
+            multiline
+            maxLength={500}
+            disabled={sending}
+          />
+          
+          <IconButton
+            icon="send"
+            size={24}
+            onPress={sendMessage}
+            disabled={!newMessage.trim() || sending}
+            style={styles.sendButton}
+            iconColor={newMessage.trim() && !sending ? colors.primary : colors.textTertiary}
+          />
+        </Surface>
+      </KeyboardAvoidingView>
 
-      {/* Input */}
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={newMessage}
-          onChangeText={setNewMessage}
-          placeholder="Type a message..."
-          style={styles.textInput}
-          mode="outlined"
-          multiline
-          maxLength={500}
-        />
-        <IconButton
-          icon="send"
-          size={24}
-          onPress={sendMessage}
-          disabled={!newMessage.trim() || sending}
-          loading={sending}
-          style={styles.sendButton}
-        />
-      </View>
-
-      {/* Toast for user feedback */}
-      <Toast
+      <ToastOptimized
         visible={toast.visible}
         message={toast.message}
         type={toast.type}
         onHide={hideToast}
       />
-
-      {/* Loading spinner */}
-      <LoadingSpinner visible={loading} message="Loading messages..." />
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: colors.background,
   },
-  headerCard: {
-    margin: 16,
+  header: {
+    backgroundColor: colors.white,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.gray200,
     ...shadowPresets.small,
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.sm,
+  },
+  backButton: {
+    marginRight: spacing.sm,
+  },
+  headerAvatar: {
+    marginRight: spacing.sm,
   },
   headerInfo: {
-    marginLeft: 12,
     flex: 1,
   },
   headerTitle: {
-    fontSize: 18,
-    marginBottom: 2,
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.textPrimary,
   },
-  headerSubtitle: {
-    fontSize: 14,
-    color: '#666',
+  headerStatus: {
+    fontSize: 12,
+    color: colors.textSecondary,
   },
   messagesList: {
     flex: 1,
-    paddingHorizontal: 16,
+  },
+  messagesContent: {
+    padding: spacing.md,
   },
   messageContainer: {
-    marginVertical: 4,
+    marginBottom: spacing.sm,
   },
-  sentMessage: {
+  ownMessage: {
     alignItems: 'flex-end',
   },
-  receivedMessage: {
+  otherMessage: {
     alignItems: 'flex-start',
   },
-  messageCard: {
-    maxWidth: '80%',
+  messageBubble: {
+    maxWidth: width * 0.7,
+    padding: spacing.sm,
+    borderRadius: borderRadius.lg,
   },
-  sentCard: {
-    backgroundColor: '#2196f3',
+  ownBubble: {
+    backgroundColor: colors.primary,
   },
-  receivedCard: {
-    backgroundColor: '#fff',
-  },
-  messageContent: {
-    padding: 8,
+  otherBubble: {
+    backgroundColor: colors.gray100,
   },
   messageText: {
-    color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
+    lineHeight: 20,
   },
-  timestamp: {
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.7)',
-    marginTop: 4,
+  ownMessageText: {
+    color: colors.white,
+  },
+  otherMessageText: {
+    color: colors.textPrimary,
+  },
+  messageTime: {
+    fontSize: 10,
+    marginTop: spacing.xs,
+  },
+  ownMessageTime: {
+    color: colors.white,
+    opacity: 0.8,
+  },
+  otherMessageTime: {
+    color: colors.textSecondary,
   },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: colors.white,
     borderTopWidth: 1,
-    borderTopColor: '#e0e0e0',
+    borderTopColor: colors.gray200,
+  },
+  inputSurface: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    padding: spacing.sm,
   },
   textInput: {
     flex: 1,
-    marginRight: 8,
+    marginRight: spacing.sm,
+    backgroundColor: colors.white,
+  },
+  textInputOutline: {
+    borderRadius: borderRadius.lg,
+    borderColor: colors.gray200,
   },
   sendButton: {
     margin: 0,
