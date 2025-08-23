@@ -18,6 +18,7 @@ import { runAllSecurityMeasures } from './src/utils/securityManager';
 import { initializeCSRFProtection } from './src/utils/csrfProtection';
 import PageRefreshHandler from './src/components/common/PageRefreshHandler';
 import { loadFonts } from './src/utils/fontLoader';
+import ErrorHandler from './src/utils/errorHandler';
 
 // Note: Lazy loading is commented out due to TypeScript module configuration
 // const LazyAppNavigator = React.lazy(() => import('./src/navigation/AppNavigator'));
@@ -46,7 +47,14 @@ export default function App() {
     
     // Load fonts for web platform
     if (typeof window !== 'undefined') {
-      loadFonts();
+      ErrorHandler.safeAsync(
+        () => loadFonts(),
+        undefined,
+        'font loading'
+      ).catch(error => {
+        console.warn('⚠️ Font loading failed:', error);
+        // Continue without fonts, fallback will be used
+      });
     }
   }, []);
 

@@ -38,18 +38,49 @@ export class FontLoader {
           return;
         }
 
-        const fontLink = document.createElement('link');
-        fontLink.rel = 'stylesheet';
-        fontLink.href = fontSources[index];
-        
-        fontLink.onload = () => {
-          console.log(`✅ Font loaded from: ${fontSources[index]}`);
-          this.isLoaded = true;
-          resolve();
-        };
-        
-        fontLink.onerror = () => {
-          console.log(`⚠️ Failed to load font from: ${fontSources[index]}`);
+        try {
+          const fontLink = document.createElement('link');
+          fontLink.rel = 'stylesheet';
+          fontLink.href = fontSources[index];
+          
+          // Add timeout for network requests
+          const timeout = setTimeout(() => {
+            console.log(`⚠️ Font load timeout from: ${fontSources[index]}`);
+            loadedCount++;
+            if (loadedCount >= totalSources) {
+              console.warn('⚠️ All font sources failed, using fallback');
+              this.isLoaded = true;
+              resolve();
+            } else {
+              // Try next source
+              setTimeout(() => tryLoadFont(index + 1), 100);
+            }
+          }, 5000); // 5 second timeout
+          
+          fontLink.onload = () => {
+            clearTimeout(timeout);
+            console.log(`✅ Font loaded from: ${fontSources[index]}`);
+            this.isLoaded = true;
+            resolve();
+          };
+          
+          fontLink.onerror = (error) => {
+            clearTimeout(timeout);
+            console.log(`⚠️ Failed to load font from: ${fontSources[index]}`, error);
+            loadedCount++;
+            if (loadedCount >= totalSources) {
+              console.warn('⚠️ All font sources failed, using fallback');
+              this.isLoaded = true;
+              resolve();
+            } else {
+              // Try next source
+              setTimeout(() => tryLoadFont(index + 1), 100);
+            }
+          };
+
+          document.head.appendChild(fontLink);
+        } catch (error) {
+          console.error('⚠️ Error creating font link:', error);
           loadedCount++;
           if (loadedCount >= totalSources) {
             console.warn('⚠️ All font sources failed, using fallback');
@@ -59,9 +90,7 @@ export class FontLoader {
             // Try next source
             setTimeout(() => tryLoadFont(index + 1), 100);
           }
-        };
-
-        document.head.appendChild(fontLink);
+        }
       };
 
       // Start with first source

@@ -42,7 +42,9 @@ export const SmartIcon: React.FC<SmartIconProps> = ({
       }
     };
 
-    checkFonts();
+    // Add a small delay to allow fonts to load
+    const timeout = setTimeout(checkFonts, 100);
+    return () => clearTimeout(timeout);
   }, [checkAttempts]);
 
   // If fonts are loaded, use IconButton
