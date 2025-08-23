@@ -76,6 +76,20 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     }
   }, [request]);
 
+  // Add timeout for request initialization
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (!isRequestReady && googleConfig.clientId) {
+        if (__DEV__) {
+          console.log('🔍 OAuth request timeout - forcing ready state');
+        }
+        setIsRequestReady(true);
+      }
+    }, 3000); // 3 second timeout
+
+    return () => clearTimeout(timeout);
+  }, [isRequestReady, googleConfig.clientId]);
+
   // Handle OAuth response
   useEffect(() => {
     if (response?.type === 'success') {
@@ -260,7 +274,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
       return 'Google OAuth Not Configured';
     }
     if (!isRequestReady) {
-      return 'Initializing...';
+      return 'Loading...';
     }
     return 'Continue with Gmail';
   };

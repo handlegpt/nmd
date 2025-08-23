@@ -55,9 +55,9 @@ export const fontSizes = {
 // Modern color palette
 export const colors = {
   // Primary colors
-  primary: '#6366f1',
-  primaryLight: '#818cf8',
-  primaryDark: '#4f46e5',
+  primary: '#3b82f6',
+  primaryLight: '#60a5fa',
+  primaryDark: '#2563eb',
   
   // Neutral colors
   white: '#ffffff',

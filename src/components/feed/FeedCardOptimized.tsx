@@ -267,6 +267,8 @@ const styles = StyleSheet.create({
     borderRadius: borderRadius.xl,
     marginBottom: spacing.md,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.gray100,
     ...shadowPresets.small,
   },
   compactCard: {
@@ -393,14 +395,16 @@ const styles = StyleSheet.create({
     paddingBottom: spacing.md,
   },
   meetupCard: {
-    backgroundColor: colors.primaryLight,
+    backgroundColor: colors.gray50,
+    borderWidth: 1,
+    borderColor: colors.gray200,
     padding: spacing.md,
     borderRadius: borderRadius.lg,
   },
   meetupTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: colors.primary,
+    color: colors.textPrimary,
     marginBottom: spacing.xs,
   },
   compactMeetupTitle: {
@@ -422,6 +426,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
     borderTopWidth: 1,
     borderTopColor: colors.gray100,
+    backgroundColor: colors.gray50,
   },
   actionButton: {
     flexDirection: 'row',
@@ -429,6 +434,9 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.xs,
     paddingHorizontal: spacing.sm,
     borderRadius: borderRadius.md,
+    backgroundColor: colors.white,
+    borderWidth: 1,
+    borderColor: colors.gray200,
   },
   actionIcon: {
     margin: 0,
