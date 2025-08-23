@@ -49,14 +49,12 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     },
   };
 
-  // Debug configuration (only in development)
-  if (__DEV__) {
-    console.log('🔍 Google OAuth Config:', {
-      clientId: googleConfig.clientId ? 'Set' : 'Missing',
-      redirectUri: googleConfig.redirectUri,
-      scopes: googleConfig.scopes,
-    });
-  }
+  // Debug configuration
+  console.log('🔍 Google OAuth Config:', {
+    clientId: googleConfig.clientId ? 'Set' : 'Missing',
+    redirectUri: googleConfig.redirectUri,
+    scopes: googleConfig.scopes,
+  });
 
   // Create auth request
   const [request, response, promptAsync] = AuthSession.useAuthRequest(googleConfig);
@@ -65,14 +63,10 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   useEffect(() => {
     if (request) {
       setIsRequestReady(true);
-      if (__DEV__) {
-        console.log('🔍 OAuth request ready');
-      }
+      console.log('🔍 OAuth request ready');
     } else {
       setIsRequestReady(false);
-      if (__DEV__) {
-        console.log('🔍 OAuth request not ready');
-      }
+      console.log('🔍 OAuth request not ready');
     }
   }, [request]);
 
@@ -80,9 +74,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!isRequestReady && googleConfig.clientId) {
-        if (__DEV__) {
-          console.log('🔍 OAuth request timeout - forcing ready state');
-        }
+        console.log('🔍 OAuth request timeout - forcing ready state');
         setIsRequestReady(true);
       }
     }, 3000); // 3 second timeout
@@ -277,7 +269,14 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
   // Check if button should be disabled
   const isButtonDisabled = () => {
-    return isLoading || !googleConfig.clientId || !isRequestReady;
+    const disabled = isLoading || !googleConfig.clientId || !isRequestReady;
+    console.log('🔍 Button disabled:', {
+      isLoading,
+      hasClientId: !!googleConfig.clientId,
+      isRequestReady,
+      disabled
+    });
+    return disabled;
   };
 
   return (
@@ -295,7 +294,19 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         {getButtonText()}
       </Button>
       
-
+      <Button
+        mode="text"
+        onPress={() => {
+          Alert.alert(
+            'Debug Info',
+            `Client ID: ${googleConfig.clientId ? 'Set' : 'Missing'}\nRedirect URI: ${googleConfig.redirectUri}\nRequest Ready: ${isRequestReady}\nLoading: ${isLoading}`,
+            [{ text: 'OK' }]
+          );
+        }}
+        style={styles.debugButton}
+      >
+        Debug Info
+      </Button>
     </View>
   );
 };
