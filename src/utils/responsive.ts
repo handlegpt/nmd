@@ -52,42 +52,61 @@ export const fontSizes = {
   '4xl': isPhone() ? 28 : 32,
 };
 
-// Modern color palette
+// Modern color palette - NomadNow inspired by nomads.com
 export const colors = {
-  // Primary colors
-  primary: '#3b82f6',
-  primaryLight: '#60a5fa',
-  primaryDark: '#2563eb',
+  // Primary colors - Warm orange/yellow theme
+  primary: '#ff6b35', // Vibrant orange
+  primaryLight: '#ff8a65',
+  primaryDark: '#e55a2b',
+  primaryGradient: ['#ff6b35', '#ffa726'],
   
-  // Neutral colors
+  // Secondary colors
+  secondary: '#ffd54f', // Warm yellow
+  secondaryLight: '#ffe082',
+  secondaryDark: '#ffb300',
+  
+  // Accent colors
+  accent: '#4fc3f7', // Sky blue
+  accentLight: '#81d4fa',
+  accentDark: '#29b6f6',
+  
+  // Neutral colors - Warmer grays
   white: '#ffffff',
-  gray50: '#f9fafb',
-  gray100: '#f3f4f6',
-  gray200: '#e5e7eb',
-  gray300: '#d1d5db',
-  gray400: '#9ca3af',
-  gray500: '#6b7280',
-  gray600: '#4b5563',
-  gray700: '#374151',
-  gray800: '#1f2937',
-  gray900: '#111827',
+  gray50: '#fafafa',
+  gray100: '#f5f5f5',
+  gray200: '#eeeeee',
+  gray300: '#e0e0e0',
+  gray400: '#bdbdbd',
+  gray500: '#9e9e9e',
+  gray600: '#757575',
+  gray700: '#616161',
+  gray800: '#424242',
+  gray900: '#212121',
   
   // Semantic colors
-  success: '#10b981',
-  warning: '#f59e0b',
-  error: '#ef4444',
-  info: '#3b82f6',
+  success: '#4caf50',
+  warning: '#ff9800',
+  error: '#f44336',
+  info: '#2196f3',
   
-  // Background colors
-  background: '#ffffff',
+  // Background colors - Warmer tones
+  background: '#fafafa',
   surface: '#ffffff',
-  surfaceVariant: '#f8fafc',
+  surfaceVariant: '#f5f5f5',
+  surfaceElevated: '#ffffff',
   
   // Text colors
-  textPrimary: '#111827',
-  textSecondary: '#6b7280',
-  textTertiary: '#9ca3af',
+  textPrimary: '#212121',
+  textSecondary: '#757575',
+  textTertiary: '#9e9e9e',
   textInverse: '#ffffff',
+  
+  // Special colors for nomad theme
+  nomadOrange: '#ff6b35',
+  nomadYellow: '#ffd54f',
+  nomadBlue: '#4fc3f7',
+  nomadGreen: '#81c784',
+  nomadPurple: '#ba68c8',
 };
 
 // Modern spacing system

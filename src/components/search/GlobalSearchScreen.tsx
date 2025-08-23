@@ -347,8 +347,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.background,
   },
   searchBar: {
-    backgroundColor: colors.surface,
-    borderRadius: borderRadius.lg,
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: borderRadius.xl,
+    elevation: 2,
+    shadowColor: colors.gray800,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 4,
   },
   searchInput: {
     fontSize: 16,

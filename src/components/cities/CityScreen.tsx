@@ -397,8 +397,13 @@ const styles = StyleSheet.create({
   cityCard: {
     marginBottom: spacing.lg,
     borderRadius: borderRadius.xl,
-    backgroundColor: colors.white,
-    ...shadowPresets.medium,
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 0,
+    elevation: 6,
+    shadowColor: colors.gray800,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
   },
   cityImage: {
     height: 200,

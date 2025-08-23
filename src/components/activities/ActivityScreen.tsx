@@ -24,6 +24,7 @@ import {
 } from 'react-native-paper';
 import { useAuthStore } from '../../store/authStore';
 import { shadowPresets } from '../../utils/platformStyles';
+import { colors } from '../../utils/responsive';
 import { ActivityService, Meetup } from '../../services/activityService';
 import Toast from '../common/Toast';
 import LoadingSpinner from '../common/LoadingSpinner';
@@ -451,9 +452,14 @@ const styles = StyleSheet.create({
   meetupCard: {
     margin: 20,
     marginBottom: 16,
-    ...shadowPresets.medium,
     borderRadius: 20,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.surfaceElevated,
+    borderWidth: 0,
+    elevation: 6,
+    shadowColor: colors.gray800,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 12,
   },
   meetupHeader: {
     flexDirection: 'row',

@@ -365,9 +365,13 @@ const styles = StyleSheet.create({
   },
   googleButton: {
     backgroundColor: '#4285f4',
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.xl,
     marginVertical: spacing.sm,
-    ...shadowPresets.small,
+    elevation: 4,
+    shadowColor: '#4285f4',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
   },
   buttonContent: {
     paddingVertical: spacing.sm,
