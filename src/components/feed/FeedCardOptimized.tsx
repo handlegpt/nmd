@@ -19,8 +19,18 @@ import {
 import { colors, spacing, borderRadius } from '../../utils/responsive';
 import { shadowPresets } from '../../utils/platformStyles';
 import { Post } from '../../services/postService';
-import { formatDistanceToNow } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
+// Native date formatting utility
+const formatDistanceToNow = (date: Date, options?: { addSuffix?: boolean; locale?: any }) => {
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+  
+  if (diffInSeconds < 60) return '刚刚';
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}分钟前`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}小时前`;
+  if (diffInSeconds < 2592000) return `${Math.floor(diffInSeconds / 86400)}天前`;
+  if (diffInSeconds < 31536000) return `${Math.floor(diffInSeconds / 2592000)}个月前`;
+  return `${Math.floor(diffInSeconds / 31536000)}年前`;
+};
 
 const { width } = Dimensions.get('window');
 
@@ -48,10 +58,7 @@ export const FeedCardOptimized: React.FC<FeedCardOptimizedProps> = ({
   const formatTime = (dateString: string) => {
     try {
       const date = new Date(dateString);
-      return formatDistanceToNow(date, { 
-        addSuffix: true, 
-        locale: zhCN 
-      });
+      return formatDistanceToNow(date, { addSuffix: true });
     } catch {
       return '刚刚';
     }
