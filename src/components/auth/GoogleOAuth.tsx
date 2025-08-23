@@ -56,14 +56,16 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     },
   };
 
-  // Debug configuration
-  console.log('🔍 Google OAuth Config:', {
-    clientId: googleConfig.clientId ? 'Set' : 'Missing',
-    redirectUri: googleConfig.redirectUri,
-    scopes: googleConfig.scopes,
-    hostname: typeof window !== 'undefined' ? window.location.hostname : 'unknown',
-    protocol: typeof window !== 'undefined' ? window.location.protocol : 'unknown',
-  });
+  // Debug configuration (only in development)
+  if (__DEV__) {
+    console.log('🔍 Google OAuth Config:', {
+      clientId: googleConfig.clientId ? 'Set' : 'Missing',
+      redirectUri: googleConfig.redirectUri,
+      scopes: googleConfig.scopes,
+      hostname: typeof window !== 'undefined' ? window.location.hostname : 'unknown',
+      protocol: typeof window !== 'undefined' ? window.location.protocol : 'unknown',
+    });
+  }
 
   // Create auth request
   const [request, response, promptAsync] = AuthSession.useAuthRequest(googleConfig);
@@ -79,14 +81,14 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     }
   }, [request]);
 
-  // Add timeout for request initialization - reduced from 3s to 1s
+  // Add timeout for request initialization - reasonable timeout
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (!isRequestReady && googleConfig.clientId) {
         console.log('🔍 OAuth request timeout - forcing ready state');
         setIsRequestReady(true);
       }
-    }, 1000); // Reduced to 1 second timeout
+    }, 3000); // 3 second timeout - reasonable for OAuth initialization
 
     return () => clearTimeout(timeout);
   }, [isRequestReady, googleConfig.clientId]);
@@ -97,13 +99,13 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
       console.log('🔍 Pre-initializing OAuth request...');
       setInitializationAttempted(true);
       
-      // Try to initialize immediately
+      // Try to initialize with a reasonable timeout
       const timer = setTimeout(() => {
         if (!isRequestReady) {
-          console.log('🔍 Forcing OAuth ready state after initialization attempt');
-          setIsRequestReady(true);
+          console.log('🔍 OAuth initialization timeout - request may not be ready');
+          // Don't force ready state, let it happen naturally
         }
-      }, 500); // Very short timeout
+      }, 2000); // 2 second timeout
 
       return () => clearTimeout(timer);
     }
@@ -234,13 +236,11 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
   // Handle login button press
   const handleLogin = async () => {
-    console.log('🔍 Google OAuth button clicked');
-    console.log('🔍 Button click timestamp:', new Date().toISOString());
-    console.log('🔍 Client ID:', googleConfig.clientId ? 'Set' : 'Missing');
-    console.log('🔍 Redirect URI:', googleConfig.redirectUri);
-    console.log('🔍 Request object:', request ? 'Available' : 'Missing');
-    console.log('🔍 Request ready:', isRequestReady);
-    console.log('🔍 Button disabled:', isButtonDisabled());
+    if (__DEV__) {
+      console.log('🔍 Google OAuth button clicked');
+      console.log('🔍 Client ID:', googleConfig.clientId ? 'Set' : 'Missing');
+      console.log('🔍 Request ready:', isRequestReady);
+    }
     
     if (!googleConfig.clientId) {
       const errorMsg = 'Google OAuth not configured. Please check server environment variables.';
@@ -254,33 +254,25 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
       return;
     }
 
-    // Check if request is ready - more lenient approach
+    // Check if request is ready - must be fully ready
     if (!request) {
-      console.log('🔍 OAuth request object is missing, trying to create...');
-      // Try to create request on the fly
-      try {
-        const newRequest = AuthSession.makeRedirectUri({
-          clientId: googleConfig.clientId,
-          redirectUri: googleConfig.redirectUri,
-          scopes: googleConfig.scopes,
-          responseType: AuthSession.ResponseType.Code,
-        });
-        console.log('🔍 Created new request:', newRequest);
-      } catch (error) {
-        console.error('🔍 Failed to create request:', error);
-        Alert.alert(
-          'OAuth Error',
-          'Unable to initialize Google OAuth. Please refresh the page and try again.',
-          [{ text: 'OK', style: 'default' }]
-        );
-        return;
-      }
+      console.log('🔍 OAuth request object is missing');
+      Alert.alert(
+        'OAuth Not Ready',
+        'OAuth request object is missing. Please refresh the page and try again.',
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
     }
 
-    // Allow proceeding even if request is not fully ready
     if (!isRequestReady) {
-      console.log('🔍 OAuth request not fully ready, but proceeding anyway...');
-      // Continue with the flow, it might work
+      console.log('🔍 OAuth request not ready, please wait...');
+      Alert.alert(
+        'OAuth Not Ready',
+        'Please wait a moment for OAuth to initialize and try again.',
+        [{ text: 'OK', style: 'default' }]
+      );
+      return;
     }
 
     try {
@@ -311,7 +303,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     }
   };
 
-  // Get button text based on state - optimized for faster display
+  // Get button text based on state - accurate state reflection
   const getButtonText = () => {
     if (isLoading) {
       return 'Signing in...';
@@ -319,19 +311,16 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     if (!googleConfig.clientId) {
       return 'Google OAuth Not Configured';
     }
-    // Show "Continue with Google" immediately if we have client ID
-    // Only show "Initializing..." for a very brief moment
-    if (!isRequestReady && googleConfig.clientId) {
+    if (!isRequestReady) {
       return 'Initializing...';
     }
     return 'Continue with Google';
   };
 
-  // Check if button should be disabled - optimized for better UX
+  // Check if button should be disabled - must wait for request to be ready
   const isButtonDisabled = () => {
-    // Only disable if loading or no client ID
-    // Allow clicking even if request is not fully ready
-    const disabled = isLoading || !googleConfig.clientId;
+    // Must wait for request to be fully ready before allowing authentication
+    const disabled = isLoading || !googleConfig.clientId || !isRequestReady;
     return disabled;
   };
 
@@ -348,43 +337,6 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         labelStyle={styles.buttonLabel}
       >
         {getButtonText()}
-      </Button>
-      
-      <Button
-        mode="text"
-        onPress={() => {
-          Alert.alert(
-            'Debug Info',
-            `Client ID: ${googleConfig.clientId ? 'Set' : 'Missing'}\nRedirect URI: ${googleConfig.redirectUri}\nHostname: ${typeof window !== 'undefined' ? window.location.hostname : 'unknown'}\nRequest Object: ${request ? 'Available' : 'Missing'}\nRequest Ready: ${isRequestReady}\nLoading: ${isLoading}\n\nClick OK to see detailed config in console.`,
-            [{ 
-              text: 'OK',
-              onPress: () => {
-                console.log('🔍 Detailed OAuth Config:', {
-                  clientId: googleConfig.clientId,
-                  redirectUri: googleConfig.redirectUri,
-                  scopes: googleConfig.scopes,
-                  request: request,
-                  isRequestReady,
-                  isLoading
-                });
-              }
-            }]
-          );
-        }}
-        style={styles.debugButton}
-      >
-        Debug Info
-      </Button>
-      
-      <Button
-        mode="outlined"
-        onPress={() => {
-          console.log('🔍 Test button clicked at:', new Date().toISOString());
-          Alert.alert('Test', 'Test button works!');
-        }}
-        style={styles.debugButton}
-      >
-        Test Button Click
       </Button>
     </View>
   );
@@ -418,9 +370,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: colors.gray700,
     marginLeft: spacing.sm,
-  },
-  debugButton: {
-    marginTop: spacing.xs,
   },
 });
 
