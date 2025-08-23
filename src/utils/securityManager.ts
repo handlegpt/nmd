@@ -172,10 +172,12 @@ export class SecurityManager {
     if (typeof window !== 'undefined') {
       const csp = this.generateCSP();
       
-      // Create meta tag for CSP
+      // Create meta tag for CSP (only for directives that work in meta tags)
       const meta = document.createElement('meta');
       meta.httpEquiv = 'Content-Security-Policy';
-      meta.content = csp;
+      // Remove frame-ancestors and other server-only directives
+      const clientCsp = csp.replace(/frame-ancestors[^;]*;?/g, '');
+      meta.content = clientCsp;
       document.head.appendChild(meta);
 
       if (__DEV__) {
@@ -187,16 +189,15 @@ export class SecurityManager {
   // Add security headers
   static addSecurityHeaders(): void {
     if (typeof window !== 'undefined') {
-      // Add security-related meta tags
-      const securityMetaTags = [
+      // Note: Most security headers must be set by the server
+      // Only add client-side compatible headers
+      const clientSecurityMetaTags = [
         { name: 'X-Content-Type-Options', content: 'nosniff' },
-        { name: 'X-Frame-Options', content: 'DENY' },
         { name: 'X-XSS-Protection', content: '1; mode=block' },
-        { name: 'Referrer-Policy', content: 'strict-origin-when-cross-origin' },
-        { name: 'Permissions-Policy', content: 'geolocation=(), microphone=(), camera=()' }
+        { name: 'Referrer-Policy', content: 'strict-origin-when-cross-origin' }
       ];
 
-      securityMetaTags.forEach(tag => {
+      clientSecurityMetaTags.forEach(tag => {
         const meta = document.createElement('meta');
         meta.httpEquiv = tag.name;
         meta.content = tag.content;
@@ -204,7 +205,8 @@ export class SecurityManager {
       });
 
       if (__DEV__) {
-        console.log('[SECURITY] Security headers added');
+        console.log('[SECURITY] Client-side security headers added');
+        console.log('[SECURITY] Note: X-Frame-Options and other headers must be set by server');
       }
     }
   }

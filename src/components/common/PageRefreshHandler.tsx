@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { useResponsive } from '../../utils/responsive';
 import { navigationUtils } from '../../utils/navigationUtils';
 
@@ -8,7 +7,6 @@ interface PageRefreshHandlerProps {
 }
 
 export const PageRefreshHandler: React.FC<PageRefreshHandlerProps> = ({ children }) => {
-  const navigation = useNavigation();
   const { isWeb } = useResponsive();
   const hasHandledRefreshRef = useRef(false);
 
@@ -28,22 +26,18 @@ export const PageRefreshHandler: React.FC<PageRefreshHandlerProps> = ({ children
       const { routeName, params } = navigationUtils.getRouteFromPath(storedPath);
       console.log(`🔄 PageRefreshHandler: Restoring to ${routeName}`);
 
-      // Navigate to the stored route
+      // Use window.location to navigate instead of React Navigation
+      // This will trigger the URL sync mechanism in useUrlSync
       setTimeout(() => {
-        if (routeName === 'Feed' || routeName === 'Map' || routeName === 'Activities' || routeName === 'Cities' || routeName === 'Notifications' || routeName === 'Profile') {
-          (navigation as any).navigate('Main', { screen: routeName });
-        } else {
-          (navigation as any).navigate(routeName, params);
-        }
-
-        // Update URL to match
-        navigationUtils.updateUrl(storedPath);
-
+        window.history.pushState({}, '', storedPath);
+        // Trigger a popstate event to activate URL sync
+        window.dispatchEvent(new PopStateEvent('popstate'));
+        
         // Clear stored path
         sessionStorage.removeItem('nomadnow_last_path');
       }, 200);
     }
-  }, [isWeb, navigation]);
+  }, [isWeb]);
 
   return <>{children}</>;
 };
