@@ -13,6 +13,9 @@ import { useResponsive } from './src/utils/responsive';
 import { colors, spacing } from './src/utils/responsive';
 import './src/utils/cryptoPolyfill';
 import './src/utils/warnings'; // Import warning suppression
+import { optimizeForProduction } from './src/utils/productionOptimizer';
+import { runAllSecurityMeasures } from './src/utils/securityManager';
+import { initializeCSRFProtection } from './src/utils/csrfProtection';
 
 // Note: Lazy loading is commented out due to TypeScript module configuration
 // const LazyAppNavigator = React.lazy(() => import('./src/navigation/AppNavigator'));
@@ -32,6 +35,13 @@ const LoadingFallback = () => (
 export default function App() {
   const { setUser, setSession } = useAuthStore();
   const { isPhone } = useResponsive();
+
+  useEffect(() => {
+    // Initialize production optimizations and security measures
+    optimizeForProduction();
+    runAllSecurityMeasures();
+    initializeCSRFProtection();
+  }, []);
 
   useEffect(() => {
     // Environment check (silent in production)

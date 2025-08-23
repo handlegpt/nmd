@@ -1,6 +1,8 @@
 import { supabase } from '../lib/supabase';
 import { User, Location, Message, Post, Comment, Notification } from '../types';
 import CacheService from './cacheService';
+import { sanitizeInput, validateUrl } from '../utils/securityManager';
+import { addCSRFTokenToHeaders } from '../utils/csrfProtection';
 
 // Database service for handling all database operations
 export class DatabaseService {
@@ -104,9 +106,17 @@ export class DatabaseService {
   // Post operations
   static async createPost(postData: Partial<Post>): Promise<Post | null> {
     try {
+      // Sanitize user input
+      const sanitizedData = {
+        ...postData,
+        content: sanitizeInput(postData.content || ''),
+        title: sanitizeInput(postData.title || ''),
+        location: sanitizeInput(postData.location || '')
+      };
+
       const { data, error } = await supabase
         .from('posts')
-        .insert(postData)
+        .insert(sanitizedData)
         .select()
         .single();
 
@@ -176,10 +186,16 @@ export class DatabaseService {
   // Comment operations
   static async createComment(commentData: Partial<Comment>): Promise<Comment | null> {
     try {
-              // Creating comment (silent in production)
+      // Sanitize user input
+      const sanitizedData = {
+        ...commentData,
+        content: sanitizeInput(commentData.content || '')
+      };
+
+      // Creating comment (silent in production)
       const { data, error } = await supabase
         .from('comments')
-        .insert(commentData)
+        .insert(sanitizedData)
         .select()
         .single();
 
@@ -193,7 +209,7 @@ export class DatabaseService {
         await CacheService.invalidateCommentsCache(commentData.post_id);
       }
       
-              // Comment created successfully (silent in production)
+      // Comment created successfully (silent in production)
       return data;
     } catch (error) {
       console.error('🔍 DatabaseService: Error creating comment:', error);
