@@ -39,8 +39,9 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   const googleConfig = {
     clientId: process.env.EXPO_PUBLIC_GOOGLE_CLIENT_ID || '',
     redirectUri: process.env.EXPO_PUBLIC_GOOGLE_REDIRECT_URI || 
-                 process.env.EXPO_PUBLIC_GOOGLE_DEV_REDIRECT_URI || 
-                 'http://localhost:19006/auth/callback',
+                 (typeof window !== 'undefined' && window.location.hostname === 'localhost' 
+                   ? 'http://localhost:19006/auth/callback'
+                   : 'https://nomad.now/auth/callback'),
     scopes: ['openid', 'profile', 'email'],
     responseType: AuthSession.ResponseType.Code,
     additionalParameters: {
@@ -54,6 +55,8 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     clientId: googleConfig.clientId ? 'Set' : 'Missing',
     redirectUri: googleConfig.redirectUri,
     scopes: googleConfig.scopes,
+    hostname: typeof window !== 'undefined' ? window.location.hostname : 'unknown',
+    protocol: typeof window !== 'undefined' ? window.location.protocol : 'unknown',
   });
 
   // Create auth request
@@ -299,7 +302,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
         onPress={() => {
           Alert.alert(
             'Debug Info',
-            `Client ID: ${googleConfig.clientId ? 'Set' : 'Missing'}\nRedirect URI: ${googleConfig.redirectUri}\nRequest Ready: ${isRequestReady}\nLoading: ${isLoading}`,
+            `Client ID: ${googleConfig.clientId ? 'Set' : 'Missing'}\nRedirect URI: ${googleConfig.redirectUri}\nHostname: ${typeof window !== 'undefined' ? window.location.hostname : 'unknown'}\nRequest Ready: ${isRequestReady}\nLoading: ${isLoading}`,
             [{ text: 'OK' }]
           );
         }}
