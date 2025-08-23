@@ -23,6 +23,7 @@ import ResponsiveContainer from '../common/ResponsiveContainer';
 import { ToastOptimized } from '../common/ToastOptimized';
 import LoadingSpinner from '../common/LoadingSpinner';
 import GoogleOAuth from './GoogleOAuth';
+import GoogleOAuthTest from './GoogleOAuthTest';
 import { 
   sendVerificationEmail, 
   verifyCode, 
@@ -200,12 +201,12 @@ export const LoginScreen: React.FC = () => {
 
               {!showVerification && (
                 <>
-                                {/* Google OAuth Button */}
-              <GoogleOAuth
-                onSuccess={handleGoogleSuccess}
-                onError={handleGoogleError}
-                style={styles.googleButton}
-              />
+                                                  {/* Google OAuth Button */}
+                  <GoogleOAuthTest
+                    onSuccess={handleGoogleSuccess}
+                    onError={handleGoogleError}
+                    style={styles.googleButton}
+                  />
 
                   <View style={styles.dividerContainer}>
                     <Divider style={styles.divider} />
