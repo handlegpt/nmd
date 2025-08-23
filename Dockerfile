@@ -34,6 +34,9 @@ RUN npx expo install expo-camera@~14.1.3
 # Install additional dependencies for new features
 RUN npx expo install expo-clipboard expo-sharing
 
+# Install nodemailer for email functionality
+RUN npm install nodemailer@^6.9.7
+
 # Clean npm cache and verify installation
 RUN npm cache clean --force && npm ls expo-camera
 

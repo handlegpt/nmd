@@ -20,6 +20,67 @@ const emailConfig: EmailConfig = {
   fromName: process.env.EXPO_PUBLIC_FROM_NAME || 'NomadNow',
 };
 
+// Simple email sending function using SendGrid API
+const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
+  try {
+    const sendGridApiKey = process.env.EXPO_PUBLIC_SENDGRID_API_KEY;
+    
+    if (sendGridApiKey) {
+      // Use SendGrid API (recommended for production)
+      const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${sendGridApiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          personalizations: [{ to: [{ email: to }] }],
+          from: { email: emailConfig.fromEmail, name: emailConfig.fromName },
+          subject: subject,
+          content: [{ type: 'text/html', value: htmlContent }]
+        })
+      });
+      
+      if (sendGridResponse.ok) {
+        console.log('📧 Email sent via SendGrid successfully');
+        return true;
+      } else {
+        const errorText = await sendGridResponse.text();
+        console.error('📧 SendGrid error:', errorText);
+        return false;
+      }
+    }
+    
+    // Fallback: EmailJS (if configured)
+    const emailjsServiceId = process.env.EXPO_PUBLIC_EMAILJS_SERVICE_ID;
+    const emailjsTemplateId = process.env.EXPO_PUBLIC_EMAILJS_TEMPLATE_ID;
+    const emailjsUserId = process.env.EXPO_PUBLIC_EMAILJS_USER_ID;
+    
+    if (emailjsServiceId && emailjsTemplateId && emailjsUserId && typeof window !== 'undefined' && (window as any).emailjs) {
+      const emailjs = (window as any).emailjs;
+      const result = await emailjs.send(
+        emailjsServiceId,
+        emailjsTemplateId,
+        {
+          to_email: to,
+          to_name: to.split('@')[0],
+          message: htmlContent,
+          subject: subject
+        },
+        emailjsUserId
+      );
+      return result.status === 200;
+    }
+    
+    console.error('📧 No email service configured');
+    return false;
+    
+  } catch (error) {
+    console.error('📧 Email API error:', error);
+    return false;
+  }
+};
+
 // Generate a random 6-digit verification code
 export const generateVerificationCode = (): string => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -36,29 +97,61 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
     verificationCodes.set(email, { code, expiresAt });
 
     // Check if email configuration is set up
-    if (!emailConfig.smtpUser || !emailConfig.smtpPass) {
-      // In production, we'll use a simple verification system
-      // The code is stored in memory and can be verified
-      return true;
+    const hasSendGrid = process.env.EXPO_PUBLIC_SENDGRID_API_KEY;
+    const hasSMTP = emailConfig.smtpUser && emailConfig.smtpPass;
+    const hasEmailJS = process.env.EXPO_PUBLIC_EMAILJS_SERVICE_ID;
+    
+    if (!hasSendGrid && !hasSMTP && !hasEmailJS) {
+      console.error('Email service not configured. Please set up SendGrid API key, SMTP credentials, or EmailJS in .env file');
+      return false;
     }
 
-    // Send real email using configured SMTP service
+    // Create email content
+    const subject = 'NomadNow - Verification Code';
     const emailContent = `
       <html>
+        <head>
+          <style>
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { background: linear-gradient(135deg, #ff6b35, #ffa726); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
+            .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
+            .code { background: #fff; padding: 20px; text-align: center; font-size: 24px; font-weight: bold; color: #ff6b35; border: 2px dashed #ff6b35; border-radius: 8px; margin: 20px 0; }
+            .footer { text-align: center; margin-top: 30px; color: #666; font-size: 14px; }
+          </style>
+        </head>
         <body>
-          <h2>Welcome to NomadNow!</h2>
-          <p>Your verification code is: <strong>${code}</strong></p>
-          <p>This code will expire in 10 minutes.</p>
-          <p>If you didn't request this code, please ignore this email.</p>
-          <br>
-          <p>Best regards,<br>The NomadNow Team</p>
+          <div class="container">
+            <div class="header">
+              <h1>Welcome to NomadNow!</h1>
+              <p>Your Digital Nomad Community</p>
+            </div>
+            <div class="content">
+              <h2>Verification Code</h2>
+              <p>Please use the following verification code to complete your registration:</p>
+              <div class="code">${code}</div>
+              <p><strong>This code will expire in 10 minutes.</strong></p>
+              <p>If you didn't request this code, please ignore this email.</p>
+              <div class="footer">
+                <p>Best regards,<br>The NomadNow Team</p>
+                <p>Join the global digital nomad community!</p>
+              </div>
+            </div>
+          </div>
         </body>
       </html>
     `;
 
-    // Here you would implement real email sending using the configured SMTP
-    // For now, we'll simulate successful email sending
-    return true;
+    // Send email using API
+    const success = await sendEmailViaAPI(email, subject, emailContent);
+    
+    if (success) {
+      console.log(`📧 Verification email sent successfully to: ${email}`);
+    } else {
+      console.error(`📧 Failed to send verification email to: ${email}`);
+    }
+    
+    return success;
 
   } catch (error) {
     console.error('Failed to send verification email:', error);
