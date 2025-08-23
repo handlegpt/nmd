@@ -33,6 +33,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 }) => {
   const { setUser, setSession } = useAuthStore();
   const [isLoading, setIsLoading] = useState(false);
+  const [isRequestReady, setIsRequestReady] = useState(false);
 
   // Google OAuth configuration
   const googleConfig = {
@@ -48,18 +49,44 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     },
   };
 
-  // OAuth configuration (silent in production)
+  // Debug configuration (only in development)
+  if (__DEV__) {
+    console.log('🔍 Google OAuth Config:', {
+      clientId: googleConfig.clientId ? 'Set' : 'Missing',
+      redirectUri: googleConfig.redirectUri,
+      scopes: googleConfig.scopes,
+    });
+  }
 
   // Create auth request
   const [request, response, promptAsync] = AuthSession.useAuthRequest(googleConfig);
 
-  // OAuth request status (silent in production)
+  // Check if request is ready
+  useEffect(() => {
+    if (request) {
+      setIsRequestReady(true);
+      if (__DEV__) {
+        console.log('🔍 OAuth request ready');
+      }
+    } else {
+      setIsRequestReady(false);
+      if (__DEV__) {
+        console.log('🔍 OAuth request not ready');
+      }
+    }
+  }, [request]);
 
   // Handle OAuth response
   useEffect(() => {
     if (response?.type === 'success') {
+      if (__DEV__) {
+        console.log('🔍 OAuth success response');
+      }
       handleAuthSuccess(response.params.code);
     } else if (response?.type === 'error') {
+      if (__DEV__) {
+        console.log('🔍 OAuth error response:', response.error);
+      }
       handleAuthError(response.error?.message || 'Authentication failed');
     }
   }, [response]);
@@ -69,8 +96,16 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     try {
       setIsLoading(true);
       
+      if (__DEV__) {
+        console.log('🔍 Exchanging code for tokens...');
+      }
+      
       // Exchange code for tokens
       const tokenResponse = await exchangeCodeForTokens(code);
+      
+      if (__DEV__) {
+        console.log('🔍 Fetching user info...');
+      }
       
       // Get user info
       const userInfo = await fetchGoogleUserInfo(tokenResponse.access_token);
@@ -141,6 +176,8 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Token exchange error:', errorText);
       throw new Error('Failed to exchange code for tokens');
     }
 
@@ -177,8 +214,10 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     }
 
     // Check if request is ready
-    if (!request) {
-      // OAuth request not ready yet (silent in production)
+    if (!request || !isRequestReady) {
+      if (__DEV__) {
+        console.log('🔍 OAuth request not ready, retrying...');
+      }
       Alert.alert(
         'OAuth Not Ready',
         'Please wait a moment and try again.',
@@ -189,10 +228,16 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
 
     try {
       setIsLoading(true);
-          // Starting Google OAuth flow (silent in production)
+      
+      if (__DEV__) {
+        console.log('🔍 Starting Google OAuth flow...');
+      }
       
       const result = await promptAsync();
-      // OAuth result (silent in production)
+      
+      if (__DEV__) {
+        console.log('🔍 OAuth result:', result.type);
+      }
       
       if (result.type === 'error') {
         console.error('🔍 OAuth error:', result.error);
@@ -206,21 +251,55 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     }
   };
 
+  // Get button text based on state
+  const getButtonText = () => {
+    if (isLoading) {
+      return 'Connecting to Google...';
+    }
+    if (!googleConfig.clientId) {
+      return 'Google OAuth Not Configured';
+    }
+    if (!isRequestReady) {
+      return 'Initializing...';
+    }
+    return 'Continue with Gmail';
+  };
+
+  // Check if button should be disabled
+  const isButtonDisabled = () => {
+    return isLoading || !googleConfig.clientId || !isRequestReady;
+  };
+
   return (
     <View style={[styles.container, style]}>
       <Button
         mode="contained"
         onPress={handleLogin}
-        disabled={isLoading || !request}
+        disabled={isButtonDisabled()}
         loading={isLoading}
         icon="google"
         style={styles.googleButton}
         contentStyle={styles.buttonContent}
         labelStyle={styles.buttonLabel}
       >
-        {isLoading ? 'Connecting to Google...' : 
-         !request ? 'Loading...' : 'Continue with Gmail'}
+        {getButtonText()}
       </Button>
+      
+      {__DEV__ && !googleConfig.clientId && (
+        <Button
+          mode="text"
+          onPress={() => {
+            Alert.alert(
+              'Debug Info',
+              `Client ID: ${googleConfig.clientId ? 'Set' : 'Missing'}\nRedirect URI: ${googleConfig.redirectUri}`,
+              [{ text: 'OK' }]
+            );
+          }}
+          style={styles.debugButton}
+        >
+          Debug Config
+        </Button>
+      )}
     </View>
   );
 };
@@ -243,6 +322,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.white,
+  },
+  debugButton: {
+    marginTop: spacing.xs,
   },
 });
 
