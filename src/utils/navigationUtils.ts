@@ -110,11 +110,13 @@ export const navigationUtils = {
   debugNavigationState: (state: any) => {
     if (Platform.OS === 'web') {
       // Navigation utils state logged silently in production
+      const debugInfo = {
         routes: state?.routes?.map((route: any) => route.name),
         index: state?.index,
         currentRoute: state?.routes?.[state?.index]?.name,
         path: window.location.pathname
-      });
+      };
+      // Debug info available but not logged in production
     }
   }
 };
