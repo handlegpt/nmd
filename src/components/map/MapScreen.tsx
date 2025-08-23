@@ -56,25 +56,28 @@ export const MapScreen: React.FC = () => {
   // Initialize map with current location
   const initializeMap = async () => {
     try {
-      await getCurrentLocation();
-      if (currentLocation && user) {
+      const location = await getCurrentLocation();
+      if (location && user) {
         // Update user location in database
-        await DatabaseService.updateUserLocation(user.id, currentLocation);
+        await DatabaseService.updateUserLocation(user.id, location);
         
         // Fetch nearby users from database
         const nearbyUsersFromDB = await DatabaseService.getNearbyUsers(
-          currentLocation.latitude, 
-          currentLocation.longitude, 
+          location.latitude, 
+          location.longitude, 
           10
         );
         
         // Update local state with database results
-        await fetchNearbyUsers(currentLocation.latitude, currentLocation.longitude, 10);
+        await fetchNearbyUsers(location.latitude, location.longitude, 10);
         showToast('Location updated successfully!', 'success');
+      } else {
+        console.log('ℹ️ Location not available or user not logged in');
+        showToast('Location not available. You can still browse the app.', 'info');
       }
     } catch (error) {
       console.error('Error initializing map:', error);
-      showToast('Unable to get location. Please check permissions.', 'error');
+      showToast('Location service not available. You can still use other features.', 'info');
     }
   };
 

@@ -77,7 +77,8 @@ export class LocationPermissionManager {
         // Request permission if not granted
         const newPermission = await this.requestPermission();
         if (!newPermission.granted) {
-          throw new Error('Location permission required');
+          console.warn('⚠️ Location permission denied, returning null');
+          return null; // Return null instead of throwing error
         }
       }
 
@@ -91,7 +92,7 @@ export class LocationPermissionManager {
       return location;
     } catch (error) {
       console.error('Get location error:', error);
-      throw error;
+      return null; // Return null instead of throwing error
     }
   }
 

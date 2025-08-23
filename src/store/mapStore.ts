@@ -8,7 +8,7 @@ import { reverseGeocode } from '../utils/geocoding';
 import { LocationPermissionManager } from '../utils/locationPermission';
 
 interface MapStore extends MapState {
-  getCurrentLocation: () => Promise<void>;
+  getCurrentLocation: () => Promise<LocationType | null>;
   updateLocation: (location: LocationType) => Promise<void>;
   fetchNearbyUsers: (latitude: number, longitude: number, radius: number) => Promise<void>;
   setSelectedUser: (user: User | null) => void;
@@ -74,13 +74,15 @@ export const useMapStore = create<MapStore>((set, get) => ({
   },
 
   // Get current user location with enhanced accuracy
-  getCurrentLocation: async () => {
+  getCurrentLocation: async (): Promise<LocationType | null> => {
     set({ loading: true });
     try {
       // Use the new location permission manager
       const location = await LocationPermissionManager.getCurrentLocation();
       if (!location) {
-        throw new Error('Unable to get current location');
+        console.warn('⚠️ Location not available');
+        set({ loading: false });
+        return null;
       }
 
       const { shareSettings } = get();
@@ -122,9 +124,12 @@ export const useMapStore = create<MapStore>((set, get) => ({
         
         await get().addToLocationHistory(historyItem);
       }
+      
+      return currentLocation;
     } catch (error) {
       console.error('Get location error:', error);
-      throw error;
+      set({ loading: false });
+      return null;
     } finally {
       set({ loading: false });
     }
