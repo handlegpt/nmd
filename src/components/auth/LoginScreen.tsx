@@ -22,8 +22,7 @@ import { colors, spacing, borderRadius } from '../../utils/responsive';
 import ResponsiveContainer from '../common/ResponsiveContainer';
 import { ToastOptimized } from '../common/ToastOptimized';
 import LoadingSpinner from '../common/LoadingSpinner';
-import GoogleOAuth from './GoogleOAuth';
-import GoogleOAuthTest from './GoogleOAuthTest';
+
 import { 
   sendVerificationEmail, 
   verifyCode, 
@@ -82,19 +81,7 @@ export const LoginScreen: React.FC = () => {
     return true;
   };
 
-  // Handle Google OAuth success
-  const handleGoogleSuccess = (user: any) => {
-    console.log('🔍 Google OAuth success:', user);
-    showToast('Successfully signed in with Gmail!', 'success');
-    
-    // The user object should already be set in the auth store by GoogleOAuth component
-    // We just need to show success message
-  };
 
-  // Handle Google OAuth error
-  const handleGoogleError = (error: string) => {
-    showToast(`Gmail login failed: ${error}`, 'error');
-  };
 
   // Handle form submission for login/signup
   const handleSubmit = async () => {
@@ -102,8 +89,17 @@ export const LoginScreen: React.FC = () => {
 
     try {
       if (isLogin) {
-        await signIn(email, password);
-        showToast('Successfully signed in!', 'success');
+        // For login, send verification code first
+        showToast('Sending verification code to your email...', 'info');
+        const code = generateVerificationCode();
+        const success = await sendVerificationEmail(email, code);
+        
+        if (success) {
+          showToast('Verification code sent to your email!', 'success');
+          setShowVerification(true);
+        } else {
+          showToast('Failed to send verification code. Please try again.', 'error');
+        }
       } else {
         // For signup, send verification email
         const code = generateVerificationCode();
@@ -133,8 +129,23 @@ export const LoginScreen: React.FC = () => {
       // Verify the code using email service
       const isValid = verifyCode(email, verificationCode);
       if (isValid) {
-        await signUp(email, password, nickname);
-        showToast('Account created successfully!', 'success');
+        if (isLogin) {
+          // For login, proceed with sign in
+          try {
+            await signIn(email, password);
+            showToast('Successfully signed in!', 'success');
+          } catch (error: any) {
+            showToast(error?.message || 'Login failed', 'error');
+          }
+        } else {
+          // For signup, create account
+          try {
+            await signUp(email, password, nickname);
+            showToast('Account created successfully!', 'success');
+          } catch (error: any) {
+            showToast(error?.message || 'Signup failed', 'error');
+          }
+        }
         setShowVerification(false);
         setVerificationCode('');
       } else {
@@ -205,19 +216,6 @@ export const LoginScreen: React.FC = () => {
 
               {!showVerification && (
                 <>
-                                                  {/* Google OAuth Button */}
-                  <GoogleOAuth
-                    onSuccess={handleGoogleSuccess}
-                    onError={handleGoogleError}
-                    style={styles.googleButton}
-                  />
-
-                  <View style={styles.dividerContainer}>
-                    <Divider style={styles.divider} />
-                    <Text style={styles.dividerText}>or</Text>
-                    <Divider style={styles.divider} />
-                  </View>
-
                   {/* Email/Password Form */}
                   <TextInput
                     label="Email"
@@ -377,26 +375,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     paddingVertical: spacing.sm,
   },
-  googleButton: {
-    marginTop: spacing.sm,
-    borderColor: '#4285f4',
-    borderWidth: 2,
-  },
-  dividerContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: spacing.base,
-  },
-  divider: {
-    flex: 1,
-    backgroundColor: colors.gray200,
-  },
-  dividerText: {
-    color: colors.textSecondary,
-    fontSize: 14,
-    fontWeight: '500',
-    marginHorizontal: spacing.base,
-  },
+
   resendButton: {
     marginTop: spacing.sm,
     paddingVertical: spacing.sm,
