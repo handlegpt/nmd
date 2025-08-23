@@ -17,6 +17,7 @@ import { optimizeForProduction } from './src/utils/productionOptimizer';
 import { runAllSecurityMeasures } from './src/utils/securityManager';
 import { initializeCSRFProtection } from './src/utils/csrfProtection';
 import PageRefreshHandler from './src/components/common/PageRefreshHandler';
+import { loadFonts } from './src/utils/fontLoader';
 
 // Note: Lazy loading is commented out due to TypeScript module configuration
 // const LazyAppNavigator = React.lazy(() => import('./src/navigation/AppNavigator'));
@@ -42,6 +43,11 @@ export default function App() {
     optimizeForProduction();
     runAllSecurityMeasures();
     initializeCSRFProtection();
+    
+    // Load fonts for web platform
+    if (typeof window !== 'undefined') {
+      loadFonts();
+    }
   }, []);
 
   useEffect(() => {

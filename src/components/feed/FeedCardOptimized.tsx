@@ -12,10 +12,10 @@ import {
   Title,
   Paragraph,
   Avatar,
-  IconButton,
   Surface,
   Divider,
 } from 'react-native-paper';
+import SmartIcon from '../common/SmartIcon';
 import { colors, spacing, borderRadius } from '../../utils/responsive';
 import { shadowPresets } from '../../utils/platformStyles';
 import { Post } from '../../services/postService';
@@ -197,10 +197,10 @@ export const FeedCardOptimized: React.FC<FeedCardOptimizedProps> = ({
           onPress={handleLike}
           activeOpacity={0.7}
         >
-          <IconButton
+          <SmartIcon
             icon={isLiked ? 'heart' : 'heart-outline'}
             size={20}
-            iconColor={isLiked ? colors.error : colors.textSecondary}
+            color={isLiked ? colors.error : colors.textSecondary}
             style={styles.actionIcon}
           />
           <Paragraph style={[styles.actionText, isLiked && styles.likedText]}>
@@ -213,10 +213,10 @@ export const FeedCardOptimized: React.FC<FeedCardOptimizedProps> = ({
           onPress={handleComment}
           activeOpacity={0.7}
         >
-          <IconButton
+          <SmartIcon
             icon="comment-outline"
             size={20}
-            iconColor={colors.textSecondary}
+            color={colors.textSecondary}
             style={styles.actionIcon}
           />
           <Paragraph style={styles.actionText}>
@@ -229,10 +229,10 @@ export const FeedCardOptimized: React.FC<FeedCardOptimizedProps> = ({
           onPress={handleShare}
           activeOpacity={0.7}
         >
-          <IconButton
+          <SmartIcon
             icon="share-outline"
             size={20}
-            iconColor={colors.textSecondary}
+            color={colors.textSecondary}
             style={styles.actionIcon}
           />
           <Paragraph style={styles.actionText}>
