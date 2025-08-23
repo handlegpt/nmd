@@ -50,8 +50,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({
   const generateShareContent = () => {
     if (!post) return { title: '', message: '', url: '' };
 
-    const title = `NomadNow - ${post.userNickname}的分享`;
-    const message = `${post.content}\n\n来自NomadNow - 数字游民社区`;
+    const title = `NomadNow - ${post.userNickname}'s Post`;
+    const message = `${post.content}\n\nFrom NomadNow - Digital Nomad Community`;
     const url = `https://nomadnow.app/post/${post.id}`;
 
     return { title, message, url };
@@ -71,11 +71,11 @@ export const ShareModal: React.FC<ShareModalProps> = ({
       });
 
       if (result.action === Share.sharedAction) {
-        showToast('分享成功', 'success');
+        showToast('Shared successfully', 'success');
       }
     } catch (error) {
       console.error('Error sharing:', error);
-      showToast('分享失败', 'error');
+      showToast('Share failed', 'error');
     }
   };
 
@@ -86,10 +86,10 @@ export const ShareModal: React.FC<ShareModalProps> = ({
     try {
       const { url } = generateShareContent();
       await Clipboard.setStringAsync(url);
-      showToast('链接已复制到剪贴板', 'success');
+      showToast('Link copied to clipboard', 'success');
     } catch (error) {
       console.error('Error copying link:', error);
-      showToast('复制失败', 'error');
+      showToast('Copy failed', 'error');
     }
   };
 
@@ -130,21 +130,21 @@ export const ShareModal: React.FC<ShareModalProps> = ({
         });
       }
 
-      showToast(`分享到${platform}成功`, 'success');
+      showToast(`Shared to ${platform} successfully`, 'success');
     } catch (error) {
       console.error(`Error sharing to ${platform}:`, error);
-      showToast(`分享到${platform}失败`, 'error');
+      showToast(`Share to ${platform} failed`, 'error');
     }
   };
 
   // Share as image (future feature)
   const handleShareAsImage = () => {
-    showToast('图片分享功能开发中', 'info');
+    showToast('Image share feature coming soon', 'info');
   };
 
   // Share to contacts (future feature)
   const handleShareToContacts = () => {
-    showToast('联系人分享功能开发中', 'info');
+    showToast('Contact share feature coming soon', 'info');
   };
 
   return (
@@ -157,7 +157,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
         <Surface style={styles.modalContent}>
           {/* Header */}
           <View style={styles.header}>
-            <Title style={styles.headerTitle}>分享</Title>
+            <Title style={styles.headerTitle}>Share</Title>
             <IconButton
               icon="close"
               size={24}
@@ -172,8 +172,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({
           <View style={styles.shareOptions}>
             {/* Native Share */}
             <List.Item
-              title="分享到..."
-              description="使用系统分享功能"
+              title="Share to..."
+              description="Use system share function"
               left={(props) => <List.Icon {...props} icon="share-variant" />}
               onPress={handleNativeShare}
               style={styles.shareOption}
@@ -183,8 +183,8 @@ export const ShareModal: React.FC<ShareModalProps> = ({
 
             {/* Copy Link */}
             <List.Item
-              title="复制链接"
-              description="复制帖子链接到剪贴板"
+              title="Copy Link"
+              description="Copy post link to clipboard"
               left={(props) => <List.Icon {...props} icon="link" />}
               onPress={handleCopyLink}
               style={styles.shareOption}
@@ -194,32 +194,32 @@ export const ShareModal: React.FC<ShareModalProps> = ({
 
             {/* Social Media */}
             <List.Item
-              title="分享到Twitter"
-              description="分享到Twitter"
+              title="Share to Twitter"
+              description="Share to Twitter"
               left={(props) => <List.Icon {...props} icon="twitter" />}
               onPress={() => handleSocialShare('twitter')}
               style={styles.shareOption}
             />
 
             <List.Item
-              title="分享到Facebook"
-              description="分享到Facebook"
+              title="Share to Facebook"
+              description="Share to Facebook"
               left={(props) => <List.Icon {...props} icon="facebook" />}
               onPress={() => handleSocialShare('facebook')}
               style={styles.shareOption}
             />
 
             <List.Item
-              title="分享到LinkedIn"
-              description="分享到LinkedIn"
+              title="Share to LinkedIn"
+              description="Share to LinkedIn"
               left={(props) => <List.Icon {...props} icon="linkedin" />}
               onPress={() => handleSocialShare('linkedin')}
               style={styles.shareOption}
             />
 
             <List.Item
-              title="分享到微博"
-              description="分享到微博"
+              title="Share to Weibo"
+              description="Share to Weibo"
               left={(props) => <List.Icon {...props} icon="weibo" />}
               onPress={() => handleSocialShare('weibo')}
               style={styles.shareOption}
@@ -229,16 +229,16 @@ export const ShareModal: React.FC<ShareModalProps> = ({
 
             {/* Future Features */}
             <List.Item
-              title="分享为图片"
-              description="生成图片分享（开发中）"
+              title="Share as Image"
+              description="Generate image share (coming soon)"
               left={(props) => <List.Icon {...props} icon="image" />}
               onPress={handleShareAsImage}
               style={[styles.shareOption, styles.disabledOption]}
             />
 
             <List.Item
-              title="分享给联系人"
-              description="分享给手机联系人（开发中）"
+              title="Share to Contacts"
+              description="Share to phone contacts (coming soon)"
               left={(props) => <List.Icon {...props} icon="account-multiple" />}
               onPress={handleShareToContacts}
               style={[styles.shareOption, styles.disabledOption]}
@@ -252,7 +252,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({
               onPress={onDismiss}
               style={styles.cancelButton}
             >
-              取消
+              Cancel
             </Button>
           </View>
         </Surface>
