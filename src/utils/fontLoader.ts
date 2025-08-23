@@ -16,50 +16,89 @@ export class FontLoader {
     }
 
     this.loadPromise = new Promise<void>((resolve) => {
-      // Load Material Community Icons font
-      const fontLink = document.createElement('link');
-      fontLink.rel = 'stylesheet';
-      fontLink.href = 'https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css';
-      fontLink.onload = () => {
-        console.log('✅ Material Design Icons font loaded');
-        this.isLoaded = true;
-        resolve();
-      };
-      fontLink.onerror = () => {
-        console.warn('⚠️ Failed to load Material Design Icons font, using fallback');
-        this.isLoaded = true;
-        resolve();
-      };
-      document.head.appendChild(fontLink);
+      // Try multiple font sources for better reliability
+      const fontSources = [
+        // Local Expo font (preferred)
+        '/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.css',
+        // CDN fallback
+        'https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css',
+        // Alternative CDN
+        'https://unpkg.com/@mdi/font@7.2.96/css/materialdesignicons.min.css'
+      ];
 
-      // Also try to load from local assets if available
-      this.loadLocalFonts();
+      let loadedCount = 0;
+      const totalSources = fontSources.length;
+
+      const tryLoadFont = (index: number) => {
+        if (index >= totalSources) {
+          // All sources failed, resolve anyway
+          console.warn('⚠️ All font sources failed, using fallback');
+          this.isLoaded = true;
+          resolve();
+          return;
+        }
+
+        const fontLink = document.createElement('link');
+        fontLink.rel = 'stylesheet';
+        fontLink.href = fontSources[index];
+        
+        fontLink.onload = () => {
+          console.log(`✅ Font loaded from: ${fontSources[index]}`);
+          this.isLoaded = true;
+          resolve();
+        };
+        
+        fontLink.onerror = () => {
+          console.log(`⚠️ Failed to load font from: ${fontSources[index]}`);
+          loadedCount++;
+          if (loadedCount >= totalSources) {
+            console.warn('⚠️ All font sources failed, using fallback');
+            this.isLoaded = true;
+            resolve();
+          } else {
+            // Try next source
+            setTimeout(() => tryLoadFont(index + 1), 100);
+          }
+        };
+
+        document.head.appendChild(fontLink);
+      };
+
+      // Start with first source
+      tryLoadFont(0);
     });
 
     return this.loadPromise;
   }
 
-  // Load fonts from local assets
+  // Load fonts from local assets (deprecated, now handled in main loadFonts method)
   private static loadLocalFonts(): void {
-    try {
-      // Try to load from Expo's built-in font
-      const expoFontLink = document.createElement('link');
-      expoFontLink.rel = 'stylesheet';
-      expoFontLink.href = '/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.css';
-      expoFontLink.onload = () => {
-        console.log('✅ Local Material Community Icons font loaded');
-      };
-      expoFontLink.onerror = () => {
-        console.log('ℹ️ Local font not available, using CDN fallback');
-      };
-      document.head.appendChild(expoFontLink);
-    } catch (error) {
-      console.log('ℹ️ Could not load local fonts:', error);
-    }
+    // This method is now deprecated as font loading is handled in the main loadFonts method
+    console.log('ℹ️ Local font loading is now handled in main loadFonts method');
   }
 
   // Check if fonts are loaded
   static isFontsLoaded(): boolean {
+    if (Platform.OS !== 'web') {
+      return true; // Always true for native platforms
+    }
+
+    // Check if Material Design Icons font is available
+    if (typeof document !== 'undefined') {
+      // Try to detect if the font is loaded by checking if a test element renders correctly
+      const testElement = document.createElement('span');
+      testElement.style.fontFamily = 'Material Design Icons';
+      testElement.style.visibility = 'hidden';
+      testElement.style.position = 'absolute';
+      testElement.textContent = '\uf159'; // A Material Design Icons character
+      document.body.appendChild(testElement);
+      
+      const isLoaded = testElement.offsetWidth > 0;
+      document.body.removeChild(testElement);
+      
+      return isLoaded || this.isLoaded;
+    }
+
     return this.isLoaded;
   }
 

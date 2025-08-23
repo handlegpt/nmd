@@ -125,11 +125,13 @@ export class SecurityManager {
       'style-src': [
         "'self'",
         "'unsafe-inline'", // Required for React Native Paper
-        'https://fonts.googleapis.com'
+        'https://fonts.googleapis.com',
+        'https://cdn.jsdelivr.net'
       ],
       'font-src': [
         "'self'",
         'https://fonts.gstatic.com',
+        'https://cdn.jsdelivr.net',
         'data:'
       ],
       'img-src': [

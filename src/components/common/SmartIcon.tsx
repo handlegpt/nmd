@@ -21,21 +21,23 @@ export const SmartIcon: React.FC<SmartIconProps> = ({
   disabled = false,
 }) => {
   const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [checkAttempts, setCheckAttempts] = useState(0);
 
   useEffect(() => {
     // Check if fonts are loaded
     const checkFonts = () => {
       const loaded = isFontsLoaded();
       setFontsLoaded(loaded);
+      
+      // If fonts are not loaded and we haven't tried too many times, try again
+      if (!loaded && checkAttempts < 3) {
+        setCheckAttempts(prev => prev + 1);
+        setTimeout(checkFonts, 2000); // Wait 2 seconds before next check
+      }
     };
 
     checkFonts();
-    
-    // Check again after a short delay
-    const timer = setTimeout(checkFonts, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
+  }, [checkAttempts]);
 
   // If fonts are loaded, use IconButton
   if (fontsLoaded) {
