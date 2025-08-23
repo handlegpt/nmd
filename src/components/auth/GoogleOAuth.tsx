@@ -287,7 +287,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   // Get button text based on state
   const getButtonText = () => {
     if (isLoading) {
-      return 'Connecting to Google...';
+      return 'Signing in...';
     }
     if (!googleConfig.clientId) {
       return 'Google OAuth Not Configured';
@@ -295,7 +295,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
     if (!isRequestReady) {
       return 'Initializing...';
     }
-    return 'Continue with Gmail';
+    return 'Continue with Google';
   };
 
   // Check if button should be disabled
@@ -307,7 +307,7 @@ const GoogleOAuth: React.FC<GoogleOAuthProps> = ({
   return (
     <View style={[styles.container, style]}>
       <Button
-        mode="contained"
+        mode="outlined"
         onPress={handleLogin}
         disabled={isButtonDisabled()}
         loading={isLoading}
@@ -364,23 +364,29 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   googleButton: {
-    backgroundColor: '#4285f4',
-    borderRadius: borderRadius.xl,
+    backgroundColor: colors.white,
+    borderRadius: borderRadius.md,
     marginVertical: spacing.sm,
-    elevation: 4,
-    shadowColor: '#4285f4',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 8,
+    borderWidth: 1,
+    borderColor: colors.gray300,
+    elevation: 1,
+    shadowColor: colors.gray800,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   buttonContent: {
     paddingVertical: spacing.sm,
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: spacing.md,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.white,
+    fontSize: 14,
+    fontWeight: '500',
+    color: colors.gray700,
+    marginLeft: spacing.sm,
   },
   debugButton: {
     marginTop: spacing.xs,
