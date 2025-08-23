@@ -11,7 +11,7 @@ import { shadowPresets } from '../utils/platformStyles';
 import { colors, spacing, borderRadius } from '../utils/responsive';
 
 // Import screens
-import FeedScreen from '../components/feed/FeedScreen';
+import FeedScreenOptimized from '../components/feed/FeedScreenOptimized';
 import { MapScreen } from '../components/map/MapScreen';
 import { ActivityScreen } from '../components/activities/ActivityScreen';
 import { CityScreen } from '../components/cities/CityScreen';
@@ -115,7 +115,7 @@ const MainTabs = ({ navigation }: { navigation: any }) => {
       })}>
       <Tab.Screen 
         name="Feed" 
-        component={FeedScreen}
+        component={FeedScreenOptimized}
         options={{ title: 'Home' }}
       />
       <Tab.Screen 

@@ -33,7 +33,7 @@ import { MediaPicker } from '../common/MediaPicker';
 import { PostEnhancer } from '../common/PostEnhancer';
 import { PlaceholderImage } from '../common/PlaceholderImage';
 import ResponsiveContainer from '../common/ResponsiveContainer';
-import Toast from '../common/Toast';
+import { ToastOptimized } from '../common/ToastOptimized';
 import LoadingSpinner from '../common/LoadingSpinner';
 import { debounce } from '../../utils/performance';
 import { useNavigation } from '@react-navigation/native';
@@ -41,6 +41,8 @@ import { DatabaseService } from '../../services/databaseService';
 import { PostService, Post } from '../../services/postService';
 import { useInfiniteScroll } from '../../hooks/useInfiniteScroll';
 import { NotificationService } from '../../services/notificationService';
+import { FeedCardOptimized } from './FeedCardOptimized';
+import { CreatePostOptimized } from './CreatePostOptimized';
 
 const { width } = Dimensions.get('window');
 
