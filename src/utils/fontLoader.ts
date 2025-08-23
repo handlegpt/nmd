@@ -18,12 +18,12 @@ export class FontLoader {
     this.loadPromise = new Promise<void>((resolve) => {
       // Try multiple font sources for better reliability
       const fontSources = [
-        // Local Expo font (preferred)
-        '/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.css',
-        // CDN fallback
+        // CDN fallback (preferred for production)
         'https://cdn.jsdelivr.net/npm/@mdi/font@7.2.96/css/materialdesignicons.min.css',
         // Alternative CDN
-        'https://unpkg.com/@mdi/font@7.2.96/css/materialdesignicons.min.css'
+        'https://unpkg.com/@mdi/font@7.2.96/css/materialdesignicons.min.css',
+        // Local Expo font (fallback)
+        '/assets/node_modules/@expo/vector-icons/build/vendor/react-native-vector-icons/Fonts/MaterialCommunityIcons.css'
       ];
 
       let loadedCount = 0;
@@ -85,18 +85,24 @@ export class FontLoader {
 
     // Check if Material Design Icons font is available
     if (typeof document !== 'undefined') {
-      // Try to detect if the font is loaded by checking if a test element renders correctly
-      const testElement = document.createElement('span');
-      testElement.style.fontFamily = 'Material Design Icons';
-      testElement.style.visibility = 'hidden';
-      testElement.style.position = 'absolute';
-      testElement.textContent = '\uf159'; // A Material Design Icons character
-      document.body.appendChild(testElement);
-      
-      const isLoaded = testElement.offsetWidth > 0;
-      document.body.removeChild(testElement);
-      
-      return isLoaded || this.isLoaded;
+      try {
+        // Try to detect if the font is loaded by checking if a test element renders correctly
+        const testElement = document.createElement('span');
+        testElement.style.fontFamily = 'Material Design Icons';
+        testElement.style.visibility = 'hidden';
+        testElement.style.position = 'absolute';
+        testElement.style.fontSize = '16px';
+        testElement.textContent = '\uf159'; // A Material Design Icons character
+        document.body.appendChild(testElement);
+        
+        const isLoaded = testElement.offsetWidth > 0;
+        document.body.removeChild(testElement);
+        
+        return isLoaded || this.isLoaded;
+      } catch (error) {
+        console.warn('⚠️ Font detection failed:', error);
+        return this.isLoaded; // Fallback to internal state
+      }
     }
 
     return this.isLoaded;
