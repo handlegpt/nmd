@@ -52,7 +52,7 @@ export default function App() {
         undefined,
         'font loading'
       ).catch(error => {
-        console.warn('⚠️ Font loading failed:', error);
+                   // Font loading failed silently in production
         // Continue without fonts, fallback will be used
       });
     }
@@ -93,7 +93,7 @@ export default function App() {
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <PaperProvider>
-            <PerformanceMonitor enableMonitoring={__DEV__}>
+            <PerformanceMonitor enableMonitoring={false}>
               <Suspense fallback={<LoadingFallback />}>
                 <PageRefreshHandler>
                   <AppNavigator />

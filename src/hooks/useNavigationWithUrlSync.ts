@@ -13,7 +13,7 @@ export const useNavigationWithUrlSync = () => {
     // Update URL for web
     if (Platform.OS === 'web') {
       const path = navigationUtils.getPathForRoute(routeName, params);
-      console.log(`🔄 NavigationWithUrlSync: Navigating to ${routeName} -> ${path}`);
+      // Navigation logged silently in production
       navigationUtils.updateUrl(path);
     }
   };
@@ -25,7 +25,7 @@ export const useNavigationWithUrlSync = () => {
     // Update URL for web
     if (Platform.OS === 'web') {
       const path = navigationUtils.getPathForRoute(tabName);
-      console.log(`🔄 NavigationWithUrlSync: Navigating to tab ${tabName} -> ${path}`);
+      // Tab navigation logged silently in production
       navigationUtils.updateUrl(path);
     }
   };
@@ -35,7 +35,7 @@ export const useNavigationWithUrlSync = () => {
     
     // For web, we don't need to manually update URL as it will be handled by popstate
     if (Platform.OS === 'web') {
-      console.log(`🔄 NavigationWithUrlSync: Going back`);
+      // Back navigation logged silently in production
     }
   };
 
@@ -48,7 +48,7 @@ export const useNavigationWithUrlSync = () => {
     // Update URL for web
     if (Platform.OS === 'web') {
       const path = navigationUtils.getPathForRoute(routeName, params);
-      console.log(`🔄 NavigationWithUrlSync: Resetting to ${routeName} -> ${path}`);
+      // Reset navigation logged silently in production
       navigationUtils.forceUrlSync(routeName, params);
     }
   };

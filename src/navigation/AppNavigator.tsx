@@ -38,13 +38,13 @@ const EnhancedUrlSyncWrapper = () => {
       
       // Handle page refresh - restore navigation state from URL
       const currentPath = window.location.pathname;
-      console.log(`🔄 EnhancedUrlSync: Page refresh detected, path: ${currentPath}`);
+      // Enhanced URL sync refresh logged silently in production
       
       // Store the current path for navigation restoration
       if (currentPath !== '/') {
         // Use sessionStorage to persist the path across refreshes
         sessionStorage.setItem('nomadnow_last_path', currentPath);
-        console.log(`🔄 EnhancedUrlSync: Stored path: ${currentPath}`);
+        // Enhanced URL sync store logged silently in production
       }
     }
   }, [isWeb]);

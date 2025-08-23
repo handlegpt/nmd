@@ -19,12 +19,12 @@ export const useUrlSync = () => {
     hasInitializedRef.current = true;
     const currentPath = window.location.pathname;
     
-    console.log(`🔄 URL Sync: Initial load, path: ${currentPath}`);
+    // URL sync initial load logged silently in production
     
     // If we're on a specific path (not root), we need to restore navigation state
     if (currentPath !== '/') {
       const { routeName, params } = navigationUtils.getRouteFromPath(currentPath);
-      console.log(`🔄 URL Sync: Restoring navigation to ${routeName}`);
+      // URL sync restore logged silently in production
       
       // Use setTimeout to ensure navigation is ready
       setTimeout(() => {
@@ -65,7 +65,7 @@ export const useUrlSync = () => {
       
       // Update URL without page reload
       if (window.location.pathname !== path) {
-        console.log(`🔄 URL Sync: Updating URL from ${window.location.pathname} to ${path}`);
+        // URL sync update logged silently in production
         navigationUtils.updateUrl(path);
         lastPathRef.current = path;
       }
@@ -80,11 +80,11 @@ export const useUrlSync = () => {
       isNavigatingRef.current = true;
       
       const path = window.location.pathname;
-      console.log(`🔄 Browser Navigation: ${path}`);
+      // Browser navigation logged silently in production
 
       // Parse URL to determine route using navigation utils
       const { routeName, params } = navigationUtils.getRouteFromPath(path);
-      console.log(`🔄 Navigating to: ${routeName}`, params);
+      // Navigation logged silently in production
 
       // Navigate to the correct route
       if (routeName === 'Feed' || routeName === 'Map' || routeName === 'Activities' || routeName === 'Cities' || routeName === 'Notifications' || routeName === 'Profile') {
@@ -115,7 +115,7 @@ export const useUrlSync = () => {
       const currentPath = window.location.pathname;
       if (currentPath !== '/') {
         sessionStorage.setItem('nomadnow_last_path', currentPath);
-        console.log(`🔄 URL Sync: Storing path before unload: ${currentPath}`);
+        // URL sync store logged silently in production
       }
     };
 

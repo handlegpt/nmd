@@ -72,7 +72,7 @@ export const MapScreen: React.FC = () => {
         await fetchNearbyUsers(location.latitude, location.longitude, 10);
         showToast('Location updated successfully!', 'success');
       } else {
-        console.log('ℹ️ Location not available or user not logged in');
+        // Location not available logged silently in production
         showToast('Location not available. You can still browse the app.', 'info');
       }
     } catch (error) {

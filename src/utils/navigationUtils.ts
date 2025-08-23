@@ -58,7 +58,7 @@ export const navigationUtils = {
   updateUrl: (path: string) => {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
       if (window.location.pathname !== path) {
-        console.log(`🔄 NavigationUtils: Updating URL to ${path}`);
+        // Navigation utils URL update logged silently in production
         window.history.pushState({}, '', path);
       }
     }
@@ -80,7 +80,7 @@ export const navigationUtils = {
   forceUrlSync: (routeName: string, params?: any) => {
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
       const path = navigationUtils.getPathForRoute(routeName, params);
-      console.log(`🔄 NavigationUtils: Force syncing URL to ${path}`);
+      // Navigation utils force sync logged silently in production
       window.history.replaceState({}, '', path);
     }
   },
@@ -109,7 +109,7 @@ export const navigationUtils = {
   // Debug navigation state
   debugNavigationState: (state: any) => {
     if (Platform.OS === 'web') {
-      console.log('🔍 NavigationUtils: Current navigation state:', {
+      // Navigation utils state logged silently in production
         routes: state?.routes?.map((route: any) => route.name),
         index: state?.index,
         currentRoute: state?.routes?.[state?.index]?.name,

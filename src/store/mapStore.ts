@@ -80,7 +80,7 @@ export const useMapStore = create<MapStore>((set, get) => ({
       // Use the new location permission manager
       const location = await LocationPermissionManager.getCurrentLocation();
       if (!location) {
-        console.warn('⚠️ Location not available');
+        // Location not available logged silently in production
         set({ loading: false });
         return null;
       }

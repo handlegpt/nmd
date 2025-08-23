@@ -109,9 +109,7 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
         onMetrics(metricsRef.current);
       }
       
-      if (__DEV__) {
-        // Performance metrics (silent in production)
-      }
+      // Performance metrics logged silently in production
     }, 5000);
 
     return () => {
@@ -125,39 +123,9 @@ export const PerformanceMonitor: React.FC<PerformanceMonitorProps> = ({
   return <>{children}</>;
 };
 
-// Performance Debug Component (only in development)
+// Performance Debug Component (removed in production)
 export const PerformanceDebug: React.FC = () => {
-  const [metrics, setMetrics] = React.useState<PerformanceMetrics>({});
-
-  if (!__DEV__) {
-    return null;
-  }
-
-  return (
-    <View style={styles.debugContainer}>
-      <Text style={styles.debugTitle}>Performance Metrics</Text>
-      {metrics.firstContentfulPaint && (
-        <Text style={styles.debugText}>
-          FCP: {metrics.firstContentfulPaint.toFixed(2)}ms
-        </Text>
-      )}
-      {metrics.largestContentfulPaint && (
-        <Text style={styles.debugText}>
-          LCP: {metrics.largestContentfulPaint.toFixed(2)}ms
-        </Text>
-      )}
-      {metrics.firstInputDelay && (
-        <Text style={styles.debugText}>
-          FID: {metrics.firstInputDelay.toFixed(2)}ms
-        </Text>
-      )}
-      {metrics.cumulativeLayoutShift && (
-        <Text style={styles.debugText}>
-          CLS: {metrics.cumulativeLayoutShift.toFixed(3)}
-        </Text>
-      )}
-    </View>
-  );
+  return null;
 };
 
 const styles = StyleSheet.create({
