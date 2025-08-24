@@ -10,7 +10,7 @@ interface EmailConfig {
 // Email configuration
 const emailConfig: EmailConfig = {
   resendApiKey: process.env.EXPO_PUBLIC_RESEND_API_KEY || '',
-  resendFrom: process.env.EXPO_PUBLIC_RESEND_FROM || 'noreply@nomad.now',
+  resendFrom: process.env.EXPO_PUBLIC_RESEND_FROM || 'noreply@nomadnow.app',
   fromName: process.env.EXPO_PUBLIC_FROM_NAME || 'NomadNow',
 };
 

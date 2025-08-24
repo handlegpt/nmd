@@ -23,7 +23,7 @@ const GoogleOAuthTest: React.FC<GoogleOAuthTestProps> = ({
     redirectUri: process.env.EXPO_PUBLIC_GOOGLE_REDIRECT_URI || 
                  (typeof window !== 'undefined' && window.location.hostname === 'localhost' 
                    ? 'http://localhost:19006/auth/callback'
-                   : 'https://nomad.now/auth/callback'),
+                   : 'https://nomadnow.app/auth/callback'),
   };
 
   // Debug info
