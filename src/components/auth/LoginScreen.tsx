@@ -73,16 +73,6 @@ export const LoginScreen: React.FC = () => {
     try {
       showToast('正在发送验证码到您的邮箱...', 'info');
       
-      // Check if user exists for login mode
-      if (!isSignup) {
-        const userExists = await EmailAuthService.checkUserExists(email);
-        if (!userExists) {
-          showToast('账户不存在，请先注册', 'error');
-          setIsSignup(true);
-          return;
-        }
-      }
-      
       const success = await EmailAuthService.sendVerificationCode(email, nickname, isSignup);
       
       if (success) {
