@@ -146,7 +146,8 @@ export class SecurityManager {
         'https://www.google-analytics.com',
         'wss://*.supabase.co',
         'https://nominatim.openstreetmap.org',
-        'https://*.openstreetmap.org'
+        'https://*.openstreetmap.org',
+        'https://api.resend.com'
       ],
       'media-src': [
         "'self'",
