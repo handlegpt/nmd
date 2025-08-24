@@ -22,23 +22,16 @@ import { colors, spacing, borderRadius } from '../../utils/responsive';
 import ResponsiveContainer from '../common/ResponsiveContainer';
 import { ToastOptimized } from '../common/ToastOptimized';
 import LoadingSpinner from '../common/LoadingSpinner';
-
-import { 
-  sendVerificationEmail, 
-  verifyCode, 
-  resendVerificationCode,
-  generateVerificationCode
-} from '../../utils/emailService';
+import { EmailAuthService } from '../../services/emailAuthService';
 
 export const LoginScreen: React.FC = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLogin, setIsLogin] = useState(true);
   const [nickname, setNickname] = useState('');
   const [verificationCode, setVerificationCode] = useState('');
   const [showVerification, setShowVerification] = useState(false);
+  const [isSignup, setIsSignup] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' as 'success' | 'error' | 'info' | 'warning' });
-  const { signIn, signUp, loading, setUser, setSession } = useAuthStore();
+  const { loading, setUser } = useAuthStore();
 
   // Show toast message
   const showToast = (message: string, type: 'success' | 'error' | 'info' | 'warning' = 'info') => {
@@ -59,134 +52,110 @@ export const LoginScreen: React.FC = () => {
   // Validate form inputs
   const validateForm = () => {
     if (!email.trim()) {
-      showToast('Please enter your email', 'error');
+      showToast('请输入您的邮箱地址', 'error');
       return false;
     }
     if (!validateEmail(email)) {
-      showToast('Please enter a valid email address', 'error');
+      showToast('请输入有效的邮箱地址', 'error');
       return false;
     }
-    if (!password.trim()) {
-      showToast('Please enter your password', 'error');
-      return false;
-    }
-    if (!isLogin && !nickname.trim()) {
-      showToast('Please enter your nickname', 'error');
-      return false;
-    }
-    if (password.length < 6) {
-      showToast('Password must be at least 6 characters', 'error');
+    if (isSignup && !nickname.trim()) {
+      showToast('请输入您的昵称', 'error');
       return false;
     }
     return true;
   };
 
-
-
-  // Handle form submission for login/signup
-  const handleSubmit = async () => {
+  // Handle email submission
+  const handleSubmitEmail = async () => {
     if (!validateForm()) return;
 
     try {
-      if (isLogin) {
-        // For login, send verification code first
-        showToast('Sending verification code to your email...', 'info');
-        const code = generateVerificationCode();
-        const success = await sendVerificationEmail(email, code);
-        
-        if (success) {
-          showToast('Verification code sent to your email!', 'success');
-          setShowVerification(true);
-        } else {
-          showToast('Failed to send verification code. Please try again.', 'error');
-        }
-      } else {
-        // For signup, send verification email
-        const code = generateVerificationCode();
-        const success = await sendVerificationEmail(email, code);
-        if (success) {
-          setShowVerification(true);
-          showToast('Verification code sent to your email!', 'success');
-        } else {
-          showToast('Failed to send verification code. Please try again.', 'error');
+      showToast('正在发送验证码到您的邮箱...', 'info');
+      
+      // Check if user exists for login mode
+      if (!isSignup) {
+        const userExists = await EmailAuthService.checkUserExists(email);
+        if (!userExists) {
+          showToast('账户不存在，请先注册', 'error');
+          setIsSignup(true);
+          return;
         }
       }
+      
+      const success = await EmailAuthService.sendVerificationCode(email, nickname, isSignup);
+      
+      if (success) {
+        showToast('验证码已发送到您的邮箱！', 'success');
+        setShowVerification(true);
+      } else {
+        showToast('发送验证码失败，请重试。', 'error');
+      }
     } catch (error: any) {
-      console.error('Authentication error:', error);
-      const errorMessage = error?.message || 'Authentication failed. Please try again.';
-      showToast(errorMessage, 'error');
+      console.error('Email submission error:', error);
+      showToast('发送验证码失败，请重试。', 'error');
     }
   };
 
   // Handle verification code submission
   const handleVerification = async () => {
     if (!verificationCode.trim()) {
-      showToast('Please enter the verification code', 'error');
+      showToast('请输入验证码', 'error');
       return;
     }
 
     try {
-      // Verify the code using email service
-      const isValid = verifyCode(email, verificationCode);
-      if (isValid) {
-        if (isLogin) {
-          // For login, proceed with sign in
-          try {
-            await signIn(email, password);
-            showToast('Successfully signed in!', 'success');
-          } catch (error: any) {
-            showToast(error?.message || 'Login failed', 'error');
-          }
-        } else {
-          // For signup, create account
-          try {
-            await signUp(email, password, nickname);
-            showToast('Account created successfully!', 'success');
-          } catch (error: any) {
-            showToast(error?.message || 'Signup failed', 'error');
-          }
-        }
+      // Verify and authenticate using email auth service
+      const result = await EmailAuthService.verifyAndAuthenticate(verificationCode);
+      
+      if (result.user) {
+        // Set user in auth store
+        setUser(result.user);
+        showToast(isSignup ? '账户创建成功！' : '登录成功！', 'success');
         setShowVerification(false);
         setVerificationCode('');
       } else {
-        showToast('Invalid or expired verification code. Please try again.', 'error');
+        showToast(result.error || '验证失败，请重试。', 'error');
       }
     } catch (error: any) {
       console.error('Verification error:', error);
-      showToast('Verification failed. Please try again.', 'error');
+      showToast('验证失败，请重试。', 'error');
     }
   };
 
   // Handle resend verification code
   const handleResendCode = async () => {
     try {
-      const success = await resendVerificationCode(email);
+      const success = await EmailAuthService.sendVerificationCode(email, nickname, isSignup);
       if (success) {
-        showToast('Verification code resent to your email!', 'success');
+        showToast('验证码已重新发送到您的邮箱！', 'success');
       } else {
-        showToast('Failed to resend verification code. Please try again.', 'error');
+        showToast('重新发送验证码失败，请重试。', 'error');
       }
     } catch (error) {
       console.error('Resend error:', error);
-      showToast('Failed to resend verification code. Please try again.', 'error');
+      showToast('重新发送验证码失败，请重试。', 'error');
     }
   };
 
   // Clear form when switching between login/signup
   const handleToggleMode = () => {
-    setIsLogin(!isLogin);
+    setIsSignup(!isSignup);
     setEmail('');
-    setPassword('');
     setNickname('');
+    setVerificationCode('');
+    setShowVerification(false);
+  };
+
+  // Go back to email input
+  const handleBackToEmail = () => {
     setShowVerification(false);
     setVerificationCode('');
   };
 
-  // Handle back to signup form
-  const handleBackToSignup = () => {
-    setShowVerification(false);
-    setVerificationCode('');
-  };
+  if (loading) {
+    return <LoadingSpinner visible={true} />;
+  }
 
   return (
     <ResponsiveContainer>
@@ -194,122 +163,127 @@ export const LoginScreen: React.FC = () => {
         style={styles.container}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
-          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <Card style={styles.card}>
-            <Card.Content>
+          <Card style={[styles.card, shadowPresets.medium]}>
+            <Card.Content style={styles.cardContent}>
               <Title style={styles.title}>
-                {showVerification ? 'Verify Your Email' : (isLogin ? 'Welcome Back' : 'Join NomadNow')}
+                {isSignup ? '注册账户' : '邮箱登录'}
               </Title>
-              
               <Paragraph style={styles.subtitle}>
-                {showVerification 
-                  ? 'Enter the verification code sent to your email'
-                  : (isLogin 
-                    ? 'Sign in to continue your journey' 
-                    : 'Create your account to start exploring'
-                  )
+                {isSignup 
+                  ? '使用邮箱验证码创建您的账户' 
+                  : '输入邮箱地址，我们将发送验证码给您'
                 }
               </Paragraph>
 
-              {!showVerification && (
-                <>
-                  {/* Email/Password Form */}
+              {!showVerification ? (
+                // Email input form
+                <View style={styles.form}>
                   <TextInput
-                    label="Email"
+                    label="邮箱地址"
                     value={email}
                     onChangeText={setEmail}
                     mode="outlined"
                     keyboardType="email-address"
                     autoCapitalize="none"
+                    autoCorrect={false}
                     style={styles.input}
-                    outlineColor={colors.gray300}
-                    activeOutlineColor={colors.primary}
+                    theme={{ colors: { primary: colors.primary } }}
                   />
 
-                  <TextInput
-                    label="Password"
-                    value={password}
-                    onChangeText={setPassword}
-                    mode="outlined"
-                    secureTextEntry
-                    style={styles.input}
-                    outlineColor={colors.gray300}
-                    activeOutlineColor={colors.primary}
-                  />
-
-                  {!isLogin && (
+                  {isSignup && (
                     <TextInput
-                      label="Nickname"
+                      label="昵称"
                       value={nickname}
                       onChangeText={setNickname}
                       mode="outlined"
                       style={styles.input}
-                      outlineColor={colors.gray300}
-                      activeOutlineColor={colors.primary}
+                      theme={{ colors: { primary: colors.primary } }}
                     />
                   )}
 
                   <Button
                     mode="contained"
-                    onPress={handleSubmit}
-                    style={styles.submitButton}
-                    contentStyle={styles.submitButtonContent}
+                    onPress={handleSubmitEmail}
+                    style={styles.button}
+                    contentStyle={styles.buttonContent}
                     disabled={loading}
                   >
-                    {loading ? 'Processing...' : (isLogin ? 'Sign In' : 'Create Account')}
+                    {isSignup ? '发送验证码' : '发送验证码'}
                   </Button>
 
-                  <Button
-                    mode="text"
-                    onPress={handleToggleMode}
-                    style={styles.toggleButton}
+                  <Divider style={styles.divider} />
+
+                  <View style={styles.toggleContainer}>
+                    <Text style={styles.toggleText}>
+                      {isSignup ? '已有账户？' : '没有账户？'}
+                    </Text>
+                    <Button
+                      mode="text"
+                      onPress={handleToggleMode}
+                      style={styles.toggleButton}
+                    >
+                      {isSignup ? '立即登录' : '立即注册'}
+                    </Button>
+                  </View>
+                </View>
+              ) : (
+                // Verification code form
+                <View style={styles.form}>
+                  <Text style={styles.verificationText}>
+                    验证码已发送到：
+                  </Text>
+                  <Chip
+                    mode="outlined"
+                    style={styles.emailChip}
+                    textStyle={styles.emailChipText}
                   >
-                    {isLogin ? "Don't have an account? Sign Up" : 'Already have an account? Sign In'}
-                  </Button>
-                </>
-              )}
+                    {email}
+                  </Chip>
 
-              {showVerification && (
-                <>
                   <TextInput
-                    label="Verification Code"
+                    label="验证码"
                     value={verificationCode}
                     onChangeText={setVerificationCode}
                     mode="outlined"
                     keyboardType="numeric"
+                    maxLength={6}
                     style={styles.input}
-                    outlineColor={colors.gray300}
-                    activeOutlineColor={colors.primary}
+                    theme={{ colors: { primary: colors.primary } }}
                   />
 
                   <Button
                     mode="contained"
                     onPress={handleVerification}
-                    style={styles.submitButton}
-                    contentStyle={styles.submitButtonContent}
+                    style={styles.button}
+                    contentStyle={styles.buttonContent}
+                    disabled={loading || !verificationCode.trim()}
                   >
-                    Verify Code
+                    {isSignup ? '创建账户' : '登录'}
                   </Button>
 
-                  <Button
-                    mode="text"
-                    onPress={handleResendCode}
-                    style={styles.resendButton}
-                  >
-                    Resend Code
-                  </Button>
-
-                  <Button
-                    mode="text"
-                    onPress={handleBackToSignup}
-                    style={styles.backButton}
-                  >
-                    Back to Sign Up
-                  </Button>
-                </>
+                  <View style={styles.verificationActions}>
+                    <Button
+                      mode="text"
+                      onPress={handleResendCode}
+                      style={styles.actionButton}
+                      disabled={loading}
+                    >
+                      重新发送验证码
+                    </Button>
+                    <Button
+                      mode="text"
+                      onPress={handleBackToEmail}
+                      style={styles.actionButton}
+                      disabled={loading}
+                    >
+                      返回修改邮箱
+                    </Button>
+                  </View>
+                </View>
               )}
             </Card.Content>
           </Card>
@@ -319,10 +293,8 @@ export const LoginScreen: React.FC = () => {
           visible={toast.visible}
           message={toast.message}
           type={toast.type}
-          onHide={hideToast}
+          onDismiss={hideToast}
         />
-
-        <LoadingSpinner visible={loading} />
       </KeyboardAvoidingView>
     </ResponsiveContainer>
   );
@@ -331,57 +303,84 @@ export const LoginScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.gray50,
+    backgroundColor: colors.background,
   },
   scrollContent: {
     flexGrow: 1,
     justifyContent: 'center',
-    padding: spacing.base,
+    padding: spacing.lg,
   },
   card: {
-    ...shadowPresets.medium,
-    borderRadius: borderRadius.xl,
-    backgroundColor: colors.white,
+    borderRadius: borderRadius.lg,
+    backgroundColor: colors.surface,
+  },
+  cardContent: {
+    padding: spacing.lg,
   },
   title: {
-    fontSize: 28,
-    fontWeight: '800',
     textAlign: 'center',
     marginBottom: spacing.sm,
     color: colors.textPrimary,
-    letterSpacing: -0.5,
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   subtitle: {
-    fontSize: 16,
     textAlign: 'center',
     marginBottom: spacing.lg,
     color: colors.textSecondary,
-    fontWeight: '500',
+    fontSize: 16,
+  },
+  form: {
+    gap: spacing.base,
   },
   input: {
-    marginBottom: spacing.base,
-    backgroundColor: colors.white,
+    marginBottom: spacing.sm,
   },
-  submitButton: {
-    marginTop: spacing.sm,
-    paddingVertical: spacing.sm,
-    borderRadius: borderRadius.lg,
-    backgroundColor: colors.primary,
+  button: {
+    marginTop: spacing.base,
+    borderRadius: borderRadius.base,
   },
-  submitButtonContent: {
+  buttonContent: {
     paddingVertical: spacing.sm,
+  },
+  divider: {
+    marginVertical: spacing.lg,
+  },
+  toggleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  toggleText: {
+    color: colors.textSecondary,
+    fontSize: 16,
   },
   toggleButton: {
-    marginTop: spacing.sm,
-    paddingVertical: spacing.sm,
+    margin: 0,
+    padding: 0,
   },
-
-  resendButton: {
-    marginTop: spacing.sm,
-    paddingVertical: spacing.sm,
+  verificationText: {
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+    color: colors.textSecondary,
+    fontSize: 16,
   },
-  backButton: {
-    marginTop: spacing.sm,
-    paddingVertical: spacing.sm,
+  emailChip: {
+    alignSelf: 'center',
+    marginBottom: spacing.base,
+  },
+  emailChipText: {
+    color: colors.primary,
+    fontWeight: '500',
+  },
+  verificationActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: spacing.base,
+  },
+  actionButton: {
+    flex: 1,
+    marginHorizontal: spacing.sm,
   },
 }); 
