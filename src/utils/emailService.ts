@@ -16,7 +16,7 @@ const emailConfig: EmailConfig = {
   smtpPort: parseInt(process.env.EXPO_PUBLIC_SMTP_PORT || '587'),
   smtpUser: process.env.EXPO_PUBLIC_SMTP_USER || '',
   smtpPass: process.env.EXPO_PUBLIC_SMTP_PASS || '',
-  fromEmail: process.env.EXPO_PUBLIC_FROM_EMAIL || 'noreply@nomadnow.com',
+  fromEmail: process.env.EXPO_PUBLIC_FROM_EMAIL || 'noreply@nomad.now',
   fromName: process.env.EXPO_PUBLIC_FROM_NAME || 'NomadNow',
 };
 
@@ -45,7 +45,7 @@ const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string)
     // Primary: SMTP via backend API
     if (emailConfig.smtpUser && emailConfig.smtpPass) {
       try {
-        const smtpResponse = await fetch('http://smtp-server:3001/api/send-smtp-email', {
+        const smtpResponse = await fetch('http://localhost:3001/api/send-smtp-email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

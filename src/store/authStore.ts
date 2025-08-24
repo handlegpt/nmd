@@ -15,7 +15,7 @@ interface AuthStore extends AuthState {
 // Default user data for when user signs in
 const defaultUser: User = {
   id: 'default-user-id',
-  email: 'user@nomadnow.com',
+  email: 'user@nomad.now',
   nickname: 'Nomad User',
   avatar_url: 'https://via.placeholder.com/80x80/2196f3/ffffff?text=N',
   bio: 'Digital nomad exploring the world!',
