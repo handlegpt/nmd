@@ -45,7 +45,7 @@ const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string)
     // Primary: SMTP via backend API
     if (emailConfig.smtpUser && emailConfig.smtpPass) {
       try {
-        const smtpResponse = await fetch('http://localhost:3001/api/send-smtp-email', {
+        const smtpResponse = await fetch('http://smtp-server:3001/api/send-smtp-email', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
