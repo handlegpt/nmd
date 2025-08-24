@@ -30,6 +30,15 @@ console.log('📧 Email config loaded:', {
   fromName: emailConfig.fromName
 });
 
+// Debug: Log raw environment variables
+console.log('📧 Raw environment variables:');
+console.log('EXPO_PUBLIC_SMTP_HOST:', process.env.EXPO_PUBLIC_SMTP_HOST);
+console.log('EXPO_PUBLIC_SMTP_PORT:', process.env.EXPO_PUBLIC_SMTP_PORT);
+console.log('EXPO_PUBLIC_SMTP_USER:', process.env.EXPO_PUBLIC_SMTP_USER ? 'Set' : 'Missing');
+console.log('EXPO_PUBLIC_SMTP_PASS:', process.env.EXPO_PUBLIC_SMTP_PASS ? 'Set' : 'Missing');
+console.log('EXPO_PUBLIC_FROM_EMAIL:', process.env.EXPO_PUBLIC_FROM_EMAIL);
+console.log('EXPO_PUBLIC_FROM_NAME:', process.env.EXPO_PUBLIC_FROM_NAME);
+
 // Simple email sending function using SMTP or EmailJS
 const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
   try {
