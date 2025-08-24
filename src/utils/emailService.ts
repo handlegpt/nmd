@@ -30,38 +30,10 @@ console.log('📧 Email config loaded:', {
   fromName: emailConfig.fromName
 });
 
-// Simple email sending function using SendGrid API or SMTP
+// Simple email sending function using SMTP or EmailJS
 const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
   try {
-    const sendGridApiKey = process.env.EXPO_PUBLIC_SENDGRID_API_KEY;
-    
-    if (sendGridApiKey) {
-      // Use SendGrid API (recommended for production)
-      const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${sendGridApiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          personalizations: [{ to: [{ email: to }] }],
-          from: { email: emailConfig.fromEmail, name: emailConfig.fromName },
-          subject: subject,
-          content: [{ type: 'text/html', value: htmlContent }]
-        })
-      });
-      
-      if (sendGridResponse.ok) {
-        console.log('📧 Email sent via SendGrid successfully');
-        return true;
-      } else {
-        const errorText = await sendGridResponse.text();
-        console.error('📧 SendGrid error:', errorText);
-        return false;
-      }
-    }
-    
-    // Fallback: SMTP via backend API
+    // Primary: SMTP via backend API
     if (emailConfig.smtpUser && emailConfig.smtpPass) {
       try {
         const smtpResponse = await fetch('http://localhost:3001/api/send-smtp-email', {
@@ -143,7 +115,6 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
     verificationCodes.set(email, { code, expiresAt });
 
     // Check if email configuration is set up
-    const hasSendGrid = process.env.EXPO_PUBLIC_SENDGRID_API_KEY;
     const hasSMTP = emailConfig.smtpUser && emailConfig.smtpPass;
     const hasEmailJS = process.env.EXPO_PUBLIC_EMAILJS_SERVICE_ID;
     
@@ -151,12 +122,11 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
     console.log('📧 Email configuration debug:');
     console.log('📧 SMTP User:', emailConfig.smtpUser ? 'Set' : 'Missing');
     console.log('📧 SMTP Pass:', emailConfig.smtpPass ? 'Set' : 'Missing');
-    console.log('📧 SendGrid API Key:', hasSendGrid ? 'Set' : 'Missing');
     console.log('📧 EmailJS Service ID:', hasEmailJS ? 'Set' : 'Missing');
     console.log('📧 Has SMTP:', hasSMTP);
     
-    if (!hasSendGrid && !hasSMTP && !hasEmailJS) {
-      console.error('Email service not configured. Please set up SendGrid API key, SMTP credentials, or EmailJS in .env file');
+    if (!hasSMTP && !hasEmailJS) {
+      console.error('Email service not configured. Please set up SMTP credentials or EmailJS in .env file');
       return false;
     }
 
