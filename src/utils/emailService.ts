@@ -14,18 +14,20 @@ const emailConfig: EmailConfig = {
   fromName: process.env.EXPO_PUBLIC_FROM_NAME || 'NomadNow',
 };
 
-// Debug: Log email configuration on load
-console.log('📧 Email config loaded:', {
-  resendApiKey: emailConfig.resendApiKey ? 'Set' : 'Missing',
-  resendFrom: emailConfig.resendFrom,
-  fromName: emailConfig.fromName
-});
+// Debug: Log email configuration on load (only in development)
+if (process.env.NODE_ENV === 'development') {
+  console.log('📧 Email config loaded:', {
+    resendApiKey: emailConfig.resendApiKey ? 'Set' : 'Missing',
+    resendFrom: emailConfig.resendFrom,
+    fromName: emailConfig.fromName
+  });
 
-// Debug: Log raw environment variables
-console.log('📧 Raw environment variables:');
-console.log('EXPO_PUBLIC_RESEND_API_KEY:', emailConfig.resendApiKey ? 'Set' : 'Missing');
-console.log('EXPO_PUBLIC_RESEND_FROM:', emailConfig.resendFrom);
-console.log('EXPO_PUBLIC_FROM_NAME:', emailConfig.fromName);
+  // Debug: Log raw environment variables
+  console.log('📧 Raw environment variables:');
+  console.log('EXPO_PUBLIC_RESEND_API_KEY:', emailConfig.resendApiKey ? 'Set' : 'Missing');
+  console.log('EXPO_PUBLIC_RESEND_FROM:', emailConfig.resendFrom);
+  console.log('EXPO_PUBLIC_FROM_NAME:', emailConfig.fromName);
+}
 
 // Send email using Resend API
 const sendEmailViaResend = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
@@ -51,7 +53,9 @@ const sendEmailViaResend = async (to: string, subject: string, htmlContent: stri
 
     if (response.ok) {
       const result = await response.json();
-      console.log('📧 Email sent via Resend successfully:', result.id);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('📧 Email sent via Resend successfully:', result.id);
+      }
       return true;
     } else {
       const error = await response.text();
@@ -81,11 +85,16 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
 
     // Check if Resend is configured
     if (!emailConfig.resendApiKey) {
-      console.error('Email service not configured. Please set up Resend API key in .env file');
-      // Fallback: Log to console for development
-      console.log('📧 Development mode - Email would be sent to:', email);
-      console.log('📧 Verification code for development:', code);
-      return true; // Return true in development mode
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Email service not configured. Please set up Resend API key in .env file');
+        // Fallback: Log to console for development
+        console.log('📧 Development mode - Email would be sent to:', email);
+        console.log('📧 Verification code for development:', code);
+        return true; // Return true in development mode
+      } else {
+        console.error('Email service not configured. Please set up Resend API key in production');
+        return false; // Return false in production
+      }
     }
 
     // Create email content
@@ -128,7 +137,9 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
     const success = await sendEmailViaResend(email, subject, emailContent);
     
     if (success) {
-      console.log(`📧 Verification email sent successfully to: ${email}`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`📧 Verification email sent successfully to: ${email}`);
+      }
     } else {
       console.error(`📧 Failed to send verification email to: ${email}`);
     }
