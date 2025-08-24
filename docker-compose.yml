@@ -1,19 +1,4 @@
 services:
-  smtp-server:
-    build:
-      context: .
-      dockerfile: Dockerfile.smtp
-    container_name: nomadnow-smtp
-    restart: unless-stopped
-    ports:
-      - "3001:3001"
-    env_file:
-      - .env
-    environment:
-      - NODE_ENV=production
-    networks:
-      - nomadnow-network
-
   nomadnow:
     build:
       context: .
