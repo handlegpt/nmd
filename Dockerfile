@@ -55,9 +55,7 @@ ENV EXPO_WEB_COMPRESS=true
 ENV EXPO_WEB_GZIP=true
 
 # Set default email configuration (can be overridden with --build-arg)
-ENV EXPO_PUBLIC_SMTP_HOST=smtp.gmail.com
-ENV EXPO_PUBLIC_SMTP_PORT=587
-ENV EXPO_PUBLIC_FROM_EMAIL=noreply@nomad.now
+ENV EXPO_PUBLIC_RESEND_FROM=noreply@nomad.now
 ENV EXPO_PUBLIC_FROM_NAME=NomadNow
 
 # Build the production web app with webpack

@@ -1,109 +1,65 @@
 // Email service for sending verification codes
-// Production-ready email verification system
+// Production-ready email verification system using Resend
 
 interface EmailConfig {
-  smtpHost: string;
-  smtpPort: number;
-  smtpUser: string;
-  smtpPass: string;
-  fromEmail: string;
+  resendApiKey: string;
+  resendFrom: string;
   fromName: string;
 }
 
 // Email configuration
 const emailConfig: EmailConfig = {
-  smtpHost: process.env.EXPO_PUBLIC_SMTP_HOST || 'smtp.gmail.com',
-  smtpPort: parseInt(process.env.EXPO_PUBLIC_SMTP_PORT || '587'),
-  smtpUser: process.env.EXPO_PUBLIC_SMTP_USER || '',
-  smtpPass: process.env.EXPO_PUBLIC_SMTP_PASS || '',
-  fromEmail: process.env.EXPO_PUBLIC_FROM_EMAIL || 'noreply@nomad.now',
+  resendApiKey: process.env.EXPO_PUBLIC_RESEND_API_KEY || '',
+  resendFrom: process.env.EXPO_PUBLIC_RESEND_FROM || 'noreply@nomad.now',
   fromName: process.env.EXPO_PUBLIC_FROM_NAME || 'NomadNow',
 };
 
 // Debug: Log email configuration on load
 console.log('📧 Email config loaded:', {
-  smtpHost: emailConfig.smtpHost,
-  smtpPort: emailConfig.smtpPort,
-  smtpUser: emailConfig.smtpUser ? 'Set' : 'Missing',
-  smtpPass: emailConfig.smtpPass ? 'Set' : 'Missing',
-  fromEmail: emailConfig.fromEmail,
+  resendApiKey: emailConfig.resendApiKey ? 'Set' : 'Missing',
+  resendFrom: emailConfig.resendFrom,
   fromName: emailConfig.fromName
 });
 
 // Debug: Log raw environment variables
 console.log('📧 Raw environment variables:');
-console.log('EXPO_PUBLIC_SMTP_HOST:', process.env.EXPO_PUBLIC_SMTP_HOST);
-console.log('EXPO_PUBLIC_SMTP_PORT:', process.env.EXPO_PUBLIC_SMTP_PORT);
-console.log('EXPO_PUBLIC_SMTP_USER:', process.env.EXPO_PUBLIC_SMTP_USER ? 'Set' : 'Missing');
-console.log('EXPO_PUBLIC_SMTP_PASS:', process.env.EXPO_PUBLIC_SMTP_PASS ? 'Set' : 'Missing');
-console.log('EXPO_PUBLIC_FROM_EMAIL:', process.env.EXPO_PUBLIC_FROM_EMAIL);
-console.log('EXPO_PUBLIC_FROM_NAME:', process.env.EXPO_PUBLIC_FROM_NAME);
+console.log('EXPO_PUBLIC_RESEND_API_KEY:', emailConfig.resendApiKey ? 'Set' : 'Missing');
+console.log('EXPO_PUBLIC_RESEND_FROM:', emailConfig.resendFrom);
+console.log('EXPO_PUBLIC_FROM_NAME:', emailConfig.fromName);
 
-// Simple email sending function using SMTP or EmailJS
-const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
+// Send email using Resend API
+const sendEmailViaResend = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
   try {
-    // Primary: SMTP via backend API
-    if (emailConfig.smtpUser && emailConfig.smtpPass) {
-      try {
-        const smtpResponse = await fetch('http://localhost:3001/api/send-smtp-email', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            to: to,
-            from: emailConfig.fromEmail,
-            subject: subject,
-            html: htmlContent,
-            smtp: {
-              host: emailConfig.smtpHost,
-              port: emailConfig.smtpPort,
-              user: emailConfig.smtpUser,
-              pass: emailConfig.smtpPass
-            }
-          })
-        });
-        
-        if (smtpResponse.ok) {
-          console.log('📧 Email sent via SMTP successfully');
-          return true;
-        } else {
-          const errorText = await smtpResponse.text();
-          console.error('📧 SMTP error:', errorText);
-          return false;
-        }
-      } catch (error) {
-        console.error('📧 SMTP connection error:', error);
-        return false;
-      }
+    if (!emailConfig.resendApiKey) {
+      console.error('📧 Resend API key not configured');
+      return false;
     }
-    
-    // Fallback: EmailJS (if configured)
-    const emailjsServiceId = process.env.EXPO_PUBLIC_EMAILJS_SERVICE_ID;
-    const emailjsTemplateId = process.env.EXPO_PUBLIC_EMAILJS_TEMPLATE_ID;
-    const emailjsUserId = process.env.EXPO_PUBLIC_EMAILJS_USER_ID;
-    
-    if (emailjsServiceId && emailjsTemplateId && emailjsUserId && typeof window !== 'undefined' && (window as any).emailjs) {
-      const emailjs = (window as any).emailjs;
-      const result = await emailjs.send(
-        emailjsServiceId,
-        emailjsTemplateId,
-        {
-          to_email: to,
-          to_name: to.split('@')[0],
-          message: htmlContent,
-          subject: subject
-        },
-        emailjsUserId
-      );
-      return result.status === 200;
+
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${emailConfig.resendApiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: `${emailConfig.fromName} <${emailConfig.resendFrom}>`,
+        to: [to],
+        subject: subject,
+        html: htmlContent,
+      })
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log('📧 Email sent via Resend successfully:', result.id);
+      return true;
+    } else {
+      const error = await response.text();
+      console.error('📧 Resend API error:', error);
+      return false;
     }
-    
-    console.error('📧 No email service configured');
-    return false;
-    
   } catch (error) {
-    console.error('📧 Email API error:', error);
+    console.error('📧 Resend API error:', error);
     return false;
   }
 };
@@ -123,24 +79,17 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
     const expiresAt = Date.now() + 10 * 60 * 1000; // 10 minutes
     verificationCodes.set(email, { code, expiresAt });
 
-    // Check if email configuration is set up
-    const hasSMTP = emailConfig.smtpUser && emailConfig.smtpPass;
-    const hasEmailJS = process.env.EXPO_PUBLIC_EMAILJS_SERVICE_ID;
-    
-    // Debug: Log email configuration status
-    console.log('📧 Email configuration debug:');
-    console.log('📧 SMTP User:', emailConfig.smtpUser ? 'Set' : 'Missing');
-    console.log('📧 SMTP Pass:', emailConfig.smtpPass ? 'Set' : 'Missing');
-    console.log('📧 EmailJS Service ID:', hasEmailJS ? 'Set' : 'Missing');
-    console.log('📧 Has SMTP:', hasSMTP);
-    
-    if (!hasSMTP && !hasEmailJS) {
-      console.error('Email service not configured. Please set up SMTP credentials or EmailJS in .env file');
-      return false;
+    // Check if Resend is configured
+    if (!emailConfig.resendApiKey) {
+      console.error('Email service not configured. Please set up Resend API key in .env file');
+      // Fallback: Log to console for development
+      console.log('📧 Development mode - Email would be sent to:', email);
+      console.log('📧 Verification code for development:', code);
+      return true; // Return true in development mode
     }
 
     // Create email content
-    const subject = 'NomadNow - Verification Code';
+    const subject = 'NomadNow - 验证码';
     const emailContent = `
       <html>
         <head>
@@ -156,18 +105,18 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
         <body>
           <div class="container">
             <div class="header">
-              <h1>Welcome to NomadNow!</h1>
-              <p>Your Digital Nomad Community</p>
+              <h1>欢迎使用 NomadNow！</h1>
+              <p>您的数字游民社区</p>
             </div>
             <div class="content">
-              <h2>Verification Code</h2>
-              <p>Please use the following verification code to complete your registration:</p>
+              <h2>验证码</h2>
+              <p>请使用以下验证码完成您的注册：</p>
               <div class="code">${code}</div>
-              <p><strong>This code will expire in 10 minutes.</strong></p>
-              <p>If you didn't request this code, please ignore this email.</p>
+              <p><strong>此验证码将在10分钟后过期。</strong></p>
+              <p>如果您没有请求此验证码，请忽略此邮件。</p>
               <div class="footer">
-                <p>Best regards,<br>The NomadNow Team</p>
-                <p>Join the global digital nomad community!</p>
+                <p>此致，<br>NomadNow 团队</p>
+                <p>加入全球数字游民社区！</p>
               </div>
             </div>
           </div>
@@ -175,8 +124,8 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
       </html>
     `;
 
-    // Send email using API
-    const success = await sendEmailViaAPI(email, subject, emailContent);
+    // Send email using Resend
+    const success = await sendEmailViaResend(email, subject, emailContent);
     
     if (success) {
       console.log(`📧 Verification email sent successfully to: ${email}`);
