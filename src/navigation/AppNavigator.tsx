@@ -17,6 +17,7 @@ import { ActivityScreen } from '../components/activities/ActivityScreen';
 import { CityScreen } from '../components/cities/CityScreen';
 import { ProfileScreen } from '../components/profile/ProfileScreen';
 import { LoginScreen } from '../components/auth/LoginScreen';
+import { EmailLoginScreen } from '../components/auth/EmailLoginScreen';
 import NotificationScreen from '../components/notifications/NotificationScreen';
 import { SettingsScreen } from '../components/settings/SettingsScreen';
 import { ChatScreen } from '../components/chat/ChatScreen';
@@ -191,6 +192,21 @@ const AppNavigator = () => {
           options={{ 
             headerShown: true,
             title: 'Sign In',
+            headerStyle: {
+              backgroundColor: colors.primary,
+            },
+            headerTintColor: colors.white,
+            headerTitleStyle: {
+              fontWeight: 'bold',
+            },
+          }}
+        />
+        <Stack.Screen 
+          name="EmailLogin" 
+          component={EmailLoginScreen}
+          options={{ 
+            headerShown: true,
+            title: '邮箱登录',
             headerStyle: {
               backgroundColor: colors.primary,
             },
