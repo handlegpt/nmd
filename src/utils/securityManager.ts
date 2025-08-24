@@ -147,7 +147,9 @@ export class SecurityManager {
         'wss://*.supabase.co',
         'https://nominatim.openstreetmap.org',
         'https://*.openstreetmap.org',
-        'https://api.resend.com'
+        'https://api.resend.com',
+        'http://localhost:3002',
+        'https://nomadnow.app:3002'
       ],
       'media-src': [
         "'self'",

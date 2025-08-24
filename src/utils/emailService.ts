@@ -29,41 +29,39 @@ if (process.env.NODE_ENV === 'development') {
   console.log('EXPO_PUBLIC_FROM_NAME:', emailConfig.fromName);
 }
 
-// Send email using Resend API
-const sendEmailViaResend = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
+// Send email using our backend API (to avoid CORS issues)
+const sendEmailViaAPI = async (to: string, subject: string, htmlContent: string): Promise<boolean> => {
   try {
-    if (!emailConfig.resendApiKey) {
-      console.error('📧 Resend API key not configured');
-      return false;
-    }
+    // Use our backend API instead of calling Resend directly
+    const apiUrl = process.env.NODE_ENV === 'development' 
+      ? 'http://localhost:3002/api/send-email'
+      : 'https://nomadnow.app:3002/api/send-email';
 
-    const response = await fetch('https://api.resend.com/emails', {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${emailConfig.resendApiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: `${emailConfig.fromName} <${emailConfig.resendFrom}>`,
-        to: [to],
-        subject: subject,
-        html: htmlContent,
+        to,
+        subject,
+        htmlContent,
       })
     });
 
     if (response.ok) {
       const result = await response.json();
       if (process.env.NODE_ENV === 'development') {
-        console.log('📧 Email sent via Resend successfully:', result.id);
+        console.log('📧 Email sent via API successfully:', result.messageId);
       }
       return true;
     } else {
       const error = await response.text();
-      console.error('📧 Resend API error:', error);
+      console.error('📧 Email API error:', error);
       return false;
     }
   } catch (error) {
-    console.error('📧 Resend API error:', error);
+    console.error('📧 Email API error:', error);
     return false;
   }
 };
@@ -133,8 +131,8 @@ export const sendVerificationEmail = async (email: string, code: string): Promis
       </html>
     `;
 
-    // Send email using Resend
-    const success = await sendEmailViaResend(email, subject, emailContent);
+    // Send email using our API
+    const success = await sendEmailViaAPI(email, subject, emailContent);
     
     if (success) {
       if (process.env.NODE_ENV === 'development') {

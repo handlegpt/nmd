@@ -1,4 +1,26 @@
 services:
+  email-api:
+    build:
+      context: .
+      dockerfile: Dockerfile.email-api
+      args:
+        EXPO_PUBLIC_RESEND_API_KEY: ${EXPO_PUBLIC_RESEND_API_KEY}
+        EXPO_PUBLIC_RESEND_FROM: ${EXPO_PUBLIC_RESEND_FROM}
+        EXPO_PUBLIC_FROM_NAME: ${EXPO_PUBLIC_FROM_NAME}
+    container_name: nomadnow-email-api
+    restart: unless-stopped
+    ports:
+      - "3002:3002"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - EXPO_PUBLIC_RESEND_API_KEY=${EXPO_PUBLIC_RESEND_API_KEY}
+      - EXPO_PUBLIC_RESEND_FROM=${EXPO_PUBLIC_RESEND_FROM}
+      - EXPO_PUBLIC_FROM_NAME=${EXPO_PUBLIC_FROM_NAME}
+    networks:
+      - nomadnow-network
+
   nomadnow:
     build:
       context: .

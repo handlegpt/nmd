@@ -1,0 +1,40 @@
+# Use Node.js 18 Alpine image for smaller size and security
+FROM node:18-alpine
+
+# Install system dependencies
+RUN apk add --no-cache curl
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies
+RUN npm ci --only=production && npm cache clean --force
+
+# Copy server files
+COPY server/ ./server/
+
+# Set production environment variables
+ENV NODE_ENV=production
+
+# Pass Resend configuration as build arguments
+ARG EXPO_PUBLIC_RESEND_API_KEY
+ARG EXPO_PUBLIC_RESEND_FROM
+ARG EXPO_PUBLIC_FROM_NAME
+
+# Set environment variables
+ENV EXPO_PUBLIC_RESEND_API_KEY=$EXPO_PUBLIC_RESEND_API_KEY
+ENV EXPO_PUBLIC_RESEND_FROM=$EXPO_PUBLIC_RESEND_FROM
+ENV EXPO_PUBLIC_FROM_NAME=$EXPO_PUBLIC_FROM_NAME
+
+# Expose port
+EXPOSE 3002
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3002/health || exit 1
+
+# Start the email API server
+CMD ["node", "server/email-api.js"]
