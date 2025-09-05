@@ -40,16 +40,16 @@ services:
     environment:
       KEY: "${KEY}"
       SECRET: "${SECRET}"
-      # Local PostgreSQL database configuration for Directus
+      # Supabase PostgreSQL database configuration for Directus
       DB_CLIENT: "pg"
-      # Local PostgreSQL connection settings
-      DB_HOST: "postgres"
-      DB_PORT: "5432"
-      DB_DATABASE: "directus"
-      DB_USER: "directus"
+      # Supabase connection settings
+      DB_HOST: "${DB_HOST:-db.xdpjstyoeqgvaacduzdw.supabase.co}"
+      DB_PORT: "${DB_PORT:-5432}"
+      DB_DATABASE: "${DB_DATABASE:-postgres}"
+      DB_USER: "${DB_USER:-postgres.xdpjstyoeqgvaacduzdw}"
       DB_PASSWORD: "${DB_PASSWORD}"
-      # SSL configuration
-      DB_SSL: "false"
+      # SSL configuration for Supabase
+      DB_SSL: "true"
       DB_SSL_REJECT_UNAUTHORIZED: "false"
       # Minimal connection pool to avoid timeouts
       DB_POOL_MIN: "1"
@@ -75,8 +75,6 @@ services:
       - directus_uploads:/directus/uploads
       - directus_snapshots:/directus/snapshots
     depends_on:
-      postgres:
-        condition: service_healthy
       redis:
         condition: service_healthy
     # Enhanced network configuration for better DNS resolution
@@ -90,25 +88,6 @@ services:
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8055/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-    networks:
-      - nomad-network
-
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: nomad-postgres
-    environment:
-      POSTGRES_DB: directus
-      POSTGRES_USER: directus
-      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U directus -d directus"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -137,5 +116,4 @@ networks:
 volumes:
   directus_uploads:
   directus_snapshots:
-  postgres_data:
   redis_data: 
