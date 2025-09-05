@@ -48,12 +48,9 @@ services:
       DB_DATABASE: "${DB_DATABASE:-postgres}"
       DB_USER: "${DB_USER:-postgres.xdpjstyoeqgvaacduzdw}"
       DB_PASSWORD: "${DB_PASSWORD}"
-      # SSL configuration for Supabase (accept self-signed certificates)
-      DB_SSL: "true"
+      # SSL configuration for Supabase (disable SSL for connection pooler)
+      DB_SSL: "false"
       DB_SSL_REJECT_UNAUTHORIZED: "false"
-      DB_SSL_CA: ""
-      DB_SSL_CERT: ""
-      DB_SSL_KEY: ""
       # Minimal connection pool to avoid timeouts
       DB_POOL_MIN: "1"
       DB_POOL_MAX: "1"
