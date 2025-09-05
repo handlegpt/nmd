@@ -19,6 +19,21 @@
   },
 
   "home": {
+    "placeCategories": {
+      "cafe": "カフェ",
+      "coworking": "コワーキング",
+      "coliving": "コリビング",
+      "restaurant": "レストラン",
+      "hospital": "病院",
+      "pharmacy": "薬局",
+      "hotel": "ホテル",
+      "transport": "交通",
+      "shopping": "ショッピング",
+      "bank": "銀行",
+      "park": "公園",
+      "library": "図書館",
+      "other": "その他"
+    },
     "localNomads": {
       "title": "ローカルノマド",
       "description": "あなたの地域でコーヒーを通じて他のノマドとつながりましょう",

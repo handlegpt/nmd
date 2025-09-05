@@ -925,7 +925,7 @@ export default function HomeLocalNomads({
               <div>
                 <h3 className="text-sm font-medium text-green-900 dark:text-green-100 flex items-center">
                   <span className="text-lg mr-2">🌟</span>
-                  Trust & Response: 94% 请求获回应
+                  {t('localNomads.trustAndResponse')}: 94% {t('localNomads.requestsGetResponse')}
                 </h3>
                 <p className="text-sm text-green-700 dark:text-green-300">
                   {t('localNomads.recent30DaysData')} • {t('localNomads.basedOnRealRequests', { count: totalUsers.toString() })}
@@ -933,7 +933,7 @@ export default function HomeLocalNomads({
               </div>
               <div className="text-right">
                 <div className="text-2xl font-bold text-green-600 dark:text-green-400">94%</div>
-                <div className="text-xs text-green-600 dark:text-green-400">成功率</div>
+                <div className="text-xs text-green-600 dark:text-green-400">{t('localNomads.successRate')}</div>
               </div>
             </div>
           </div>

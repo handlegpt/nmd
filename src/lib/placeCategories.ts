@@ -10,106 +10,106 @@ export interface PlaceCategory {
 export const PLACE_CATEGORIES: PlaceCategory[] = [
   {
     id: 'cafe',
-    name: '咖啡店',
+    name: 'Cafe',
     icon: '☕',
     color: 'bg-orange-100 text-orange-700',
-    description: '适合工作的咖啡店',
+    description: 'Work-friendly cafes',
     translationKey: 'home.placeCategories.cafe'
   },
   {
     id: 'coworking',
-    name: '联合办公',
+    name: 'Coworking',
     icon: '💻',
     color: 'bg-blue-100 text-blue-700',
-    description: '专业的联合办公空间',
+    description: 'Professional coworking spaces',
     translationKey: 'home.placeCategories.coworking'
   },
   {
     id: 'coliving',
-    name: '共居空间',
+    name: 'Coliving',
     icon: '🏠',
     color: 'bg-green-100 text-green-700',
-    description: '数字游民住宿',
+    description: 'Digital nomad accommodation',
     translationKey: 'home.placeCategories.coliving'
   },
   {
     id: 'restaurant',
-    name: '餐厅',
+    name: 'Restaurant',
     icon: '🍽',
     color: 'bg-red-100 text-red-700',
-    description: '美食餐厅',
+    description: 'Food and dining',
     translationKey: 'home.placeCategories.restaurant'
   },
   {
     id: 'hospital',
-    name: '医院',
+    name: 'Hospital',
     icon: '🏥',
     color: 'bg-red-100 text-red-700',
-    description: '医疗设施',
+    description: 'Medical facilities',
     translationKey: 'home.placeCategories.hospital'
   },
   {
     id: 'pharmacy',
-    name: '药店',
+    name: 'Pharmacy',
     icon: '💊',
     color: 'bg-green-100 text-green-700',
-    description: '药店和诊所',
+    description: 'Pharmacies and clinics',
     translationKey: 'home.placeCategories.pharmacy'
   },
   {
     id: 'hotel',
-    name: '酒店',
+    name: 'Hotel',
     icon: '🏨',
     color: 'bg-purple-100 text-purple-700',
-    description: '酒店和旅馆',
+    description: 'Hotels and hostels',
     translationKey: 'home.placeCategories.hotel'
   },
   {
     id: 'transport',
-    name: '交通',
+    name: 'Transport',
     icon: '🚇',
     color: 'bg-yellow-100 text-yellow-700',
-    description: '公交、地铁站',
+    description: 'Public transport stations',
     translationKey: 'home.placeCategories.transport'
   },
   {
     id: 'shopping',
-    name: '购物',
+    name: 'Shopping',
     icon: '🛒',
     color: 'bg-pink-100 text-pink-700',
-    description: '超市、商场',
+    description: 'Supermarkets and malls',
     translationKey: 'home.placeCategories.shopping'
   },
   {
     id: 'bank',
-    name: '银行',
+    name: 'Bank',
     icon: '🏦',
     color: 'bg-gray-100 text-gray-700',
-    description: '银行和金融服务',
+    description: 'Banking and financial services',
     translationKey: 'home.placeCategories.bank'
   },
   {
     id: 'park',
-    name: '公园',
+    name: 'Park',
     icon: '🌳',
     color: 'bg-green-100 text-green-700',
-    description: '公园和休闲场所',
+    description: 'Parks and recreational areas',
     translationKey: 'home.placeCategories.park'
   },
   {
     id: 'library',
-    name: '图书馆',
+    name: 'Library',
     icon: '📚',
     color: 'bg-indigo-100 text-indigo-700',
-    description: '图书馆和学习空间',
+    description: 'Libraries and study spaces',
     translationKey: 'home.placeCategories.library'
   },
   {
     id: 'other',
-    name: '其他',
+    name: 'Other',
     icon: '📍',
     color: 'bg-gray-100 text-gray-700',
-    description: '其他场所',
+    description: 'Other places',
     translationKey: 'home.placeCategories.other'
   }
 ]

@@ -273,7 +273,7 @@ export default function HomePlaceRecommendations() {
                       : category.color
                   }`}
                 >
-                  {category.icon} {category.name}
+                  {category.icon} {t(category.translationKey)}
                 </button>
               ))}
             </div>
@@ -473,7 +473,7 @@ export default function HomePlaceRecommendations() {
               href={`/places?category=${category.id}`}
               className={`px-3 py-1 rounded-full text-sm font-medium hover:opacity-80 transition-opacity ${category.color}`}
             >
-              {category.icon} {category.name}
+              {category.icon} {t(category.translationKey)}
             </FixedLink>
           ))}
         </div>

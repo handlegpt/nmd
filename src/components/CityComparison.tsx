@@ -168,63 +168,63 @@ export default function CityComparison() {
   const comparisonMetrics: ComparisonMetric[] = [
     {
       key: 'overall',
-      label: '综合评分',
+      label: t('cityComparison.overallScoreLabel'),
       icon: <Star className="h-4 w-4" />,
       getValue: getOverallScore,
       formatValue: (value) => `${value}/100`,
       getScore: (value) => value,
-      description: '基于所有指标的加权平均分',
-      unit: '分'
+      description: t('cityComparison.overallScoreDescription'),
+      unit: t('cityComparison.points')
     },
     {
       key: 'wifi',
-      label: 'WiFi速度',
+      label: t('cityComparison.wifiSpeed'),
       icon: <Wifi className="h-4 w-4" />,
       getValue: (city) => city.wifi_speed || 0,
       formatValue: (value) => `${value} Mbps`,
       getScore: (value) => Math.min(100, value),
-      description: '平均WiFi下载速度',
+      description: t('cityComparison.averageWifiSpeed'),
       unit: 'Mbps'
     },
     {
       key: 'cost',
-      label: '生活成本',
+      label: t('cityComparison.costOfLiving'),
       icon: <DollarSign className="h-4 w-4" />,
       getValue: (city) => city.cost_of_living || 0,
       formatValue: (value) => `$${value}`,
       getScore: (value) => Math.max(0, Math.min(100, (3000 - value) / 30)),
-      description: '月生活成本（美元）',
-      unit: '$/月'
+      description: t('cityComparison.monthlyCostUSD'),
+      unit: t('cityComparison.perMonth')
     },
     {
       key: 'visa',
-      label: '签证便利',
+      label: t('cityComparison.visaConvenience'),
       icon: <Calendar className="h-4 w-4" />,
       getValue: (city) => city.visa_days || 0,
-      formatValue: (value) => `${value} 天`,
+      formatValue: (value) => `${value} ${t('cityComparison.days')}`,
       getScore: (value) => Math.min(100, value / 3.65),
-      description: '可停留天数',
-      unit: '天'
+      description: t('cityComparison.stayDays'),
+      unit: t('cityComparison.days')
     },
     {
       key: 'climate',
-      label: '气候舒适',
+      label: t('cityComparison.climateComfort'),
       icon: <Sun className="h-4 w-4" />,
       getValue: (city) => getClimateScore(city.latitude || 0),
       formatValue: (value) => `${value}/100`,
       getScore: (value) => value,
-      description: '基于纬度的气候评分',
-      unit: '分'
+      description: t('cityComparison.climateScoreByLatitude'),
+      unit: t('cityComparison.points')
     },
     {
       key: 'social',
-      label: '社交氛围',
+      label: t('cityComparison.socialAtmosphere'),
       icon: <Users className="h-4 w-4" />,
       getValue: (city) => getSocialScore(city),
       formatValue: (value) => `${value}/100`,
       getScore: (value) => value,
-      description: '基于签证类型和成本的社交评分',
-      unit: '分'
+      description: t('cityComparison.socialScoreByVisaAndCost'),
+      unit: t('cityComparison.points')
     }
   ]
 

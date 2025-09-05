@@ -19,6 +19,21 @@
   },
 
   "home": {
+    "placeCategories": {
+      "cafe": "Café",
+      "coworking": "Coworking",
+      "coliving": "Coliving",
+      "restaurant": "Restaurante",
+      "hospital": "Hospital",
+      "pharmacy": "Farmacia",
+      "hotel": "Hotel",
+      "transport": "Transporte",
+      "shopping": "Compras",
+      "bank": "Banco",
+      "park": "Parque",
+      "library": "Biblioteca",
+      "other": "Otro"
+    },
     "localNomads": {
       "title": "Nómadas Locales",
       "description": "Conéctate con otros nómadas a través del café en tu área",

@@ -143,15 +143,15 @@
     "moderate": "Moderate",
     "easy": "Easy",
     "hotel": "Hotel",
-    "requirements": "Requirements",
+      "requirements": "Requirements",
     "applicationDifficulty": "Application Difficulty",
     "stayDuration": "Stay Duration",
     "visaType": "Visa Type",
     "writeReview": "Write Review",
     "userReviews": "User Reviews",
     "other": "Other",
-    "utilities": "Utilities",
-    "entertainment": "Entertainment",
+      "utilities": "Utilities",
+      "entertainment": "Entertainment",
     "transportation": "Transportation",
     "food": "Food",
     "accommodation": "Accommodation",
@@ -190,7 +190,7 @@
     "hotels": "Hotels",
     "apartmentRental": "Apartment Rental",
     "coworkingSpaces": "Coworking Spaces",
-    "taxi": "Taxi",
+      "taxi": "Taxi",
     "publicTransport": "Public Transport",
     "airport": "Airport",
     "accommodationInfo": "Accommodation Information",
@@ -1236,6 +1236,19 @@
     "selectMetrics": "Select Comparison Metrics",
     "shareComparison": "Share",
     "saveComparison": "Save",
+    "wifiSpeed": "WiFi Speed",
+    "costOfLiving": "Cost of Living",
+    "visaConvenience": "Visa Convenience",
+    "climateComfort": "Climate Comfort",
+    "socialAtmosphere": "Social Atmosphere",
+    "averageWifiSpeed": "Average WiFi download speed",
+    "monthlyCostUSD": "Monthly living cost (USD)",
+    "stayDays": "Days to stay",
+    "climateScoreByLatitude": "Climate score based on latitude",
+    "socialScoreByVisaAndCost": "Social score based on visa type and cost",
+    "points": "points",
+    "days": "days",
+    "perMonth": "/month",
     "viewMode": {
       "table": "Table",
       "chart": "Chart"
@@ -1925,6 +1938,21 @@
     "title": "Essential Tools for Nomads"
   },
   "home": {
+    "placeCategories": {
+      "cafe": "Cafe",
+      "coworking": "Coworking",
+      "coliving": "Coliving",
+      "restaurant": "Restaurant",
+      "hospital": "Hospital",
+      "pharmacy": "Pharmacy",
+      "hotel": "Hotel",
+      "transport": "Transport",
+      "shopping": "Shopping",
+      "bank": "Bank",
+      "park": "Park",
+      "library": "Library",
+      "other": "Other"
+    },
     "cta": {
       "button": "Get Started",
       "description": "Explore our comprehensive resources and join the global digital nomad community.",
@@ -2374,6 +2402,9 @@
     "loadingMore": "Loading more nomads...",
     "loadMore": "Load More",
     "noResults": "No nomads found matching your criteria",
+    "trustAndResponse": "Trust & Response",
+    "requestsGetResponse": "requests get response",
+    "successRate": "Success Rate",
     "hideFilters": "Hide Filters",
     "showFilters": "Show Filters",
     "filterByInterests": "Filter by interests",
@@ -2481,4 +2512,4 @@
     "tools": "Tools",
     "home": "Home"
   }
-}
+} 

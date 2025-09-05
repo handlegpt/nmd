@@ -13,6 +13,21 @@
     "language": "语言"
   },
   "home": {
+    "placeCategories": {
+      "cafe": "咖啡店",
+      "coworking": "联合办公",
+      "coliving": "共居空间",
+      "restaurant": "餐厅",
+      "hospital": "医院",
+      "pharmacy": "药店",
+      "hotel": "酒店",
+      "transport": "交通",
+      "shopping": "购物",
+      "bank": "银行",
+      "park": "公园",
+      "library": "图书馆",
+      "other": "其他"
+    },
     "localNomads": {
       "title": "本地游民",
       "description": "与您所在地区的同行游民通过咖啡建立联系",
@@ -1440,6 +1455,19 @@
       "wifi": "WiFi速度",
       "visa": "签证天数"
     },
+    "wifiSpeed": "WiFi速度",
+    "costOfLiving": "生活成本",
+    "visaConvenience": "签证便利",
+    "climateComfort": "气候舒适",
+    "socialAtmosphere": "社交氛围",
+    "averageWifiSpeed": "平均WiFi下载速度",
+    "monthlyCostUSD": "月生活成本（美元）",
+    "stayDays": "可停留天数",
+    "climateScoreByLatitude": "基于纬度的气候评分",
+    "socialScoreByVisaAndCost": "基于签证类型和成本的社交评分",
+    "points": "分",
+    "days": "天",
+    "perMonth": "/月",
     "selectedCount": "已选择 {count}/6 个城市",
     "cityInfo": {
       "overallScore": "综合评分",
@@ -2517,6 +2545,9 @@
     "selectCityManually": "手动选城市",
     "recent30DaysData": "近30天数据",
     "basedOnRealRequests": "基于 {count} 次真实请求",
+    "trustAndResponse": "信任与回应",
+    "requestsGetResponse": "请求获回应",
+    "successRate": "成功率",
     "shareInviteLink": "分享邀请链接或探索热门城市",
     "inviteReward": "每邀请1人得1个月高级版（上限3个月，好友完成注册即发放）",
     "exploreGlobal": "探索全球",
