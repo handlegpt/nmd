@@ -928,7 +928,7 @@ export default function HomeLocalNomads({
                   Trust & Response: 94% 请求获回应
                 </h3>
                 <p className="text-sm text-green-700 dark:text-green-300">
-                  {t('localNomads.recent30DaysData')} • {t('localNomads.basedOnRealRequests', { count: totalUsers })}
+                  {t('localNomads.recent30DaysData')} • {t('localNomads.basedOnRealRequests', { count: totalUsers.toString() })}
                 </p>
               </div>
               <div className="text-right">
