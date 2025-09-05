@@ -42,15 +42,8 @@ services:
       SECRET: "${SECRET}"
       # Supabase PostgreSQL database configuration for Directus
       DB_CLIENT: "pg"
-      # Supabase connection settings
-      DB_HOST: "${DB_HOST:-db.xdpjstyoeqgvaacduzdw.supabase.co}"
-      DB_PORT: "${DB_PORT:-5432}"
-      DB_DATABASE: "${DB_DATABASE:-postgres}"
-      DB_USER: "${DB_USER:-postgres.xdpjstyoeqgvaacduzdw}"
-      DB_PASSWORD: "${DB_PASSWORD}"
-      # Completely disable SSL to avoid certificate issues
-      DB_SSL: "false"
-      DB_SSL_REJECT_UNAUTHORIZED: "false"
+      # Use connection string with explicit sslmode=disable
+      DB_CONNECTION_STRING: "postgresql://${DB_USER:-postgres.xdpjstyoeqgvaacduzdw}:${DB_PASSWORD}@${DB_HOST:-db.xdpjstyoeqgvaacduzdw.supabase.co}:${DB_PORT:-5432}/${DB_DATABASE:-postgres}?sslmode=disable"
       # Additional Node.js SSL configuration to bypass all SSL validation
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
       NODE_EXTRA_CA_CERTS: ""
