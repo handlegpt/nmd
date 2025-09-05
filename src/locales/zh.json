@@ -643,7 +643,72 @@
       "feieCheck": "FEIE 资格检查",
       "feieLimit": "FEIE限额",
       "taxableIncome": "应税收入",
-      "potentialSavings": "潜在节省"
+      "potentialSavings": "潜在节省",
+      "detailedResults": {
+        "title": "详细计算结果",
+        "taxRateComparison": "税率对比",
+        "feieApplicable": "适用：可节省",
+        "recommendedRanking": "推荐排序（按节税潜力）",
+        "annualIncome": "年收入",
+        "taxAmount": "税额",
+        "netIncome": "净收入",
+        "savingsAmount": "节税金额",
+        "effectiveRate": "有效税率",
+        "taxRate": "税率"
+      },
+      "feie": {
+        "title": "FEIE 资格检查",
+        "annualIncome": "年收入",
+        "feieLimit": "FEIE 限额",
+        "taxableIncome": "应税收入",
+        "potentialSavings": "潜在节省",
+        "importantReminder": "重要提醒",
+        "reminder1": "必须满足物理存在测试（330天）或真实居所测试",
+        "reminder2": "仅适用于美国联邦所得税，不包括州税",
+        "reminder3": "需要咨询税务专业人士确认资格",
+        "reminder4": "实际节省金额取决于具体情况",
+        "feieLimitYear": "FEIE 限额"
+      },
+      "presence": {
+        "title": "物理存在测试",
+        "testPeriodStart": "测试期间开始",
+        "testPeriodEnd": "测试期间结束",
+        "daysOutsideUS": "在美国境外天数",
+        "progressTracking": "进度追踪",
+        "progress": "进度",
+        "daysRequired": "天",
+        "eligibleForFEIE": "符合FEIE资格",
+        "needMoreDays": "需要更多天数",
+        "daysOutsideUSInput": "输入天数",
+        "daysFormat": "天"
+      },
+      "residency": {
+        "title": "税务居民天数追踪",
+        "description": "监控各国居住天数，避免意外触发税务居民身份（通常为183天）",
+        "daysSpent": "已居住天数",
+        "daysLimit": "/ 183天",
+        "statusOverview": "状态概览",
+        "safe": "安全",
+        "warning": "警告",
+        "danger": "危险",
+        "daysInput": "天",
+        "daysFormat": "天"
+      },
+      "visaDifficulty": {
+        "easy": "签证容易",
+        "medium": "签证中等",
+        "hard": "签证困难"
+      },
+      "costOfLiving": {
+        "low": "生活成本低",
+        "medium": "生活成本中",
+        "high": "生活成本高"
+      },
+      "digitalNomadFriendly": "数字游民友好",
+      "disclaimer": {
+        "title": "重要声明",
+        "description": "本计算器提供估算结果，仅供参考。实际税务情况取决于个人具体情况、最新税法变化和各国规定。在做出任何税务决定前，请务必咨询专业的税务顾问。"
+      }
     }
   },
   "taxAssessment": {

@@ -439,7 +439,7 @@ export default function TaxCalculator() {
               <div className="space-y-4">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <Target className="h-5 w-5 mr-2 text-green-600" />
-                  详细计算结果
+                  {t('tax.calculator.detailedResults.title')}
                 </h3>
                 {calculations.map((calc, index) => (
                   <div key={index} className="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow">
@@ -450,27 +450,27 @@ export default function TaxCalculator() {
                           <h4 className="text-xl font-semibold text-gray-900">{calc.country}</h4>
                           <div className="flex space-x-2 mt-1">
                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCategoryColor(calc.category)}`}>
-                              {calc.category === 'tax-haven' ? '税务天堂' : 
-                               calc.category === 'moderate' ? '中等税率' : '高税率'}
+                              {calc.category === 'tax-haven' ? t('tax.categories.taxHaven') : 
+                               calc.category === 'moderate' ? t('tax.categories.moderate') : t('tax.categories.highTax')}
                             </span>
                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(calc.visaDifficulty)}`}>
-                              {calc.visaDifficulty === 'easy' ? '签证容易' : 
-                               calc.visaDifficulty === 'medium' ? '签证中等' : '签证困难'}
+                              {calc.visaDifficulty === 'easy' ? t('tax.calculator.visaDifficulty.easy') : 
+                               calc.visaDifficulty === 'medium' ? t('tax.calculator.visaDifficulty.medium') : t('tax.calculator.visaDifficulty.hard')}
                             </span>
                             <span className={`px-2 py-1 text-xs font-medium rounded-full ${getCostOfLivingColor(calc.costOfLiving)}`}>
-                              {calc.costOfLiving === 'low' ? '生活成本低' : 
-                               calc.costOfLiving === 'medium' ? '生活成本中' : '生活成本高'}
+                              {calc.costOfLiving === 'low' ? t('tax.calculator.costOfLiving.low') : 
+                               calc.costOfLiving === 'medium' ? t('tax.calculator.costOfLiving.medium') : t('tax.calculator.costOfLiving.high')}
                             </span>
                             {calc.digitalNomadFriendly && (
                               <span className="px-2 py-1 text-xs font-medium rounded-full text-blue-600 bg-blue-100">
-                                数字游民友好
+                                {t('tax.calculator.digitalNomadFriendly')}
                               </span>
                             )}
                           </div>
                         </div>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm text-gray-500">有效税率</div>
+                        <div className="text-sm text-gray-500">{t('tax.calculator.detailedResults.effectiveRate')}</div>
                         <div className="text-2xl font-bold text-blue-600">
                           {calc.effectiveRate.toFixed(1)}%
                         </div>
@@ -479,23 +479,23 @@ export default function TaxCalculator() {
                     
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div className="p-3 bg-gray-50 rounded-lg">
-                        <div className="text-gray-500 mb-1">年收入</div>
+                        <div className="text-gray-500 mb-1">{t('tax.calculator.detailedResults.annualIncome')}</div>
                         <div className="font-semibold text-lg">${calc.annualIncome.toLocaleString()}</div>
                       </div>
                       <div className="p-3 bg-red-50 rounded-lg">
-                        <div className="text-gray-500 mb-1">税额</div>
+                        <div className="text-gray-500 mb-1">{t('tax.calculator.detailedResults.taxAmount')}</div>
                         <div className="font-semibold text-lg text-red-600">
                           ${calc.taxAmount.toLocaleString()}
                         </div>
                       </div>
                       <div className="p-3 bg-green-50 rounded-lg">
-                        <div className="text-gray-500 mb-1">净收入</div>
+                        <div className="text-gray-500 mb-1">{t('tax.calculator.detailedResults.netIncome')}</div>
                         <div className="font-semibold text-lg text-green-600">
                           ${calc.netIncome.toLocaleString()}
                         </div>
                       </div>
                       <div className="p-3 bg-blue-50 rounded-lg">
-                        <div className="text-gray-500 mb-1">节税金额</div>
+                        <div className="text-gray-500 mb-1">{t('tax.calculator.detailedResults.savingsAmount')}</div>
                         <div className="font-semibold text-lg text-blue-600">
                           ${calc.savings.toLocaleString()}
                         </div>
@@ -505,7 +505,7 @@ export default function TaxCalculator() {
                     {/* 可视化进度条 */}
                     <div className="mt-4 space-y-2">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">税率对比</span>
+                        <span className="text-gray-600">{t('tax.calculator.detailedResults.taxRateComparison')}</span>
                         <span className="font-medium">{calc.effectiveRate.toFixed(1)}%</span>
                       </div>
                       <div className="w-full bg-gray-200 rounded-full h-2">
@@ -524,7 +524,7 @@ export default function TaxCalculator() {
                         <div className="flex items-center space-x-2">
                           <CheckCircle className="h-4 w-4 text-green-600" />
                           <span className="text-sm text-green-800">
-                            FEIE 适用：可节省 ${calc.feieSavings.toLocaleString()}
+                            {t('tax.calculator.detailedResults.feieApplicable')} ${calc.feieSavings.toLocaleString()}
                           </span>
                         </div>
                       </div>
@@ -537,7 +537,7 @@ export default function TaxCalculator() {
               <div className="bg-white border border-gray-200 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
-                  推荐排序（按节税潜力）
+                  {t('tax.calculator.detailedResults.recommendedRanking')}
                 </h3>
                 <div className="space-y-3">
                   {calculations
@@ -556,7 +556,7 @@ export default function TaxCalculator() {
                           ${calc.savings.toLocaleString()}
                         </div>
                         <div className="text-sm text-gray-500">
-                          {calc.effectiveRate.toFixed(1)}% 税率
+                          {calc.effectiveRate.toFixed(1)}% {t('tax.calculator.detailedResults.taxRate')}
                         </div>
                       </div>
                     </div>
@@ -574,23 +574,23 @@ export default function TaxCalculator() {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center">
               <DollarSign className="h-5 w-5 mr-2" />
-              FEIE 资格检查
+              {t('tax.calculator.feie.title')}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="p-4 bg-white rounded-lg">
-                <div className="text-sm text-blue-700 mb-1">年收入</div>
+                <div className="text-sm text-blue-700 mb-1">{t('tax.calculator.feie.annualIncome')}</div>
                 <div className="text-xl font-semibold">${feieCalculation.annualIncome.toLocaleString()}</div>
               </div>
               <div className="p-4 bg-white rounded-lg">
-                <div className="text-sm text-blue-700 mb-1">FEIE 限额 ({feieCalculation.taxYear})</div>
+                <div className="text-sm text-blue-700 mb-1">{t('tax.calculator.feie.feieLimitYear')} ({feieCalculation.taxYear})</div>
                 <div className="text-xl font-semibold">${feieCalculation.feieLimit.toLocaleString()}</div>
               </div>
               <div className="p-4 bg-white rounded-lg">
-                <div className="text-sm text-blue-700 mb-1">应税收入</div>
+                <div className="text-sm text-blue-700 mb-1">{t('tax.calculator.feie.taxableIncome')}</div>
                 <div className="text-xl font-semibold">${feieCalculation.taxableIncome.toLocaleString()}</div>
               </div>
               <div className="p-4 bg-white rounded-lg">
-                <div className="text-sm text-blue-700 mb-1">潜在节省</div>
+                <div className="text-sm text-blue-700 mb-1">{t('tax.calculator.feie.potentialSavings')}</div>
                 <div className="text-xl font-semibold text-green-600">
                   ${feieCalculation.taxSavings.toLocaleString()}
                 </div>
@@ -602,12 +602,12 @@ export default function TaxCalculator() {
             <div className="flex items-start space-x-2">
               <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
               <div>
-                <h4 className="font-semibold text-yellow-800 mb-2">重要提醒</h4>
+                <h4 className="font-semibold text-yellow-800 mb-2">{t('tax.calculator.feie.importantReminder')}</h4>
                 <ul className="text-sm text-yellow-700 space-y-1">
-                  <li>• 必须满足物理存在测试（330天）或真实居所测试</li>
-                  <li>• 仅适用于美国联邦所得税，不包括州税</li>
-                  <li>• 需要咨询税务专业人士确认资格</li>
-                  <li>• 实际节省金额取决于具体情况</li>
+                  <li>• {t('tax.calculator.feie.reminder1')}</li>
+                  <li>• {t('tax.calculator.feie.reminder2')}</li>
+                  <li>• {t('tax.calculator.feie.reminder3')}</li>
+                  <li>• {t('tax.calculator.feie.reminder4')}</li>
                 </ul>
               </div>
             </div>
@@ -620,7 +620,7 @@ export default function TaxCalculator() {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">测试期间开始</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('tax.calculator.presence.testPeriodStart')}</label>
               <input
                 type="date"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -633,7 +633,7 @@ export default function TaxCalculator() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">测试期间结束</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">{t('tax.calculator.presence.testPeriodEnd')}</label>
               <input
                 type="date"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
@@ -644,11 +644,11 @@ export default function TaxCalculator() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">在美国境外天数</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('tax.calculator.presence.daysOutsideUS')}</label>
             <input
               type="number"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-              placeholder="输入天数"
+              placeholder={t('tax.calculator.presence.daysOutsideUSInput')}
               onChange={(e) => {
                 if (presenceTracker) {
                   setPresenceTracker(calculatePresence(
@@ -663,12 +663,12 @@ export default function TaxCalculator() {
 
           {presenceTracker && (
             <div className="bg-gray-50 border border-gray-200 rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">进度追踪</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('tax.calculator.presence.progressTracking')}</h3>
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">进度</span>
+                  <span className="text-sm text-gray-600">{t('tax.calculator.presence.progress')}</span>
                   <span className="text-sm font-semibold">
-                    {presenceTracker.daysOutsideUS} / {presenceTracker.daysRequired} 天
+                    {presenceTracker.daysOutsideUS} / {presenceTracker.daysRequired} {t('tax.calculator.presence.daysFormat')}
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-3">
@@ -688,7 +688,7 @@ export default function TaxCalculator() {
                   <span className={`text-sm font-medium ${
                     presenceTracker.isEligible ? 'text-green-600' : 'text-yellow-600'
                   }`}>
-                    {presenceTracker.isEligible ? '符合FEIE资格' : '需要更多天数'}
+                    {presenceTracker.isEligible ? t('tax.calculator.presence.eligibleForFEIE') : t('tax.calculator.presence.needMoreDays')}
                   </span>
                 </div>
               </div>
@@ -701,9 +701,9 @@ export default function TaxCalculator() {
       {activeTab === 'residency' && (
         <div className="space-y-6">
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-blue-900 mb-3">税务居民天数追踪</h3>
+            <h3 className="text-lg font-semibold text-blue-900 mb-3">{t('tax.calculator.residency.title')}</h3>
             <p className="text-sm text-blue-700 mb-4">
-              监控各国居住天数，避免意外触发税务居民身份（通常为183天）
+              {t('tax.calculator.residency.description')}
             </p>
             
             <div className="space-y-3">
@@ -717,7 +717,7 @@ export default function TaxCalculator() {
                     <input
                       type="number"
                       className="w-20 px-2 py-1 border border-gray-300 rounded text-sm"
-                      placeholder="天数"
+                      placeholder={t('tax.calculator.residency.daysInput')}
                       onChange={(e) => {
                         const days = Number(e.target.value)
                         const tracker = calculateResidency(country, days)
@@ -727,7 +727,7 @@ export default function TaxCalculator() {
                         })
                       }}
                     />
-                    <span className="text-sm text-gray-500">/ 183天</span>
+                    <span className="text-sm text-gray-500">{t('tax.calculator.residency.daysLimit')}</span>
                   </div>
                 </div>
               ))}
@@ -736,7 +736,7 @@ export default function TaxCalculator() {
 
           {residencyTrackers.length > 0 && (
             <div className="space-y-3">
-              <h3 className="text-lg font-semibold text-gray-900">状态概览</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{t('tax.calculator.residency.statusOverview')}</h3>
               {residencyTrackers.map((tracker, index) => (
                 <div key={index} className={`p-4 rounded-lg border ${
                   tracker.status === 'safe' ? 'border-green-200 bg-green-50' :
@@ -750,15 +750,15 @@ export default function TaxCalculator() {
                     </div>
                     <div className="text-right">
                       <div className="text-sm font-semibold">
-                        {tracker.daysSpent} / {tracker.limit} 天
+                        {tracker.daysSpent} / {tracker.limit} {t('tax.calculator.residency.daysFormat')}
                       </div>
                       <div className={`text-xs ${
                         tracker.status === 'safe' ? 'text-green-600' :
                         tracker.status === 'warning' ? 'text-yellow-600' :
                         'text-red-600'
                       }`}>
-                        {tracker.status === 'safe' ? '安全' :
-                         tracker.status === 'warning' ? '警告' : '危险'}
+                        {tracker.status === 'safe' ? t('tax.calculator.residency.safe') :
+                         tracker.status === 'warning' ? t('tax.calculator.residency.warning') : t('tax.calculator.residency.danger')}
                       </div>
                     </div>
                   </div>
@@ -774,10 +774,9 @@ export default function TaxCalculator() {
         <div className="flex items-start space-x-2">
           <Info className="h-5 w-5 text-yellow-600 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-yellow-800 mb-2">重要声明</h4>
+            <h4 className="font-semibold text-yellow-800 mb-2">{t('tax.calculator.disclaimer.title')}</h4>
             <p className="text-sm text-yellow-700">
-              本计算器提供估算结果，仅供参考。实际税务情况取决于个人具体情况、最新税法变化和各国规定。
-              在做出任何税务决定前，请务必咨询专业的税务顾问。
+              {t('tax.calculator.disclaimer.description')}
             </p>
           </div>
         </div>

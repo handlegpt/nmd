@@ -1723,7 +1723,13 @@
         "title": "Detailed Calculation Results",
         "taxRateComparison": "Tax Rate Comparison",
         "feieApplicable": "FEIE Applicable: Can Save",
-        "recommendedRanking": "Recommended Ranking (by savings potential)"
+        "recommendedRanking": "Recommended Ranking (by savings potential)",
+        "annualIncome": "Annual Income",
+        "taxAmount": "Tax Amount",
+        "netIncome": "Net Income",
+        "savingsAmount": "Savings Amount",
+        "effectiveRate": "Effective Rate",
+        "taxRate": "Tax Rate"
       },
       "feie": {
         "title": "FEIE Eligibility Check",
@@ -1735,7 +1741,8 @@
         "reminder1": "Must meet physical presence test (330 days) or bona fide residence test",
         "reminder2": "Only applies to US federal income tax, not state taxes",
         "reminder3": "Consult tax professionals to confirm eligibility",
-        "reminder4": "Actual savings depend on specific circumstances"
+        "reminder4": "Actual savings depend on specific circumstances",
+        "feieLimitYear": "FEIE Limit"
       },
       "presence": {
         "title": "Physical Presence Test",
@@ -1746,7 +1753,9 @@
         "progress": "Progress",
         "daysRequired": "days required",
         "eligibleForFEIE": "Eligible for FEIE",
-        "needMoreDays": "Need more days"
+        "needMoreDays": "Need more days",
+        "daysOutsideUSInput": "Enter number of days",
+        "daysFormat": "days"
       },
       "residency": {
         "title": "Tax Residency Tracking",
@@ -1756,7 +1765,9 @@
         "statusOverview": "Status Overview",
         "safe": "Safe",
         "warning": "Warning",
-        "danger": "Danger"
+        "danger": "Danger",
+        "daysInput": "days",
+        "daysFormat": "days"
       }
     },
     "deadlines": {
@@ -1798,6 +1809,10 @@
       "description": "This information is for educational purposes only and should not be considered as tax advice. Tax laws vary by country and change frequently. Please consult a qualified tax professional or accountant specializing in international tax law before making any tax decisions.",
       "title": "Important Notice"
     },
+    "disclaimer": {
+      "title": "Important Notice",
+      "description": "This calculator provides estimates for reference only. Actual tax situations depend on individual circumstances, latest tax law changes, and country regulations. Please consult professional tax advisors before making any tax decisions."
+    },
     "countryDetails": {
       "nomadFriendlyRating": "Nomad-Friendly Rating",
       "potentialRisks": "Potential Risks",
@@ -1817,6 +1832,17 @@
       "moderate": "Moderate Tax",
       "taxHaven": "Tax Haven"
     },
+    "visaDifficulty": {
+      "easy": "Easy Visa",
+      "medium": "Medium Visa",
+      "hard": "Hard Visa"
+    },
+    "costOfLiving": {
+      "low": "Low Cost",
+      "medium": "Medium Cost",
+      "high": "High Cost"
+    },
+    "digitalNomadFriendly": "Digital Nomad Friendly",
     "searchPlaceholder": "Search countries or tax types...",
     "tabs": {
       "countries": "Country Comparison",
