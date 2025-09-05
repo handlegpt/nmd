@@ -48,11 +48,14 @@ services:
       DB_DATABASE: "${DB_DATABASE:-postgres}"
       DB_USER: "${DB_USER:-postgres.xdpjstyoeqgvaacduzdw}"
       DB_PASSWORD: "${DB_PASSWORD}"
-      # Use prefer SSL mode to handle certificate issues
-      DB_SSL: "true"
+      # Completely disable SSL to avoid certificate issues
+      DB_SSL: "false"
       DB_SSL_REJECT_UNAUTHORIZED: "false"
-      # Additional Node.js SSL configuration
+      # Additional Node.js SSL configuration to bypass all SSL validation
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
+      NODE_EXTRA_CA_CERTS: ""
+      SSL_CERT_FILE: ""
+      SSL_KEY_FILE: ""
       # Minimal connection pool to avoid timeouts
       DB_POOL_MIN: "1"
       DB_POOL_MAX: "1"
