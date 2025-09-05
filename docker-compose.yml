@@ -42,8 +42,8 @@ services:
       SECRET: "${SECRET}"
       # Supabase PostgreSQL database configuration for Directus
       DB_CLIENT: "pg"
-      # Use connection string format with proper SSL configuration
-      DB_CONNECTION_STRING: "postgresql://${DB_USER:-postgres.xdpjstyoeqgvaacduzdw}:${DB_PASSWORD}@${DB_HOST:-aws-0-ap-southeast-1.pooler.supabase.com}:${DB_PORT:-6543}/${DB_DATABASE:-postgres}?sslmode=require&sslcert=&sslkey=&sslrootcert="
+      # Use direct Supabase connection instead of pooler
+      DB_CONNECTION_STRING: "postgresql://${DB_USER:-postgres.xdpjstyoeqgvaacduzdw}:${DB_PASSWORD}@${DB_HOST:-db.xdpjstyoeqgvaacduzdw.supabase.co}:${DB_PORT:-5432}/${DB_DATABASE:-postgres}?sslmode=require"
       # Minimal connection pool to avoid timeouts
       DB_POOL_MIN: "1"
       DB_POOL_MAX: "1"
