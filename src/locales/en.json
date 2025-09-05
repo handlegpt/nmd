@@ -925,6 +925,12 @@
       "coworking": "Coworking",
       "coffee": "Coffee"
     },
+    "status": {
+      "upcoming": "Upcoming",
+      "ongoing": "Ongoing",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
     "title": "Nomad Connect"
   },
   "voteModal": {
@@ -1893,6 +1899,7 @@
     "quickUpvote": "Quick Upvote",
     "votes": "votes",
     "stayDays": "Stay Days",
+    "days": "days",
     "visaType": "Visa Type",
     "wifiSpeed": "WiFi Speed",
     "costOfLiving": "Cost of Living",
