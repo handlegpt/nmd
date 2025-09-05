@@ -44,6 +44,9 @@ services:
       DB_CLIENT: "pg"
       # Use connection string with explicit sslmode=disable and additional parameters
       DB_CONNECTION_STRING: "postgresql://${DB_USER:-postgres.xdpjstyoeqgvaacduzdw}:${DB_PASSWORD}@${DB_HOST:-db.xdpjstyoeqgvaacduzdw.supabase.co}:${DB_PORT:-5432}/${DB_DATABASE:-postgres}?sslmode=disable&sslcert=&sslkey=&sslrootcert=&application_name=directus"
+      # Force disable SSL at the database level
+      DB_SSL: "false"
+      DB_SSL_REJECT_UNAUTHORIZED: "false"
       # Additional Node.js SSL configuration to bypass all SSL validation
       NODE_TLS_REJECT_UNAUTHORIZED: "0"
       NODE_EXTRA_CA_CERTS: ""
