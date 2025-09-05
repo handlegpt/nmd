@@ -1511,6 +1511,27 @@
         "namePlaceholder": "Enter place name",
         "name": "Place Name"
       },
+      "priceLevels": {
+        "cheap": "$ Cheap",
+        "economical": "$$ Economical",
+        "moderate": "$$$ Moderate",
+        "expensive": "$$$$ Expensive",
+        "veryExpensive": "$$$$$ Very Expensive"
+      },
+      "suggestedTags": {
+        "quiet": "Quiet",
+        "fastWifi": "Fast WiFi",
+        "goodCoffee": "Good Coffee",
+        "reasonablePrice": "Reasonable Price",
+        "convenientLocation": "Convenient Location",
+        "wellEquipped": "Well Equipped",
+        "goodCommunity": "Good Community",
+        "beautifulView": "Beautiful View",
+        "goodFood": "Good Food",
+        "goodService": "Good Service",
+        "open24Hours": "24 Hours",
+        "petFriendly": "Pet Friendly"
+      },
       "submitButton": "Submit Recommendation",
       "title": "Recommend a Place"
     },
@@ -1665,7 +1686,78 @@
       "results": "Calculation Results",
       "selectCountries": "Select countries to compare",
       "annualIncomePlaceholder": "Enter annual income",
-      "annualIncome": "Annual Income"
+      "annualIncome": "Annual Income",
+      "tabs": {
+        "calculator": "Tax Calculator",
+        "feie": "FEIE Calculator",
+        "presence": "Presence Test",
+        "residency": "Residency Tracker"
+      },
+      "countries": {
+        "portugal": "Portugal",
+        "thailand": "Thailand",
+        "mexico": "Mexico",
+        "spain": "Spain",
+        "germany": "Germany",
+        "estonia": "Estonia",
+        "costaRica": "Costa Rica",
+        "malaysia": "Malaysia"
+      },
+      "countryNotes": {
+        "portugal": "NHR policy tightened",
+        "thailand": "Territorial tax system",
+        "mexico": "Territorial tax system",
+        "spain": "Beckham Law",
+        "germany": "High tax rate",
+        "estonia": "Digital nomad friendly",
+        "costaRica": "Territorial tax system",
+        "malaysia": "MM2H visa"
+      },
+      "overview": {
+        "title": "Tax Comparison Overview",
+        "maxSavings": "Maximum Savings Potential",
+        "countryCount": "Countries Compared",
+        "lowestRate": "Lowest Effective Rate"
+      },
+      "detailedResults": {
+        "title": "Detailed Calculation Results",
+        "taxRateComparison": "Tax Rate Comparison",
+        "feieApplicable": "FEIE Applicable: Can Save",
+        "recommendedRanking": "Recommended Ranking (by savings potential)"
+      },
+      "feie": {
+        "title": "FEIE Eligibility Check",
+        "annualIncome": "Annual Income",
+        "feieLimit": "FEIE Limit",
+        "taxableIncome": "Taxable Income",
+        "potentialSavings": "Potential Savings",
+        "importantReminder": "Important Reminder",
+        "reminder1": "Must meet physical presence test (330 days) or bona fide residence test",
+        "reminder2": "Only applies to US federal income tax, not state taxes",
+        "reminder3": "Consult tax professionals to confirm eligibility",
+        "reminder4": "Actual savings depend on specific circumstances"
+      },
+      "presence": {
+        "title": "Physical Presence Test",
+        "testPeriodStart": "Test Period Start",
+        "testPeriodEnd": "Test Period End",
+        "daysOutsideUS": "Days Outside US",
+        "progressTracking": "Progress Tracking",
+        "progress": "Progress",
+        "daysRequired": "days required",
+        "eligibleForFEIE": "Eligible for FEIE",
+        "needMoreDays": "Need more days"
+      },
+      "residency": {
+        "title": "Tax Residency Tracking",
+        "description": "Monitor days spent in each country to avoid triggering tax residency (usually 183 days)",
+        "daysSpent": "Days Spent",
+        "daysLimit": "/ 183 days",
+        "statusOverview": "Status Overview",
+        "safe": "Safe",
+        "warning": "Warning",
+        "danger": "Danger"
+      }
     },
     "deadlines": {
       "deadlineDisclaimer": "This reminder system provides general tax deadline information. Actual deadlines may vary due to personal circumstances, filing extensions, and other factors. Please refer to the latest information from official tax authorities and consult professional tax advisors for complex situations.",
@@ -1730,12 +1822,200 @@
       "countries": "Country Comparison",
       "strategies": "Strategy Guide",
       "calculator": "Tax Calculator",
-      "assessment": "Needs Assessment"
+      "assessment": "Needs Assessment",
+      "deadlines": "Deadline Reminder"
     },
+    "currentStep": "Current Step:",
+    "step1": "1️⃣ Needs Assessment",
+    "step2": "2️⃣ Tax Calculator",
+    "step3": "3️⃣ Strategy Guide",
+    "step4": "4️⃣ Country Comparison",
+    "step5": "5️⃣ Deadline Reminder",
     "pageDescription": "Understand tax regulations in different countries and optimize your tax strategy",
     "pageTitle": "Digital Nomad Tax Guide",
     "description": "Understand tax regulations in different countries and optimize your tax strategy",
     "title": "Digital Nomad Tax Guide"
+  },
+  "taxStrategies": {
+    "title": "Tax Strategy Guide",
+    "showAdvisors": "View Advisors",
+    "hideAdvisors": "Hide Advisors",
+    "filters": {
+      "difficulty": "Difficulty Filter",
+      "allDifficulties": "All Difficulties",
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard",
+      "strategyType": "Strategy Type",
+      "allTypes": "All Types",
+      "taxHaven": "Tax Haven",
+      "territorial": "Territorial Tax",
+      "company": "Company Structure",
+      "visa": "Visa Strategy",
+      "treaty": "Tax Treaty"
+    },
+    "strategies": {
+      "nhrPortugal": {
+        "title": "Portugal NHR Plan (2024 Update)",
+        "description": "10-year preferential tax rate, but policy has been significantly tightened, limited to high-skilled professions",
+        "savings": "$15,000-40,000/year",
+        "timeToImplement": "6-12 months",
+        "risk": "Medium",
+        "successRate": "25%",
+        "advisorFee": "€2,000-5,000"
+      },
+      "territorialTax": {
+        "title": "Territorial Tax Strategy",
+        "description": "Utilize territorial tax countries, foreign income tax-free, suitable for digital nomads",
+        "savings": "$10,000-30,000/year",
+        "timeToImplement": "1-3 months",
+        "risk": "Low",
+        "successRate": "90%",
+        "advisorFee": "$500-1,500"
+      },
+      "companyStructure": {
+        "title": "Company Structure Optimization",
+        "description": "Optimize tax structure through offshore companies, suitable for high-income business owners",
+        "savings": "$20,000-60,000/year",
+        "timeToImplement": "6-12 months",
+        "risk": "Medium",
+        "successRate": "70%",
+        "advisorFee": "$5,000-15,000"
+      },
+      "digitalNomadVisa": {
+        "title": "Digital Nomad Visa",
+        "description": "Utilize specialized visas to optimize tax situation, simple and feasible",
+        "savings": "$5,000-20,000/year",
+        "timeToImplement": "2-4 months",
+        "risk": "Low",
+        "successRate": "95%",
+        "advisorFee": "$300-800"
+      },
+      "taxTreatyOptimization": {
+        "title": "Tax Treaty Optimization",
+        "description": "Utilize bilateral tax treaties to reduce double taxation",
+        "savings": "$8,000-25,000/year",
+        "timeToImplement": "3-6 months",
+        "risk": "Low",
+        "successRate": "80%",
+        "advisorFee": "$1,000-3,000"
+      }
+    },
+    "details": {
+      "expectedSavings": "Expected Savings:",
+      "implementationTime": "Implementation Time:",
+      "riskLevel": "Risk Level:",
+      "successRate": "Success Rate:",
+      "lastUpdated": "Last Updated:",
+      "relatedCountries": "Related Countries",
+      "professionalAdvisorService": "Professional Advisor Service",
+      "advisorServiceDesc": "This strategy has professional advisors providing services",
+      "fee": "Fee:",
+      "viewAdvisors": "View Advisors",
+      "requirements": "Application Requirements",
+      "implementationSteps": "Implementation Steps",
+      "practicalTips": "Practical Tips"
+    },
+    "advisors": {
+      "title": "Professional Tax Advisors",
+      "available": "Available",
+      "busy": "Busy",
+      "unavailable": "Unavailable",
+      "contact": "Contact",
+      "details": "Details",
+      "specialization": "Specialization:",
+      "languages": "Languages:",
+      "sendEmail": "Send Email",
+      "phoneConsultation": "Phone Consultation",
+      "visitWebsite": "Visit Website"
+    }
+  },
+  "taxAssessment": {
+    "questions": {
+      "income": "What is your annual income range?",
+      "passport": "What is your passport country?",
+      "residence": "What is your residence pattern?",
+      "workType": "What is your work type?",
+      "visaStatus": "What is your current visa status?"
+    },
+    "incomeOptions": {
+      "under50k": "Under $50,000",
+      "under50kDesc": "Suitable for basic optimization strategies",
+      "50k100k": "$50,000 - $100,000",
+      "50k100kDesc": "Medium income optimization potential",
+      "100k200k": "$100,000 - $200,000",
+      "100k200kDesc": "High income optimization potential",
+      "over200k": "Over $200,000",
+      "over200kDesc": "Requires professional tax planning"
+    },
+    "passportOptions": {
+      "us": "United States",
+      "usDesc": "Global taxation, requires FEIE",
+      "eu": "European Union",
+      "euDesc": "Convenient mobility within EU",
+      "uk": "United Kingdom",
+      "ukDesc": "New tax environment post-Brexit",
+      "canada": "Canada",
+      "canadaDesc": "Relatively friendly tax system",
+      "australia": "Australia",
+      "australiaDesc": "Must meet residence test",
+      "other": "Other",
+      "otherDesc": "Requires specific analysis"
+    },
+    "residenceOptions": {
+      "single": "Single country residence",
+      "singleDesc": "Single country residence",
+      "multiple": "Multiple country residence",
+      "multipleDesc": "Multiple country residence, requires planning",
+      "nomadic": "Nomadic lifestyle",
+      "nomadicDesc": "Nomadic lifestyle"
+    },
+    "workTypeOptions": {
+      "freelance": "Freelancer",
+      "freelanceDesc": "Freelancer",
+      "remote": "Remote employee",
+      "remoteDesc": "Remote employee",
+      "business": "Business owner",
+      "businessDesc": "Business owner",
+      "mixed": "Mixed income sources",
+      "mixedDesc": "Mixed income sources"
+    },
+    "visaStatusOptions": {
+      "tourist": "Tourist visa",
+      "touristDesc": "Tourist visa",
+      "digitalNomad": "Digital nomad visa",
+      "digitalNomadDesc": "Digital nomad visa",
+      "resident": "Resident status",
+      "residentDesc": "Resident status",
+      "citizen": "Citizen status",
+      "citizenDesc": "Citizen status"
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "viewResults": "View Results",
+      "question": "Question",
+      "progress": "Progress"
+    },
+    "results": {
+      "title": "Your Tax Profile Report",
+      "subtitle": "Based on your answers, we've customized tax optimization recommendations for you",
+      "incomeLevel": "Income Level",
+      "passportCountry": "Passport Country",
+      "residencePattern": "Residence Pattern",
+      "potentialSavings": "Potential Savings",
+      "riskLevel": "Risk Level",
+      "lowRisk": "Low Risk",
+      "mediumRisk": "Medium Risk",
+      "highRisk": "High Risk",
+      "recommendedStrategies": "Recommended Strategies",
+      "riskWarnings": "Risk Warnings",
+      "recommendedCountries": "Recommended Tax-Friendly Countries",
+      "nextSteps": "Next Steps",
+      "useCalculator": "Use Tax Calculator",
+      "viewStrategies": "View Strategy Guide",
+      "reassess": "Reassess"
+    }
   },
   "cityCard": {
     "selected": "Selected",

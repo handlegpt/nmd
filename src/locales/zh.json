@@ -542,8 +542,15 @@
       "assessment": "需求评估",
       "calculator": "税务计算器",
       "strategies": "策略指南",
-      "countries": "国家对比"
+      "countries": "国家对比",
+      "deadlines": "截止提醒"
     },
+    "currentStep": "当前步骤:",
+    "step1": "1️⃣ 需求评估",
+    "step2": "2️⃣ 税务计算",
+    "step3": "3️⃣ 策略指南",
+    "step4": "4️⃣ 国家对比",
+    "step5": "5️⃣ 截止提醒",
     "searchPlaceholder": "搜索国家或税务类型...",
     "categories": {
       "taxHaven": "税务天堂",
@@ -637,67 +644,154 @@
       "feieLimit": "FEIE限额",
       "taxableIncome": "应税收入",
       "potentialSavings": "潜在节省"
+    }
+  },
+  "taxAssessment": {
+    "questions": {
+      "income": "你的年收入范围是？",
+      "passport": "你的护照国是？",
+      "residence": "你的居住模式是？",
+      "workType": "你的工作类型是？",
+      "visaStatus": "你当前的签证状态是？"
     },
-    "reviews": {
-      "title": "评价",
-      "reviews": "评价",
-      "noReviews": "暂无评价",
-      "beFirstToReview": "成为第一个评价这个地方的人",
-      "writeReview": "写评价",
-      "writeFirstReview": "写第一篇评价"
+    "incomeOptions": {
+      "under50k": "低于 $50,000",
+      "under50kDesc": "适合基础优化策略",
+      "50k100k": "$50,000 - $100,000",
+      "50k100kDesc": "中等收入优化空间",
+      "100k200k": "$100,000 - $200,000",
+      "100k200kDesc": "高收入优化潜力",
+      "over200k": "超过 $200,000",
+      "over200kDesc": "需要专业税务规划"
     },
-    "photoUpload": {
-      "title": "照片上传",
-      "description": "与社区分享这个地方的照片",
-      "dragDropTitle": "上传照片",
-      "dragDropDescription": "用照片分享你的体验",
-      "selectFiles": "选择文件",
-      "or": "或",
-      "dragDrop": "拖拽上传",
-      "fileTypes": "JPG、PNG、GIF，最大5MB",
-      "maxSize": "最大文件大小：5MB",
-      "maxPhotos": "每次最多上传10张照片"
+    "passportOptions": {
+      "us": "美国",
+      "usDesc": "全球征税，需要FEIE",
+      "eu": "欧盟",
+      "euDesc": "欧盟内部流动便利",
+      "uk": "英国",
+      "ukDesc": "脱欧后新税务环境",
+      "canada": "加拿大",
+      "canadaDesc": "相对友好的税务制度",
+      "australia": "澳大利亚",
+      "australiaDesc": "需要满足居住测试",
+      "other": "其他",
+      "otherDesc": "需要具体分析"
     },
-    "realtime": {
-      "disconnected": "已断开连接",
-      "enableNotifications": "启用通知以获取实时更新"
+    "residenceOptions": {
+      "single": "单一国家居住",
+      "singleDesc": "单一国家居住",
+      "multiple": "多国居住",
+      "multipleDesc": "多国居住，需要规划",
+      "nomadic": "游牧式生活",
+      "nomadicDesc": "游牧式生活"
     },
-    "cityDetail": {
-      "recommendedPlaces": "数字游民推荐地点",
-      "recommendedPlacesDescription": "发现这座城市最适合工作和生活的地方"
+    "workTypeOptions": {
+      "freelance": "自由职业者",
+      "freelanceDesc": "自由职业者",
+      "remote": "远程员工",
+      "remoteDesc": "远程员工",
+      "business": "企业主",
+      "businessDesc": "企业主",
+      "mixed": "混合收入来源",
+      "mixedDesc": "混合收入来源"
     },
-    "recommendationForm": {
-      "place": {
-        "title": "添加地点推荐",
-        "submitButton": "提交推荐",
-        "fields": {
-          "name": "地点名称",
-          "namePlaceholder": "输入地点名称",
-          "category": "类别",
-          "address": "地址",
-          "addressPlaceholder": "输入地址",
-          "location": "位置",
-          "locationPlaceholder": "输入位置",
-          "locationHelp": "帮助其他人找到这个地方",
-          "description": "描述",
-          "descriptionPlaceholder": "描述这个地方",
-          "wifiSpeed": "WiFi速度",
-          "wifiSpeedPlaceholder": "选择WiFi速度",
-          "priceLevel": "价格等级",
-          "noiseLevel": "噪音等级",
-          "noiseLevels": {
-            "quiet": "安静",
-            "moderate": "适中",
-            "loud": "嘈杂"
-          },
-          "socialAtmosphere": "社交氛围",
-          "socialLevels": {
-            "low": "低",
-            "medium": "中等",
-            "high": "高"
-          },
-          "tags": "标签"
-        }
+    "visaStatusOptions": {
+      "tourist": "旅游签证",
+      "touristDesc": "旅游签证",
+      "digitalNomad": "数字游民签证",
+      "digitalNomadDesc": "数字游民签证",
+      "resident": "居民身份",
+      "residentDesc": "居民身份",
+      "citizen": "公民身份",
+      "citizenDesc": "公民身份"
+    },
+    "navigation": {
+      "previous": "上一步",
+      "next": "下一步",
+      "viewResults": "查看结果",
+      "question": "问题",
+      "progress": "进度"
+    },
+    "results": {
+      "title": "你的税务画像报告",
+      "subtitle": "基于你的回答，我们为你定制了税务优化建议",
+      "incomeLevel": "收入水平",
+      "passportCountry": "护照国",
+      "residencePattern": "居住模式",
+      "potentialSavings": "潜在节税",
+      "riskLevel": "风险等级",
+      "lowRisk": "低风险",
+      "mediumRisk": "中等风险",
+      "highRisk": "高风险",
+      "recommendedStrategies": "推荐策略",
+      "riskWarnings": "风险提醒",
+      "recommendedCountries": "推荐税务友好国家",
+      "nextSteps": "下一步行动",
+      "useCalculator": "使用税务计算器",
+      "viewStrategies": "查看策略指南",
+      "reassess": "重新评估"
+    }
+  },
+  "reviews": {
+    "title": "评价",
+    "reviews": "评价",
+    "noReviews": "暂无评价",
+    "beFirstToReview": "成为第一个评价这个地方的人",
+    "writeReview": "写评价",
+    "writeFirstReview": "写第一篇评价"
+  },
+  "photoUpload": {
+    "title": "照片上传",
+    "description": "与社区分享这个地方的照片",
+    "dragDropTitle": "上传照片",
+    "dragDropDescription": "用照片分享你的体验",
+    "selectFiles": "选择文件",
+    "or": "或",
+    "dragDrop": "拖拽上传",
+    "fileTypes": "JPG、PNG、GIF，最大5MB",
+    "maxSize": "最大文件大小：5MB",
+    "maxPhotos": "每次最多上传10张照片"
+  },
+  "realtime": {
+    "disconnected": "已断开连接",
+    "enableNotifications": "启用通知以获取实时更新"
+  },
+  "cityDetail": {
+    "recommendedPlaces": "数字游民推荐地点",
+    "recommendedPlacesDescription": "发现这座城市最适合工作和生活的地方"
+  },
+  "recommendationForm": {
+    "place": {
+      "title": "添加地点推荐",
+      "submitButton": "提交推荐",
+      "fields": {
+        "name": "地点名称",
+        "namePlaceholder": "输入地点名称",
+        "category": "类别",
+        "address": "地址",
+        "addressPlaceholder": "输入地址",
+        "location": "位置",
+        "locationPlaceholder": "输入位置",
+        "locationHelp": "帮助其他人找到这个地方",
+        "description": "描述",
+        "descriptionPlaceholder": "描述这个地方",
+        "wifiSpeed": "WiFi速度",
+        "wifiSpeedPlaceholder": "选择WiFi速度",
+        "priceLevel": "价格等级",
+        "noiseLevel": "噪音等级",
+        "noiseLevels": {
+          "quiet": "安静",
+          "moderate": "适中",
+          "loud": "嘈杂"
+        },
+        "socialAtmosphere": "社交氛围",
+        "socialLevels": {
+          "low": "低",
+          "medium": "中等",
+          "high": "高"
+        },
+        "tags": "标签"
       }
     }
   },
@@ -2160,6 +2254,63 @@
     "all": "全部"
   },
   "recommendationForm": {
+    "place": {
+      "fields": {
+        "tags": "标签",
+        "socialLevels": {
+          "high": "高",
+          "medium": "中等",
+          "low": "低"
+        },
+        "socialAtmosphere": "社交氛围",
+        "noiseLevels": {
+          "loud": "嘈杂",
+          "moderate": "中等",
+          "quiet": "安静"
+        },
+        "noiseLevel": "噪音水平",
+        "priceLevel": "价格水平",
+        "wifiSpeedPlaceholder": "输入WiFi速度（Mbps）",
+        "wifiSpeed": "WiFi速度",
+        "descriptionPlaceholder": "描述这个地方以及为什么推荐它",
+        "description": "描述",
+        "longitudePlaceholder": "输入经度",
+        "longitude": "经度",
+        "latitudePlaceholder": "输入纬度",
+        "latitude": "纬度",
+        "locationHelp": "一般区域或社区（可选）",
+        "locationPlaceholder": "例如：涩谷、东京或中央公园区域",
+        "location": "位置",
+        "addressPlaceholder": "输入地址",
+        "address": "地址",
+        "category": "类别",
+        "namePlaceholder": "输入地点名称",
+        "name": "地点名称"
+      },
+      "priceLevels": {
+        "cheap": "$ 便宜",
+        "economical": "$$ 经济",
+        "moderate": "$$$ 中等",
+        "expensive": "$$$$ 较贵",
+        "veryExpensive": "$$$$$ 昂贵"
+      },
+      "suggestedTags": {
+        "quiet": "安静",
+        "fastWifi": "WiFi快",
+        "goodCoffee": "咖啡好",
+        "reasonablePrice": "价格合理",
+        "convenientLocation": "位置便利",
+        "wellEquipped": "设施齐全",
+        "goodCommunity": "社区好",
+        "beautifulView": "风景美",
+        "goodFood": "食物好吃",
+        "goodService": "服务好",
+        "open24Hours": "24小时",
+        "petFriendly": "宠物友好"
+      },
+      "submitButton": "提交推荐",
+      "title": "推荐地点"
+    },
     "city": {
       "title": "推荐新城市",
       "fields": {

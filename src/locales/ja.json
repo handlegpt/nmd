@@ -2019,6 +2019,63 @@
     "all": "すべて"
   },
   "recommendationForm": {
+    "place": {
+      "fields": {
+        "tags": "タグ",
+        "socialLevels": {
+          "high": "高い",
+          "medium": "中程度",
+          "low": "低い"
+        },
+        "socialAtmosphere": "ソーシャル雰囲気",
+        "noiseLevels": {
+          "loud": "うるさい",
+          "moderate": "中程度",
+          "quiet": "静か"
+        },
+        "noiseLevel": "騒音レベル",
+        "priceLevel": "価格レベル",
+        "wifiSpeedPlaceholder": "WiFi速度をMbpsで入力",
+        "wifiSpeed": "WiFi速度",
+        "descriptionPlaceholder": "場所とおすすめ理由を説明してください",
+        "description": "説明",
+        "longitudePlaceholder": "経度を入力",
+        "longitude": "経度",
+        "latitudePlaceholder": "緯度を入力",
+        "latitude": "緯度",
+        "locationHelp": "一般的なエリアまたは地域（オプション）",
+        "locationPlaceholder": "例：渋谷、東京またはセントラルパークエリア",
+        "location": "場所",
+        "addressPlaceholder": "住所を入力",
+        "address": "住所",
+        "category": "カテゴリ",
+        "namePlaceholder": "場所名を入力",
+        "name": "場所名"
+      },
+      "priceLevels": {
+        "cheap": "$ 安い",
+        "economical": "$$ 経済的",
+        "moderate": "$$$ 中程度",
+        "expensive": "$$$$ 高い",
+        "veryExpensive": "$$$$$ 非常に高い"
+      },
+      "suggestedTags": {
+        "quiet": "静か",
+        "fastWifi": "WiFi速い",
+        "goodCoffee": "コーヒー美味しい",
+        "reasonablePrice": "価格合理的",
+        "convenientLocation": "立地便利",
+        "wellEquipped": "設備充実",
+        "goodCommunity": "コミュニティ良い",
+        "beautifulView": "景色美しい",
+        "goodFood": "食べ物美味しい",
+        "goodService": "サービス良い",
+        "open24Hours": "24時間営業",
+        "petFriendly": "ペット可"
+      },
+      "submitButton": "おすすめを送信",
+      "title": "場所をおすすめ"
+    },
     "city": {
       "title": "新しい都市を推薦",
       "fields": {

@@ -321,11 +321,11 @@ export default function TaxPage() {
         <div className="mb-8">
           <div className="flex items-center justify-center space-x-4 mb-6">
             {[
-              { id: 'assessment', label: '需求评估', icon: Target, step: 1 },
-              { id: 'calculator', label: '税务计算', icon: Calculator, step: 2 },
-              { id: 'strategies', label: '策略指南', icon: BookOpen, step: 3 },
-              { id: 'countries', label: '国家对比', icon: Globe, step: 4 },
-              { id: 'deadlines', label: '截止提醒', icon: Calendar, step: 5 }
+              { id: 'assessment', label: t('tax.tabs.assessment'), icon: Target, step: 1 },
+              { id: 'calculator', label: t('tax.tabs.calculator'), icon: Calculator, step: 2 },
+              { id: 'strategies', label: t('tax.tabs.strategies'), icon: BookOpen, step: 3 },
+              { id: 'countries', label: t('tax.tabs.countries'), icon: Globe, step: 4 },
+              { id: 'deadlines', label: t('tax.tabs.deadlines'), icon: Calendar, step: 5 }
             ].map((tab, index) => (
               <div key={tab.id} className="flex items-center">
                 <button
@@ -352,13 +352,13 @@ export default function TaxPage() {
           {/* 步骤指示器 */}
           <div className="text-center">
             <div className="inline-flex items-center space-x-2 bg-gray-100 rounded-full px-4 py-2">
-              <span className="text-sm text-gray-600">当前步骤:</span>
+              <span className="text-sm text-gray-600">{t('tax.currentStep')}</span>
               <span className="text-sm font-medium text-blue-600">
-                {activeCategory === 'assessment' && '1️⃣ 需求评估'}
-                {activeCategory === 'calculator' && '2️⃣ 税务计算'}
-                {activeCategory === 'strategies' && '3️⃣ 策略指南'}
-                {activeCategory === 'countries' && '4️⃣ 国家对比'}
-                {activeCategory === 'deadlines' && '5️⃣ 截止提醒'}
+                {activeCategory === 'assessment' && t('tax.step1')}
+                {activeCategory === 'calculator' && t('tax.step2')}
+                {activeCategory === 'strategies' && t('tax.step3')}
+                {activeCategory === 'countries' && t('tax.step4')}
+                {activeCategory === 'deadlines' && t('tax.step5')}
               </span>
             </div>
           </div>

@@ -2173,6 +2173,63 @@
     "all": "Todos"
   },
   "recommendationForm": {
+    "place": {
+      "fields": {
+        "tags": "Etiquetas",
+        "socialLevels": {
+          "high": "Alto",
+          "medium": "Medio",
+          "low": "Bajo"
+        },
+        "socialAtmosphere": "Ambiente Social",
+        "noiseLevels": {
+          "loud": "Ruidoso",
+          "moderate": "Moderado",
+          "quiet": "Tranquilo"
+        },
+        "noiseLevel": "Nivel de Ruido",
+        "priceLevel": "Nivel de Precio",
+        "wifiSpeedPlaceholder": "Ingresa la velocidad WiFi en Mbps",
+        "wifiSpeed": "Velocidad WiFi",
+        "descriptionPlaceholder": "Describe el lugar y por qué lo recomiendas",
+        "description": "Descripción",
+        "longitudePlaceholder": "Ingresa la longitud",
+        "longitude": "Longitud",
+        "latitudePlaceholder": "Ingresa la latitud",
+        "latitude": "Latitud",
+        "locationHelp": "Área general o vecindario (opcional)",
+        "locationPlaceholder": "ej. Shibuya, Tokio o área del Central Park",
+        "location": "Ubicación",
+        "addressPlaceholder": "Ingresa la dirección",
+        "address": "Dirección",
+        "category": "Categoría",
+        "namePlaceholder": "Ingresa el nombre del lugar",
+        "name": "Nombre del Lugar"
+      },
+      "priceLevels": {
+        "cheap": "$ Barato",
+        "economical": "$$ Económico",
+        "moderate": "$$$ Moderado",
+        "expensive": "$$$$ Caro",
+        "veryExpensive": "$$$$$ Muy Caro"
+      },
+      "suggestedTags": {
+        "quiet": "Tranquilo",
+        "fastWifi": "WiFi Rápido",
+        "goodCoffee": "Buen Café",
+        "reasonablePrice": "Precio Razonable",
+        "convenientLocation": "Ubicación Conveniente",
+        "wellEquipped": "Bien Equipado",
+        "goodCommunity": "Buena Comunidad",
+        "beautifulView": "Vista Hermosa",
+        "goodFood": "Buena Comida",
+        "goodService": "Buen Servicio",
+        "open24Hours": "24 Horas",
+        "petFriendly": "Pet Friendly"
+      },
+      "submitButton": "Enviar Recomendación",
+      "title": "Recomendar un Lugar"
+    },
     "city": {
       "title": "Recomendar Nueva Ciudad",
       "fields": {

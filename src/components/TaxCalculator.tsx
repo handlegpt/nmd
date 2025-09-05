@@ -61,11 +61,11 @@ export default function TaxCalculator() {
   const countries = [
     { 
       id: 'portugal', 
-      name: '葡萄牙', 
+      name: t('tax.calculator.countries.portugal'), 
       flag: '🇵🇹', 
       nhrRate: 0.20, 
       standardRate: 0.48, 
-      note: 'NHR政策已收紧',
+      note: t('tax.calculator.countryNotes.portugal'),
       category: 'tax-haven' as const,
       visaDifficulty: 'medium' as const,
       costOfLiving: 'medium' as const,
@@ -73,11 +73,11 @@ export default function TaxCalculator() {
     },
     { 
       id: 'thailand', 
-      name: '泰国', 
+      name: t('tax.calculator.countries.thailand'), 
       flag: '🇹🇭', 
       nhrRate: 0, 
       standardRate: 0.35, 
-      note: '领土税制',
+      note: t('tax.calculator.countryNotes.thailand'),
       category: 'tax-haven' as const,
       visaDifficulty: 'easy' as const,
       costOfLiving: 'low' as const,
@@ -85,11 +85,11 @@ export default function TaxCalculator() {
     },
     { 
       id: 'mexico', 
-      name: '墨西哥', 
+      name: t('tax.calculator.countries.mexico'), 
       flag: '🇲🇽', 
       nhrRate: 0, 
       standardRate: 0.35, 
-      note: '领土税制',
+      note: t('tax.calculator.countryNotes.mexico'),
       category: 'moderate' as const,
       visaDifficulty: 'easy' as const,
       costOfLiving: 'low' as const,
@@ -97,11 +97,11 @@ export default function TaxCalculator() {
     },
     { 
       id: 'spain', 
-      name: '西班牙', 
+      name: t('tax.calculator.countries.spain'), 
       flag: '🇪🇸', 
       nhrRate: 0.24, 
       standardRate: 0.47, 
-      note: '贝克汉姆法',
+      note: t('tax.calculator.countryNotes.spain'),
       category: 'high-tax' as const,
       visaDifficulty: 'medium' as const,
       costOfLiving: 'medium' as const,
@@ -109,11 +109,11 @@ export default function TaxCalculator() {
     },
     { 
       id: 'germany', 
-      name: '德国', 
+      name: t('tax.calculator.countries.germany'), 
       flag: '🇩🇪', 
       nhrRate: 0.45, 
       standardRate: 0.45, 
-      note: '高税率',
+      note: t('tax.calculator.countryNotes.germany'),
       category: 'high-tax' as const,
       visaDifficulty: 'hard' as const,
       costOfLiving: 'high' as const,
@@ -121,11 +121,11 @@ export default function TaxCalculator() {
     },
     { 
       id: 'estonia', 
-      name: '爱沙尼亚', 
+      name: t('tax.calculator.countries.estonia'), 
       flag: '🇪🇪', 
       nhrRate: 0.20, 
       standardRate: 0.20, 
-      note: '数字游民友好',
+      note: t('tax.calculator.countryNotes.estonia'),
       category: 'moderate' as const,
       visaDifficulty: 'easy' as const,
       costOfLiving: 'medium' as const,
@@ -133,11 +133,11 @@ export default function TaxCalculator() {
     },
     { 
       id: 'costa-rica', 
-      name: '哥斯达黎加', 
+      name: t('tax.calculator.countries.costaRica'), 
       flag: '🇨🇷', 
       nhrRate: 0.25, 
       standardRate: 0.25, 
-      note: '领土税制',
+      note: t('tax.calculator.countryNotes.costaRica'),
       category: 'moderate' as const,
       visaDifficulty: 'easy' as const,
       costOfLiving: 'medium' as const,
@@ -145,11 +145,11 @@ export default function TaxCalculator() {
     },
     { 
       id: 'malaysia', 
-      name: '马来西亚', 
+      name: t('tax.calculator.countries.malaysia'), 
       flag: '🇲🇾', 
       nhrRate: 0.30, 
       standardRate: 0.30, 
-      note: 'MM2H签证',
+      note: t('tax.calculator.countryNotes.malaysia'),
       category: 'moderate' as const,
       visaDifficulty: 'medium' as const,
       costOfLiving: 'low' as const,
@@ -317,7 +317,7 @@ export default function TaxCalculator() {
           }`}
         >
           <Calculator className="h-4 w-4 inline mr-2" />
-          税务计算器
+          {t('tax.calculator.tabs.calculator')}
         </button>
         <button
           onClick={() => setActiveTab('feie')}
@@ -328,7 +328,7 @@ export default function TaxCalculator() {
           }`}
         >
           <DollarSign className="h-4 w-4 inline mr-2" />
-          FEIE 计算器
+          {t('tax.calculator.tabs.feie')}
         </button>
         <button
           onClick={() => setActiveTab('presence')}
@@ -339,7 +339,7 @@ export default function TaxCalculator() {
           }`}
         >
           <Clock className="h-4 w-4 inline mr-2" />
-          存在测试
+          {t('tax.calculator.tabs.presence')}
         </button>
         <button
           onClick={() => setActiveTab('residency')}
@@ -350,14 +350,14 @@ export default function TaxCalculator() {
           }`}
         >
           <Globe className="h-4 w-4 inline mr-2" />
-          居民追踪
+          {t('tax.calculator.tabs.residency')}
         </button>
       </div>
 
       {/* 收入输入 */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          年收入 (USD)
+          {t('tax.calculator.annualIncome')} (USD)
         </label>
         <div className="relative">
           <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -366,7 +366,7 @@ export default function TaxCalculator() {
             value={annualIncome}
             onChange={(e) => setAnnualIncome(Number(e.target.value))}
             className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="输入年收入"
+            placeholder={t('tax.calculator.annualIncomePlaceholder')}
           />
         </div>
       </div>
@@ -377,7 +377,7 @@ export default function TaxCalculator() {
           {/* 国家选择 */}
           <div className="mb-6">
             <label className="block text-sm font-medium text-gray-700 mb-3">
-              选择对比国家
+              {t('tax.calculator.selectCountries')}
             </label>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {countries.map(country => (
@@ -395,8 +395,8 @@ export default function TaxCalculator() {
                     <div className="text-sm font-medium text-gray-900">{country.name}</div>
                     <div className="text-xs text-gray-500">{country.note}</div>
                     <div className={`text-xs px-2 py-1 rounded-full mt-1 ${getCategoryColor(country.category)}`}>
-                      {country.category === 'tax-haven' ? '税务天堂' : 
-                       country.category === 'moderate' ? '中等税率' : '高税率'}
+                      {country.category === 'tax-haven' ? t('tax.categories.taxHaven') : 
+                       country.category === 'moderate' ? t('tax.categories.moderate') : t('tax.categories.highTax')}
                     </div>
                   </div>
                 </button>
@@ -411,26 +411,26 @@ export default function TaxCalculator() {
               <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <BarChart3 className="h-5 w-5 mr-2 text-blue-600" />
-                  税务对比概览
+                  {t('tax.calculator.overview.title')}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="text-center p-4 bg-white rounded-lg">
                     <div className="text-2xl font-bold text-green-600">
                       ${Math.max(...calculations.map(c => c.savings)).toLocaleString()}
                     </div>
-                    <div className="text-sm text-gray-600">最大节税潜力</div>
+                    <div className="text-sm text-gray-600">{t('tax.calculator.overview.maxSavings')}</div>
                   </div>
                   <div className="text-center p-4 bg-white rounded-lg">
                     <div className="text-2xl font-bold text-blue-600">
                       {calculations.length}
                     </div>
-                    <div className="text-sm text-gray-600">对比国家数量</div>
+                    <div className="text-sm text-gray-600">{t('tax.calculator.overview.countryCount')}</div>
                   </div>
                   <div className="text-center p-4 bg-white rounded-lg">
                     <div className="text-2xl font-bold text-purple-600">
                       {Math.min(...calculations.map(c => c.effectiveRate)).toFixed(1)}%
                     </div>
-                    <div className="text-sm text-gray-600">最低有效税率</div>
+                    <div className="text-sm text-gray-600">{t('tax.calculator.overview.lowestRate')}</div>
                   </div>
                 </div>
               </div>

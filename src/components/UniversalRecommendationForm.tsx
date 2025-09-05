@@ -200,8 +200,18 @@ export default function UniversalRecommendationForm({
         title: t('recommendationForm.place.title'),
         submitButtonText: t('recommendationForm.place.submitButton'),
         suggestedTags: [
-          '安静', 'WiFi快', '咖啡好', '价格合理', '位置便利', '设施齐全',
-          '社区好', '风景美', '食物好吃', '服务好', '24小时', '宠物友好'
+          t('recommendationForm.place.suggestedTags.quiet'),
+          t('recommendationForm.place.suggestedTags.fastWifi'),
+          t('recommendationForm.place.suggestedTags.goodCoffee'),
+          t('recommendationForm.place.suggestedTags.reasonablePrice'),
+          t('recommendationForm.place.suggestedTags.convenientLocation'),
+          t('recommendationForm.place.suggestedTags.wellEquipped'),
+          t('recommendationForm.place.suggestedTags.goodCommunity'),
+          t('recommendationForm.place.suggestedTags.beautifulView'),
+          t('recommendationForm.place.suggestedTags.goodFood'),
+          t('recommendationForm.place.suggestedTags.goodService'),
+          t('recommendationForm.place.suggestedTags.open24Hours'),
+          t('recommendationForm.place.suggestedTags.petFriendly')
         ],
         fields: [
           {
@@ -256,11 +266,11 @@ export default function UniversalRecommendationForm({
             label: t('recommendationForm.place.fields.priceLevel'),
             type: 'select',
             options: [
-              { value: 1, label: '$ 便宜' },
-              { value: 2, label: '$$ 经济' },
-              { value: 3, label: '$$$ 中等' },
-              { value: 4, label: '$$$$ 较贵' },
-              { value: 5, label: '$$$$$ 昂贵' }
+              { value: 1, label: t('recommendationForm.place.priceLevels.cheap') },
+              { value: 2, label: t('recommendationForm.place.priceLevels.economical') },
+              { value: 3, label: t('recommendationForm.place.priceLevels.moderate') },
+              { value: 4, label: t('recommendationForm.place.priceLevels.expensive') },
+              { value: 5, label: t('recommendationForm.place.priceLevels.veryExpensive') }
             ],
             gridCols: 1
           },

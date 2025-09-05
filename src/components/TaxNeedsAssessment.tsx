@@ -49,62 +49,62 @@ export default function TaxNeedsAssessment() {
     {
       id: 'income',
       type: 'select',
-      question: '你的年收入范围是？',
+      question: t('taxAssessment.questions.income'),
       icon: DollarSign,
       options: [
-        { value: 'under-50k', label: '低于 $50,000', description: '适合基础优化策略' },
-        { value: '50k-100k', label: '$50,000 - $100,000', description: '中等收入优化空间' },
-        { value: '100k-200k', label: '$100,000 - $200,000', description: '高收入优化潜力' },
-        { value: 'over-200k', label: '超过 $200,000', description: '需要专业税务规划' }
+        { value: 'under-50k', label: t('taxAssessment.incomeOptions.under50k'), description: t('taxAssessment.incomeOptions.under50kDesc') },
+        { value: '50k-100k', label: t('taxAssessment.incomeOptions.50k100k'), description: t('taxAssessment.incomeOptions.50k100kDesc') },
+        { value: '100k-200k', label: t('taxAssessment.incomeOptions.100k200k'), description: t('taxAssessment.incomeOptions.100k200kDesc') },
+        { value: 'over-200k', label: t('taxAssessment.incomeOptions.over200k'), description: t('taxAssessment.incomeOptions.over200kDesc') }
       ]
     },
     {
       id: 'passport',
       type: 'select',
-      question: '你的护照国是？',
+      question: t('taxAssessment.questions.passport'),
       icon: Globe,
       options: [
-        { value: 'us', label: 'United States', flag: '🇺🇸', description: '全球征税，需要FEIE' },
-        { value: 'eu', label: 'European Union', flag: '🇪🇺', description: '欧盟内部流动便利' },
-        { value: 'uk', label: 'United Kingdom', flag: '🇬🇧', description: '脱欧后新税务环境' },
-        { value: 'canada', label: 'Canada', flag: '🇨🇦', description: '相对友好的税务制度' },
-        { value: 'australia', label: 'Australia', flag: '🇦🇺', description: '需要满足居住测试' },
-        { value: 'other', label: '其他', flag: '🌍', description: '需要具体分析' }
+        { value: 'us', label: t('taxAssessment.passportOptions.us'), flag: '🇺🇸', description: t('taxAssessment.passportOptions.usDesc') },
+        { value: 'eu', label: t('taxAssessment.passportOptions.eu'), flag: '🇪🇺', description: t('taxAssessment.passportOptions.euDesc') },
+        { value: 'uk', label: t('taxAssessment.passportOptions.uk'), flag: '🇬🇧', description: t('taxAssessment.passportOptions.ukDesc') },
+        { value: 'canada', label: t('taxAssessment.passportOptions.canada'), flag: '🇨🇦', description: t('taxAssessment.passportOptions.canadaDesc') },
+        { value: 'australia', label: t('taxAssessment.passportOptions.australia'), flag: '🇦🇺', description: t('taxAssessment.passportOptions.australiaDesc') },
+        { value: 'other', label: t('taxAssessment.passportOptions.other'), flag: '🌍', description: t('taxAssessment.passportOptions.otherDesc') }
       ]
     },
     {
       id: 'residence',
       type: 'select',
-      question: '你的居住模式是？',
+      question: t('taxAssessment.questions.residence'),
       icon: MapPin,
       options: [
-        { value: 'single', label: '单一国家居住', description: '单一国家居住' },
-        { value: 'multiple', label: '多国居住', description: '多国居住，需要规划' },
-        { value: 'nomadic', label: '游牧式生活', description: '游牧式生活' }
+        { value: 'single', label: t('taxAssessment.residenceOptions.single'), description: t('taxAssessment.residenceOptions.singleDesc') },
+        { value: 'multiple', label: t('taxAssessment.residenceOptions.multiple'), description: t('taxAssessment.residenceOptions.multipleDesc') },
+        { value: 'nomadic', label: t('taxAssessment.residenceOptions.nomadic'), description: t('taxAssessment.residenceOptions.nomadicDesc') }
       ]
     },
     {
       id: 'work_type',
       type: 'select',
-      question: '你的工作类型是？',
+      question: t('taxAssessment.questions.workType'),
       icon: Users,
       options: [
-        { value: 'freelance', label: '自由职业者', description: '自由职业者' },
-        { value: 'remote', label: '远程员工', description: '远程员工' },
-        { value: 'business', label: '企业主', description: '企业主' },
-        { value: 'mixed', label: '混合收入来源', description: '混合收入来源' }
+        { value: 'freelance', label: t('taxAssessment.workTypeOptions.freelance'), description: t('taxAssessment.workTypeOptions.freelanceDesc') },
+        { value: 'remote', label: t('taxAssessment.workTypeOptions.remote'), description: t('taxAssessment.workTypeOptions.remoteDesc') },
+        { value: 'business', label: t('taxAssessment.workTypeOptions.business'), description: t('taxAssessment.workTypeOptions.businessDesc') },
+        { value: 'mixed', label: t('taxAssessment.workTypeOptions.mixed'), description: t('taxAssessment.workTypeOptions.mixedDesc') }
       ]
     },
     {
       id: 'visa_status',
       type: 'select',
-      question: '你当前的签证状态是？',
+      question: t('taxAssessment.questions.visaStatus'),
       icon: Shield,
       options: [
-        { value: 'tourist', label: '旅游签证', description: '旅游签证' },
-        { value: 'digital_nomad', label: '数字游民签证', description: '数字游民签证' },
-        { value: 'resident', label: '居民身份', description: '居民身份' },
-        { value: 'citizen', label: '公民身份', description: '公民身份' }
+        { value: 'tourist', label: t('taxAssessment.visaStatusOptions.tourist'), description: t('taxAssessment.visaStatusOptions.touristDesc') },
+        { value: 'digital_nomad', label: t('taxAssessment.visaStatusOptions.digitalNomad'), description: t('taxAssessment.visaStatusOptions.digitalNomadDesc') },
+        { value: 'resident', label: t('taxAssessment.visaStatusOptions.resident'), description: t('taxAssessment.visaStatusOptions.residentDesc') },
+        { value: 'citizen', label: t('taxAssessment.visaStatusOptions.citizen'), description: t('taxAssessment.visaStatusOptions.citizenDesc') }
       ]
     }
   ];
@@ -261,10 +261,10 @@ export default function TaxNeedsAssessment() {
               <Target className="h-10 w-10 text-white" />
             </div>
             <h2 className="text-3xl font-bold mb-2">
-              你的税务画像报告
+              {t('taxAssessment.results.title')}
             </h2>
             <p className="text-blue-100 text-lg">
-              基于你的回答，我们为你定制了税务优化建议
+              {t('taxAssessment.results.subtitle')}
             </p>
           </div>
 
@@ -273,7 +273,7 @@ export default function TaxNeedsAssessment() {
             <div className="bg-white bg-opacity-10 rounded-lg p-6">
               <div className="flex items-center mb-3">
                 <DollarSign className="h-6 w-6 mr-2" />
-                <h3 className="font-semibold">收入水平</h3>
+                <h3 className="font-semibold">{t('taxAssessment.results.incomeLevel')}</h3>
               </div>
               <p className="text-sm text-blue-100">
                 {questions[0].options.find(opt => opt.value === result.taxProfile.income)?.label}
@@ -282,7 +282,7 @@ export default function TaxNeedsAssessment() {
             <div className="bg-white bg-opacity-10 rounded-lg p-6">
               <div className="flex items-center mb-3">
                 <Globe className="h-6 w-6 mr-2" />
-                <h3 className="font-semibold">护照国</h3>
+                <h3 className="font-semibold">{t('taxAssessment.results.passportCountry')}</h3>
               </div>
               <p className="text-sm text-blue-100">
                 {questions[1].options.find(opt => opt.value === result.taxProfile.passport)?.label}
@@ -291,7 +291,7 @@ export default function TaxNeedsAssessment() {
             <div className="bg-white bg-opacity-10 rounded-lg p-6">
               <div className="flex items-center mb-3">
                 <MapPin className="h-6 w-6 mr-2" />
-                <h3 className="font-semibold">居住模式</h3>
+                <h3 className="font-semibold">{t('taxAssessment.results.residencePattern')}</h3>
               </div>
               <p className="text-sm text-blue-100">
                 {questions[2].options.find(opt => opt.value === result.taxProfile.residence)?.label}
@@ -304,7 +304,7 @@ export default function TaxNeedsAssessment() {
             <div className="bg-white bg-opacity-20 rounded-lg p-6 text-center">
               <div className="flex items-center justify-center mb-2">
                 <TrendingUp className="h-8 w-8 mr-2" />
-                <h3 className="text-xl font-bold">潜在节税</h3>
+                <h3 className="text-xl font-bold">{t('taxAssessment.results.potentialSavings')}</h3>
               </div>
               <p className="text-2xl font-bold text-green-300">{result.savingsPotential}</p>
             </div>
@@ -317,10 +317,10 @@ export default function TaxNeedsAssessment() {
                 ) : (
                   <AlertTriangle className="h-8 w-8 mr-2 text-red-300" />
                 )}
-                <h3 className="text-xl font-bold">风险等级</h3>
+                <h3 className="text-xl font-bold">{t('taxAssessment.results.riskLevel')}</h3>
               </div>
               <p className="text-2xl font-bold">
-                {result.riskLevel === 'low' ? '低风险' : result.riskLevel === 'medium' ? '中等风险' : '高风险'}
+                {result.riskLevel === 'low' ? t('taxAssessment.results.lowRisk') : result.riskLevel === 'medium' ? t('taxAssessment.results.mediumRisk') : t('taxAssessment.results.highRisk')}
               </p>
             </div>
           </div>
@@ -334,7 +334,7 @@ export default function TaxNeedsAssessment() {
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <TrendingUp className="h-5 w-5 mr-2 text-green-600" />
-                  推荐策略
+                  {t('taxAssessment.results.recommendedStrategies')}
                 </h3>
                 <div className="space-y-3">
                   {result.recommendedStrategies.map((strategy, index) => (
@@ -354,7 +354,7 @@ export default function TaxNeedsAssessment() {
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <AlertTriangle className="h-5 w-5 mr-2 text-yellow-600" />
-                  风险提醒
+                  {t('taxAssessment.results.riskWarnings')}
                 </h3>
                 <div className="space-y-3">
                   {result.warnings.map((warning, index) => (
@@ -377,7 +377,7 @@ export default function TaxNeedsAssessment() {
               <div className="bg-white rounded-lg shadow-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                   <Globe className="h-5 w-5 mr-2 text-blue-600" />
-                  推荐税务友好国家
+                  {t('taxAssessment.results.recommendedCountries')}
                 </h3>
                 <div className="space-y-3">
                   {result.recommendedCountries.map((country, index) => (
@@ -396,7 +396,7 @@ export default function TaxNeedsAssessment() {
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                 <ArrowRight className="h-5 w-5 mr-2 text-blue-600" />
-                下一步行动
+                {t('taxAssessment.results.nextSteps')}
               </h3>
               <div className="space-y-3">
                 {result.nextSteps.map((step, index) => (
@@ -420,14 +420,14 @@ export default function TaxNeedsAssessment() {
                   className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
                 >
                   <Calculator className="h-5 w-5 mr-2" />
-                  使用税务计算器
+                  {t('taxAssessment.results.useCalculator')}
                 </button>
                 <button
                   onClick={() => {/* Navigate to strategies */}}
                   className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center"
                 >
                   <BookOpen className="h-5 w-5 mr-2" />
-                  查看策略指南
+                  {t('taxAssessment.results.viewStrategies')}
                 </button>
                 <button
                   onClick={() => {
@@ -437,7 +437,7 @@ export default function TaxNeedsAssessment() {
                   }}
                   className="w-full px-6 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
                 >
-                  重新评估
+                  {t('taxAssessment.results.reassess')}
                 </button>
               </div>
             </div>
@@ -454,7 +454,7 @@ export default function TaxNeedsAssessment() {
         <div className="mb-8">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-700">
-              问题 {currentStep + 1} / {questions.length}
+              {t('taxAssessment.navigation.question')} {currentStep + 1} / {questions.length}
             </span>
             <span className="text-sm text-gray-500">
               {Math.round(((currentStep + 1) / questions.length) * 100)}%
@@ -527,7 +527,7 @@ export default function TaxNeedsAssessment() {
             }`}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            上一步
+            {t('taxAssessment.navigation.previous')}
           </button>
           
           <button
@@ -539,7 +539,7 @@ export default function TaxNeedsAssessment() {
                 : 'bg-blue-600 text-white hover:bg-blue-700'
             }`}
           >
-            {currentStep === questions.length - 1 ? '查看结果' : '下一步'}
+            {currentStep === questions.length - 1 ? t('taxAssessment.navigation.viewResults') : t('taxAssessment.navigation.next')}
             {currentStep < questions.length - 1 && <ArrowRight className="h-4 w-4 ml-2" />}
           </button>
         </div>
