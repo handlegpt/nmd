@@ -815,10 +815,10 @@ export default function HomeLocalNomads({
               <Navigation className="w-5 h-5 text-blue-600 dark:text-blue-400" />
               <div>
                 <h3 className="text-sm font-medium text-blue-900 dark:text-blue-100">
-                  启用定位
+                  {t('localNomads.enableLocation')}
                 </h3>
                 <p className="text-sm text-blue-700 dark:text-blue-300">
-                  获取基于位置的个性化推荐
+                  {t('localNomads.getPersonalizedRecommendations')}
                 </p>
               </div>
             </div>
@@ -838,14 +838,14 @@ export default function HomeLocalNomads({
               className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
             >
               <Target className="w-4 h-4" />
-              <span>允许定位</span>
+              <span>{t('localNomads.allowLocation')}</span>
             </button>
             <button
               onClick={() => {/* TODO: 手动选城市 */}}
               className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-white text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors text-sm"
             >
               <MapPin className="w-4 h-4" />
-              <span>手动选城市</span>
+              <span>{t('localNomads.selectCityManually')}</span>
             </button>
           </div>
         </div>
@@ -928,7 +928,7 @@ export default function HomeLocalNomads({
                   Trust & Response: 94% 请求获回应
                 </h3>
                 <p className="text-sm text-green-700 dark:text-green-300">
-                  近30天数据 • 基于 {totalUsers} 次真实请求
+                  {t('localNomads.recent30DaysData')} • {t('localNomads.basedOnRealRequests', { count: totalUsers })}
                 </p>
               </div>
               <div className="text-right">
@@ -1152,7 +1152,7 @@ export default function HomeLocalNomads({
               
               {/* 次要文案 */}
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                分享邀请链接或探索热门城市
+                {t('localNomads.shareInviteLink')}
               </p>
             </div>
           </div>
@@ -1227,7 +1227,7 @@ export default function HomeLocalNomads({
                 {t('localNomads.inviteFriendsTitle')}
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
-                每邀请1人得1个月高级版（上限3个月，好友完成注册即发放）
+                {t('localNomads.inviteReward')}
               </p>
               
               <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 mb-4">
