@@ -1,0 +1,16 @@
+{
+  "name": "NOMAD.NOW",
+  "short_name": "NOMAD.NOW",
+  "description": "Digital Nomad Tools and Community",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3b82f6",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

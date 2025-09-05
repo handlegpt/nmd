@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Import design system */
+@import './design-system.css';
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+/* Dark mode styles */
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 0, 0, 0;
+  --background-end-rgb: 0, 0, 0;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+/* Prevent mobile overscroll and ensure consistent background */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure body takes full height and prevents overscroll */
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-start-rgb));
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Prevent horizontal scroll on mobile */
+.container {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
+/* Ensure all pages have consistent background */
+.min-h-screen {
+  background-color: rgb(249, 250, 251) !important; /* bg-gray-50 */
+}
+
+.dark .min-h-screen {
+  background-color: rgb(17, 24, 39) !important; /* bg-gray-900 */
+}
+
+/* Smooth transitions for theme changes */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+} 

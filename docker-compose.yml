@@ -1,0 +1,141 @@
+version: '3.8'
+
+services:
+  # Next.js Application
+  nomad-now:
+    build: 
+      context: .
+      args:
+        - NODE_ENV=production
+        - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+        - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    ports:
+      - "3011:3000"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOSTNAME=0.0.0.0
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - nomad-network
+
+  # Directus CMS
+  directus:
+    image: directus/directus:latest
+    container_name: nomad-directus
+    ports:
+      - "8055:8055"
+    environment:
+      KEY: "${KEY}"
+      SECRET: "${SECRET}"
+      # Local PostgreSQL database configuration for Directus
+      DB_CLIENT: "pg"
+      # Local PostgreSQL connection settings
+      DB_HOST: "postgres"
+      DB_PORT: "5432"
+      DB_DATABASE: "directus"
+      DB_USER: "directus"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      # SSL configuration
+      DB_SSL: "false"
+      DB_SSL_REJECT_UNAUTHORIZED: "false"
+      # Minimal connection pool to avoid timeouts
+      DB_POOL_MIN: "1"
+      DB_POOL_MAX: "1"
+      DB_POOL_ACQUIRE_TIMEOUT: "60000"
+      CACHE_ENABLED: "true"
+      CACHE_STORE: "redis"
+      REDIS: "redis://redis:6379"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@nomad.now}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      PUBLIC_URL: "${PUBLIC_URL:-http://localhost:8055}"
+      AUTH_PROVIDERS: ""
+      AUTH_DISABLE_DEFAULT: "false"
+      TELEMETRY: "false"
+      STORAGE_LOCATIONS: "local"
+      STORAGE_LOCAL_DRIVER: "local"
+      STORAGE_LOCAL_ROOT: "/directus/uploads"
+      # SSL configuration handled in connection string
+      # Additional database optimizations
+      DB_MIGRATIONS: "true"
+      DB_MIGRATIONS_TABLE: "directus_migrations"
+    volumes:
+      - directus_uploads:/directus/uploads
+      - directus_snapshots:/directus/snapshots
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # Enhanced network configuration for better DNS resolution
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1
+      - net.ipv6.conf.default.disable_ipv6=1
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+      - 8.8.4.4
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8055/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - nomad-network
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: nomad-postgres
+    environment:
+      POSTGRES_DB: directus
+      POSTGRES_USER: directus
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U directus -d directus"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - nomad-network
+
+  # Redis Cache
+  redis:
+    image: redis:alpine
+    container_name: nomad-redis
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - nomad-network
+
+networks:
+  nomad-network:
+    driver: bridge
+
+volumes:
+  directus_uploads:
+  directus_snapshots:
+  postgres_data:
+  redis_data: 
