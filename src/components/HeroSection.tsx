@@ -492,21 +492,6 @@ export default function HeroSection() {
                     </button>
                   </div>
                   
-                  {/* Setup Benefits */}
-                  <div className="mt-3 space-y-2">
-                    <div className="flex items-center space-x-2 text-xs text-gray-600">
-                      <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
-                      <span>{t('home.hero.liveInfo.visaBenefit1')}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-xs text-gray-600">
-                      <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
-                      <span>{t('home.hero.liveInfo.visaBenefit2')}</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-xs text-gray-600">
-                      <span className="w-2 h-2 bg-amber-400 rounded-full"></span>
-                      <span>{t('home.hero.liveInfo.visaBenefit3')}</span>
-                    </div>
-                  </div>
                 </div>
                 
                 {/* 3. Two Column Layout for Secondary Info - Compact */}
