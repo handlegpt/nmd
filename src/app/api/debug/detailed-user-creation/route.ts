@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
-  console.log('🔍 Detailed user creation API called')
+  console.log('🔍 Detailed user creation test API called')
   
   try {
     const body = await request.json()
@@ -21,124 +21,112 @@ export async function POST(request: NextRequest) {
     const results: any = {
       timestamp: new Date().toISOString(),
       email,
-      steps: {}
+      attempts: {}
     }
 
-    // 1. 尝试不同的用户创建方式
-    console.log('🔍 Step 1: Trying different user creation approaches')
-    
-    // 方式1: 只提供基本字段
+    // 尝试1: 最基本的字段
+    console.log('🔍 Attempt 1: Minimal fields only')
     try {
       const userName = email.split('@')[0]
-      const basicUserData = {
-        email,
-        name: userName
-      }
-      
-      console.log('📝 Trying basic user creation with data:', basicUserData)
-      
-      const { data: basicUser, error: basicError } = await supabase
+      const { data: data1, error: error1 } = await supabase
         .from('users')
-        .insert(basicUserData)
+        .insert({
+          email,
+          name: userName
+        })
         .select('*')
         .single()
 
-      if (basicError) {
-        results.steps.basicCreation = {
-          status: 'error',
-          error: basicError.message,
-          code: basicError.code,
-          details: basicError.details,
-          hint: basicError.hint
-        }
-      } else {
-        results.steps.basicCreation = {
-          status: 'success',
-          data: basicUser
-        }
+      results.attempts.minimal = {
+        status: error1 ? 'error' : 'success',
+        error: error1 ? {
+          message: error1.message,
+          code: error1.code,
+          details: error1.details,
+          hint: error1.hint
+        } : null,
+        data: data1
       }
     } catch (error) {
-      results.steps.basicCreation = {
+      results.attempts.minimal = {
         status: 'error',
         error: error instanceof Error ? error.message : 'Unknown error'
       }
     }
 
-    // 方式2: 提供所有可能需要的字段
+    // 尝试2: 使用upsert
+    console.log('🔍 Attempt 2: Upsert with minimal fields')
     try {
       const userName = email.split('@')[0]
-      const fullUserData = {
-        email,
-        name: userName,
-        avatar_url: null,
-        preferences: {},
-        current_city: null,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }
-      
-      console.log('📝 Trying full user creation with data:', fullUserData)
-      
-      const { data: fullUser, error: fullError } = await supabase
+      const { data: data2, error: error2 } = await supabase
         .from('users')
-        .insert(fullUserData)
+        .upsert({
+          email,
+          name: userName
+        })
         .select('*')
         .single()
 
-      if (fullError) {
-        results.steps.fullCreation = {
-          status: 'error',
-          error: fullError.message,
-          code: fullError.code,
-          details: fullError.details,
-          hint: fullError.hint
-        }
-      } else {
-        results.steps.fullCreation = {
-          status: 'success',
-          data: fullUser
-        }
+      results.attempts.upsert = {
+        status: error2 ? 'error' : 'success',
+        error: error2 ? {
+          message: error2.message,
+          code: error2.code,
+          details: error2.details,
+          hint: error2.hint
+        } : null,
+        data: data2
       }
     } catch (error) {
-      results.steps.fullCreation = {
+      results.attempts.upsert = {
         status: 'error',
         error: error instanceof Error ? error.message : 'Unknown error'
       }
     }
 
-    // 方式3: 尝试使用不同的email
+    // 尝试3: 检查表结构
+    console.log('🔍 Attempt 3: Check table structure')
     try {
-      const testEmail = `test-${Date.now()}@example.com`
-      const userName = testEmail.split('@')[0]
-      const testUserData = {
-        email: testEmail,
-        name: userName
-      }
-      
-      console.log('📝 Trying test user creation with data:', testUserData)
-      
-      const { data: testUser, error: testError } = await supabase
+      const { data: tableData, error: tableError } = await supabase
         .from('users')
-        .insert(testUserData)
         .select('*')
-        .single()
+        .limit(1)
 
-      if (testError) {
-        results.steps.testCreation = {
-          status: 'error',
-          error: testError.message,
-          code: testError.code,
-          details: testError.details,
-          hint: testError.hint
-        }
-      } else {
-        results.steps.testCreation = {
-          status: 'success',
-          data: testUser
-        }
+      results.attempts.tableCheck = {
+        status: tableError ? 'error' : 'success',
+        error: tableError ? {
+          message: tableError.message,
+          code: tableError.code,
+          details: tableError.details,
+          hint: tableError.hint
+        } : null,
+        data: tableData
       }
     } catch (error) {
-      results.steps.testCreation = {
+      results.attempts.tableCheck = {
+        status: 'error',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }
+    }
+
+    // 尝试4: 使用原始SQL查询表结构
+    console.log('🔍 Attempt 4: Raw SQL table structure')
+    try {
+      const { data: sqlData, error: sqlError } = await supabase
+        .rpc('get_table_columns', { table_name: 'users' })
+
+      results.attempts.sqlStructure = {
+        status: sqlError ? 'error' : 'success',
+        error: sqlError ? {
+          message: sqlError.message,
+          code: sqlError.code,
+          details: sqlError.details,
+          hint: sqlError.hint
+        } : null,
+        data: sqlData
+      }
+    } catch (error) {
+      results.attempts.sqlStructure = {
         status: 'error',
         error: error instanceof Error ? error.message : 'Unknown error'
       }
@@ -151,7 +139,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('💥 Unexpected error in detailed user creation:', error)
+    console.error('💥 Unexpected error in detailed user creation test:', error)
     return NextResponse.json(
       { 
         success: false,
