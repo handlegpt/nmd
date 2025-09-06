@@ -39,13 +39,13 @@ export default function MobileMenu() {
       description: t('mobileMenu.citiesDescription')
     },
     {
-      href: '/visa-guide',
+      href: '/nomadvisaguide',
       icon: FileText,
       label: t('navigation.visaGuide'),
       description: t('mobileMenu.visaGuideDescription')
     },
     {
-      href: '/tax',
+      href: '/nomadtax',
       icon: DollarSign,
       label: t('navigation.tax'),
       description: t('mobileMenu.taxDescription')

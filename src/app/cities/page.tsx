@@ -3,19 +3,19 @@
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 
-export default function VisaGuideRedirect() {
+export default function CitiesRedirect() {
   const router = useRouter()
 
   useEffect(() => {
-    router.replace('/nomadvisaguide')
+    router.replace('/nomadcities')
   }, [router])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-        <p className="text-gray-600 dark:text-gray-400">Redirecting to nomad visa guide...</p>
+        <p className="text-gray-600 dark:text-gray-400">Redirecting to nomad cities...</p>
       </div>
     </div>
   )
-}
+} 

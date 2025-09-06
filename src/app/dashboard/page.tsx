@@ -939,8 +939,8 @@ export default function DashboardPage() {
                     <button
                       onClick={() => {
                         if (rec.action === 'explore') router.push('/nomadcities')
-                        else if (rec.action === 'visa') router.push('/visa-guide')
-                        else if (rec.action === 'tax') router.push('/tax')
+                        else if (rec.action === 'visa') router.push('/nomadvisaguide')
+                        else if (rec.action === 'tax') router.push('/nomadtax')
                         else if (rec.action === 'profile') router.push('/profile')
                       }}
                       className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"
@@ -1032,7 +1032,7 @@ export default function DashboardPage() {
 
           {/* 签证指南 */}
           <button
-            onClick={() => router.push('/visa-guide')}
+            onClick={() => router.push('/nomadvisaguide')}
             className="group relative bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-900/40 border-2 border-orange-200 dark:border-orange-700 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
           >
             <div className="text-center">

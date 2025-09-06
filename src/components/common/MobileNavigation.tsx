@@ -76,9 +76,9 @@ export default function MobileNavigation({
     {
       id: 'tax',
       label: '税务',
-      href: '/tax',
+      href: '/nomadtax',
       icon: <Calculator className="h-5 w-5" />,
-      isActive: pathname.startsWith('/tax')
+      isActive: pathname.startsWith('/nomadtax')
     },
     {
       id: 'guides',

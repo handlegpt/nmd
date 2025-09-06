@@ -23,11 +23,11 @@ export default function DesktopNavigation() {
     },
     {
       name: t('navigation.visaGuide'),
-      href: '/visa-guide',
+      href: '/nomadvisaguide',
     },
     {
       name: t('navigation.tax'),
-      href: '/tax',
+      href: '/nomadtax',
     }
   ]
 
