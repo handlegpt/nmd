@@ -191,9 +191,13 @@ export async function POST(request: NextRequest) {
         
         console.log('📝 Creating user with data:', newUserData)
         
+        // 使用 upsert 而不是 insert，这样可以避免重复键错误
         const { data: newUser, error: createError } = await supabase
           .from('users')
-          .insert(newUserData)
+          .upsert(newUserData, { 
+            onConflict: 'email',
+            ignoreDuplicates: false 
+          })
           .select('id, email, name, created_at, current_city, avatar_url')
           .single()
 
