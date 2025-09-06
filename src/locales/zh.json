@@ -2853,6 +2853,52 @@
     "applicationDifficulty": "申请难度",
     "applicationFee": "申请费用",
     "requirements": "申请要求",
+    "quickStats": "快速统计",
+    "costLevel": {
+      "low": "低",
+      "moderate": "中等",
+      "high": "高"
+    },
+    "wifiSpeed": "WiFi速度",
+    "wifiLevel": {
+      "poor": "差",
+      "fair": "一般",
+      "good": "良好",
+      "excellent": "优秀"
+    },
+    "visaStay": "签证停留",
+    "visaDifficulty": {
+      "easy": "简单",
+      "medium": "中等",
+      "hard": "困难"
+    },
+    "nomadCommunity": "数字游民社区",
+    "communityActivity": {
+      "low": "低",
+      "medium": "中等",
+      "high": "高"
+    },
+    "activeNomads": "活跃游民",
+    "aboutCity": "关于{city}",
+    "cityDescription": "{city}是{country}的一个充满活力的城市，生活成本约${cost}/月，WiFi速度平均{wifi}Mbps，大多数国籍可免签停留{visa}天。",
+    "pros": {
+      "affordableCost": "生活成本合理",
+      "goodWifi": "WiFi基础设施良好",
+      "longVisa": "免签停留时间长",
+      "nomadFriendly": "数字游民友好环境"
+    },
+    "cons": {
+      "languageBarrier": "语言障碍",
+      "weatherIssues": "天气问题",
+      "transportation": "交通挑战"
+    },
+    "actions": "操作",
+    "rateCity": "评价城市",
+    "addToFavorites": "添加到收藏",
+    "share": "分享",
+    "quickInfo": "快速信息",
+    "timezone": "时区",
+    "coordinates": "坐标",
     "validPassport": "有效护照（6个月以上）",
     "roundTripTicket": "往返机票",
     "accommodationProof": "住宿证明",

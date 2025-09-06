@@ -2491,6 +2491,52 @@
     "applicationDifficulty": "Dificultad de Aplicación",
     "applicationFee": "Tarifa de Aplicación",
     "requirements": "Requisitos",
+    "quickStats": "Estadísticas Rápidas",
+    "costLevel": {
+      "low": "Bajo",
+      "moderate": "Moderado",
+      "high": "Alto"
+    },
+    "wifiSpeed": "Velocidad WiFi",
+    "wifiLevel": {
+      "poor": "Pobre",
+      "fair": "Regular",
+      "good": "Bueno",
+      "excellent": "Excelente"
+    },
+    "visaStay": "Estancia con Visa",
+    "visaDifficulty": {
+      "easy": "Fácil",
+      "medium": "Medio",
+      "hard": "Difícil"
+    },
+    "nomadCommunity": "Comunidad Nómada Digital",
+    "communityActivity": {
+      "low": "Baja",
+      "medium": "Media",
+      "high": "Alta"
+    },
+    "activeNomads": "Nómadas Activos",
+    "aboutCity": "Acerca de {city}",
+    "cityDescription": "{city} es una ciudad vibrante en {country} con un costo de vida de alrededor de ${cost}/mes, velocidades WiFi promedio de {wifi}Mbps, y estadías sin visa de hasta {visa} días para la mayoría de nacionalidades.",
+    "pros": {
+      "affordableCost": "Costo de vida asequible",
+      "goodWifi": "Buena infraestructura WiFi",
+      "longVisa": "Estadía sin visa larga",
+      "nomadFriendly": "Ambiente amigable para nómadas"
+    },
+    "cons": {
+      "languageBarrier": "Barrera del idioma",
+      "weatherIssues": "Problemas climáticos",
+      "transportation": "Desafíos de transporte"
+    },
+    "actions": "Acciones",
+    "rateCity": "Calificar Ciudad",
+    "addToFavorites": "Agregar a Favoritos",
+    "share": "Compartir",
+    "quickInfo": "Información Rápida",
+    "timezone": "Zona Horaria",
+    "coordinates": "Coordenadas",
     "validPassport": "Pasaporte válido (6+ meses)",
     "roundTripTicket": "Boleto de ida y vuelta",
     "accommodationProof": "Prueba de alojamiento",

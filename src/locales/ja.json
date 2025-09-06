@@ -2312,6 +2312,52 @@
     "applicationDifficulty": "申請難易度",
     "applicationFee": "申請料",
     "requirements": "申請要件",
+    "quickStats": "クイック統計",
+    "costLevel": {
+      "low": "低",
+      "moderate": "中程度",
+      "high": "高"
+    },
+    "wifiSpeed": "WiFi速度",
+    "wifiLevel": {
+      "poor": "悪い",
+      "fair": "普通",
+      "good": "良い",
+      "excellent": "優秀"
+    },
+    "visaStay": "ビザ滞在",
+    "visaDifficulty": {
+      "easy": "簡単",
+      "medium": "中程度",
+      "hard": "困難"
+    },
+    "nomadCommunity": "デジタルノマドコミュニティ",
+    "communityActivity": {
+      "low": "低",
+      "medium": "中程度",
+      "high": "高"
+    },
+    "activeNomads": "アクティブノマド",
+    "aboutCity": "{city}について",
+    "cityDescription": "{city}は{country}の活気ある都市で、生活費は約${cost}/月、WiFi速度は平均{wifi}Mbps、ほとんどの国籍で{visa}日間のビザなし滞在が可能です。",
+    "pros": {
+      "affordableCost": "手頃な生活費",
+      "goodWifi": "良好なWiFiインフラ",
+      "longVisa": "長期ビザなし滞在",
+      "nomadFriendly": "ノマドフレンドリーな環境"
+    },
+    "cons": {
+      "languageBarrier": "言語の壁",
+      "weatherIssues": "天候の問題",
+      "transportation": "交通の課題"
+    },
+    "actions": "アクション",
+    "rateCity": "都市を評価",
+    "addToFavorites": "お気に入りに追加",
+    "share": "共有",
+    "quickInfo": "クイック情報",
+    "timezone": "タイムゾーン",
+    "coordinates": "座標",
     "validPassport": "有効なパスポート（6ヶ月以上）",
     "roundTripTicket": "往復航空券",
     "accommodationProof": "宿泊証明",

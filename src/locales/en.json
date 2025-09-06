@@ -190,6 +190,52 @@
     "writeReview": "Write Review",
     "userReviews": "User Reviews",
     "other": "Other",
+    "quickStats": "Quick Stats",
+    "costLevel": {
+      "low": "Low",
+      "moderate": "Moderate",
+      "high": "High"
+    },
+    "wifiSpeed": "WiFi Speed",
+    "wifiLevel": {
+      "poor": "Poor",
+      "fair": "Fair",
+      "good": "Good",
+      "excellent": "Excellent"
+    },
+    "visaStay": "Visa Stay",
+    "visaDifficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "nomadCommunity": "Nomad Community",
+    "communityActivity": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "activeNomads": "Active Nomads",
+    "aboutCity": "About {city}",
+    "cityDescription": "{city} is a vibrant city in {country} with a cost of living around ${cost}/month, WiFi speeds averaging {wifi}Mbps, and visa-free stays of up to {visa} days for most nationalities.",
+    "pros": {
+      "affordableCost": "Affordable cost of living",
+      "goodWifi": "Good WiFi infrastructure",
+      "longVisa": "Long visa-free stay",
+      "nomadFriendly": "Nomad-friendly environment"
+    },
+    "cons": {
+      "languageBarrier": "Language barrier",
+      "weatherIssues": "Weather issues",
+      "transportation": "Transportation challenges"
+    },
+    "actions": "Actions",
+    "rateCity": "Rate City",
+    "addToFavorites": "Add to Favorites",
+    "share": "Share",
+    "quickInfo": "Quick Info",
+    "timezone": "Timezone",
+    "coordinates": "Coordinates",
       "utilities": "Utilities",
       "entertainment": "Entertainment",
     "transportation": "Transportation",
@@ -1708,8 +1754,8 @@
     "searchPlaceholder": "Search places...",
     "description": "Discover the best places for remote work",
     "title": "Nomad Place Recommendations"
-      },
-      "guides": {
+  },
+  "guides": {
     "categories": {
       "cohabitation": "Cohabitation",
       "moving": "Moving",
