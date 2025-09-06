@@ -58,25 +58,25 @@ export default function TaxPage() {
       foreignIncomeTax: '20% (NHR 2024年更新)',
       localIncomeTax: '14.5% - 48%',
       benefits: [
-        'NHR计划：10年优惠税率（2024年政策收紧）',
-        '无财富税',
-        '无遗产税',
-        '欧盟护照优势',
-        '生活成本相对较低',
-        'D7签证替代方案'
+        t('countryDetails.portugal.benefits.nhrPlan'),
+        t('countryDetails.portugal.benefits.noWealthTax'),
+        t('countryDetails.portugal.benefits.noInheritanceTax'),
+        t('countryDetails.portugal.benefits.euPassportAdvantage'),
+        t('countryDetails.portugal.benefits.lowerCostOfLiving'),
+        t('countryDetails.portugal.benefits.d7VisaAlternative')
       ],
       requirements: [
-        '2024年1月1日前申请（已截止）',
-        '或符合新的严格条件',
-        '高技能职业，年收入超过€75,000',
-        '每年在葡萄牙居住超过183天',
-        '不能是过去5年的葡萄牙税务居民'
+        t('countryDetails.portugal.requirements.applicationDeadline'),
+        t('countryDetails.portugal.requirements.newStrictConditions'),
+        t('countryDetails.portugal.requirements.highSkillProfession'),
+        t('countryDetails.portugal.requirements.residencyDays'),
+        t('countryDetails.portugal.requirements.noPreviousResidency')
       ],
       risks: [
-        'NHR申请条件大幅收紧',
-        '需要证明高技能职业和收入',
-        '可能面临葡萄牙税务局审查',
-        '政策变化风险增加'
+        t('countryDetails.portugal.risks.nhrConditionsTightened'),
+        t('countryDetails.portugal.risks.proofRequired'),
+        t('countryDetails.portugal.risks.taxAuditRisk'),
+        t('countryDetails.portugal.risks.policyChangeRisk')
       ],
       rating: 4,
       category: 'tax-haven'
@@ -89,22 +89,22 @@ export default function TaxPage() {
       foreignIncomeTax: '0% (不汇入泰国)',
       localIncomeTax: '5% - 35%',
       benefits: [
-        '不汇入的外国收入免税',
-        '生活成本低',
-        '签证便利',
-        '无资本利得税',
-        '无遗产税'
+        t('countryDetails.thailand.benefits.foreignIncomeExempt'),
+        t('countryDetails.thailand.benefits.lowCostOfLiving'),
+        t('countryDetails.thailand.benefits.visaConvenience'),
+        t('countryDetails.thailand.benefits.noCapitalGainsTax'),
+        t('countryDetails.thailand.benefits.noInheritanceTax')
       ],
       requirements: [
-        '外国收入不汇入泰国',
-        '在泰国工作需申请工作许可',
-        '超过180天需申请税务居民身份',
-        '保持良好记录'
+        t('countryDetails.thailand.requirements.noForeignIncomeRemittance'),
+        t('countryDetails.thailand.requirements.workPermitRequired'),
+        t('countryDetails.thailand.requirements.taxResidencyOver180Days'),
+        t('countryDetails.thailand.requirements.maintainGoodRecords')
       ],
       risks: [
-        '汇入外国收入可能被征税',
-        '工作许可限制严格',
-        '税务规定可能变化'
+        t('countryDetails.thailand.risks.remittedIncomeTaxed'),
+        t('countryDetails.thailand.risks.workPermitRestrictions'),
+        t('countryDetails.thailand.risks.taxRegulationChanges')
       ],
       rating: 4,
       category: 'tax-haven'
@@ -117,22 +117,22 @@ export default function TaxPage() {
       foreignIncomeTax: '0% (不汇入墨西哥)',
       localIncomeTax: '1.92% - 35%',
       benefits: [
-        '领土税制',
-        '外国收入不汇入则免税',
-        '与美国有税收协定',
-        '生活成本适中',
-        '数字游民签证'
+        t('countryDetails.mexico.benefits.territorialTaxSystem'),
+        t('countryDetails.mexico.benefits.foreignIncomeExempt'),
+        t('countryDetails.mexico.benefits.usTaxTreaty'),
+        t('countryDetails.mexico.benefits.moderateCostOfLiving'),
+        t('countryDetails.mexico.benefits.digitalNomadVisa')
       ],
       requirements: [
-        '超过183天成为税务居民',
-        '外国收入不汇入墨西哥',
-        '墨西哥收入需纳税',
-        '可能需要提交申报'
+        t('countryDetails.mexico.requirements.taxResidencyOver183Days'),
+        t('countryDetails.mexico.requirements.noForeignIncomeRemittance'),
+        t('countryDetails.mexico.requirements.mexicanIncomeTaxed'),
+        t('countryDetails.mexico.requirements.mayNeedFiling')
       ],
       risks: [
-        '汇入外国收入可能被征税',
-        '税务申报复杂',
-        '可能面临审计'
+        t('countryDetails.mexico.risks.remittedIncomeTaxed'),
+        t('countryDetails.mexico.risks.complexTaxFiling'),
+        t('countryDetails.mexico.risks.auditRisk')
       ],
       rating: 4,
       category: 'moderate'
@@ -145,10 +145,10 @@ export default function TaxPage() {
       foreignIncomeTax: '24% - 47%',
       localIncomeTax: '19% - 47%',
       benefits: [
-        '贝克汉姆法（前5年优惠税率）',
-        '欧盟护照',
-        '优质医疗系统',
-        '文化丰富'
+        t('countryDetails.spain.benefits.beckhamLaw'),
+        t('countryDetails.spain.benefits.euPassport'),
+        t('countryDetails.spain.benefits.qualityHealthcare'),
+        t('countryDetails.spain.benefits.richCulture')
       ],
       requirements: [
         '贝克汉姆法需在6个月内申请',
@@ -173,10 +173,10 @@ export default function TaxPage() {
       foreignIncomeTax: '14% - 45%',
       localIncomeTax: '14% - 45%',
       benefits: [
-        '优质基础设施',
-        '强健经济',
-        '欧盟护照',
-        '优秀医疗系统'
+        t('countryDetails.germany.benefits.qualityInfrastructure'),
+        t('countryDetails.germany.benefits.strongEconomy'),
+        t('countryDetails.germany.benefits.euPassport'),
+        t('countryDetails.germany.benefits.excellentHealthcare')
       ],
       requirements: [
         '超过183天成为税务居民',
@@ -229,22 +229,22 @@ export default function TaxPage() {
       foreignIncomeTax: '0% (不汇入)',
       localIncomeTax: '10% - 25%',
       benefits: [
-        '领土税制',
-        '外国收入不汇入免税',
-        '数字游民签证',
-        '自然环境优美',
-        '生活成本适中'
+        t('countryDetails.costaRica.benefits.territorialTaxSystem'),
+        t('countryDetails.costaRica.benefits.foreignIncomeExempt'),
+        t('countryDetails.costaRica.benefits.digitalNomadVisa'),
+        t('countryDetails.costaRica.benefits.beautifulNature'),
+        t('countryDetails.costaRica.benefits.moderateCostOfLiving')
       ],
       requirements: [
-        '超过183天成为税务居民',
-        '外国收入不汇入',
-        '可能需要申请居留许可',
-        '保持良好记录'
+        t('countryDetails.costaRica.requirements.taxResidencyOver183Days'),
+        t('countryDetails.costaRica.requirements.noForeignIncomeRemittance'),
+        t('countryDetails.costaRica.requirements.costaRicanIncomeTaxed'),
+        t('countryDetails.costaRica.requirements.mayNeedFiling')
       ],
       risks: [
-        '汇入外国收入被征税',
-        '基础设施相对落后',
-        '医疗系统有限'
+        t('countryDetails.costaRica.risks.remittedIncomeTaxed'),
+        t('countryDetails.costaRica.risks.complexTaxFiling'),
+        t('countryDetails.costaRica.risks.auditRisk')
       ],
       rating: 4,
       category: 'moderate'
@@ -257,11 +257,11 @@ export default function TaxPage() {
       foreignIncomeTax: '0% (不汇入)',
       localIncomeTax: '0% - 30%',
       benefits: [
-        'MM2H签证计划',
-        '外国收入不汇入免税',
-        '生活成本低',
-        '英语普及率高',
-        '基础设施良好'
+        t('countryDetails.malaysia.benefits.mm2hVisaProgram'),
+        t('countryDetails.malaysia.benefits.foreignIncomeExempt'),
+        t('countryDetails.malaysia.benefits.lowCostOfLiving'),
+        t('countryDetails.malaysia.benefits.highEnglishProficiency'),
+        t('countryDetails.malaysia.benefits.goodInfrastructure')
       ],
       requirements: [
         '超过182天成为税务居民',

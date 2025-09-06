@@ -3001,5 +3001,115 @@
     "cities": "Cities",
     "tools": "Tools",
     "home": "Home"
+  },
+  "countryDetails": {
+    "portugal": {
+      "benefits": {
+        "nhrPlan": "NHR Plan: 10-year preferential tax rate (2024 policy tightened)",
+        "noWealthTax": "No wealth tax",
+        "noInheritanceTax": "No inheritance tax",
+        "euPassportAdvantage": "EU passport advantage",
+        "lowerCostOfLiving": "Relatively low cost of living",
+        "d7VisaAlternative": "D7 visa alternative"
+      },
+      "requirements": {
+        "applicationDeadline": "Application before January 1, 2024 (closed)",
+        "newStrictConditions": "Or meet new strict conditions",
+        "highSkillProfession": "High-skill profession, annual income over €75,000",
+        "residencyDays": "Reside in Portugal for more than 183 days per year",
+        "noPreviousResidency": "Cannot be Portuguese tax resident in past 5 years"
+      },
+      "risks": {
+        "nhrConditionsTightened": "NHR application conditions significantly tightened",
+        "proofRequired": "Need to prove high-skill profession and income",
+        "taxAuditRisk": "May face Portuguese tax authority review",
+        "policyChangeRisk": "Increased policy change risk"
+      }
+    },
+    "thailand": {
+      "benefits": {
+        "foreignIncomeExempt": "Foreign income not remitted is tax-free",
+        "lowCostOfLiving": "Low cost of living",
+        "visaConvenience": "Visa convenience",
+        "noCapitalGainsTax": "No capital gains tax",
+        "noInheritanceTax": "No inheritance tax"
+      },
+      "requirements": {
+        "noForeignIncomeRemittance": "Foreign income not remitted to Thailand",
+        "workPermitRequired": "Work permit required for work in Thailand",
+        "taxResidencyOver180Days": "Tax residency status required for over 180 days",
+        "maintainGoodRecords": "Maintain good records"
+      },
+      "risks": {
+        "remittedIncomeTaxed": "Remitted foreign income may be taxed",
+        "workPermitRestrictions": "Strict work permit restrictions",
+        "taxRegulationChanges": "Tax regulations may change"
+      }
+    },
+    "mexico": {
+      "benefits": {
+        "territorialTaxSystem": "Territorial tax system",
+        "foreignIncomeExempt": "Foreign income not remitted is tax-free",
+        "usTaxTreaty": "Tax treaty with the US",
+        "moderateCostOfLiving": "Moderate cost of living",
+        "digitalNomadVisa": "Digital nomad visa"
+      },
+      "requirements": {
+        "taxResidencyOver183Days": "Become tax resident for over 183 days",
+        "noForeignIncomeRemittance": "Foreign income not remitted to Mexico",
+        "mexicanIncomeTaxed": "Mexican income subject to tax",
+        "mayNeedFiling": "May need to file returns"
+      },
+      "risks": {
+        "remittedIncomeTaxed": "Remitted foreign income may be taxed",
+        "complexTaxFiling": "Complex tax filing",
+        "auditRisk": "May face audit"
+      }
+    },
+    "spain": {
+      "benefits": {
+        "beckhamLaw": "Beckham Law (preferential tax rate for first 5 years)",
+        "euPassport": "EU passport",
+        "qualityHealthcare": "Quality healthcare system",
+        "richCulture": "Rich culture"
+      }
+    },
+    "germany": {
+      "benefits": {
+        "qualityInfrastructure": "Quality infrastructure",
+        "strongEconomy": "Strong economy",
+        "euPassport": "EU passport",
+        "excellentHealthcare": "Excellent healthcare system"
+      }
+    },
+    "costaRica": {
+      "benefits": {
+        "territorialTaxSystem": "Territorial tax system",
+        "foreignIncomeExempt": "Foreign income not remitted is tax-free",
+        "digitalNomadVisa": "Digital nomad visa",
+        "beautifulNature": "Beautiful natural environment",
+        "moderateCostOfLiving": "Moderate cost of living"
+      },
+      "requirements": {
+        "taxResidencyOver183Days": "Become tax resident for over 183 days",
+        "noForeignIncomeRemittance": "Foreign income not remitted to Costa Rica",
+        "costaRicanIncomeTaxed": "Costa Rican income subject to tax",
+        "mayNeedFiling": "May need to file returns"
+      },
+      "risks": {
+        "remittedIncomeTaxed": "Remitted foreign income may be taxed",
+        "complexTaxFiling": "Complex tax filing",
+        "auditRisk": "May face audit"
+      }
+    },
+    "malaysia": {
+      "benefits": {
+        "mm2hVisaProgram": "MM2H visa program",
+        "foreignIncomeExempt": "Foreign income not remitted is tax-free",
+        "lowCostOfLiving": "Low cost of living",
+        "highEnglishProficiency": "High English proficiency",
+        "goodInfrastructure": "Good infrastructure"
+      }
+    }
   }
 } 
