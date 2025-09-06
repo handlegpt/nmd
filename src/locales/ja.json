@@ -2649,6 +2649,10 @@
     },
     "currentStep": "現在のステップ：",
     "step1": "1️⃣ ニーズ評価",
+    "step2": "2️⃣ 税金計算機",
+    "step3": "3️⃣ 戦略ガイド",
+    "step4": "4️⃣ 国別比較",
+    "step5": "5️⃣ 期限リマインダー",
     "searchPlaceholder": "国や税金タイプを検索...",
     "categories": {
       "taxHaven": "税金天国",

@@ -2866,8 +2866,15 @@
       "assessment": "Evaluación de Necesidades",
       "calculator": "Calculadora Fiscal",
       "strategies": "Guía de Estrategias",
-      "countries": "Comparación de Países"
+      "countries": "Comparación de Países",
+      "deadlines": "Recordatorio de Fechas Límite"
     },
+    "currentStep": "Paso Actual:",
+    "step1": "1️⃣ Evaluación de Necesidades",
+    "step2": "2️⃣ Calculadora Fiscal",
+    "step3": "3️⃣ Guía de Estrategias",
+    "step4": "4️⃣ Comparación de Países",
+    "step5": "5️⃣ Recordatorio de Fechas Límite",
     "searchPlaceholder": "Buscar países o tipos de impuestos...",
     "categories": {
       "taxHaven": "Paraíso Fiscal",
