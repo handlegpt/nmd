@@ -260,10 +260,52 @@ function CitiesPageContent() {
     setShowImportModal(false)
   }
 
-  const filteredCities = cities.filter(city => {
-    return city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-           city.country.toLowerCase().includes(searchTerm.toLowerCase())
-  })
+  const filteredCities = cities
+    .filter(city => {
+      return city.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             city.country.toLowerCase().includes(searchTerm.toLowerCase())
+    })
+    .sort((a, b) => {
+      let aValue: number | string
+      let bValue: number | string
+      
+      switch (sortBy.field) {
+        case 'rating':
+          aValue = a.avg_overall_rating || 0
+          bValue = b.avg_overall_rating || 0
+          break
+        case 'cost':
+          aValue = a.cost_of_living || 0
+          bValue = b.cost_of_living || 0
+          break
+        case 'wifi':
+          aValue = a.wifi_speed || 0
+          bValue = b.wifi_speed || 0
+          break
+        case 'visa':
+          aValue = a.visa_days || 0
+          bValue = b.visa_days || 0
+          break
+        case 'nomads':
+          // 使用基于城市ID的固定游民数量，确保排序一致性
+          aValue = (a.id.charCodeAt(0) + a.id.charCodeAt(a.id.length - 1)) % 50 + 10
+          bValue = (b.id.charCodeAt(0) + b.id.charCodeAt(b.id.length - 1)) % 50 + 10
+          break
+        default:
+          aValue = a.name
+          bValue = b.name
+      }
+      
+      if (typeof aValue === 'string' && typeof bValue === 'string') {
+        return sortBy.direction === 'asc' 
+          ? aValue.localeCompare(bValue)
+          : bValue.localeCompare(aValue)
+      } else {
+        const numA = Number(aValue)
+        const numB = Number(bValue)
+        return sortBy.direction === 'asc' ? numA - numB : numB - numA
+      }
+    })
 
   const getCountryFlag = (countryCode: string) => {
     const codePoints = countryCode
@@ -385,46 +427,46 @@ function CitiesPageContent() {
 
   // 新增：渲染轨迹标签页
   const renderTrajectoryTab = () => (
-    <div className="space-y-6">
+                <div className="space-y-6">
       {/* 轨迹概览统计 */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between">
-            <div>
+                      <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('cities.totalCities')}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">{trajectories.length}</p>
                       </div>
             <Globe className="w-8 h-8 text-blue-500" />
-                      </div>
-                    </div>
-                    
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('cities.totalDays')}</p>
-              <p className="text-2xl font-bold text-gray-900 dark:text-white">
-                {trajectories.reduce((sum, t) => sum + (t.daysStayed || 0), 0)}
-              </p>
-                      </div>
-            <Clock className="w-8 h-8 text-green-500" />
                     </div>
                   </div>
 
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between">
                     <div>
+              <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('cities.totalDays')}</p>
+              <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                {trajectories.reduce((sum, t) => sum + (t.daysStayed || 0), 0)}
+              </p>
+                    </div>
+            <Clock className="w-8 h-8 text-green-500" />
+                        </div>
+                        </div>
+
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <div className="flex items-center justify-between">
+                        <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('cities.currentCity')}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {trajectories.find(t => !t.endDate)?.cityName || t('cities.noTrajectory')}
               </p>
-                    </div>
+                        </div>
             <MapPin className="w-8 h-8 text-orange-500" />
+                      </div>
                     </div>
-                  </div>
-        
+
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
           <div className="flex items-center justify-between">
-                      <div>
+                  <div>
               <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{t('cities.consecutiveDays')}</p>
               <p className="text-2xl font-bold text-gray-900 dark:text-white">
                 {(() => {
@@ -435,11 +477,11 @@ function CitiesPageContent() {
                   return Math.ceil((now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))
                 })()}
               </p>
-                      </div>
+                          </div>
             <TrendingUp className="w-8 h-8 text-purple-500" />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
       {/* 轨迹操作按钮 */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -467,8 +509,8 @@ function CitiesPageContent() {
               <Plus className="w-4 h-4" />
               {t('cities.addTrajectory')}
             </button>
-                    </div>
                         </div>
+                      </div>
 
         {/* 轨迹列表 */}
         <div className="space-y-4">
@@ -482,8 +524,8 @@ function CitiesPageContent() {
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
                     <MapPin className="w-6 h-6 text-blue-600" />
-                        </div>
-                        <div>
+                          </div>
+                          <div>
                     <h4 className="font-medium text-gray-900 dark:text-white">
                       {trajectory.cityName}, {trajectory.country}
                     </h4>
@@ -498,8 +540,8 @@ function CitiesPageContent() {
                         {trajectory.notes}
                       </p>
                     )}
-                        </div>
-                      </div>
+                          </div>
+                          </div>
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setEditingTrajectory(trajectory)}
@@ -513,12 +555,12 @@ function CitiesPageContent() {
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
-                    </div>
-                  </div>
+                        </div>
+                      </div>
             ))
           )}
-                          </div>
-                          </div>
+                    </div>
+                  </div>
 
       {/* 轨迹地图可视化 */}
       {trajectories.length > 0 && (
@@ -548,7 +590,7 @@ function CitiesPageContent() {
             notes: formData.get('notes') as string
           })
         }} className="space-y-4">
-                          <div>
+                    <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t('cities.cityName')} *
             </label>
@@ -560,9 +602,9 @@ function CitiesPageContent() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="例如：Bangkok"
             />
-                          </div>
+                        </div>
           
-                          <div>
+                        <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t('cities.country')} *
             </label>
@@ -574,10 +616,10 @@ function CitiesPageContent() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="例如：Thailand"
             />
-                          </div>
+                        </div>
           
           <div className="grid grid-cols-2 gap-4">
-                          <div>
+                        <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t('cities.startDate')} *
               </label>
@@ -588,9 +630,9 @@ function CitiesPageContent() {
                 required
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
-                      </div>
+                        </div>
 
-                          <div>
+                        <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t('cities.endDate')}
               </label>
@@ -600,11 +642,11 @@ function CitiesPageContent() {
                 defaultValue={editingTrajectory?.endDate || ''}
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               />
-                          </div>
-                          </div>
-          
+                      </div>
+                    </div>
+
           <div className="grid grid-cols-2 gap-4">
-                          <div>
+                    <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t('cities.daysStayed')}
               </label>
@@ -616,9 +658,9 @@ function CitiesPageContent() {
                 className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                 placeholder="0"
               />
-                  </div>
+                          </div>
 
-                  <div>
+                        <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 {t('cities.type')}
               </label>
@@ -631,10 +673,10 @@ function CitiesPageContent() {
                 <option value="visit">{t('cities.visit')}</option>
                 <option value="work">{t('cities.work')}</option>
               </select>
-                    </div>
-                  </div>
+                          </div>
+                        </div>
 
-                    <div>
+                  <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
               {t('cities.notes')}
             </label>
@@ -645,8 +687,8 @@ function CitiesPageContent() {
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
               placeholder="记录一些关于这次旅行的感受..."
             />
-                        </div>
-          
+                      </div>
+
           <div className="flex items-center justify-end space-x-3 pt-4">
             <button
               type="button"
@@ -664,10 +706,10 @@ function CitiesPageContent() {
             >
               {editingTrajectory ? t('cities.update') : t('cities.add')}
             </button>
-                        </div>
+                      </div>
         </form>
-                        </div>
-                        </div>
+                    </div>
+                  </div>
   )
 
   // 新增：导入模态框
@@ -693,9 +735,9 @@ function CitiesPageContent() {
           >
             {t('cities.cancel')}
           </button>
-                          </div>
-                        </div>
-                          </div>
+                    </div>
+                  </div>
+                </div>
   )
 
   if (loading) {
@@ -703,7 +745,7 @@ function CitiesPageContent() {
               <PageLayout>
           <div className="flex justify-center items-center min-h-[400px]">
             <LoadingSpinner size="lg" text={t('common.loadingCities')} />
-          </div>
+                        </div>
         </PageLayout>
     )
   }
@@ -721,7 +763,7 @@ function CitiesPageContent() {
             >
               {t('cities.tryAgain')}
             </button>
-                      </div>
+                        </div>
                     </div>
       </PageLayout>
     )
@@ -753,7 +795,7 @@ function CitiesPageContent() {
           <MapPin className="w-4 h-4" />
           <span>{t('cities.travelTrajectory')}</span>
         </button>
-                  </div>
+                        </div>
 
       {/* 标签页内容 */}
       {activeTab === 'cities' ? (
@@ -804,8 +846,8 @@ function CitiesPageContent() {
                     {t('cities.addCity')}
                   </button>
                 )}
+                        </div>
                       </div>
-            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredCities.map((city) => {
@@ -838,7 +880,7 @@ function CitiesPageContent() {
                                city.visa_days >= 90 ? 'medium' : 'hard'
                   },
                   nomads: {
-                    count: Math.floor(Math.random() * 50) + 10, // 模拟数据
+                    count: (city.id.charCodeAt(0) + city.id.charCodeAt(city.id.length - 1)) % 50 + 10, // 基于城市ID的固定数量
                     active: true,
                     meetups: [t('cityCard.weeklyCoffeeMeetup'), t('cityCard.monthlyTechShare')]
                   },
@@ -859,7 +901,7 @@ function CitiesPageContent() {
                   />
                 )
               })}
-            </div>
+                </div>
               )}
           
           {/* 城市对比工具栏 */}
@@ -919,7 +961,7 @@ export default function CitiesPage() {
         <PageLayout>
           <div className="flex justify-center items-center min-h-[400px]">
             <LoadingSpinner size="lg" text="Loading cities..." />
-              </div>
+            </div>
         </PageLayout>
       }>
       <CitiesPageContent />
