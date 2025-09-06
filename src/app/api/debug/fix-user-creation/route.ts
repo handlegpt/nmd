@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
         .insert({
           email,
           name: userName,
-          ip_address: '127.0.0.1'::inet
+          ip_address: '127.0.0.1'
         })
         .select('*')
         .single()
@@ -162,7 +162,7 @@ export async function POST(request: NextRequest) {
         .upsert({
           email,
           name: userName,
-          ip_address: '127.0.0.1'::inet
+          ip_address: '127.0.0.1'
         })
         .select('*')
         .single()
