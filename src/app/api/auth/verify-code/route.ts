@@ -187,7 +187,10 @@ export async function POST(request: NextRequest) {
         const newUserData = {
           email,
           name: userName,
-          ip_address: '127.0.0.1'
+          ip_address: '127.0.0.1',
+          avatar_url: null,
+          preferences: {},
+          current_city: null
         }
         
         console.log('📝 Creating user with data:', newUserData)
