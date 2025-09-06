@@ -536,6 +536,22 @@
       "totalDays": "Total Days",
       "totalCities": "Total Cities"
     },
+    "trajectoryMap": {
+      "title": "Travel Trajectory Map",
+      "loading": "Loading map...",
+      "instructions": "Click city markers to view details • Dashed lines show travel paths",
+      "legend": {
+        "residence": "Residence",
+        "work": "Work",
+        "visit": "Visit",
+        "unknown": "Unknown"
+      }
+    },
+    "trajectoryForm": {
+      "addTrajectory": "Add Trajectory",
+      "editTrajectory": "Edit Trajectory",
+      "notesPlaceholder": "Record some thoughts about this trip..."
+    },
     "recommendations": {
       "priorityIndicator": "Priority Indicator",
       "algorithmExplanation": "We generate recommendations based on WiFi speed, cost of living, visa days, climate comfort, and social atmosphere.",

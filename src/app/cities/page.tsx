@@ -533,7 +533,7 @@ function CitiesPageContent() {
                       {trajectory.startDate} - {trajectory.endDate || '至今'}
                     </p>
                     <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {trajectory.daysStayed} 天 • {trajectory.type === 'residence' ? '居住' : trajectory.type === 'visit' ? '访问' : '工作'}
+                      {trajectory.daysStayed} {t('common.days')} • {trajectory.type === 'residence' ? t('trajectoryMap.legend.residence') : trajectory.type === 'visit' ? t('trajectoryMap.legend.visit') : t('trajectoryMap.legend.work')}
                     </p>
                     {trajectory.notes && (
                       <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -574,7 +574,7 @@ function CitiesPageContent() {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md mx-4">
         <h3 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
-          {editingTrajectory ? '编辑轨迹' : '添加轨迹'}
+          {editingTrajectory ? t('trajectoryForm.editTrajectory') : t('trajectoryForm.addTrajectory')}
         </h3>
         
         <form onSubmit={(e) => {
@@ -685,7 +685,7 @@ function CitiesPageContent() {
               defaultValue={editingTrajectory?.notes}
               rows={3}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-              placeholder="记录一些关于这次旅行的感受..."
+              placeholder={t('trajectoryForm.notesPlaceholder')}
             />
                       </div>
 

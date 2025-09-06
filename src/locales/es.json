@@ -1881,6 +1881,22 @@
       "export": "Exportar",
       "addTrajectory": "Agregar Trayectoria"
     },
+    "trajectoryMap": {
+      "title": "Mapa de Trayectoria de Viaje",
+      "loading": "Cargando mapa...",
+      "instructions": "Haz clic en los marcadores de ciudad para ver detalles • Las líneas punteadas muestran las rutas de viaje",
+      "legend": {
+        "residence": "Residencia",
+        "work": "Trabajo",
+        "visit": "Visita",
+        "unknown": "Desconocido"
+      }
+    },
+    "trajectoryForm": {
+      "addTrajectory": "Agregar Trayectoria",
+      "editTrajectory": "Editar Trayectoria",
+      "notesPlaceholder": "Registra algunos pensamientos sobre este viaje..."
+    },
     "travelStatistics": "Estadísticas de Viaje",
     "noActivityRecords": "No hay registros de actividad, ¡comienza a explorar ciudades!",
     "daysAgo": "días atrás",

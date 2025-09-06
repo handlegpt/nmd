@@ -239,13 +239,13 @@ export default function TrajectoryMap({ trajectories, className = '' }: Trajecto
   const getTypeText = (type: string) => {
     switch (type) {
       case 'residence':
-        return '居住'
+        return t('trajectoryMap.legend.residence')
       case 'work':
-        return '工作'
+        return t('trajectoryMap.legend.work')
       case 'visit':
-        return '访问'
+        return t('trajectoryMap.legend.visit')
       default:
-        return '未知'
+        return t('trajectoryMap.legend.unknown')
     }
   }
 
@@ -268,20 +268,20 @@ export default function TrajectoryMap({ trajectories, className = '' }: Trajecto
     <div className={`bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 ${className}`}>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-          旅行轨迹地图
+          {t('trajectoryMap.title')}
         </h3>
         <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
           <div className="flex items-center space-x-1">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span>居住</span>
+            <span>{t('trajectoryMap.legend.residence')}</span>
           </div>
           <div className="flex items-center space-x-1">
             <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-            <span>工作</span>
+            <span>{t('trajectoryMap.legend.work')}</span>
           </div>
           <div className="flex items-center space-x-1">
             <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <span>访问</span>
+            <span>{t('trajectoryMap.legend.visit')}</span>
           </div>
         </div>
       </div>
@@ -295,14 +295,14 @@ export default function TrajectoryMap({ trajectories, className = '' }: Trajecto
           <div className="flex items-center justify-center h-full">
             <div className="text-center">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
-              <p className="text-gray-500 dark:text-gray-400">加载地图中...</p>
+              <p className="text-gray-500 dark:text-gray-400">{t('trajectoryMap.loading')}</p>
             </div>
           </div>
         )}
       </div>
       
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400 text-center">
-        点击城市标记查看详细信息 • 虚线显示旅行路径
+        {t('trajectoryMap.instructions')}
       </div>
     </div>
   )

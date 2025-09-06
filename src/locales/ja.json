@@ -1688,6 +1688,22 @@
       "export": "エクスポート",
       "addTrajectory": "軌跡を追加"
     },
+    "trajectoryMap": {
+      "title": "旅行軌跡マップ",
+      "loading": "マップを読み込み中...",
+      "instructions": "都市マーカーをクリックして詳細を表示 • 破線は旅行ルートを示します",
+      "legend": {
+        "residence": "居住",
+        "work": "仕事",
+        "visit": "訪問",
+        "unknown": "不明"
+      }
+    },
+    "trajectoryForm": {
+      "addTrajectory": "軌跡を追加",
+      "editTrajectory": "軌跡を編集",
+      "notesPlaceholder": "この旅行についての感想を記録してください..."
+    },
     "travelStatistics": "旅行統計",
     "noActivityRecords": "アクティビティ記録がありません。都市を探索し始めましょう！",
     "daysAgo": "日前",

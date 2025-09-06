@@ -2080,6 +2080,22 @@
       "export": "导出",
       "addTrajectory": "添加轨迹"
     },
+    "trajectoryMap": {
+      "title": "旅行轨迹地图",
+      "loading": "加载地图中...",
+      "instructions": "点击城市标记查看详细信息 • 虚线显示旅行路径",
+      "legend": {
+        "residence": "居住",
+        "work": "工作",
+        "visit": "访问",
+        "unknown": "未知"
+      }
+    },
+    "trajectoryForm": {
+      "addTrajectory": "添加轨迹",
+      "editTrajectory": "编辑轨迹",
+      "notesPlaceholder": "记录一些关于这次旅行的感受..."
+    },
     "travelStatistics": "旅行统计",
     "noActivityRecords": "暂无活动记录，开始探索城市吧！",
     "daysAgo": "天前",
