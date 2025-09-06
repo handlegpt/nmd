@@ -186,8 +186,7 @@ export async function POST(request: NextRequest) {
         const userName = email.split('@')[0]
         const newUserData = {
           email,
-          name: userName,
-          ip_address: '127.0.0.1'
+          name: userName
         }
         
         console.log('📝 Creating user with data:', newUserData)
