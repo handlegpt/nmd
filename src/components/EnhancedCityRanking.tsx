@@ -517,20 +517,19 @@ export default function EnhancedCityRanking({
                 </div>
               </div>
 
-              {/* Action Buttons - Enhanced and Prominent */}
-              <div className="p-4 pt-0 space-y-3">
-                {/* Primary Action Buttons */}
+              {/* Action Buttons - Fixed at Bottom */}
+              <div className="p-4 pt-0 flex-shrink-0">
                 <div className="flex gap-2">
                   <button 
                     onClick={() => handleRateCity(city)}
-                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center space-x-2"
+                    className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors flex items-center justify-center space-x-2"
                   >
-                    <StarIcon className="h-4 w-4" />
+                    <StarIcon className="h-3 w-3" />
                     <span>{t('cities.rateCity')}</span>
                   </button>
                   <button 
                     onClick={() => handleToggleFavorite(city.id)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
                       favorites.has(city.id) 
                         ? 'bg-red-100 hover:bg-red-200 text-red-700' 
                         : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
@@ -541,7 +540,7 @@ export default function EnhancedCityRanking({
                 </div>
                 
                 {/* Secondary Actions */}
-                <div className="flex items-center justify-between text-xs text-gray-500">
+                <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                   <FixedLink
                     href={`/cities/${city.name.toLowerCase().replace(/\s+/g, '-')}`}
                     className="text-blue-600 hover:text-blue-700 hover:underline"
