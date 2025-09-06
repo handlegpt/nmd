@@ -26,7 +26,7 @@ export async function GET(request: NextRequest) {
 
     // 检查每个验证码是否过期
     const now = new Date()
-    const processedCodes = codes?.map(code => ({
+    const processedCodes = codes?.map((code: any) => ({
       ...code,
       isExpired: new Date(code.expires_at) < now,
       timeUntilExpiry: new Date(code.expires_at).getTime() - now.getTime()
