@@ -3153,5 +3153,126 @@
       "personalTaxReturn": "Personal Tax Return",
       "selfEmployedFiling": "Self-Employed Filing"
     }
+  },
+  "strategyGuide": {
+    "applicationRequirements": "Application Requirements",
+    "implementationSteps": "Implementation Steps",
+    "practicalTips": "Practical Tips",
+    "strategies": {
+      "nhrPlan": {
+        "requirements": {
+          "0": "Application before January 1, 2024 (closed)",
+          "1": "Or meet new strict conditions",
+          "2": "High-skill profession (IT, finance, science, etc.)",
+          "3": "Annual income over €75,000",
+          "4": "Reside in Portugal for more than 183 days/year",
+          "5": "Not a Portuguese tax resident in the past 5 years"
+        },
+        "steps": {
+          "0": "Confirm eligibility under new policy conditions",
+          "1": "Prepare detailed profession and income documentation",
+          "2": "Open bank account in Portugal",
+          "3": "Rent or purchase property",
+          "4": "Apply for tax number",
+          "5": "Submit NHR application (if still eligible)",
+          "6": "Wait for approval (typically 4-8 weeks)"
+        },
+        "tips": {
+          "0": "Application conditions significantly tightened after 2024",
+          "1": "Prioritize other tax-friendly countries",
+          "2": "Consult professional tax advisors to assess eligibility",
+          "3": "Consider alternatives like D7 visa",
+          "4": "Keep foreign income in foreign accounts"
+        }
+      },
+      "territorialTax": {
+        "requirements": {
+          "0": "Choose territorial tax countries (Thailand, Mexico, Costa Rica, etc.)",
+          "1": "Do not remit foreign income locally",
+          "2": "Reside locally for more than required days",
+          "3": "Comply with local tax filing requirements"
+        },
+        "steps": {
+          "0": "Choose target country and research tax regulations",
+          "1": "Apply for residence permit or visa",
+          "2": "Open bank account locally",
+          "3": "Ensure income sources are abroad",
+          "4": "Regular filing (if required)",
+          "5": "Maintain good records"
+        },
+        "tips": {
+          "0": "Use international bank accounts",
+          "1": "Avoid working locally",
+          "2": "Maintain income source documentation",
+          "3": "Consult local tax advisors"
+        }
+      },
+      "companyStructure": {
+        "requirements": {
+          "0": "Sufficient business scale",
+          "1": "Professional legal and tax advisors",
+          "2": "Compliant business structure",
+          "3": "Adequate documentation"
+        },
+        "steps": {
+          "0": "Consult professional tax advisors",
+          "1": "Choose suitable jurisdiction",
+          "2": "Register offshore company",
+          "3": "Establish bank accounts",
+          "4": "Develop business structure",
+          "5": "Ensure compliant operations"
+        },
+        "tips": {
+          "0": "Choose reputable jurisdictions",
+          "1": "Maintain adequate business records",
+          "2": "Regularly review compliance requirements",
+          "3": "Avoid aggressive tax avoidance strategies"
+        }
+      },
+      "digitalNomadVisa": {
+        "requirements": {
+          "0": "Remote work capability",
+          "1": "Stable income proof",
+          "2": "Health insurance",
+          "3": "Clean criminal record"
+        },
+        "steps": {
+          "0": "Choose target country",
+          "1": "Prepare application materials",
+          "2": "Submit visa application",
+          "3": "Wait for approval",
+          "4": "Enter after obtaining visa",
+          "5": "Comply with visa conditions"
+        },
+        "tips": {
+          "0": "Choose tax-friendly visas",
+          "1": "Understand visa limitation conditions",
+          "2": "Maintain income proof",
+          "3": "Regularly update visa"
+        }
+      },
+      "taxTreatyOptimization": {
+        "requirements": {
+          "0": "Understand relevant tax treaties",
+          "1": "Meet treaty requirements",
+          "2": "Correct filing and application",
+          "3": "Maintain compliance records"
+        },
+        "steps": {
+          "0": "Research relevant tax treaties",
+          "1": "Confirm applicable conditions",
+          "2": "Prepare application materials",
+          "3": "Submit relief application",
+          "4": "Wait for approval",
+          "5": "Regularly update application"
+        },
+        "tips": {
+          "0": "Stay updated on treaty changes",
+          "1": "Maintain detailed records",
+          "2": "Consult professional advisors",
+          "3": "Avoid treaty abuse"
+        }
+      }
+    }
   }
 } 

@@ -90,28 +90,28 @@ export default function TaxStrategyGuide() {
       advisorFee: '€2,000-5,000',
       relatedCountries: ['Portugal', 'Spain', 'Italy'],
       requirements: [
-        '2024年1月1日前申请（已截止）',
-        '或符合新的严格条件',
-        '高技能职业（IT、金融、科学等）',
-        '年收入超过€75,000',
-        '在葡萄牙居住超过183天/年',
-        '非过去5年葡萄牙税务居民'
+        t('tax.strategyGuide.strategies.nhrPlan.requirements.0'),
+        t('tax.strategyGuide.strategies.nhrPlan.requirements.1'),
+        t('tax.strategyGuide.strategies.nhrPlan.requirements.2'),
+        t('tax.strategyGuide.strategies.nhrPlan.requirements.3'),
+        t('tax.strategyGuide.strategies.nhrPlan.requirements.4'),
+        t('tax.strategyGuide.strategies.nhrPlan.requirements.5')
       ],
       steps: [
-        '确认是否符合新政策条件',
-        '准备详细的职业和收入证明',
-        '在葡萄牙开设银行账户',
-        '租赁或购买房产',
-        '申请税务号码',
-        '提交NHR申请（如仍符合条件）',
-        '等待批准（通常4-8周）'
+        t('tax.strategyGuide.strategies.nhrPlan.steps.0'),
+        t('tax.strategyGuide.strategies.nhrPlan.steps.1'),
+        t('tax.strategyGuide.strategies.nhrPlan.steps.2'),
+        t('tax.strategyGuide.strategies.nhrPlan.steps.3'),
+        t('tax.strategyGuide.strategies.nhrPlan.steps.4'),
+        t('tax.strategyGuide.strategies.nhrPlan.steps.5'),
+        t('tax.strategyGuide.strategies.nhrPlan.steps.6')
       ],
       tips: [
-        '2024年后申请条件大幅收紧',
-        '优先考虑其他税务友好国家',
-        '咨询专业税务顾问评估资格',
-        '考虑替代方案如D7签证',
-        '保持外国收入在外国账户'
+        t('tax.strategyGuide.strategies.nhrPlan.tips.0'),
+        t('tax.strategyGuide.strategies.nhrPlan.tips.1'),
+        t('tax.strategyGuide.strategies.nhrPlan.tips.2'),
+        t('tax.strategyGuide.strategies.nhrPlan.tips.3'),
+        t('tax.strategyGuide.strategies.nhrPlan.tips.4')
       ]
     },
     {
@@ -132,24 +132,24 @@ export default function TaxStrategyGuide() {
       advisorFee: '$500-1,500',
       relatedCountries: ['Thailand', 'Mexico', 'Costa Rica', 'Malaysia'],
       requirements: [
-        '选择领土税制国家（泰国、墨西哥、哥斯达黎加等）',
-        '外国收入不汇入当地',
-        '在当地居住超过规定天数',
-        '遵守当地税务申报要求'
+        t('tax.strategyGuide.strategies.territorialTax.requirements.0'),
+        t('tax.strategyGuide.strategies.territorialTax.requirements.1'),
+        t('tax.strategyGuide.strategies.territorialTax.requirements.2'),
+        t('tax.strategyGuide.strategies.territorialTax.requirements.3')
       ],
       steps: [
-        '选择目标国家并研究税务规定',
-        '申请居留许可或签证',
-        '在当地开设银行账户',
-        '确保收入来源在国外',
-        '定期申报（如需要）',
-        '保持良好记录'
+        t('tax.strategyGuide.strategies.territorialTax.steps.0'),
+        t('tax.strategyGuide.strategies.territorialTax.steps.1'),
+        t('tax.strategyGuide.strategies.territorialTax.steps.2'),
+        t('tax.strategyGuide.strategies.territorialTax.steps.3'),
+        t('tax.strategyGuide.strategies.territorialTax.steps.4'),
+        t('tax.strategyGuide.strategies.territorialTax.steps.5')
       ],
       tips: [
-        '使用国际银行账户',
-        '避免在当地工作',
-        '保持收入来源证明',
-        '咨询当地税务顾问'
+        t('tax.strategyGuide.strategies.territorialTax.tips.0'),
+        t('tax.strategyGuide.strategies.territorialTax.tips.1'),
+        t('tax.strategyGuide.strategies.territorialTax.tips.2'),
+        t('tax.strategyGuide.strategies.territorialTax.tips.3')
       ]
     },
     {
@@ -170,24 +170,24 @@ export default function TaxStrategyGuide() {
       advisorFee: '$5,000-15,000',
       relatedCountries: ['Estonia', 'Singapore', 'UAE', 'Cayman Islands'],
       requirements: [
-        '足够的业务规模',
-        '专业法律和税务顾问',
-        '合规的业务结构',
-        '充分的文档记录'
+        t('tax.strategyGuide.strategies.companyStructure.requirements.0'),
+        t('tax.strategyGuide.strategies.companyStructure.requirements.1'),
+        t('tax.strategyGuide.strategies.companyStructure.requirements.2'),
+        t('tax.strategyGuide.strategies.companyStructure.requirements.3')
       ],
       steps: [
-        '咨询专业税务顾问',
-        '选择合适的司法管辖区',
-        '注册离岸公司',
-        '建立银行账户',
-        '制定业务结构',
-        '确保合规运营'
+        t('tax.strategyGuide.strategies.companyStructure.steps.0'),
+        t('tax.strategyGuide.strategies.companyStructure.steps.1'),
+        t('tax.strategyGuide.strategies.companyStructure.steps.2'),
+        t('tax.strategyGuide.strategies.companyStructure.steps.3'),
+        t('tax.strategyGuide.strategies.companyStructure.steps.4'),
+        t('tax.strategyGuide.strategies.companyStructure.steps.5')
       ],
       tips: [
-        '选择信誉良好的司法管辖区',
-        '保持充分的业务记录',
-        '定期审查合规要求',
-        '避免激进避税策略'
+        t('tax.strategyGuide.strategies.companyStructure.tips.0'),
+        t('tax.strategyGuide.strategies.companyStructure.tips.1'),
+        t('tax.strategyGuide.strategies.companyStructure.tips.2'),
+        t('tax.strategyGuide.strategies.companyStructure.tips.3')
       ]
     },
     {
@@ -208,24 +208,24 @@ export default function TaxStrategyGuide() {
       advisorFee: '$300-800',
       relatedCountries: ['Estonia', 'Croatia', 'Portugal', 'Thailand'],
       requirements: [
-        '远程工作能力',
-        '稳定收入证明',
-        '健康保险',
-        '无犯罪记录证明'
+        t('tax.strategyGuide.strategies.digitalNomadVisa.requirements.0'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.requirements.1'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.requirements.2'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.requirements.3')
       ],
       steps: [
-        '选择目标国家',
-        '准备申请材料',
-        '提交签证申请',
-        '等待审批',
-        '获得签证后入境',
-        '遵守签证条件'
+        t('tax.strategyGuide.strategies.digitalNomadVisa.steps.0'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.steps.1'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.steps.2'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.steps.3'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.steps.4'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.steps.5')
       ],
       tips: [
-        '选择税务友好的签证',
-        '了解签证限制条件',
-        '保持收入证明',
-        '定期更新签证'
+        t('tax.strategyGuide.strategies.digitalNomadVisa.tips.0'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.tips.1'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.tips.2'),
+        t('tax.strategyGuide.strategies.digitalNomadVisa.tips.3')
       ]
     },
     {
@@ -246,24 +246,24 @@ export default function TaxStrategyGuide() {
       advisorFee: '$1,000-3,000',
       relatedCountries: ['Germany', 'France', 'Netherlands', 'Switzerland'],
       requirements: [
-        '了解相关税收协定',
-        '满足协定要求',
-        '正确申报和申请',
-        '保持合规记录'
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.requirements.0'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.requirements.1'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.requirements.2'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.requirements.3')
       ],
       steps: [
-        '研究相关税收协定',
-        '确认适用条件',
-        '准备申请材料',
-        '提交减免申请',
-        '等待批准',
-        '定期更新申请'
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.steps.0'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.steps.1'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.steps.2'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.steps.3'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.steps.4'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.steps.5')
       ],
       tips: [
-        '及时了解协定变化',
-        '保持详细记录',
-        '咨询专业顾问',
-        '避免滥用协定'
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.tips.0'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.tips.1'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.tips.2'),
+        t('tax.strategyGuide.strategies.taxTreatyOptimization.tips.3')
       ]
     }
   ]
@@ -548,7 +548,7 @@ export default function TaxStrategyGuide() {
               <div>
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <Target className="h-5 w-5 mr-2 text-blue-600" />
-                  申请要求
+                  {t('tax.strategyGuide.applicationRequirements')}
                 </h4>
                 <ul className="space-y-2">
                   {selectedStrategyData.requirements.map((req, index) => (
@@ -564,7 +564,7 @@ export default function TaxStrategyGuide() {
               <div>
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <Zap className="h-5 w-5 mr-2 text-green-600" />
-                  实施步骤
+                  {t('tax.strategyGuide.implementationSteps')}
                 </h4>
                 <ol className="space-y-2">
                   {selectedStrategyData.steps.map((step, index) => (
@@ -582,7 +582,7 @@ export default function TaxStrategyGuide() {
               <div>
                 <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
                   <Shield className="h-5 w-5 mr-2 text-purple-600" />
-                  实用建议
+                  {t('tax.strategyGuide.practicalTips')}
                 </h4>
                 <ul className="space-y-2">
                   {selectedStrategyData.tips.map((tip, index) => (
