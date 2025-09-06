@@ -193,7 +193,7 @@ export async function POST(request: NextRequest) {
         
         const { data: newUser, error: createError } = await supabase
           .from('users')
-          .insert(newUserData)
+          .upsert(newUserData)
           .select('id, email, name, created_at, current_city, avatar_url')
           .single()
 
