@@ -76,6 +76,8 @@ export interface Place {
   price_level: 1 | 2 | 3 | 4 | 5 // 1=cheap, 5=expensive
   noise_level: 'quiet' | 'moderate' | 'loud'
   social_atmosphere: 'low' | 'medium' | 'high'
+  outlets?: boolean
+  long_stay_ok?: boolean
   submitted_by: string
   created_at: string
   updated_at: string
