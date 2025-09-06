@@ -144,6 +144,34 @@ export default function DashboardPage() {
     }
   }
 
+  // 获取用户名称，优先从 localStorage 获取最新数据
+  const getUserName = () => {
+    try {
+      const storedProfile = localStorage.getItem('user_profile_details')
+      if (storedProfile) {
+        const profileData = JSON.parse(storedProfile)
+        return profileData.name || user.profile?.name || t('dashboard.notSet')
+      }
+      return user.profile?.name || t('dashboard.notSet')
+    } catch (error) {
+      return user.profile?.name || t('dashboard.notSet')
+    }
+  }
+
+  // 获取用户当前城市，优先从 localStorage 获取最新数据
+  const getUserCurrentCity = () => {
+    try {
+      const storedProfile = localStorage.getItem('user_profile_details')
+      if (storedProfile) {
+        const profileData = JSON.parse(storedProfile)
+        return profileData.current_city || user.profile?.current_city || t('dashboard.notSet')
+      }
+      return user.profile?.current_city || t('dashboard.notSet')
+    } catch (error) {
+      return user.profile?.current_city || t('dashboard.notSet')
+    }
+  }
+
   // 计算资料完整度
   const getProfileCompletion = () => {
     try {
@@ -588,11 +616,11 @@ export default function DashboardPage() {
               <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-green-500 rounded-full border-2 border-white dark:border-gray-800"></div>
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{user.profile?.name || t('dashboard.notSet')}</h2>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{getUserName()}</h2>
               <p className="text-gray-600 dark:text-gray-400">{user.profile?.email}</p>
               <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
                 <MapPin className="w-4 h-4 mr-1" />
-                <span>{user.profile?.current_city || t('dashboard.notSet')}</span>
+                <span>{getUserCurrentCity()}</span>
               </div>
               <div className="flex items-center mt-2 text-sm text-gray-500 dark:text-gray-400">
                 <Briefcase className="w-4 h-4 mr-1" />
@@ -1234,7 +1262,7 @@ export default function DashboardPage() {
           
           {/* Welcome Message */}
           <div className="mt-6">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t('dashboard.welcome')}, {user.profile?.name || t('dashboard.traveler')}!</h2>
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{t('dashboard.welcome')}, {getUserName()}!</h2>
             <p className="mt-2 text-gray-600 dark:text-gray-400">{t('dashboard.subtitle')}</p>
           </div>
         </div>
