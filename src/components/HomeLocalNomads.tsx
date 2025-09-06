@@ -599,13 +599,24 @@ export default function HomeLocalNomads({
     }
   }
 
+
+  const handleViewGlobalHotspots = () => {
+    // Navigate to global hotspots page or open modal
+    window.open('/local-nomads', '_blank')
+  }
+
+  const handleViewMoreHotCities = () => {
+    // Navigate to hot cities page
+    window.open('/cities', '_blank')
+  }
+
   const handleShareInvite = () => {
-          // 埋点：邀请链接分享
-      trackEvent('invite_link_share', {
-        city: location?.city || 'unknown',
-        user_id: user?.profile?.id || 'anonymous',
-        context: 'home_empty'
-      })
+    // 埋点：邀请链接分享
+    trackEvent('invite_link_share', {
+      city: location?.city || 'unknown',
+      user_id: user?.profile?.id || 'anonymous',
+      context: 'home_empty'
+    })
     
     if (navigator.share) {
       navigator.share({
@@ -620,37 +631,7 @@ export default function HomeLocalNomads({
     }
   }
 
-  const handleViewGlobalHotspots = () => {
-    // Navigate to global hotspots page or open modal
-    window.open('/local-nomads', '_blank')
-  }
 
-  const handleViewMoreHotCities = () => {
-    // Navigate to hot cities page
-    window.open('/cities', '_blank')
-  }
-
-  const handleCopyInviteLink = () => {
-    // 埋点：复制邀请链接
-    trackEvent('invite_link_copy', {
-      city: location?.city || 'unknown',
-      user_id: user?.profile?.id || 'anonymous'
-    })
-    
-    navigator.clipboard.writeText('https://nomad.now/invite?code=ABC123')
-    alert('Invite link copied to clipboard!')
-  }
-
-  const handleGenerateQR = () => {
-    // 埋点：生成二维码
-    trackEvent('invite_qr_generate', {
-      city: location?.city || 'unknown',
-      user_id: user?.profile?.id || 'anonymous'
-    })
-    
-    // Generate QR code for invite link
-    alert('QR code generation coming soon!')
-  }
 
   // 标签系统数据
   const tagCategories: TagCategory[] = [
@@ -1220,49 +1201,6 @@ export default function HomeLocalNomads({
             </div>
           </div>
 
-          {/* Invite Friends Section */}
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl border border-green-200 dark:border-green-800 p-6">
-            <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                {t('localNomads.inviteFriendsTitle')}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                {t('localNomads.inviteReward')}
-              </p>
-              
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4 border border-gray-200 dark:border-gray-700 mb-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{t('localNomads.inviteLink')}:</span>
-                  <button
-                    onClick={() => handleCopyInviteLink()}
-                    className="text-blue-600 hover:text-blue-700 text-sm"
-                  >
-                    {t('localNomads.copyLink')}
-                  </button>
-                </div>
-                <div className="text-sm font-mono text-gray-800 dark:text-gray-200 bg-gray-100 dark:bg-gray-700 p-2 rounded">
-                  nomad.now/invite?code=ABC123
-                </div>
-              </div>
-              
-              <div className="flex items-center justify-center space-x-3">
-                <button
-                  onClick={() => handleGenerateQR()}
-                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                >
-                  <span className="text-lg">📱</span>
-                  <span>{t('localNomads.generateQR')}</span>
-                </button>
-                <button
-                  onClick={() => handleShareInvite()}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                >
-                  <MessageCircle className="w-4 h-4" />
-                  <span>{t('localNomads.shareLink')}</span>
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       )}
     </div>
