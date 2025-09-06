@@ -184,22 +184,15 @@ export async function POST(request: NextRequest) {
         console.log('👤 User does not exist, creating new user for email:', email)
         
         const userName = email.split('@')[0]
-        const newUserData = {
-          email,
-          name: userName
-        }
         
-        console.log('📝 Creating user with data:', newUserData)
+        console.log('📝 Creating user with raw SQL for email:', email)
         
-        // 使用 upsert 而不是 insert，这样可以避免重复键错误
+        // 使用原始SQL插入用户，避免ip_address字段的类型转换问题
         const { data: newUser, error: createError } = await supabase
-          .from('users')
-          .upsert(newUserData, { 
-            onConflict: 'email',
-            ignoreDuplicates: false 
+          .rpc('create_user_simple', {
+            user_email: email,
+            user_name: userName
           })
-          .select('id, email, name, created_at, current_city, avatar_url')
-          .single()
 
         if (createError) {
           console.error('❌ Create user error:', createError)
