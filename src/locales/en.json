@@ -3154,6 +3154,27 @@
       "selfEmployedFiling": "Self-Employed Filing"
     }
   },
+  "site": {
+    "title": "NomadNow - Digital Nomad Life Guide | City Exploration, Tax Optimization, Community Connection",
+    "description": "NomadNow is the ultimate life guide for digital nomads, providing global city information, tax optimization advice, community connections and practical tools. Discover the best cities for digital nomads, optimize tax strategies, and connect with the global nomad community.",
+    "keywords": [
+      "digital nomad",
+      "remote work",
+      "global cities",
+      "tax optimization",
+      "nomad community",
+      "city exploration",
+      "remote office",
+      "global travel",
+      "nomad life",
+      "city ranking"
+    ],
+    "ogTitle": "NomadNow - Digital Nomad Life Guide",
+    "ogDescription": "Discover the best cities for digital nomads, optimize tax strategies, and connect with the global nomad community.",
+    "ogAlt": "NomadNow - Digital Nomad Life Guide",
+    "structuredDataDescription": "The ultimate life guide for digital nomads, providing global city information, tax optimization advice, community connections and practical tools",
+    "platformDescription": "Digital nomad life guide platform"
+  },
   "strategyGuide": {
     "applicationRequirements": "Application Requirements",
     "implementationSteps": "Implementation Steps",

@@ -3423,6 +3423,27 @@
       "selfEmployedFiling": "自雇人士申报"
     }
   },
+  "site": {
+    "title": "NomadNow - 数字游民生活指南 | 城市探索、税务优化、社区连接",
+    "description": "NomadNow是数字游民的终极生活指南，提供全球城市信息、税务优化建议、社区连接和实用工具。发现最适合数字游民的城市，优化税务策略，连接全球游民社区。",
+    "keywords": [
+      "数字游民",
+      "远程工作",
+      "全球城市",
+      "税务优化",
+      "游民社区",
+      "城市探索",
+      "远程办公",
+      "全球旅行",
+      "游民生活",
+      "城市排名"
+    ],
+    "ogTitle": "NomadNow - 数字游民生活指南",
+    "ogDescription": "发现最适合数字游民的城市，优化税务策略，连接全球游民社区。",
+    "ogAlt": "NomadNow - 数字游民生活指南",
+    "structuredDataDescription": "数字游民的终极生活指南，提供全球城市信息、税务优化建议、社区连接和实用工具",
+    "platformDescription": "数字游民生活指南平台"
+  },
   "strategyGuide": {
     "applicationRequirements": "申请要求",
     "implementationSteps": "实施步骤",

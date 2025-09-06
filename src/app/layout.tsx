@@ -5,6 +5,7 @@ import { GlobalStateProvider } from '@/contexts/GlobalStateContext'
 import { ThemeProvider } from '@/contexts/ThemeContext'
 import { LanguageProvider } from '@/contexts/LanguageContext'
 import Header from '@/components/Header'
+import DynamicHead from '@/components/DynamicHead'
 
 import PerformanceMonitor from '@/components/PerformanceMonitor'
 import { ReactErrorMonitor } from '@/components/ReactErrorMonitor'
@@ -13,26 +14,26 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: {
-    default: 'NomadNow - 数字游民生活指南 | 城市探索、税务优化、社区连接',
+    default: 'NomadNow - Digital Nomad Life Guide | City Exploration, Tax Optimization, Community Connection',
     template: '%s | NomadNow'
   },
-  description: 'NomadNow是数字游民的终极生活指南，提供全球城市信息、税务优化建议、社区连接和实用工具。发现最适合数字游民的城市，优化税务策略，连接全球游民社区。',
+  description: 'NomadNow is the ultimate life guide for digital nomads, providing global city information, tax optimization advice, community connections and practical tools. Discover the best cities for digital nomads, optimize tax strategies, and connect with the global nomad community.',
   keywords: [
-    '数字游民',
-    '远程工作',
-    '全球城市',
-    '税务优化',
-    '游民社区',
-    '城市探索',
-    '远程办公',
-    '全球旅行',
-    '游民生活',
-    '城市排名',
-    '税务指南',
-    '游民签证',
-    '联合办公',
-    '咖啡店',
-    '生活成本'
+    'digital nomad',
+    'remote work',
+    'global cities',
+    'tax optimization',
+    'nomad community',
+    'city exploration',
+    'remote office',
+    'global travel',
+    'nomad life',
+    'city ranking',
+    'tax guide',
+    'nomad visa',
+    'coworking',
+    'coffee shops',
+    'cost of living'
   ],
   authors: [{ name: 'NomadNow Team' }],
   creator: 'NomadNow',
@@ -54,24 +55,24 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: 'website',
-    locale: 'zh_CN',
+    locale: 'en_US',
     url: 'https://nomadnow.app',
     siteName: 'NomadNow',
-    title: 'NomadNow - 数字游民生活指南',
-    description: '发现最适合数字游民的城市，优化税务策略，连接全球游民社区。',
+    title: 'NomadNow - Digital Nomad Life Guide',
+    description: 'Discover the best cities for digital nomads, optimize tax strategies, and connect with the global nomad community.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'NomadNow - 数字游民生活指南',
+        alt: 'NomadNow - Digital Nomad Life Guide',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'NomadNow - 数字游民生活指南',
-    description: '发现最适合数字游民的城市，优化税务策略，连接全球游民社区。',
+    title: 'NomadNow - Digital Nomad Life Guide',
+    description: 'Discover the best cities for digital nomads, optimize tax strategies, and connect with the global nomad community.',
     images: ['/og-image.jpg'],
     creator: '@nomadnow',
   },
@@ -146,7 +147,7 @@ export default function RootLayout({
               "@type": "WebSite",
               "name": "NomadNow",
               "url": "https://nomadnow.app",
-              "description": "数字游民的终极生活指南，提供全球城市信息、税务优化建议、社区连接和实用工具",
+              "description": "The ultimate life guide for digital nomads, providing global city information, tax optimization advice, community connections and practical tools",
               "potentialAction": {
                 "@type": "SearchAction",
                 "target": "https://nomadnow.app/search?q={search_term_string}",
@@ -170,7 +171,7 @@ export default function RootLayout({
               "name": "NomadNow",
               "url": "https://nomadnow.app",
               "logo": "https://nomadnow.app/logo.png",
-              "description": "数字游民生活指南平台",
+              "description": "Digital nomad life guide platform",
               "foundingDate": "2024",
               "contactPoint": {
                 "@type": "ContactPoint",
@@ -185,6 +186,7 @@ export default function RootLayout({
         <GlobalStateProvider>
           <ThemeProvider>
             <LanguageProvider>
+              <DynamicHead />
               <Header />
               <main className="flex-1">
                 {children}
