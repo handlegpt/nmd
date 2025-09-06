@@ -2622,8 +2622,11 @@
       "assessment": "ニーズ評価",
       "calculator": "税金計算機",
       "strategies": "戦略ガイド",
-      "countries": "国別比較"
+      "countries": "国別比較",
+      "deadlines": "期限リマインダー"
     },
+    "currentStep": "現在のステップ：",
+    "step1": "1️⃣ ニーズ評価",
     "searchPlaceholder": "国や税金タイプを検索...",
     "categories": {
       "taxHaven": "税金天国",
@@ -2642,7 +2645,115 @@
       "mainBenefits": "主な利点",
       "requirements": "要件",
       "potentialRisks": "潜在的なリスク",
-      "nomadFriendlyRating": "ノマドフレンドリー評価"
+      "nomadFriendlyRating": "ノマドフレンドリー評価",
+      "portugal": {
+        "benefits": {
+          "nhrPlan": "NHR計画：10年間の優遇税率（2024年政策厳格化）",
+          "noWealthTax": "富裕税なし",
+          "noInheritanceTax": "相続税なし",
+          "euPassportAdvantage": "EUパスポートの利点",
+          "lowerCostOfLiving": "比較的低い生活費",
+          "d7VisaAlternative": "D7ビザの代替案"
+        },
+        "requirements": {
+          "applicationDeadline": "2024年1月1日以前の申請（締切済み）",
+          "newStrictConditions": "または新しい厳格な条件を満たす",
+          "highSkillProfession": "高技能職業、年収€75,000以上",
+          "residencyDays": "年間183日以上ポルトガルに居住",
+          "noPreviousResidency": "過去5年間ポルトガル税務居住者ではないこと"
+        },
+        "risks": {
+          "nhrConditionsTightened": "NHR申請条件が大幅に厳格化",
+          "proofRequired": "高技能職業と所得の証明が必要",
+          "taxAuditRisk": "ポルトガル税務当局の審査を受ける可能性",
+          "policyChangeRisk": "政策変更リスクの増加"
+        }
+      },
+      "thailand": {
+        "benefits": {
+          "foreignIncomeExempt": "外国所得の非課税（タイに送金しない場合）",
+          "lowCostOfLiving": "低い生活費",
+          "visaConvenience": "ビザの利便性",
+          "noCapitalGainsTax": "キャピタルゲイン税なし",
+          "noInheritanceTax": "相続税なし"
+        },
+        "requirements": {
+          "noForeignIncomeRemittance": "外国所得をタイに送金しない",
+          "workPermitRequired": "タイで働く場合は就労許可が必要",
+          "taxResidencyOver180Days": "180日を超える場合は税務居住者申請",
+          "maintainGoodRecords": "良好な記録を保持"
+        },
+        "risks": {
+          "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
+          "workPermitRestrictions": "就労許可の制限が厳格",
+          "taxRegulationChanges": "税務規定の変更可能性"
+        }
+      },
+      "mexico": {
+        "benefits": {
+          "territorialTaxSystem": "領土税制",
+          "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
+          "usTaxTreaty": "米国との税務条約",
+          "moderateCostOfLiving": "適度な生活費",
+          "digitalNomadVisa": "デジタルノマドビザ"
+        },
+        "requirements": {
+          "taxResidencyOver183Days": "183日を超えると税務居住者",
+          "noForeignIncomeRemittance": "外国所得をメキシコに送金しない",
+          "mexicanIncomeTaxed": "メキシコ所得は課税対象",
+          "mayNeedFiling": "申告が必要な場合がある"
+        },
+        "risks": {
+          "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
+          "complexTaxFiling": "税務申告の複雑さ",
+          "auditRisk": "監査リスク"
+        }
+      },
+      "spain": {
+        "benefits": {
+          "beckhamLaw": "ベッカム法",
+          "euPassport": "EUパスポート",
+          "qualityHealthcare": "質の高い医療",
+          "richCulture": "豊かな文化"
+        }
+      },
+      "germany": {
+        "benefits": {
+          "qualityInfrastructure": "質の高いインフラ",
+          "strongEconomy": "強固な経済",
+          "euPassport": "EUパスポート",
+          "excellentHealthcare": "優秀な医療制度"
+        }
+      },
+      "costaRica": {
+        "benefits": {
+          "territorialTaxSystem": "領土税制",
+          "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
+          "digitalNomadVisa": "デジタルノマドビザ",
+          "beautifulNature": "美しい自然",
+          "moderateCostOfLiving": "適度な生活費"
+        },
+        "requirements": {
+          "taxResidencyOver183Days": "183日を超えると税務居住者",
+          "noForeignIncomeRemittance": "外国所得をコスタリカに送金しない",
+          "costaRicanIncomeTaxed": "コスタリカ所得は課税対象",
+          "mayNeedFiling": "申告が必要な場合がある"
+        },
+        "risks": {
+          "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
+          "complexTaxFiling": "税務申告の複雑さ",
+          "auditRisk": "監査リスク"
+        }
+      },
+      "malaysia": {
+        "benefits": {
+          "mm2hVisaProgram": "MM2Hビザプログラム",
+          "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
+          "lowCostOfLiving": "低い生活費",
+          "highEnglishProficiency": "高い英語能力",
+          "goodInfrastructure": "良好なインフラ"
+        }
+      }
     },
     "importantNotice": {
       "title": "重要な注意事項",
@@ -2824,6 +2935,72 @@
       "favorited": "お気に入りにした",
       "connected": "つながった",
       "explored": "探索した"
+    }
+  },
+  "taxAssessment": {
+    "questions": {
+      "income": "あなたの年収範囲は？",
+      "passport": "あなたのパスポート国は？",
+      "residence": "あなたの居住パターンは？",
+      "workType": "あなたの仕事の種類は？",
+      "visaStatus": "あなたの現在のビザステータスは？"
+    },
+    "incomeOptions": {
+      "under50k": "$50,000未満",
+      "under50kDesc": "基本的な最適化戦略に適している",
+      "50k100k": "$50,000 - $100,000",
+      "50k100kDesc": "中程度の所得最適化の可能性",
+      "100k200k": "$100,000 - $200,000",
+      "100k200kDesc": "高所得最適化の可能性",
+      "over200k": "$200,000以上",
+      "over200kDesc": "専門的な税務計画が必要"
+    },
+    "passportOptions": {
+      "us": "アメリカ合衆国",
+      "usDesc": "グローバル課税、FEIEが必要",
+      "eu": "EU",
+      "euDesc": "EU内での税務最適化が可能",
+      "uk": "イギリス",
+      "ukDesc": "居住地ベースの課税",
+      "canada": "カナダ",
+      "canadaDesc": "居住地ベースの課税",
+      "australia": "オーストラリア",
+      "australiaDesc": "居住地ベースの課税",
+      "other": "その他",
+      "otherDesc": "各国の税務規定に従う"
+    },
+    "residenceOptions": {
+      "single": "単一居住地",
+      "singleDesc": "主に一つの国に居住",
+      "multiple": "複数居住地",
+      "multipleDesc": "複数の国に分散して居住",
+      "nomadic": "ノマド型",
+      "nomadicDesc": "頻繁に移動するライフスタイル"
+    },
+    "workTypeOptions": {
+      "freelance": "フリーランス",
+      "freelanceDesc": "独立した契約者として働く",
+      "remote": "リモートワーク",
+      "remoteDesc": "企業のリモート従業員",
+      "business": "事業主",
+      "businessDesc": "自分の事業を経営",
+      "mixed": "混合型",
+      "mixedDesc": "複数の働き方の組み合わせ"
+    },
+    "visaStatusOptions": {
+      "tourist": "観光ビザ",
+      "touristDesc": "短期滞在、通常90日以内",
+      "digitalNomad": "デジタルノマドビザ",
+      "digitalNomadDesc": "リモートワーク専用ビザ",
+      "resident": "居住者",
+      "residentDesc": "長期居住許可",
+      "citizen": "市民",
+      "citizenDesc": "その国の市民権を持つ"
+    },
+    "navigation": {
+      "question": "質問",
+      "previous": "前へ",
+      "next": "次へ"
     }
   },
   "site": {
