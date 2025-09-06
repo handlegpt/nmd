@@ -185,14 +185,17 @@ export async function POST(request: NextRequest) {
         
         const userName = email.split('@')[0]
         
-        console.log('📝 Creating user with minimal fields for email:', email)
+        console.log('📝 Creating user with upsert and ignoreDuplicates for email:', email)
         
-        // 使用最基本的字段插入用户，让数据库处理默认值
+        // 使用 upsert 策略，但是设置 ignoreDuplicates: true 来避免重复键错误
         const { data: newUser, error: createError } = await supabase
           .from('users')
-          .insert({
+          .upsert({
             email,
             name: userName
+          }, {
+            onConflict: 'email',
+            ignoreDuplicates: true
           })
           .select('id, email, name, created_at, current_city, avatar_url')
           .single()
