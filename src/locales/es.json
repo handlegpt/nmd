@@ -618,6 +618,9 @@
     },
     "addCity": "Recomendar Ciudad",
     "addCitySuccess": "Ciudad recomendada exitosamente: {cityName}",
+    "citiesFound": "Ciudades Encontradas",
+    "rateCity": "Calificar Ciudad",
+    "viewAllCities": "Ver Todas las Ciudades",
     "addCityError": "Error al agregar ciudad, por favor intenta de nuevo",
     "cityList": "Lista de Ciudades",
     "travelTrajectory": "Trayectoria de Viaje",
@@ -1390,6 +1393,19 @@
     "share": "Compartir",
     "overallScore": "Puntuación General",
     "recommendation": "Recomendación",
+    "points": "Puntos",
+    "wifiSpeed": "Velocidad WiFi",
+    "averageWifiSpeed": "Velocidad WiFi Promedio",
+    "costOfLiving": "Costo de Vida",
+    "monthlyCostUSD": "Costo Mensual USD",
+    "perMonth": "por mes",
+    "visaConvenience": "Conveniencia de Visa",
+    "stayDays": "Días de Estancia",
+    "days": "días",
+    "climateComfort": "Comodidad Climática",
+    "climateScoreByLatitude": "Puntuación Climática por Latitud",
+    "socialAtmosphere": "Ambiente Social",
+    "socialScoreByVisaAndCost": "Puntuación Social por Visa y Costo",
     "searchCities": "Buscar ciudades o países...",
     "sortBy": "Ordenar por",
     "advancedFilter": "Filtro Avanzado",
@@ -1487,6 +1503,24 @@
       "title": "No se encontraron lugares",
       "description": "Intenta ajustar tus criterios de búsqueda o agrega un nuevo lugar"
     },
+    "filterByCategory": "Filtrar por Categoría",
+    "all": "Todos",
+    "filterByRegion": "Filtrar por Región",
+    "allRegions": "Todas las Regiones",
+    "asia": "Asia",
+    "europe": "Europa",
+    "americas": "Américas",
+    "sortByRating": "Ordenar por Calificación",
+    "sortBySpeed": "Ordenar por Velocidad",
+    "sortByPrice": "Ordenar por Precio",
+    "community": "Comunidad",
+    "openNow": "Abierto Ahora",
+    "outlets": "Enchufes",
+    "seating": "Asientos",
+    "noise": "Ruido",
+    "evaluate": "Evaluar",
+    "wifiSpeed": "Velocidad WiFi",
+    "priceLevel": "Nivel de Precio",
     "viewAll": "Ver todos los {count} lugares",
     "foundResults": "Encontrados {count} lugares",
     "viewDetails": "Ver Detalles",
@@ -2225,7 +2259,20 @@
         "goodFood": "Buena Comida",
         "goodService": "Buen Servicio",
         "open24Hours": "24 Horas",
-        "petFriendly": "Pet Friendly"
+        "petFriendly": "Mascotas Permitidas",
+        "latteArt": "Arte del Latte",
+        "nearBeach": "Cerca de la Playa",
+        "riverView": "Vista al Río",
+        "premiumFacilities": "Instalaciones Premium",
+        "affordablePrice": "Precio Asequible",
+        "chiangMai": "Chiang Mai",
+        "historicalBuilding": "Edificio Histórico",
+        "elegantEnvironment": "Ambiente Elegante",
+        "stableWifi": "WiFi Estable",
+        "culturalExperience": "Experiencia Cultural",
+        "freeVisit": "Visita Gratuita",
+        "influencerSpot": "Lugar de Influencers",
+        "communityActivities": "Actividades Comunitarias"
       },
       "submitButton": "Enviar Recomendación",
       "title": "Recomendar un Lugar"
@@ -2571,6 +2618,51 @@
       "communityRating": "Calificación de la Comunidad",
       "days": "días"
     },
+    "tagCategories": {
+      "lifestyle": "Estilo de Vida",
+      "work": "Trabajo",
+      "interests": "Intereses",
+      "personality": "Personalidad"
+    },
+    "lifestyleTags": {
+      "earlyBird": "Madrugador",
+      "nightOwl": "Noctámbulo",
+      "minimalist": "Minimalista",
+      "adventurer": "Aventurero"
+    },
+    "workTags": {
+      "developer": "Desarrollador",
+      "designer": "Diseñador",
+      "writer": "Escritor",
+      "entrepreneur": "Emprendedor"
+    },
+    "interestTags": {
+      "photography": "Fotografía",
+      "music": "Música",
+      "cooking": "Cocina",
+      "fitness": "Fitness"
+    },
+    "personalityTags": {
+      "extrovert": "Extrovertido",
+      "introvert": "Introvertido",
+      "creative": "Creativo",
+      "analytical": "Analítico"
+    },
+    "badgeTypes": {
+      "localGuide": "Guía Local",
+      "coffeeHero": "Héroe del Café",
+      "cityExplorer": "Explorador de Ciudades",
+      "communityBuilder": "Constructor de Comunidad"
+    },
+    "badgeDescriptions": {
+      "localGuide": "Conoce bien la ciudad y ayuda a otros nómadas",
+      "coffeeHero": "Organiza encuentros de café y construye comunidad",
+      "cityExplorer": "Explora activamente nuevas ciudades y lugares",
+      "communityBuilder": "Construye y fortalece la comunidad nómada"
+    },
+    "totalNomads": "Total de Nómadas",
+    "trustAndResponse": "Confianza y Respuesta",
+    "requestsGetResponse": "Solicitudes Obtienen Respuesta",
     "realtimeData": "Datos en Tiempo Real",
     "searchAndConnect": "Buscar y Conectar",
     "searchNomads": "Buscar Nómadas",
@@ -2917,6 +3009,16 @@
     "feedback": "Comentarios",
     "allRightsReserved": "Todos los derechos reservados.",
     "madeWith": "Hecho con"
+  },
+  "site": {
+    "title": "Guía de Vida para Nómadas Digitales | Exploración de Ciudades Optimización Fiscal Conexión Comunitaria",
+    "description": "Tu plataforma integral para nómadas digitales. Descubre ciudades, optimiza impuestos, conecta con la comunidad global y encuentra las mejores herramientas para tu estilo de vida nómada.",
+    "keywords": "nómadas digitales, ciudades, impuestos, visa, comunidad, herramientas, estilo de vida nómada, trabajo remoto, viajes",
+    "ogTitle": "Guía de Vida para Nómadas Digitales | Exploración de Ciudades Optimización Fiscal",
+    "ogDescription": "Descubre ciudades perfectas para nómadas digitales, optimiza tus impuestos y conecta con una comunidad global. Tu plataforma integral para el estilo de vida nómada.",
+    "ogAlt": "Nómadas digitales explorando ciudades y conectando globalmente",
+    "structuredDataDescription": "Plataforma integral para nómadas digitales que proporciona información sobre ciudades, guías de impuestos, herramientas de visa y conexión comunitaria.",
+    "platformDescription": "Una plataforma completa diseñada para nómadas digitales que buscan optimizar su estilo de vida, desde la exploración de ciudades hasta la gestión fiscal y la construcción de redes profesionales globales."
   },
   "quickStart": {
     "title": "Guía de Inicio Rápido",
