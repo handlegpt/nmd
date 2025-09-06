@@ -238,7 +238,7 @@ export default function HomePlaceRecommendations() {
             </button>
           )}
           <FixedLink
-            href="/places"
+            href="/nomadplaces"
             className="flex items-center space-x-2 text-blue-600 hover:text-blue-700 text-sm font-medium"
           >
             <span>{t('common.viewDetails')}</span>
@@ -444,7 +444,7 @@ export default function HomePlaceRecommendations() {
               {/* Secondary Actions */}
               <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                 <FixedLink
-                  href={`/places/${place.id}`}
+                  href={`/nomadplaces/${place.id}`}
                   className="text-blue-600 hover:text-blue-700 hover:underline"
                 >
                   {t('places.viewDetails')}
@@ -465,7 +465,7 @@ export default function HomePlaceRecommendations() {
           <h3 className="text-lg font-medium text-gray-900 mb-2">{t('places.noResults.title')}</h3>
           <p className="text-gray-600 mb-4">{t('places.noResults.description')}</p>
           <FixedLink
-            href="/places"
+            href="/nomadplaces"
             className="inline-flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             <PlusIcon className="h-4 w-4" />
@@ -481,7 +481,7 @@ export default function HomePlaceRecommendations() {
           {PLACE_CATEGORIES.slice(0, 6).map((category) => (
             <FixedLink
               key={category.id}
-              href={`/places?category=${category.id}`}
+              href={`/nomadplaces?category=${category.id}`}
               className={`px-3 py-1 rounded-full text-sm font-medium hover:opacity-80 transition-opacity ${category.color}`}
             >
               {category.icon} {t(category.translationKey)}

@@ -108,7 +108,7 @@ export default function EnhancedSearch() {
         title: 'Coworking Spaces',
         subtitle: 'Find workspaces near you',
         icon: <MapPin className="h-4 w-4" />,
-        href: '/places?category=coworking',
+        href: '/nomadplaces?category=coworking',
         popularity: 75
       },
       {

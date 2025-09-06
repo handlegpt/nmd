@@ -208,7 +208,7 @@ export default function CityPlacesSection({ cityName, cityCountry }: CityPlacesS
           {filteredPlaces.map((place) => (
             <FixedLink
               key={place.id}
-              href={`/places/${place.id}`}
+              href={`/nomadplaces/${place.id}`}
               className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-start justify-between mb-2">

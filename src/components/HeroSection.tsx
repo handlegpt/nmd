@@ -534,7 +534,7 @@ export default function HeroSection() {
                       </div>
                     </div>
                     <button 
-                      onClick={() => window.open('/places', '_blank')}
+                      onClick={() => window.open('/nomadplaces', '_blank')}
                       className="btn btn-sm btn-purple hover:bg-purple-600 text-white"
                     >
                       🔗 {t('home.hero.liveInfo.viewDetails')}

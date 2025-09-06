@@ -10,6 +10,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     '/nomadcities',
     '/nomadtax',
     '/nomadvisaguide',
+    '/nomadplaces',
     '/local-nomads',
     '/dashboard',
     '/about',

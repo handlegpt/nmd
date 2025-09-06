@@ -48,7 +48,7 @@ export default function QuickStartWizard() {
       icon: <MapPin className="h-6 w-6" />,
       action: {
         text: t('quickStart.step2.action'),
-        href: '/places'
+        href: '/nomadplaces'
       }
     },
     {

@@ -97,9 +97,9 @@ export default function MobileNavigation({
     {
       id: 'places',
       label: '地点',
-      href: '/places',
+      href: '/nomadplaces',
       icon: <Globe className="h-5 w-5" />,
-      isActive: pathname.startsWith('/places')
+      isActive: pathname.startsWith('/nomadplaces')
     },
     {
       id: 'favorites',

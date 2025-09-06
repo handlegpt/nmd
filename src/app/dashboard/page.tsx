@@ -1018,7 +1018,7 @@ export default function DashboardPage() {
 
           {/* 咖啡地图 */}
           <button
-            onClick={() => router.push('/places')}
+            onClick={() => router.push('/nomadplaces')}
             className="group relative bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-900/40 border-2 border-purple-200 dark:border-purple-700 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
           >
             <div className="text-center">
