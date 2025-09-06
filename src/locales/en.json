@@ -1947,7 +1947,47 @@
       },
       "successRate": "Success Rate",
       "hasAdvisor": "Has Advisor",
-      "hideAdvisors": "Hide Advisors"
+      "hideAdvisors": "Hide Advisors",
+      "expectedSavings": "Expected Savings",
+      "implementationTime": "Implementation Time",
+      "riskLevel": "Risk Level",
+      "lastUpdated": "Last Updated",
+      "relatedCountries": "Related Countries",
+      "professionalAdvisorService": "Professional Advisor Service",
+      "advisorServiceDescription": "This strategy has professional advisors available",
+      "fee": "Fee",
+      "professionalTaxAdvisors": "Professional Tax Advisors",
+      "availability": {
+        "available": "Available",
+        "busy": "Busy",
+        "unavailable": "Unavailable"
+      },
+      "specialization": "Specialization",
+      "languages": "Languages",
+      "contact": "Contact",
+      "details": "Details",
+      "sendEmail": "Send Email",
+      "phoneConsultation": "Phone Consultation",
+      "visitWebsite": "Visit Website",
+      "risk": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "strategies": {
+        "companyStructure": {
+          "savings": "$20,000-60,000/year",
+          "timeToImplement": "6-12 months"
+        },
+        "digitalNomadVisa": {
+          "savings": "$5,000-20,000/year",
+          "timeToImplement": "2-4 months"
+        },
+        "taxTreatyOptimization": {
+          "savings": "$8,000-25,000/year",
+          "timeToImplement": "3-6 months"
+        }
+      }
     },
     "calculator": {
       "potentialSavings": "Potential Savings",

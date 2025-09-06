@@ -154,11 +154,11 @@ export default function TaxStrategyGuide() {
     },
     {
       id: 'company-structure',
-      title: '公司结构优化',
-      description: '通过离岸公司优化税务结构，适合高收入企业主',
+      title: t('tax.strategyGuide.strategies.companyStructure.title'),
+      description: t('tax.strategyGuide.strategies.companyStructure.description'),
       difficulty: 'hard',
-      savings: '$20,000-60,000/年',
-      timeToImplement: '6-12个月',
+      savings: t('tax.strategyGuide.strategies.companyStructure.savings'),
+      timeToImplement: t('tax.strategyGuide.strategies.companyStructure.timeToImplement'),
       risk: 'medium',
       category: 'company',
       passportRestrictions: [],
@@ -192,11 +192,11 @@ export default function TaxStrategyGuide() {
     },
     {
       id: 'digital-nomad-visa',
-      title: '数字游民签证',
-      description: '利用专门签证优化税务状况，简单易行',
+      title: t('tax.strategyGuide.strategies.digitalNomadVisa.title'),
+      description: t('tax.strategyGuide.strategies.digitalNomadVisa.description'),
       difficulty: 'easy',
-      savings: '$5,000-20,000/年',
-      timeToImplement: '2-4个月',
+      savings: t('tax.strategyGuide.strategies.digitalNomadVisa.savings'),
+      timeToImplement: t('tax.strategyGuide.strategies.digitalNomadVisa.timeToImplement'),
       risk: 'low',
       category: 'visa',
       passportRestrictions: [],
@@ -230,11 +230,11 @@ export default function TaxStrategyGuide() {
     },
     {
       id: 'tax-treaty-optimization',
-      title: '税收协定优化',
-      description: '利用双边税收协定减少双重征税',
+      title: t('tax.strategyGuide.strategies.taxTreatyOptimization.title'),
+      description: t('tax.strategyGuide.strategies.taxTreatyOptimization.description'),
       difficulty: 'medium',
-      savings: '$8,000-25,000/年',
-      timeToImplement: '3-6个月',
+      savings: t('tax.strategyGuide.strategies.taxTreatyOptimization.savings'),
+      timeToImplement: t('tax.strategyGuide.strategies.taxTreatyOptimization.timeToImplement'),
       risk: 'low',
       category: 'treaty',
       passportRestrictions: [],
@@ -426,7 +426,9 @@ export default function TaxStrategyGuide() {
             <div className="flex items-start justify-between mb-2">
               <h3 className="font-semibold text-gray-900 text-sm">{strategy.title}</h3>
               <span className={`px-2 py-1 text-xs font-medium rounded-full ${getDifficultyColor(strategy.difficulty)}`}>
-                {strategy.difficulty === 'easy' ? '简单' : strategy.difficulty === 'medium' ? '中等' : '困难'}
+                {strategy.difficulty === 'easy' ? t('tax.strategyGuide.difficulty.easy') : 
+                 strategy.difficulty === 'medium' ? t('tax.strategyGuide.difficulty.medium') : 
+                 t('tax.strategyGuide.difficulty.hard')}
               </span>
             </div>
             
@@ -446,10 +448,11 @@ export default function TaxStrategyGuide() {
               
               <div className="flex items-center justify-between text-xs">
                 <span className={`px-2 py-1 rounded-full text-xs ${getCategoryColor(strategy.category)}`}>
-                  {strategy.category === 'tax-haven' ? '税务天堂' :
-                   strategy.category === 'territorial' ? '领土税制' :
-                   strategy.category === 'company' ? '公司结构' :
-                   strategy.category === 'visa' ? '签证策略' : '税收协定'}
+                  {strategy.category === 'tax-haven' ? t('tax.strategyGuide.categories.taxHaven') :
+                   strategy.category === 'territorial' ? t('tax.strategyGuide.categories.territorial') :
+                   strategy.category === 'company' ? t('tax.strategyGuide.categories.companyStructure') :
+                   strategy.category === 'visa' ? t('tax.strategyGuide.categories.visaStrategy') : 
+                   t('tax.strategyGuide.categories.taxTreaty')}
                 </span>
                 <div className="flex items-center space-x-1">
                   <Star className="h-3 w-3 text-yellow-500" />
@@ -480,17 +483,19 @@ export default function TaxStrategyGuide() {
                 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">预期节省:</span>
+                    <span className="text-gray-600">{t('tax.strategyGuide.expectedSavings')}:</span>
                     <span className="font-semibold text-green-600">{selectedStrategyData.savings}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">实施时间:</span>
+                    <span className="text-gray-600">{t('tax.strategyGuide.implementationTime')}:</span>
                     <span className="font-semibold text-blue-600">{selectedStrategyData.timeToImplement}</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">风险等级:</span>
+                    <span className="text-gray-600">{t('tax.strategyGuide.riskLevel')}:</span>
                     <span className={`font-semibold ${getRiskColor(selectedStrategyData.risk)}`}>
-                      {selectedStrategyData.risk === 'low' ? '低' : selectedStrategyData.risk === 'medium' ? '中' : '高'}
+                      {selectedStrategyData.risk === 'low' ? t('tax.strategyGuide.risk.low') : 
+                       selectedStrategyData.risk === 'medium' ? t('tax.strategyGuide.risk.medium') : 
+                       t('tax.strategyGuide.risk.high')}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
@@ -498,7 +503,7 @@ export default function TaxStrategyGuide() {
                     <span className="font-semibold text-purple-600">{selectedStrategyData.successRate}%</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">更新时间:</span>
+                    <span className="text-gray-600">{t('tax.strategyGuide.lastUpdated')}:</span>
                     <span className="font-semibold text-gray-600">{selectedStrategyData.lastUpdated}</span>
                   </div>
                 </div>
@@ -508,7 +513,7 @@ export default function TaxStrategyGuide() {
               <div className="bg-gray-50 rounded-lg p-4 mb-4">
                 <h4 className="font-semibold text-gray-900 mb-2 flex items-center">
                   <Globe className="h-4 w-4 mr-2" />
-                  相关国家
+                  {t('tax.strategyGuide.relatedCountries')}
                 </h4>
                 <div className="flex flex-wrap gap-2">
                   {selectedStrategyData.relatedCountries.map((country, index) => (
@@ -524,19 +529,19 @@ export default function TaxStrategyGuide() {
                 <div className="bg-green-50 border border-green-200 rounded-lg p-4">
                   <h4 className="font-semibold text-green-900 mb-2 flex items-center">
                     <UserCheck className="h-4 w-4 mr-2" />
-                    专业顾问服务
+                    {t('tax.strategyGuide.professionalAdvisorService')}
                   </h4>
                   <p className="text-sm text-green-700 mb-3">
-                    此策略有专业顾问提供服务
+                    {t('tax.strategyGuide.advisorServiceDescription')}
                   </p>
                   <div className="text-sm text-green-600 mb-3">
-                    费用: {selectedStrategyData.advisorFee}
+                    {t('tax.strategyGuide.fee')}: {selectedStrategyData.advisorFee}
                   </div>
                   <button
                     onClick={() => setShowAdvisors(true)}
                     className="w-full px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors text-sm"
                   >
-                    查看顾问
+                    {t('tax.strategyGuide.viewAdvisors')}
                   </button>
                 </div>
               )}
@@ -603,7 +608,7 @@ export default function TaxStrategyGuide() {
         <div className="border-t border-gray-200 pt-6 mt-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <Users className="h-5 w-5 mr-2 text-blue-600" />
-            专业税务顾问
+            {t('tax.strategyGuide.professionalTaxAdvisors')}
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {advisors.map(advisor => (
@@ -619,8 +624,9 @@ export default function TaxStrategyGuide() {
                 <div className="flex items-start justify-between mb-2">
                   <h4 className="font-semibold text-gray-900">{advisor.name}</h4>
                   <span className={`px-2 py-1 text-xs font-medium rounded-full ${getAvailabilityColor(advisor.availability)}`}>
-                    {advisor.availability === 'available' ? '可咨询' : 
-                     advisor.availability === 'busy' ? '忙碌' : '不可用'}
+                    {advisor.availability === 'available' ? t('tax.strategyGuide.availability.available') : 
+                     advisor.availability === 'busy' ? t('tax.strategyGuide.availability.busy') : 
+                     t('tax.strategyGuide.availability.unavailable')}
                   </span>
                 </div>
                 
@@ -641,20 +647,20 @@ export default function TaxStrategyGuide() {
                   </div>
                   
                   <div className="text-xs text-gray-500">
-                    专业领域: {advisor.specialization.join(', ')}
+                    {t('tax.strategyGuide.specialization')}: {advisor.specialization.join(', ')}
                   </div>
                   
                   <div className="text-xs text-gray-500">
-                    语言: {advisor.languages.join(', ')}
+                    {t('tax.strategyGuide.languages')}: {advisor.languages.join(', ')}
                   </div>
                 </div>
                 
                 <div className="mt-3 flex space-x-2">
                   <button className="flex-1 px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors">
-                    联系
+                    {t('tax.strategyGuide.contact')}
                   </button>
                   <button className="flex-1 px-3 py-1 bg-gray-100 text-gray-700 rounded text-xs hover:bg-gray-200 transition-colors">
-                    详情
+                    {t('tax.strategyGuide.details')}
                   </button>
                 </div>
               </div>
@@ -678,15 +684,16 @@ export default function TaxStrategyGuide() {
                   <span className="font-semibold">{selectedAdvisorData.rating}/5.0</span>
                 </div>
                 <span className={`px-2 py-1 text-xs font-medium rounded-full ${getAvailabilityColor(selectedAdvisorData.availability)}`}>
-                  {selectedAdvisorData.availability === 'available' ? '可咨询' : 
-                   selectedAdvisorData.availability === 'busy' ? '忙碌' : '不可用'}
+                  {selectedAdvisorData.availability === 'available' ? t('tax.strategyGuide.availability.available') : 
+                   selectedAdvisorData.availability === 'busy' ? t('tax.strategyGuide.availability.busy') : 
+                   t('tax.strategyGuide.availability.unavailable')}
                 </span>
               </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
               <div>
-                <h5 className="font-semibold text-blue-900 mb-2">专业领域</h5>
+                <h5 className="font-semibold text-blue-900 mb-2">{t('tax.strategyGuide.specialization')}</h5>
                 <div className="flex flex-wrap gap-1">
                   {selectedAdvisorData.specialization.map((spec, index) => (
                     <span key={index} className="px-2 py-1 bg-white rounded-full text-xs border">
@@ -696,7 +703,7 @@ export default function TaxStrategyGuide() {
                 </div>
               </div>
               <div>
-                <h5 className="font-semibold text-blue-900 mb-2">语言能力</h5>
+                <h5 className="font-semibold text-blue-900 mb-2">{t('tax.strategyGuide.languages')}</h5>
                 <div className="flex flex-wrap gap-1">
                   {selectedAdvisorData.languages.map((lang, index) => (
                     <span key={index} className="px-2 py-1 bg-white rounded-full text-xs border">
@@ -710,18 +717,18 @@ export default function TaxStrategyGuide() {
             <div className="flex space-x-3">
               <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                 <Mail className="h-4 w-4" />
-                <span>发送邮件</span>
+                <span>{t('tax.strategyGuide.sendEmail')}</span>
               </button>
               {selectedAdvisorData.contact.phone && (
                 <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                   <Phone className="h-4 w-4" />
-                  <span>电话咨询</span>
+                  <span>{t('tax.strategyGuide.phoneConsultation')}</span>
                 </button>
               )}
               {selectedAdvisorData.contact.website && (
                 <button className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
                   <ExternalLink className="h-4 w-4" />
-                  <span>访问网站</span>
+                  <span>{t('tax.strategyGuide.visitWebsite')}</span>
                 </button>
               )}
             </div>

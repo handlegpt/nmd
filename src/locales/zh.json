@@ -642,7 +642,47 @@
       },
       "successRate": "成功率",
       "hasAdvisor": "有顾问",
-      "hideAdvisors": "隐藏顾问"
+      "hideAdvisors": "隐藏顾问",
+      "expectedSavings": "预期节省",
+      "implementationTime": "实施时间",
+      "riskLevel": "风险等级",
+      "lastUpdated": "更新时间",
+      "relatedCountries": "相关国家",
+      "professionalAdvisorService": "专业顾问服务",
+      "advisorServiceDescription": "此策略有专业顾问提供服务",
+      "fee": "费用",
+      "professionalTaxAdvisors": "专业税务顾问",
+      "availability": {
+        "available": "可咨询",
+        "busy": "忙碌",
+        "unavailable": "不可用"
+      },
+      "specialization": "专业领域",
+      "languages": "语言",
+      "contact": "联系",
+      "details": "详情",
+      "sendEmail": "发送邮件",
+      "phoneConsultation": "电话咨询",
+      "visitWebsite": "访问网站",
+      "risk": {
+        "low": "低",
+        "medium": "中",
+        "high": "高"
+      },
+      "strategies": {
+        "companyStructure": {
+          "savings": "$20,000-60,000/年",
+          "timeToImplement": "6-12个月"
+        },
+        "digitalNomadVisa": {
+          "savings": "$5,000-20,000/年",
+          "timeToImplement": "2-4个月"
+        },
+        "taxTreatyOptimization": {
+          "savings": "$8,000-25,000/年",
+          "timeToImplement": "3-6个月"
+        }
+      }
     },
     "currentStep": "当前步骤:",
     "step1": "1️⃣ 需求评估",
