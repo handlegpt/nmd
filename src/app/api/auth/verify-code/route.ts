@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
         const newUserData = {
           email,
           name: userName,
-          created_at: new Date().toISOString()
+          ip_address: null
         }
         
         console.log('📝 Creating user with data:', newUserData)
