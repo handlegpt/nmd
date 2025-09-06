@@ -3380,5 +3380,47 @@
         "goodInfrastructure": "基础设施良好"
       }
     }
+  },
+  "deadlines": {
+    "title": "税务截止日期提醒",
+    "selectCountry": "选择你的国籍国家",
+    "statusSummary": "状态摘要",
+    "urgentDeadlines": "紧急截止日期",
+    "upcomingDeadlines": "即将到期",
+    "completed": "已完成",
+    "exportToCalendar": "导出到日历",
+    "copyUrgentDeadlines": "复制紧急截止日期",
+    "showCompleted": "显示已完成",
+    "hideCompleted": "隐藏已完成",
+    "yourTaxDeadlines": "你的税务截止日期",
+    "selectCountryToView": "请选择国家以查看税务截止日期",
+    "daysLeft": "天后",
+    "dueToday": "今天到期",
+    "daysAgo": "天前",
+    "urgent": "紧急：请尽快处理",
+    "reminderTips": "提醒提示",
+    "reminderTip1": "在每个截止日期前2-4周设置日历提醒",
+    "reminderTip2": "考虑申请延期（美国公民自动获得2个月延期）",
+    "reminderTip3": "全年保持重要文档的有序组织",
+    "reminderTip4": "复杂情况请咨询税务专业人士",
+    "disclaimer": "重要声明",
+    "disclaimerText": "本提醒系统提供一般性税务截止日期信息。实际截止日期可能因个人情况、申请延期等因素而变化。请以官方税务机构的最新信息为准，并在复杂情况下咨询专业税务顾问。",
+    "countries": {
+      "us": "美国",
+      "uk": "英国",
+      "ca": "加拿大",
+      "au": "澳大利亚",
+      "ie": "爱尔兰"
+    },
+    "descriptions": {
+      "annualTaxReturn": "年度所得税申报",
+      "fbarFiling": "FBAR申报（外国银行账户）",
+      "q1EstimatedTax": "第一季度预估税",
+      "q2EstimatedTax": "第二季度预估税",
+      "selfAssessment": "自我评估",
+      "taxPayment": "税务付款",
+      "personalTaxReturn": "个人所得税申报",
+      "selfEmployedFiling": "自雇人士申报"
+    }
   }
 } 

@@ -3111,5 +3111,47 @@
         "goodInfrastructure": "Good infrastructure"
       }
     }
+  },
+  "deadlines": {
+    "title": "Tax Deadline Reminder",
+    "selectCountry": "Select your nationality country",
+    "statusSummary": "Status Summary",
+    "urgentDeadlines": "Urgent Deadlines",
+    "upcomingDeadlines": "Upcoming Deadlines",
+    "completed": "Completed",
+    "exportToCalendar": "Export to Calendar",
+    "copyUrgentDeadlines": "Copy Urgent Deadlines",
+    "showCompleted": "Show Completed",
+    "hideCompleted": "Hide Completed",
+    "yourTaxDeadlines": "Your Tax Deadlines",
+    "selectCountryToView": "Please select a country to view tax deadlines",
+    "daysLeft": " days left",
+    "dueToday": "Due today",
+    "daysAgo": " days ago",
+    "urgent": "Urgent: Please handle ASAP",
+    "reminderTips": "Reminder Tips",
+    "reminderTip1": "Set calendar reminders 2-4 weeks before each deadline",
+    "reminderTip2": "Consider applying for extensions (US citizens automatically get 2 months extension)",
+    "reminderTip3": "Keep important documents organized throughout the year",
+    "reminderTip4": "Consult tax professionals for complex situations",
+    "disclaimer": "Important Notice",
+    "disclaimerText": "This reminder system provides general tax deadline information. Actual deadlines may vary due to personal circumstances, extension applications, and other factors. Please refer to the latest information from official tax authorities and consult professional tax advisors for complex situations.",
+    "countries": {
+      "us": "United States",
+      "uk": "United Kingdom",
+      "ca": "Canada",
+      "au": "Australia",
+      "ie": "Ireland"
+    },
+    "descriptions": {
+      "annualTaxReturn": "Annual Tax Return",
+      "fbarFiling": "FBAR Filing (Foreign Bank Account)",
+      "q1EstimatedTax": "Q1 Estimated Tax",
+      "q2EstimatedTax": "Q2 Estimated Tax",
+      "selfAssessment": "Self Assessment",
+      "taxPayment": "Tax Payment",
+      "personalTaxReturn": "Personal Tax Return",
+      "selfEmployedFiling": "Self-Employed Filing"
+    }
   }
 } 
