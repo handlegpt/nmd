@@ -28,18 +28,18 @@ export async function POST(request: NextRequest) {
     console.log('🔍 Attempt 1: Using raw SQL with explicit field casting')
     try {
       const userName = email.split('@')[0]
-      const { data: sqlData, error: sqlData } = await supabase
+      const { data: sqlData, error: sqlError } = await supabase
         .rpc('create_user_with_ip', {
           user_email: email,
           user_name: userName,
           user_ip: '127.0.0.1'
         })
 
-      if (sqlData) {
+      if (sqlError) {
         results.attempts.sqlWithIp = {
           status: 'error',
-          error: sqlData.message,
-          code: sqlData.code
+          error: sqlError.message,
+          code: sqlError.code
         }
       } else {
         results.attempts.sqlWithIp = {
