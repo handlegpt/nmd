@@ -315,7 +315,8 @@
     "loadingLocationData": "Loading location data...",
     "loadingCities": "Loading cities...",
     "loading": "Loading...",
-    "home": "Home"
+    "home": "Home",
+    "goSee": "Go See"
   },
   "voteSystem": {
     "voteFailed": "Vote submission failed, please try again",
@@ -1639,7 +1640,15 @@
         "culturalExperience": "Cultural Experience",
         "freeVisit": "Free Visit",
         "influencerSpot": "Influencer Spot",
-        "communityActivities": "Community Activities"
+        "communityActivities": "Community Activities",
+        "WiFi快": "Fast WiFi",
+        "海滩附近": "Near Beach",
+        "河景": "River View",
+        "高端设施": "Premium Facilities",
+        "历史建筑": "Historical Building",
+        "优雅环境": "Elegant Environment",
+        "价格实惠": "Affordable Price",
+        "清迈": "Chiang Mai"
       },
       "submitButton": "Submit Recommendation",
       "title": "Recommend a Place"
