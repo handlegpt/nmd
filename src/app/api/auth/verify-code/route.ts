@@ -185,15 +185,18 @@ export async function POST(request: NextRequest) {
         
         const userName = email.split('@')[0]
         
-        console.log('📝 Creating user with raw SQL to handle ip_address field for email:', email)
+        console.log('📝 Creating user with explicit ip_address field for email:', email)
         
-        // 使用原始SQL插入用户，明确处理 ip_address 字段的类型转换
+        // 使用 insert 操作，明确提供 ip_address 字段
         const { data: newUser, error: createError } = await supabase
-          .rpc('create_user_with_ip', {
-            user_email: email,
-            user_name: userName,
-            user_ip: '127.0.0.1'
+          .from('users')
+          .insert({
+            email,
+            name: userName,
+            ip_address: '127.0.0.1'
           })
+          .select('id, email, name, created_at, current_city, avatar_url')
+          .single()
 
         if (createError) {
           console.error('❌ Create user error:', createError)
