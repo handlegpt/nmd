@@ -611,7 +611,7 @@ export default function PlacesPage() {
                           key={tag}
                           className="px-2 py-1 text-xs bg-blue-100 text-blue-800 rounded-full"
                         >
-                          {tag}
+                          {t(`recommendationForm.place.suggestedTags.${tag}`) || tag}
                         </span>
                       ))}
                       {place.tags.length > 3 && (

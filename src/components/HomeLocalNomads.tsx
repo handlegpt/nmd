@@ -1212,7 +1212,7 @@ export default function HomeLocalNomads({
                   {/* 左下角"去看看"轻按钮 */}
                   <div className="mt-3 flex justify-start">
                     <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">
-                      去看看 →
+                      {t('common.goSee')} →
                     </button>
                   </div>
                 </div>

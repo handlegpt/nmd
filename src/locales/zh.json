@@ -32,6 +32,7 @@
       "title": "本地游民",
       "description": "与您所在地区的同行游民通过咖啡建立联系",
           "viewDetails": "查看详情",
+          "goSee": "去看看",
     "pros": {
       "fastWifi": "WiFi覆盖好",
       "longVisa": "长期签证选择",
@@ -2471,7 +2472,20 @@
         "goodFood": "食物好吃",
         "goodService": "服务好",
         "open24Hours": "24小时",
-        "petFriendly": "宠物友好"
+        "petFriendly": "宠物友好",
+        "latteArt": "拉花艺术",
+        "nearBeach": "海滩附近",
+        "riverView": "河景",
+        "premiumFacilities": "高端设施",
+        "affordablePrice": "价格实惠",
+        "chiangMai": "清迈",
+        "historicalBuilding": "历史建筑",
+        "elegantEnvironment": "优雅环境",
+        "stableWifi": "WiFi稳定",
+        "culturalExperience": "文化体验",
+        "freeVisit": "免费参观",
+        "influencerSpot": "网红店",
+        "communityActivities": "社区活动"
       },
       "submitButton": "提交推荐",
       "title": "推荐地点"

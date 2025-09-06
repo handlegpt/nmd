@@ -251,7 +251,7 @@ export default function CityPlacesSection({ cityName, cityCountry }: CityPlacesS
                       key={index}
                       className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full"
                     >
-                      {tag}
+                      {t(`recommendationForm.place.suggestedTags.${tag}`) || tag}
                     </span>
                   ))}
                 </div>

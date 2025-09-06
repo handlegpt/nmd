@@ -37,7 +37,8 @@
     "localNomads": {
       "title": "ローカルノマド",
       "description": "あなたの地域でコーヒーを通じて他のノマドとつながりましょう",
-      "viewDetails": "詳細を見る"
+      "viewDetails": "詳細を見る",
+      "goSee": "見に行く"
     },
     "title": "デジタルノマド情報ハブ",
     "subtitle": "デジタルノマドの包括的ガイド",
@@ -2071,7 +2072,20 @@
         "goodFood": "食べ物美味しい",
         "goodService": "サービス良い",
         "open24Hours": "24時間営業",
-        "petFriendly": "ペット可"
+        "petFriendly": "ペット可",
+        "latteArt": "ラテアート",
+        "nearBeach": "ビーチ近く",
+        "riverView": "川の景色",
+        "premiumFacilities": "高級施設",
+        "affordablePrice": "手頃な価格",
+        "chiangMai": "チェンマイ",
+        "historicalBuilding": "歴史的建物",
+        "elegantEnvironment": "優雅な環境",
+        "stableWifi": "WiFi安定",
+        "culturalExperience": "文化体験",
+        "freeVisit": "無料見学",
+        "influencerSpot": "インフルエンサースポット",
+        "communityActivities": "コミュニティ活動"
       },
       "submitButton": "おすすめを送信",
       "title": "場所をおすすめ"
