@@ -370,6 +370,30 @@
     "title": "Login Required"
   },
   "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your digital nomad profile",
+    "name": "Name",
+    "currentCity": "Current City",
+    "currentCityExample": "e.g., Bangkok, Thailand",
+    "profession": "Profession",
+    "professionExample": "e.g., Software Developer",
+    "company": "Company",
+    "companyExample": "e.g., Remote Company",
+    "bioPlaceholder": "Tell us about yourself, your interests, and your digital nomad journey...",
+    "skills": "Skills",
+    "interests": "Interests",
+    "socialLinks": "Social Links",
+    "phone": "Phone",
+    "addSkill": "Add Skill",
+    "addInterest": "Add Interest",
+    "editProfile": "Edit Profile",
+    "save": "Save",
+    "saving": "Saving...",
+    "profileCompleteness": "Profile Completeness",
+    "unlockMoreBadges": "Unlock more badges",
+    "completeInfoToUpgrade": "Complete the following information to upgrade your profile:",
+    "uploadAvatar": "Upload Avatar",
+    "avatarUploaded": "Avatar uploaded successfully",
     "badges": {
       "profileStarter": "🔰 Profile Starter",
       "profilePro": "⭐ Profile Pro",
@@ -1802,7 +1826,7 @@
         "medium": "Medium", 
         "hard": "Hard"
       },
-      "categories": {
+    "categories": {
         "taxHaven": "Tax Haven",
         "territorial": "Territorial Tax",
         "companyStructure": "Company Structure",

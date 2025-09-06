@@ -75,6 +75,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false)
   const [showSuccessMessage, setShowSuccessMessage] = useState(false)
   const [isOnline, setIsOnline] = useState(true) // 模拟在线状态
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
 
   useEffect(() => {
     // 给认证检查一些时间，避免强制刷新时立即跳转
@@ -157,6 +158,52 @@ export default function ProfilePage() {
       console.error('Error saving profile:', error)
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleAvatarUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (!file || !profile) return
+
+    // 检查文件类型
+    if (!file.type.startsWith('image/')) {
+      alert('请选择图片文件')
+      return
+    }
+
+    // 检查文件大小 (5MB限制)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('图片大小不能超过5MB')
+      return
+    }
+
+    try {
+      setUploadingAvatar(true)
+      
+      // 创建FileReader来读取文件
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const result = e.target?.result as string
+        if (result) {
+          // 更新profile中的avatar_url
+          const updatedProfile = { ...profile, avatar_url: result }
+          setProfile(updatedProfile)
+          
+          // 保存到localStorage
+          localStorage.setItem('user_profile_details', JSON.stringify(updatedProfile))
+          
+          // 显示成功消息
+          setShowSuccessMessage(true)
+          setTimeout(() => setShowSuccessMessage(false), 3000)
+        }
+      }
+      reader.readAsDataURL(file)
+      
+    } catch (error) {
+      console.error('Error uploading avatar:', error)
+      alert('头像上传失败，请重试')
+    } finally {
+      setUploadingAvatar(false)
     }
   }
 
@@ -285,7 +332,7 @@ export default function ProfilePage() {
               <div className="relative p-8 text-white">
                 <div className="flex items-center space-x-6">
                   {/* 头像 */}
-                  <div className="relative">
+                  <div className="relative group">
                     <div className="w-24 h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center border-4 border-white/30">
                       {profile.avatar_url ? (
                         <img 
@@ -301,6 +348,29 @@ export default function ProfilePage() {
                     <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white ${
                       isOnline ? 'bg-green-400' : 'bg-gray-400'
                     }`}></div>
+                    
+                    {/* 头像上传按钮 */}
+                    <div className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                      <label className="cursor-pointer">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleAvatarUpload}
+                          className="hidden"
+                          disabled={uploadingAvatar}
+                        />
+                        <div className="flex flex-col items-center text-white">
+                          {uploadingAvatar ? (
+                            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                          ) : (
+                            <>
+                              <Camera className="w-6 h-6 mb-1" />
+                              <span className="text-xs">{t('profile.uploadAvatar')}</span>
+                            </>
+                          )}
+                        </div>
+                      </label>
+                    </div>
                   </div>
                   
                   {/* 基本信息 */}
