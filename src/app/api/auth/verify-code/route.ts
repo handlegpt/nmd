@@ -185,14 +185,17 @@ export async function POST(request: NextRequest) {
         
         const userName = email.split('@')[0]
         
-        console.log('📝 Creating user with raw SQL for email:', email)
+        console.log('📝 Creating user with minimal fields for email:', email)
         
-        // 使用原始SQL插入用户，避免ip_address字段的类型转换问题
+        // 使用最基本的字段插入用户，让数据库处理默认值
         const { data: newUser, error: createError } = await supabase
-          .rpc('create_user_simple', {
-            user_email: email,
-            user_name: userName
+          .from('users')
+          .insert({
+            email,
+            name: userName
           })
+          .select('id, email, name, created_at, current_city, avatar_url')
+          .single()
 
         if (createError) {
           console.error('❌ Create user error:', createError)
