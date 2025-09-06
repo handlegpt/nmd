@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { 
   BookOpen, 
   Target, 
@@ -64,14 +64,14 @@ interface Advisor {
 }
 
 export default function TaxStrategyGuide() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null)
   const [selectedAdvisor, setSelectedAdvisor] = useState<string | null>(null)
   const [filterDifficulty, setFilterDifficulty] = useState<string>('all')
   const [filterCategory, setFilterCategory] = useState<string>('all')
   const [showAdvisors, setShowAdvisors] = useState(false)
 
-  const strategies: Strategy[] = [
+  const strategies: Strategy[] = useMemo(() => [
     {
       id: 'nhr-portugal',
       title: t('tax.strategyGuide.strategies.nhrPortugal.title'),
@@ -266,7 +266,7 @@ export default function TaxStrategyGuide() {
         t('tax.strategyGuide.strategies.taxTreatyOptimization.tips.3')
       ]
     }
-  ]
+  ], [t, locale])
 
   const advisors: Advisor[] = [
     {

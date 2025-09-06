@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Calculator, TrendingUp, TrendingDown, DollarSign, Calendar, Globe, Clock, AlertTriangle, CheckCircle, Info, BarChart3, PieChart, Target } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
 
@@ -49,7 +49,7 @@ interface ResidencyTracker {
 }
 
 export default function TaxCalculator() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const [activeTab, setActiveTab] = useState<'calculator' | 'feie' | 'presence' | 'residency'>('calculator')
   const [annualIncome, setAnnualIncome] = useState(100000)
   const [selectedCountries, setSelectedCountries] = useState(['portugal', 'thailand', 'mexico'])
@@ -58,7 +58,7 @@ export default function TaxCalculator() {
   const [presenceTracker, setPresenceTracker] = useState<PresenceTracker | null>(null)
   const [residencyTrackers, setResidencyTrackers] = useState<ResidencyTracker[]>([])
 
-  const countries = [
+  const countries = useMemo(() => [
     { 
       id: 'portugal', 
       name: t('tax.calculator.countries.portugal'), 
@@ -155,7 +155,7 @@ export default function TaxCalculator() {
       costOfLiving: 'low' as const,
       digitalNomadFriendly: true
     }
-  ]
+  ], [t, locale])
 
   // FEIE 计算
   const calculateFEIE = (income: number, taxYear: '2024' | '2025') => {

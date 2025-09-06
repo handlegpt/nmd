@@ -84,19 +84,23 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       setLoading(true)
       console.log('🔍 Changing locale to:', newLocale)
       
-      // 立即更新状态
+      // 立即更新状态 - 确保所有组件都能立即响应
       setCurrentLocale(newLocale)
-      setLocale(newLocale)
       setCurrentTranslations(TRANSLATIONS_MAP[newLocale])
+      setLocale(newLocale)
       
-      console.log('✅ Locale changed to:', newLocale)
+      // 强制触发重新渲染
+      setTimeout(() => {
+        setLoading(false)
+        console.log('✅ Locale changed to:', newLocale)
+      }, 50)
+      
     } catch (error) {
       console.error('❌ Failed to change locale:', error)
       // 回退到默认语言
       setCurrentLocale('en')
-      setLocale('en')
       setCurrentTranslations(TRANSLATIONS_MAP.en)
-    } finally {
+      setLocale('en')
       setLoading(false)
     }
   }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { Calendar, Clock, AlertTriangle, CheckCircle, Download, Copy, Bell } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
 
@@ -22,20 +22,20 @@ interface CountryDeadlines {
 }
 
 export default function TaxDeadlineReminder() {
-  const { t } = useTranslation()
+  const { t, locale } = useTranslation()
   const [selectedCountries, setSelectedCountries] = useState(['us', 'uk', 'ca'])
   const [deadlines, setDeadlines] = useState<TaxDeadline[]>([])
   const [showCompleted, setShowCompleted] = useState(false)
 
-  const availableCountries = [
+  const availableCountries = useMemo(() => [
     { id: 'us', name: t('tax.deadlines.countries.us'), flag: '🇺🇸' },
     { id: 'uk', name: t('tax.deadlines.countries.uk'), flag: '🇬🇧' },
     { id: 'ca', name: t('tax.deadlines.countries.ca'), flag: '🇨🇦' },
     { id: 'au', name: t('tax.deadlines.countries.au'), flag: '🇦🇺' },
     { id: 'ie', name: t('tax.deadlines.countries.ie'), flag: '🇮🇪' }
-  ]
+  ], [t, locale])
 
-  const countryDeadlines: Record<string, TaxDeadline[]> = {
+  const countryDeadlines: Record<string, TaxDeadline[]> = useMemo(() => ({
     us: [
       {
         id: 'us-annual',
@@ -146,7 +146,7 @@ export default function TaxDeadlineReminder() {
         isCompleted: false
       }
     ]
-  }
+  }), [t, locale])
 
   useEffect(() => {
     const allDeadlines: TaxDeadline[] = []
