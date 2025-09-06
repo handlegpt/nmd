@@ -28,8 +28,27 @@ export default function PrivacyPage() {
           </p>
         </div>
 
-        {/* Introduction */}
+        {/* Table of Contents */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Table of Contents</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <a href="#introduction" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">1. Introduction</a>
+              <a href="#information-collect" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">2. Information We Collect</a>
+              <a href="#how-we-use" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">3. How We Use Your Information</a>
+              <a href="#data-sharing" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">4. Data Sharing and Disclosure</a>
+            </div>
+            <div className="space-y-2">
+              <a href="#data-security" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">5. Data Security</a>
+              <a href="#your-rights" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">6. Your Rights and Choices</a>
+              <a href="#cookies" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">7. Cookies and Tracking</a>
+              <a href="#contact" className="block text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">8. Contact Us</a>
+            </div>
+          </div>
+        </div>
+
+        {/* Introduction */}
+        <div id="introduction" className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-start space-x-4">
             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <Eye className="h-5 w-5 text-blue-600" />
@@ -44,7 +63,7 @@ export default function PrivacyPage() {
         </div>
 
         {/* Information We Collect */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+        <div id="information-collect" className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-start space-x-4 mb-6">
             <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <UserCheck className="h-5 w-5 text-green-600" />
@@ -61,51 +80,41 @@ export default function PrivacyPage() {
             <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('privacy.informationWeCollect.personalInfo.title')}</h3>
               <ul className="space-y-2">
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">姓名和联系信息</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">个人资料信息（职业、技能、兴趣）</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">位置数据（当您选择分享时）</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">旅行偏好和历史</span>
-                </li>
+                {[
+                  t('privacy.informationWeCollect.personalInfoItems.0'),
+                  t('privacy.informationWeCollect.personalInfoItems.1'),
+                  t('privacy.informationWeCollect.personalInfoItems.2'),
+                  t('privacy.informationWeCollect.personalInfoItems.3')
+                ].map((item: string, index: number) => (
+                  <li key={index} className="flex items-start space-x-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-600 dark:text-gray-300 text-sm">{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
             
             <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
               <h3 className="font-semibold text-gray-900 dark:text-white mb-4">{t('privacy.informationWeCollect.usageData.title')}</h3>
               <ul className="space-y-2">
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">访问的页面和使用的功能</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">搜索查询和偏好</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">设备信息和浏览器类型</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-600 dark:text-gray-300 text-sm">IP地址和大致位置</span>
-                </li>
+                {[
+                  t('privacy.informationWeCollect.usageDataItems.0'),
+                  t('privacy.informationWeCollect.usageDataItems.1'),
+                  t('privacy.informationWeCollect.usageDataItems.2'),
+                  t('privacy.informationWeCollect.usageDataItems.3')
+                ].map((item: string, index: number) => (
+                  <li key={index} className="flex items-start space-x-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-600 dark:text-gray-300 text-sm">{item}</span>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
         </div>
 
         {/* How We Use Information */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+        <div id="how-we-use" className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-start space-x-4 mb-6">
             <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <Lock className="h-5 w-5 text-purple-600" />
@@ -120,42 +129,26 @@ export default function PrivacyPage() {
           
           <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
             <ul className="space-y-3">
-              <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-purple-600 font-semibold text-sm">1</span>
-                </div>
-                <span className="text-gray-600 dark:text-gray-300">提供和维护我们的服务</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-purple-600 font-semibold text-sm">2</span>
-                </div>
-                <span className="text-gray-600 dark:text-gray-300">个性化您的体验</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-purple-600 font-semibold text-sm">3</span>
-                </div>
-                <span className="text-gray-600 dark:text-gray-300">改进我们的平台和功能</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-purple-600 font-semibold text-sm">4</span>
-                </div>
-                <span className="text-gray-600 dark:text-gray-300">发送重要更新和通知</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <span className="text-purple-600 font-semibold text-sm">5</span>
-                </div>
-                <span className="text-gray-600 dark:text-gray-300">回应您的询问和支持请求</span>
-              </li>
+              {[
+                t('privacy.howWeUseInfo.purposes.0'),
+                t('privacy.howWeUseInfo.purposes.1'),
+                t('privacy.howWeUseInfo.purposes.2'),
+                t('privacy.howWeUseInfo.purposes.3'),
+                t('privacy.howWeUseInfo.purposes.4')
+              ].map((purpose: string, index: number) => (
+                <li key={index} className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <span className="text-purple-600 font-semibold text-sm">{index + 1}</span>
+                  </div>
+                  <span className="text-gray-600 dark:text-gray-300">{purpose}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
         {/* Data Sharing */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+        <div id="data-sharing" className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-start space-x-4 mb-6">
             <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <Shield className="h-5 w-5 text-orange-600" />
@@ -170,28 +163,23 @@ export default function PrivacyPage() {
           
           <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
             <ul className="space-y-3">
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">在您明确同意的情况下</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">为了遵守法律义务</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">为了保护我们的权利和安全</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">与协助运营我们平台的服务提供商（在严格的保密协议下）</span>
-              </li>
+              {[
+                t('privacy.dataSharing.circumstances.0'),
+                t('privacy.dataSharing.circumstances.1'),
+                t('privacy.dataSharing.circumstances.2'),
+                t('privacy.dataSharing.circumstances.3')
+              ].map((circumstance: string, index: number) => (
+                <li key={index} className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-gray-600 dark:text-gray-300">{circumstance}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
         {/* Data Security */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+        <div id="data-security" className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-start space-x-4 mb-6">
             <div className="w-10 h-10 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <Lock className="h-5 w-5 text-red-600" />
@@ -206,28 +194,23 @@ export default function PrivacyPage() {
           
           <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
             <ul className="space-y-3">
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">传输和存储数据的加密</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">定期安全评估和更新</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">访问控制和身份验证</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">安全的数据存储和备份程序</span>
-              </li>
+              {[
+                t('privacy.dataSecurity.measures.0'),
+                t('privacy.dataSecurity.measures.1'),
+                t('privacy.dataSecurity.measures.2'),
+                t('privacy.dataSecurity.measures.3')
+              ].map((measure: string, index: number) => (
+                <li key={index} className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-gray-600 dark:text-gray-300">{measure}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
         {/* Your Rights */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+        <div id="your-rights" className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-start space-x-4 mb-6">
             <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <UserCheck className="h-5 w-5 text-indigo-600" />
@@ -242,32 +225,24 @@ export default function PrivacyPage() {
           
           <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
             <ul className="space-y-3">
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">访问和审查您的个人信息</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">更新或更正您的信息</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">删除您的账户和关联数据</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">选择退出某些通信</span>
-              </li>
-              <li className="flex items-start space-x-3">
-                <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
-                <span className="text-gray-600 dark:text-gray-300">控制位置共享和权限</span>
-              </li>
+              {[
+                t('privacy.yourRights.rights.0'),
+                t('privacy.yourRights.rights.1'),
+                t('privacy.yourRights.rights.2'),
+                t('privacy.yourRights.rights.3'),
+                t('privacy.yourRights.rights.4')
+              ].map((right: string, index: number) => (
+                <li key={index} className="flex items-start space-x-3">
+                  <div className="w-2 h-2 bg-indigo-500 rounded-full mt-2 flex-shrink-0"></div>
+                  <span className="text-gray-600 dark:text-gray-300">{right}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
 
         {/* Cookies */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
+        <div id="cookies" className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8">
           <div className="flex items-start space-x-4 mb-6">
             <div className="w-10 h-10 bg-yellow-100 dark:bg-yellow-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <Cookie className="h-5 w-5 text-yellow-600" />
@@ -280,21 +255,33 @@ export default function PrivacyPage() {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 text-center">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-6 text-center border border-blue-200 dark:border-blue-800">
+              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Shield className="h-6 w-6 text-white" />
+              </div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{t('privacy.cookies.types.essential')}</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Required for basic functionality</p>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 text-center">
+            <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-6 text-center border border-green-200 dark:border-green-800">
+              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Eye className="h-6 w-6 text-white" />
+              </div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{t('privacy.cookies.types.analytics')}</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Help us improve our services</p>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-4 text-center">
+            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-6 text-center border border-purple-200 dark:border-purple-800">
+              <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Cookie className="h-6 w-6 text-white" />
+              </div>
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2">{t('privacy.cookies.types.preferences')}</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Remember your settings</p>
             </div>
           </div>
         </div>
 
         {/* Contact Us */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+        <div id="contact" className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
           <div className="flex items-start space-x-4 mb-6">
             <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
               <Mail className="h-5 w-5 text-blue-600" />
@@ -307,13 +294,30 @@ export default function PrivacyPage() {
             </div>
           </div>
           
-          <div className="bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
-            <div className="space-y-3">
-              <p className="text-gray-600 dark:text-gray-300">
-                <strong>{t('privacy.contactUs.email')}</strong>
-              </p>
-              <p className="text-gray-600 dark:text-gray-300">
-                <strong>{t('privacy.contactUs.address')}</strong>
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                  <Mail className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h4>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">privacy@nomadnow.app</p>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
+                  <Calendar className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Response Time</h4>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">Within 24-48 hours</p>
+                </div>
+              </div>
+            </div>
+            <div className="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+              <p className="text-sm text-gray-600 dark:text-gray-300 text-center">
+                <strong>Need immediate assistance?</strong> For urgent privacy concerns, please mark your email as "URGENT" in the subject line.
               </p>
             </div>
           </div>

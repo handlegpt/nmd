@@ -882,7 +882,7 @@
     "message": "Message",
     "days": "Days",
     "meetups": "Meetups",
-    "timezone": "Timezone",
+      "timezone": "Timezone",
     "interests": "Interests",
     "lastSeen": "Last Seen",
     "userProfile": "User Profile",
@@ -1030,20 +1030,91 @@
     "description": "Empowering digital nomads with comprehensive information, tools, and community support for a better nomadic lifestyle."
   },
   "privacy": {
-    "contactUs": {
-      "address": "Address: [Your Company Address]",
-      "email": "Email: privacy@nomadnow.app",
-      "description": "If you have any questions about this Privacy Policy or our data practices, please contact us:",
-      "title": "Contact Us"
+    "title": "Privacy Policy",
+    "subtitle": "Your privacy is important to us. This policy explains how we collect, use, and protect your information.",
+    "lastUpdated": "Last updated: {date}",
+    "introduction": {
+      "title": "Introduction",
+      "description": "At Nomad Now, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform."
+    },
+    "informationWeCollect": {
+      "title": "Information We Collect",
+      "description": "We collect information to provide better services to all our users. The types of information we collect depend on how you use our services.",
+      "personalInfo": {
+        "title": "Personal Information"
+      },
+      "usageData": {
+        "title": "Usage Data"
+      },
+      "personalInfoItems": {
+        "0": "Name and contact information",
+        "1": "Profile information (profession, skills, interests)",
+        "2": "Location data (when you choose to share)",
+        "3": "Travel preferences and history"
+      },
+      "usageDataItems": {
+        "0": "Pages visited and features used",
+        "1": "Search queries and preferences",
+        "2": "Device information and browser type",
+        "3": "IP address and approximate location"
+      }
+    },
+    "howWeUseInfo": {
+      "title": "How We Use Your Information",
+      "description": "We use the information we collect to provide, maintain, and improve our services.",
+      "purposes": {
+        "0": "Provide and maintain our services",
+        "1": "Personalize your experience",
+        "2": "Improve our platform and features",
+        "3": "Send important updates and notifications",
+        "4": "Respond to your inquiries and support requests"
+      }
+    },
+    "dataSharing": {
+      "title": "Data Sharing and Disclosure",
+      "description": "We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:",
+      "circumstances": {
+        "0": "With your explicit consent",
+        "1": "To comply with legal obligations",
+        "2": "To protect our rights and safety",
+        "3": "With service providers who assist in operating our platform (under strict confidentiality agreements)"
+      }
+    },
+    "dataSecurity": {
+      "title": "Data Security",
+      "description": "We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
+      "measures": {
+        "0": "Encryption of data in transit and at rest",
+        "1": "Regular security assessments and updates",
+        "2": "Access controls and authentication",
+        "3": "Secure data storage and backup procedures"
+      }
+    },
+    "yourRights": {
+      "title": "Your Rights and Choices",
+      "description": "You have the right to:",
+      "rights": {
+        "0": "Access and review your personal information",
+        "1": "Update or correct your information",
+        "2": "Delete your account and associated data",
+        "3": "Opt-out of certain communications",
+        "4": "Control location sharing and permissions"
+      }
     },
     "cookies": {
-      "types": {
-        "preferences": "Preference cookies to remember your settings",
-        "analytics": "Analytics cookies to understand usage patterns",
-        "essential": "Essential cookies for basic functionality"
-      },
+      "title": "Cookies and Tracking",
       "description": "We use cookies and similar technologies to enhance your experience, analyze usage, and provide personalized content.",
-      "title": "Cookies and Tracking"
+      "types": {
+        "essential": "Essential cookies for basic functionality",
+        "analytics": "Analytics cookies to understand usage patterns",
+        "preferences": "Preference cookies to remember your settings"
+      }
+    },
+    "contactUs": {
+      "title": "Contact Us",
+      "description": "If you have any questions about this Privacy Policy or our data practices, please contact us:",
+      "email": "Email: privacy@nomadnow.app",
+      "address": "Address: [Your Company Address]"
     },
     "yourRights": {
       "rights": [
