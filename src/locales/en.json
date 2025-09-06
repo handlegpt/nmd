@@ -1,4 +1,43 @@
 {
+  "geolocation": {
+    "title": "Location Permission",
+    "status": {
+      "granted": "Permission Granted",
+      "denied": "Permission Denied",
+      "prompt": "Permission Requested",
+      "unknown": "Status Unknown"
+    },
+    "denied": {
+      "title": "Location Access Blocked",
+      "description": "Your browser has blocked location access. Follow these steps to enable it:",
+      "step1": {
+        "title": "Click the lock icon",
+        "description": "Click the lock or shield icon next to the website URL in your browser's address bar"
+      },
+      "step2": {
+        "title": "Allow location access",
+        "description": "Find 'Location' in the permissions list and change it to 'Allow'"
+      },
+      "step3": {
+        "title": "Refresh the page",
+        "description": "Reload this page to try again"
+      }
+    },
+    "browserInstructions": {
+      "title": "Browser-specific Instructions",
+      "chrome": "Click the lock icon → Site settings → Location → Allow",
+      "firefox": "Click the shield icon → Permissions → Location → Allow",
+      "safari": "Safari menu → Preferences → Websites → Location → Allow"
+    },
+    "alternatives": {
+      "title": "Alternative Options",
+      "description": "If you prefer not to share your location, you can:",
+      "manualInput": "📝 Enter location manually",
+      "ipLocation": "🌐 Use approximate location (IP-based)"
+    },
+    "refresh": "Refresh Status",
+    "retry": "Try Again"
+  },
   "liveStats": {
     "activities": {
       "explored": "explored",

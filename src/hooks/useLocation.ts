@@ -15,6 +15,10 @@ interface UseLocationReturn {
   error: string | null
   requestLocation: () => void
   hasPermission: boolean
+  permissionStatus: 'unknown' | 'granted' | 'denied' | 'prompt'
+  showPermissionGuide: boolean
+  setShowPermissionGuide: (show: boolean) => void
+  clearError: () => void
 }
 
 export function useLocation(): UseLocationReturn {
@@ -22,10 +26,39 @@ export function useLocation(): UseLocationReturn {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasPermission, setHasPermission] = useState(false)
+  const [permissionStatus, setPermissionStatus] = useState<'unknown' | 'granted' | 'denied' | 'prompt'>('unknown')
+  const [showPermissionGuide, setShowPermissionGuide] = useState(false)
+
+  // 检查权限状态
+  const checkPermissionStatus = async () => {
+    try {
+      if (!navigator.geolocation) {
+        setPermissionStatus('unknown')
+        return
+      }
+
+      if ('permissions' in navigator) {
+        try {
+          const permission = await navigator.permissions.query({ name: 'geolocation' })
+          setPermissionStatus(permission.state)
+          setHasPermission(permission.state === 'granted')
+        } catch (err) {
+          console.log('Permission query not supported')
+          setPermissionStatus('unknown')
+        }
+      } else {
+        setPermissionStatus('unknown')
+      }
+    } catch (err) {
+      console.error('Error checking permission status:', err)
+      setPermissionStatus('unknown')
+    }
+  }
 
   const requestLocation = () => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by this browser')
+      setPermissionStatus('unknown')
       return
     }
 
@@ -36,6 +69,7 @@ export function useLocation(): UseLocationReturn {
       async (position) => {
         const { latitude, longitude } = position.coords
         setHasPermission(true)
+        setPermissionStatus('granted')
         
         try {
           // 使用反向地理编码获取城市信息
@@ -67,7 +101,9 @@ export function useLocation(): UseLocationReturn {
         
         switch (err.code) {
           case err.PERMISSION_DENIED:
+            setPermissionStatus('denied')
             errorMessage = 'Location permission denied. Please enable location access in your browser settings.'
+            setShowPermissionGuide(true)
             break
           case err.POSITION_UNAVAILABLE:
             errorMessage = 'Location information is unavailable.'
@@ -90,6 +126,10 @@ export function useLocation(): UseLocationReturn {
     )
   }
 
+  const clearError = () => {
+    setError(null)
+  }
+
   useEffect(() => {
     // 检查是否有保存的位置
     const savedLocation = localStorage.getItem('userLocation')
@@ -100,6 +140,9 @@ export function useLocation(): UseLocationReturn {
         console.error('Failed to parse saved location:', err)
       }
     }
+    
+    // 检查权限状态
+    checkPermissionStatus()
   }, [])
 
   useEffect(() => {
@@ -109,5 +152,15 @@ export function useLocation(): UseLocationReturn {
     }
   }, [location])
 
-  return { location, loading, error, requestLocation, hasPermission }
+  return { 
+    location, 
+    loading, 
+    error, 
+    requestLocation, 
+    hasPermission,
+    permissionStatus,
+    showPermissionGuide,
+    setShowPermissionGuide,
+    clearError
+  }
 }

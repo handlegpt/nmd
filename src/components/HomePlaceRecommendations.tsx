@@ -21,6 +21,7 @@ import { useNotifications } from '@/contexts/GlobalStateContext'
 import { logWarn, logError } from '@/lib/logger'
 import { PlaceDataService, UserLocation } from '@/lib/placeDataService'
 import { PLACE_CATEGORIES, getCategoryIcon, getCategoryName, getCategoryColor } from '@/lib/placeCategories'
+import GeolocationPermissionGuide from '@/components/GeolocationPermissionGuide'
 
 export default function HomePlaceRecommendations() {
   const { t } = useTranslation()
@@ -30,6 +31,8 @@ export default function HomePlaceRecommendations() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
+  const [showPermissionGuide, setShowPermissionGuide] = useState(false)
+  const [locationError, setLocationError] = useState<string | null>(null)
   const [showLocationDetection, setShowLocationDetection] = useState(false)
 
   useEffect(() => {
@@ -114,9 +117,17 @@ export default function HomePlaceRecommendations() {
         (error) => {
           setShowLocationDetection(false)
           logError('Geolocation error', error, 'HomePlaceRecommendations')
+          
+          let errorMessage = 'Location access denied'
+          if (error.code === error.PERMISSION_DENIED) {
+            errorMessage = 'Location permission denied. Please enable location access in your browser settings.'
+            setLocationError(errorMessage)
+            setShowPermissionGuide(true)
+          }
+          
           addNotification({
             type: 'error',
-            message: 'Location access denied'
+            message: errorMessage
           })
         }
       )
@@ -485,6 +496,21 @@ export default function HomePlaceRecommendations() {
         isOpen={showAddForm}
         onClose={() => setShowAddForm(false)}
         onSubmit={handleAddPlace}
+      />
+
+      {/* Geolocation Permission Guide */}
+      <GeolocationPermissionGuide
+        isOpen={showPermissionGuide}
+        onClose={() => {
+          setShowPermissionGuide(false)
+          setLocationError(null)
+        }}
+        onRetry={() => {
+          setShowPermissionGuide(false)
+          setLocationError(null)
+          detectUserLocation()
+        }}
+        error={locationError}
       />
     </div>
   )
