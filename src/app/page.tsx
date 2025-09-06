@@ -47,7 +47,7 @@ export default function HomePage() {
                 🌍 {t('home.features.nomadCities.title')}
               </h2>
               <div className="flex items-center space-x-3">
-                <FixedLink href="/cities" className="btn btn-md btn-primary">
+                <FixedLink href="/nomadcities" className="btn btn-md btn-primary">
                   {t('common.viewDetails')}
                   <ArrowRight className="h-4 w-4 ml-2" />
                 </FixedLink>

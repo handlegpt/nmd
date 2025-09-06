@@ -33,7 +33,7 @@ export default function MobileMenu() {
       description: t('mobileMenu.homeDescription')
     },
     {
-      href: '/cities',
+      href: '/nomadcities',
       icon: MapPin,
       label: t('navigation.cities'),
       description: t('mobileMenu.citiesDescription')

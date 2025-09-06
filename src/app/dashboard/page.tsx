@@ -672,7 +672,7 @@ export default function DashboardPage() {
               </p>
               {getCitiesVisited() === 0 && (
                 <button 
-                  onClick={() => router.push('/cities?tab=trajectory')}
+                  onClick={() => router.push('/nomadcities?tab=trajectory')}
                   className="mt-3 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
                   {t('dashboard.addFirstCity')}
@@ -938,7 +938,7 @@ export default function DashboardPage() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{rec.description}</p>
                     <button
                       onClick={() => {
-                        if (rec.action === 'explore') router.push('/cities')
+                        if (rec.action === 'explore') router.push('/nomadcities')
                         else if (rec.action === 'visa') router.push('/visa-guide')
                         else if (rec.action === 'tax') router.push('/tax')
                         else if (rec.action === 'profile') router.push('/profile')
@@ -990,7 +990,7 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {/* 探索城市 */}
           <button
-            onClick={() => router.push('/cities')}
+            onClick={() => router.push('/nomadcities')}
             className="group relative bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-900/40 border-2 border-blue-200 dark:border-blue-700 rounded-xl p-4 hover:shadow-lg transition-all duration-200 hover:scale-105"
           >
             <div className="text-center">

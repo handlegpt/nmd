@@ -38,7 +38,7 @@ export default function QuickStartWizard() {
       icon: <Globe className="h-6 w-6" />,
       action: {
         text: t('quickStart.step1.action'),
-        href: '/cities'
+        href: '/nomadcities'
       }
     },
     {
@@ -68,7 +68,7 @@ export default function QuickStartWizard() {
       icon: <Star className="h-6 w-6" />,
       action: {
         text: t('quickStart.step4.action'),
-        href: '/cities'
+        href: '/nomadcities'
       }
     }
   ]

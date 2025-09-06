@@ -542,7 +542,7 @@ export default function EnhancedCityRanking({
                 {/* Secondary Actions */}
                 <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                   <FixedLink
-                    href={`/cities/${city.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    href={`/nomadcities/${city.name.toLowerCase().replace(/\s+/g, '-')}`}
                     className="text-blue-600 hover:text-blue-700 hover:underline"
                   >
                     {t('cities.viewDetails')}
@@ -561,7 +561,7 @@ export default function EnhancedCityRanking({
       {filteredCities.length > limit && (
         <div className="text-center mt-6">
           <FixedLink
-            href="/cities"
+            href="/nomadcities"
             className="btn btn-md btn-outline"
           >
             {t('cities.viewAllCities')}

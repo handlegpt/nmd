@@ -250,7 +250,7 @@ export default function HeroSection() {
                     {t('home.hero.liveInfo.citiesToExplore')}
                   </h3>
                   <FixedLink 
-                    href="/cities"
+                    href="/nomadcities"
                     className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center group hover:underline"
                   >
                     {t('home.hero.liveInfo.viewAllCities')}
@@ -557,7 +557,7 @@ export default function HeroSection() {
                     </button>
                     
                     <button 
-                      onClick={() => window.open('/cities', '_blank')}
+                      onClick={() => window.open('/nomadcities', '_blank')}
                       className="flex flex-col items-center p-3 bg-white rounded-lg border border-gray-200 hover:border-green-300 hover:bg-green-50 transition-all group"
                     >
                       <Navigation className="h-5 w-5 text-green-600 mb-1 group-hover:scale-110 transition-transform" />

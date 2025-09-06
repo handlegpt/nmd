@@ -310,7 +310,7 @@ export default function EnhancedSearch() {
           <div className="p-4 bg-gray-50 rounded-b-lg">
             <div className="grid grid-cols-2 gap-2">
               <FixedLink
-                href="/cities"
+                href="/nomadcities"
                 className="flex items-center space-x-2 p-2 rounded-lg bg-white hover:bg-gray-50 transition-colors text-sm"
                 onClick={() => setIsOpen(false)}
               >

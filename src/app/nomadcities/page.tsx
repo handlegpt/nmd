@@ -415,9 +415,11 @@ function CitiesPageContent() {
     setViewMode(view)
   }
   
-  const handleViewDetails = (cityId: string) => {
-    // 跳转到城市详情页面
-    window.location.href = `/cities/${cityId}`
+  const handleViewDetails = (city: any) => {
+    // 跳转到城市详情页面，使用SEO友好的URL
+    const citySlug = city.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+    const countrySlug = city.country.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+    window.location.href = `/nomadcities/${countrySlug}/${citySlug}`
   }
   
   const handleAddToFavorites = (cityId: string) => {
@@ -895,7 +897,7 @@ function CitiesPageContent() {
                     city={enhancedCityData}
                     isSelected={selectedCities.includes(city.id)}
                     onSelect={handleCitySelect}
-                    onViewDetails={handleViewDetails}
+                    onViewDetails={() => handleViewDetails(city)}
                     onAddToFavorites={handleAddToFavorites}
                     showCompareButton={true}
                   />

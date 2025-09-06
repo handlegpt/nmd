@@ -15,7 +15,7 @@ export default function DesktopNavigation() {
     },
     {
       name: t('navigation.cities'),
-      href: '/cities',
+      href: '/nomadcities',
     },
     {
       name: t('navigation.localNomads'),

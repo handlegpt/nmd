@@ -308,7 +308,7 @@ export default function UnifiedLiveInfoCard({
                 <span className="font-medium">{t('common.testWifi')}</span>
               </button>
               <FixedLink
-                href="/cities"
+                href="/nomadcities"
                 className="flex-1 btn btn-primary hover:bg-blue-700 transition-colors"
               >
                 <Globe className="h-4 w-4 mr-2" />

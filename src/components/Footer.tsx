@@ -10,7 +10,7 @@ export default function Footer() {
 
   const footerLinks = {
     product: [
-      { name: t('footer.cities'), href: '/cities' },
+      { name: t('footer.cities'), href: '/nomadcities' },
       { name: t('footer.visaGuide'), href: '/visa-guide' },
       { name: t('footer.tools'), href: '/tools' }
     ],

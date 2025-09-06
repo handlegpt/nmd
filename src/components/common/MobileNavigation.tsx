@@ -62,9 +62,9 @@ export default function MobileNavigation({
     {
       id: 'cities',
       label: '城市',
-      href: '/cities',
+      href: '/nomadcities',
       icon: <MapPin className="h-5 w-5" />,
-      isActive: pathname.startsWith('/cities')
+      isActive: pathname.startsWith('/nomadcities')
     },
     {
       id: 'community',

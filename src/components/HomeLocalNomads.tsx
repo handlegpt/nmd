@@ -607,7 +607,7 @@ export default function HomeLocalNomads({
 
   const handleViewMoreHotCities = () => {
     // Navigate to hot cities page
-    window.open('/cities', '_blank')
+    window.open('/nomadcities', '_blank')
   }
 
   const handleShareInvite = () => {
