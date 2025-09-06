@@ -57,6 +57,9 @@ export default function EnhancedCityRanking({
   const [showFiltersPanel, setShowFiltersPanel] = useState(false)
   const [personalizedCities, setPersonalizedCities] = useState<City[]>([])
   const { addNotification } = useNotifications()
+  const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  const [ratingModalOpen, setRatingModalOpen] = useState(false)
+  const [selectedCity, setSelectedCity] = useState<City | null>(null)
 
   // 获取真实城市数据
   useEffect(() => {
@@ -198,6 +201,51 @@ export default function EnhancedCityRanking({
     if (speed >= 50) return 'text-blue-600'
     if (speed >= 25) return 'text-yellow-600'
     return 'text-red-600'
+  }
+
+  // 处理Rate City按钮点击
+  const handleRateCity = (city: City) => {
+    if (!user) {
+      addNotification({
+        type: 'info',
+        message: t('cities.loginToRate'),
+        duration: 3000
+      })
+      return
+    }
+    
+    setSelectedCity(city)
+    setRatingModalOpen(true)
+  }
+
+  // 处理收藏按钮点击
+  const handleToggleFavorite = (cityId: string) => {
+    if (!user) {
+      addNotification({
+        type: 'info',
+        message: t('cities.loginToFavorite'),
+        duration: 3000
+      })
+      return
+    }
+
+    const newFavorites = new Set(favorites)
+    if (newFavorites.has(cityId)) {
+      newFavorites.delete(cityId)
+      addNotification({
+        type: 'success',
+        message: t('cities.removedFromFavorites'),
+        duration: 2000
+      })
+    } else {
+      newFavorites.add(cityId)
+      addNotification({
+        type: 'success',
+        message: t('cities.addedToFavorites'),
+        duration: 2000
+      })
+    }
+    setFavorites(newFavorites)
   }
 
   const handleVoteSubmitted = (voteData: any) => {
@@ -473,12 +521,22 @@ export default function EnhancedCityRanking({
               <div className="p-4 pt-0 space-y-3">
                 {/* Primary Action Buttons */}
                 <div className="flex gap-2">
-                  <button className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center space-x-2">
+                  <button 
+                    onClick={() => handleRateCity(city)}
+                    className="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center justify-center space-x-2"
+                  >
                     <StarIcon className="h-4 w-4" />
                     <span>{t('cities.rateCity')}</span>
                   </button>
-                  <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium rounded-lg transition-colors">
-                    ❤️
+                  <button 
+                    onClick={() => handleToggleFavorite(city.id)}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      favorites.has(city.id) 
+                        ? 'bg-red-100 hover:bg-red-200 text-red-700' 
+                        : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    }`}
+                  >
+                    {favorites.has(city.id) ? '❤️' : '🤍'}
                   </button>
                 </div>
                 
@@ -510,6 +568,65 @@ export default function EnhancedCityRanking({
             {t('cities.viewAllCities')}
             <ArrowRight className="h-4 w-4 ml-2" />
           </FixedLink>
+        </div>
+      )}
+
+      {/* Rating Modal */}
+      {ratingModalOpen && selectedCity && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-lg font-semibold mb-4">
+              {t('cities.rateCity')}: {selectedCity.name}
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('cities.overallRating')}
+                </label>
+                <div className="flex space-x-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      className="text-2xl hover:scale-110 transition-transform"
+                    >
+                      ⭐
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('cities.comment')}
+                </label>
+                <textarea
+                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={3}
+                  placeholder={t('cities.shareYourExperience')}
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button
+                onClick={() => setRatingModalOpen(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                {t('common.cancel')}
+              </button>
+              <button
+                onClick={() => {
+                  addNotification({
+                    type: 'success',
+                    message: t('cities.ratingSubmitted'),
+                    duration: 3000
+                  })
+                  setRatingModalOpen(false)
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                {t('cities.submitRating')}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </>

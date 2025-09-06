@@ -187,6 +187,15 @@
     "travelTrajectory": "旅行軌跡",
     "citiesFound": "都市",
     "rateCity": "都市を評価",
+    "loginToRate": "都市を評価するにはログインしてください",
+    "loginToFavorite": "お気に入りに追加するにはログインしてください",
+    "addedToFavorites": "お気に入りに追加しました",
+    "removedFromFavorites": "お気に入りから削除しました",
+    "overallRating": "総合評価",
+    "comment": "コメント",
+    "shareYourExperience": "この都市での体験を共有してください...",
+    "ratingSubmitted": "評価を送信しました",
+    "submitRating": "評価を送信",
     "viewAllCities": "すべての都市を見る"
         }
       },

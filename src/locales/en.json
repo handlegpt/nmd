@@ -1564,8 +1564,8 @@
     "searchPlaceholder": "Search places...",
     "description": "Discover the best places for remote work",
     "title": "Nomad Place Recommendations"
-  },
-  "guides": {
+      },
+      "guides": {
     "categories": {
       "cohabitation": "Cohabitation",
       "moving": "Moving",
@@ -1894,7 +1894,7 @@
       "selectCountries": "Select countries to compare",
       "annualIncomePlaceholder": "Enter annual income",
       "annualIncome": "Annual Income",
-      "tabs": {
+    "tabs": {
         "calculator": "Tax Calculator",
         "feie": "FEIE Calculator",
         "presence": "Presence Test",
@@ -2265,7 +2265,7 @@
     "addToFavorites": "Add to Favorites",
     "selectForComparison": "Select for Comparison",
     "stable": "Stable",
-    "luxury": "Luxury",
+      "luxury": "Luxury",
     "expensive": "Expensive",
     "moderate": "Moderate",
     "affordable": "Affordable",
@@ -2286,7 +2286,7 @@
     "spanish": "Spanish",
     "english": "English",
     "allLanguages": "All Languages",
-    "language": "Language",
+      "language": "Language",
     "over200Mbps": "200+ Mbps",
     "over100Mbps": "100+ Mbps",
     "over50Mbps": "50+ Mbps",
@@ -2405,6 +2405,15 @@
     "cityList": "City List",
     "viewAllCities": "View All Cities",
     "rateCity": "Rate City",
+    "loginToRate": "Please log in to rate cities",
+    "loginToFavorite": "Please log in to add favorites",
+    "addedToFavorites": "Added to favorites",
+    "removedFromFavorites": "Removed from favorites",
+    "overallRating": "Overall Rating",
+    "comment": "Comment",
+    "shareYourExperience": "Share your experience with this city...",
+    "ratingSubmitted": "Rating submitted successfully",
+    "submitRating": "Submit Rating",
     "citiesFound": "Cities Found",
     "addCityError": "Failed to add city, please try again",
     "addCitySuccess": "Successfully recommended city: {cityName}",
@@ -2492,7 +2501,7 @@
       "title": "Global Nomad Community"
     },
     "features": {
-      "community": {
+  "community": {
         "description": "Connect with fellow digital nomads worldwide",
         "title": "Community"
       },
@@ -2715,7 +2724,7 @@
         "totalDays": "Total Days",
         "totalCities": "Total Cities",
         "explore": "Explore",
-        "viewDetails": "View Details",
+    "viewDetails": "View Details",
         "weather": "Weather",
         "wifiSpeedTest": "WiFi Speed Test",
         "locationPlaceholder": "Enter city name",
@@ -2734,7 +2743,7 @@
         "fromUserRecommendations": "From {count} user recommendations",
         "popularCafe": "Popular Cafe",
         "monthlyAverage": "Monthly Average",
-        "costOfLiving": "Cost of Living",
+    "costOfLiving": "Cost of Living",
         "wifiRating": "WiFi Rating",
         "setReminder": "Set Reminder",
         "days": "days",
