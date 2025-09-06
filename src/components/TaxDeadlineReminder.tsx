@@ -28,51 +28,51 @@ export default function TaxDeadlineReminder() {
   const [showCompleted, setShowCompleted] = useState(false)
 
   const availableCountries = [
-    { id: 'us', name: '美国', flag: '🇺🇸' },
-    { id: 'uk', name: '英国', flag: '🇬🇧' },
-    { id: 'ca', name: '加拿大', flag: '🇨🇦' },
-    { id: 'au', name: '澳大利亚', flag: '🇦🇺' },
-    { id: 'ie', name: '爱尔兰', flag: '🇮🇪' }
+    { id: 'us', name: t('tax.deadlines.countries.us'), flag: '🇺🇸' },
+    { id: 'uk', name: t('tax.deadlines.countries.uk'), flag: '🇬🇧' },
+    { id: 'ca', name: t('tax.deadlines.countries.ca'), flag: '🇨🇦' },
+    { id: 'au', name: t('tax.deadlines.countries.au'), flag: '🇦🇺' },
+    { id: 'ie', name: t('tax.deadlines.countries.ie'), flag: '🇮🇪' }
   ]
 
   const countryDeadlines: Record<string, TaxDeadline[]> = {
     us: [
       {
         id: 'us-annual',
-        country: '美国',
+        country: t('tax.deadlines.countries.us'),
         flag: '🇺🇸',
         deadline: '2025-04-15',
-        description: '年度所得税申报',
+        description: t('tax.deadlines.descriptions.annualTaxReturn'),
         type: 'urgent',
         daysUntil: 45,
         isCompleted: false
       },
       {
         id: 'us-fbar',
-        country: '美国',
+        country: t('tax.deadlines.countries.us'),
         flag: '🇺🇸',
         deadline: '2025-04-15',
-        description: 'FBAR申报（外国银行账户）',
+        description: t('tax.deadlines.descriptions.fbarFiling'),
         type: 'urgent',
         daysUntil: 45,
         isCompleted: false
       },
       {
         id: 'us-q1',
-        country: '美国',
+        country: t('tax.deadlines.countries.us'),
         flag: '🇺🇸',
         deadline: '2025-04-15',
-        description: '第一季度预估税',
+        description: t('tax.deadlines.descriptions.q1EstimatedTax'),
         type: 'urgent',
         daysUntil: 45,
         isCompleted: false
       },
       {
         id: 'us-q2',
-        country: '美国',
+        country: t('tax.deadlines.countries.us'),
         flag: '🇺🇸',
         deadline: '2025-06-15',
-        description: '第二季度预估税',
+        description: t('tax.deadlines.descriptions.q2EstimatedTax'),
         type: 'upcoming',
         daysUntil: 105,
         isCompleted: false
@@ -81,20 +81,20 @@ export default function TaxDeadlineReminder() {
     uk: [
       {
         id: 'uk-self-assessment',
-        country: '英国',
+        country: t('tax.deadlines.countries.uk'),
         flag: '🇬🇧',
         deadline: '2025-01-31',
-        description: '自我评估申报',
+        description: t('tax.deadlines.descriptions.selfAssessment'),
         type: 'normal',
         daysUntil: 0,
         isCompleted: true
       },
       {
         id: 'uk-payment',
-        country: '英国',
+        country: t('tax.deadlines.countries.uk'),
         flag: '🇬🇧',
         deadline: '2025-07-31',
-        description: '税务付款',
+        description: t('tax.deadlines.descriptions.taxPayment'),
         type: 'upcoming',
         daysUntil: 165,
         isCompleted: false
@@ -103,20 +103,20 @@ export default function TaxDeadlineReminder() {
     ca: [
       {
         id: 'ca-personal',
-        country: '加拿大',
+        country: t('tax.deadlines.countries.ca'),
         flag: '🇨🇦',
         deadline: '2025-04-30',
-        description: '个人所得税申报',
+        description: t('tax.deadlines.descriptions.personalTaxReturn'),
         type: 'upcoming',
         daysUntil: 60,
         isCompleted: false
       },
       {
         id: 'ca-self-employed',
-        country: '加拿大',
+        country: t('tax.deadlines.countries.ca'),
         flag: '🇨🇦',
         deadline: '2025-06-15',
-        description: '自雇人士申报',
+        description: t('tax.deadlines.descriptions.selfEmployedFiling'),
         type: 'upcoming',
         daysUntil: 105,
         isCompleted: false
@@ -240,7 +240,7 @@ END:VCALENDAR`
       {/* 国家选择 */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-3">
-          选择你的国籍国家
+          {t('tax.deadlines.selectCountry')}
         </label>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
           {availableCountries.map(country => (
@@ -264,19 +264,19 @@ END:VCALENDAR`
 
       {/* 状态摘要 */}
       <div className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">状态摘要</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('tax.deadlines.statusSummary')}</h3>
         <div className="grid grid-cols-3 gap-4">
           <div className="text-center">
             <div className="text-2xl font-bold text-red-600">{status.urgent}</div>
-            <div className="text-sm text-gray-600">紧急截止日期</div>
+            <div className="text-sm text-gray-600">{t('tax.deadlines.urgentDeadlines')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-yellow-600">{status.upcoming}</div>
-            <div className="text-sm text-gray-600">即将到期</div>
+            <div className="text-sm text-gray-600">{t('tax.deadlines.upcomingDeadlines')}</div>
           </div>
           <div className="text-center">
             <div className="text-2xl font-bold text-green-600">{status.completed}</div>
-            <div className="text-sm text-gray-600">已完成</div>
+            <div className="text-sm text-gray-600">{t('tax.deadlines.completed')}</div>
           </div>
         </div>
         
@@ -294,31 +294,31 @@ END:VCALENDAR`
           className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Download className="h-4 w-4" />
-          <span>导出到日历</span>
+          <span>{t('tax.deadlines.exportToCalendar')}</span>
         </button>
         <button
           onClick={copyUrgentDeadlines}
           className="flex items-center space-x-2 px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
         >
           <Copy className="h-4 w-4" />
-          <span>复制紧急截止日期</span>
+          <span>{t('tax.deadlines.copyUrgentDeadlines')}</span>
         </button>
         <button
           onClick={() => setShowCompleted(!showCompleted)}
           className="flex items-center space-x-2 px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
         >
           <CheckCircle className="h-4 w-4" />
-          <span>{showCompleted ? '隐藏已完成' : '显示已完成'}</span>
+          <span>{showCompleted ? t('tax.deadlines.hideCompleted') : t('tax.deadlines.showCompleted')}</span>
         </button>
       </div>
 
       {/* 截止日期列表 */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold text-gray-900 mb-3">你的税务截止日期</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-3">{t('tax.deadlines.yourTaxDeadlines')}</h3>
         
         {deadlines.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            请选择国家以查看税务截止日期
+            {t('tax.deadlines.selectCountryToView')}
           </div>
         ) : (
           deadlines
@@ -353,9 +353,9 @@ END:VCALENDAR`
                         deadline.daysUntil <= 90 ? 'text-yellow-600' :
                         'text-gray-600'
                       }`}>
-                        {deadline.daysUntil === 0 ? '今天到期' :
-                         deadline.daysUntil < 0 ? `${Math.abs(deadline.daysUntil)}天前` :
-                         `${deadline.daysUntil}天后`}
+                        {deadline.daysUntil === 0 ? t('tax.deadlines.dueToday') :
+                         deadline.daysUntil < 0 ? `${Math.abs(deadline.daysUntil)}${t('tax.deadlines.daysAgo')}` :
+                         `${deadline.daysUntil}${t('tax.deadlines.daysLeft')}`}
                       </div>
                     </div>
                     
@@ -379,7 +379,7 @@ END:VCALENDAR`
                 {deadline.type === 'urgent' && !deadline.isCompleted && (
                   <div className="mt-3 flex items-center space-x-2 text-red-600">
                     <AlertTriangle className="h-4 w-4" />
-                    <span className="text-sm font-medium">紧急：请尽快处理</span>
+                    <span className="text-sm font-medium">{t('tax.deadlines.urgent')}</span>
                   </div>
                 )}
               </div>
@@ -389,12 +389,12 @@ END:VCALENDAR`
 
       {/* 提醒提示 */}
       <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <h4 className="font-semibold text-blue-900 mb-2">💡 提醒提示</h4>
+        <h4 className="font-semibold text-blue-900 mb-2">💡 {t('tax.deadlines.reminderTips')}</h4>
         <ul className="text-sm text-blue-800 space-y-1">
-          <li>• 在每个截止日期前2-4周设置日历提醒</li>
-          <li>• 考虑申请延期（美国公民自动获得2个月延期）</li>
-          <li>• 全年保持重要文档的有序组织</li>
-          <li>• 复杂情况请咨询税务专业人士</li>
+          <li>• {t('tax.deadlines.reminderTip1')}</li>
+          <li>• {t('tax.deadlines.reminderTip2')}</li>
+          <li>• {t('tax.deadlines.reminderTip3')}</li>
+          <li>• {t('tax.deadlines.reminderTip4')}</li>
         </ul>
       </div>
 
@@ -403,10 +403,9 @@ END:VCALENDAR`
         <div className="flex items-start space-x-2">
           <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
           <div>
-            <h4 className="font-semibold text-yellow-800 mb-2">重要声明</h4>
+            <h4 className="font-semibold text-yellow-800 mb-2">{t('tax.deadlines.disclaimer')}</h4>
             <p className="text-sm text-yellow-700">
-              本提醒系统提供一般性税务截止日期信息。实际截止日期可能因个人情况、申请延期等因素而变化。
-              请以官方税务机构的最新信息为准，并在复杂情况下咨询专业税务顾问。
+              {t('tax.deadlines.disclaimerText')}
             </p>
           </div>
         </div>

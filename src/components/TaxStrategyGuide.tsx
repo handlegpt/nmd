@@ -23,6 +23,7 @@ import {
   Award,
   UserCheck
 } from 'lucide-react'
+import { useTranslation } from '@/hooks/useTranslation'
 
 interface Strategy {
   id: string
@@ -63,6 +64,7 @@ interface Advisor {
 }
 
 export default function TaxStrategyGuide() {
+  const { t } = useTranslation()
   const [selectedStrategy, setSelectedStrategy] = useState<string | null>(null)
   const [selectedAdvisor, setSelectedAdvisor] = useState<string | null>(null)
   const [filterDifficulty, setFilterDifficulty] = useState<string>('all')
@@ -72,8 +74,8 @@ export default function TaxStrategyGuide() {
   const strategies: Strategy[] = [
     {
       id: 'nhr-portugal',
-      title: '葡萄牙NHR计划（2024年更新）',
-      description: '10年优惠税率，但政策已大幅收紧，仅限高技能职业',
+      title: t('tax.strategyGuide.strategies.nhrPortugal.title'),
+      description: t('tax.strategyGuide.strategies.nhrPortugal.description'),
       difficulty: 'hard',
       savings: '$15,000-40,000/年',
       timeToImplement: '6-12个月',
@@ -114,8 +116,8 @@ export default function TaxStrategyGuide() {
     },
     {
       id: 'territorial-tax',
-      title: '领土税制策略',
-      description: '利用领土税制国家，外国收入免税，适合数字游民',
+      title: t('tax.strategyGuide.strategies.territorialTax.title'),
+      description: t('tax.strategyGuide.strategies.territorialTax.description'),
       difficulty: 'easy',
       savings: '$10,000-30,000/年',
       timeToImplement: '1-3个月',
@@ -364,14 +366,14 @@ export default function TaxStrategyGuide() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-2">
           <BookOpen className="h-6 w-6 text-purple-600" />
-          <h2 className="text-xl font-bold text-gray-900">税务策略指南</h2>
+          <h2 className="text-xl font-bold text-gray-900">{t('tax.strategyGuide.title')}</h2>
         </div>
         <button
           onClick={() => setShowAdvisors(!showAdvisors)}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
         >
           <Users className="h-4 w-4" />
-          <span>{showAdvisors ? '隐藏顾问' : '查看顾问'}</span>
+          <span>{showAdvisors ? t('tax.strategyGuide.hideAdvisors') : t('tax.strategyGuide.viewAdvisors')}</span>
         </button>
       </div>
 
@@ -379,31 +381,31 @@ export default function TaxStrategyGuide() {
       <div className="mb-6 p-4 bg-gray-50 rounded-lg">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">难度筛选</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('tax.strategyGuide.difficultyFilter')}</label>
             <select
               value={filterDifficulty}
               onChange={(e) => setFilterDifficulty(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
-              <option value="all">全部难度</option>
-              <option value="easy">简单</option>
-              <option value="medium">中等</option>
-              <option value="hard">困难</option>
+              <option value="all">{t('tax.strategyGuide.allDifficulties')}</option>
+              <option value="easy">{t('tax.strategyGuide.difficulty.easy')}</option>
+              <option value="medium">{t('tax.strategyGuide.difficulty.medium')}</option>
+              <option value="hard">{t('tax.strategyGuide.difficulty.hard')}</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">策略类型</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">{t('tax.strategyGuide.strategyType')}</label>
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
             >
-              <option value="all">全部类型</option>
-              <option value="tax-haven">税务天堂</option>
-              <option value="territorial">领土税制</option>
-              <option value="company">公司结构</option>
-              <option value="visa">签证策略</option>
-              <option value="treaty">税收协定</option>
+              <option value="all">{t('tax.strategyGuide.allTypes')}</option>
+              <option value="tax-haven">{t('tax.strategyGuide.categories.taxHaven')}</option>
+              <option value="territorial">{t('tax.strategyGuide.categories.territorial')}</option>
+              <option value="company">{t('tax.strategyGuide.categories.companyStructure')}</option>
+              <option value="visa">{t('tax.strategyGuide.categories.visaStrategy')}</option>
+              <option value="treaty">{t('tax.strategyGuide.categories.taxTreaty')}</option>
             </select>
           </div>
         </div>
@@ -456,9 +458,9 @@ export default function TaxStrategyGuide() {
               </div>
               
               <div className="flex items-center justify-between text-xs">
-                <span className="text-gray-500">成功率: {strategy.successRate}%</span>
+                <span className="text-gray-500">{t('tax.strategyGuide.successRate')}: {strategy.successRate}%</span>
                 {strategy.advisorAvailable && (
-                  <span className="text-green-600 text-xs">✓ 有顾问</span>
+                  <span className="text-green-600 text-xs">✓ {t('tax.strategyGuide.hasAdvisor')}</span>
                 )}
               </div>
             </div>
@@ -492,7 +494,7 @@ export default function TaxStrategyGuide() {
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-600">成功率:</span>
+                    <span className="text-gray-600">{t('tax.strategyGuide.successRate')}:</span>
                     <span className="font-semibold text-purple-600">{selectedStrategyData.successRate}%</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
