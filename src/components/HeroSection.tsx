@@ -426,16 +426,6 @@ export default function HeroSection() {
               </div>
             </div>
 
-            {/* Main CTA - Enhanced with Better Styling */}
-            <div className="pt-4">
-              <FixedLink 
-                href="/cities"
-                className="btn btn-lg btn-primary group w-full justify-center text-lg py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all hover:scale-[1.02]"
-              >
-                {t('home.hero.exploreCities')}
-                <ArrowRight className="h-6 w-6 ml-3 group-hover:translate-x-2 transition-transform" />
-              </FixedLink>
-            </div>
           </div>
 
           {/* Right Content - Redesigned Layout */}

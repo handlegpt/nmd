@@ -2410,7 +2410,15 @@
     "vote": "Vote",
     "viewDetails": "View Details",
     "searchPlaceholder": "Search cities...",
-    "title": "Cities"
+    "title": "Cities",
+    "totalCities": "Total Cities",
+    "totalDays": "Total Days",
+    "currentCity": "Current City",
+    "consecutiveDays": "Consecutive Days",
+    "myTravelTrajectory": "My Travel Trajectory",
+    "import": "Import",
+    "export": "Export",
+    "addTrajectory": "Add Trajectory"
   },
   "tools": {
     "missingTool": {
