@@ -15,6 +15,7 @@ import {
 import { useTranslation } from '@/hooks/useTranslation'
 import { getPlacesByCity, getCities } from '@/lib/api'
 import { Place, City } from '@/lib/supabase'
+import { generatePlaceUrl } from '@/lib/urlUtils'
 import FixedLink from '@/components/FixedLink'
 import UniversalRecommendationForm from '@/components/UniversalRecommendationForm'
 import { useNotifications } from '@/contexts/GlobalStateContext'
@@ -444,7 +445,7 @@ export default function HomePlaceRecommendations() {
               {/* Secondary Actions */}
               <div className="flex items-center justify-between mt-2 text-xs text-gray-500">
                 <FixedLink
-                  href={`/nomadplaces/${place.id}`}
+                  href={generatePlaceUrl(place)}
                   className="text-blue-600 hover:text-blue-700 hover:underline"
                 >
                   {t('places.viewDetails')}

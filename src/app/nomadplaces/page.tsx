@@ -26,6 +26,7 @@ import {
 } from 'lucide-react'
 import { Place } from '@/lib/supabase'
 import { useTranslation } from '@/hooks/useTranslation'
+import { generatePlaceUrl } from '@/lib/urlUtils'
 import PageLayout from '@/components/PageLayout'
 import FixedLink from '@/components/FixedLink'
 import { useUser } from '@/contexts/GlobalStateContext'
@@ -801,7 +802,7 @@ export default function PlacesPage() {
                             <HeartIcon className="h-4 w-4" />
                           </button>
                           <FixedLink
-                            href={`/places/${place.id}`}
+                            href={generatePlaceUrl(place)}
                             className="btn btn-sm btn-outline"
                           >
                             {t('places.viewDetails')}
