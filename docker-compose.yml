@@ -31,66 +31,65 @@ services:
     networks:
       - nomad-network
 
-  # Directus CMS - Temporarily disabled due to connection issues
-  # directus:
-  #   image: directus/directus:latest
-  #   container_name: nomad-directus
-  #   ports:
-  #     - "8055:8055"
-  #   environment:
-  #     KEY: "${KEY}"
-  #     SECRET: "${SECRET}"
-  #     # Supabase PostgreSQL database configuration for Directus
-  #     DB_CLIENT: "pg"
-  #     # Use connection string with SSL disabled for Supabase compatibility
-  #     DB_CONNECTION_STRING: "postgresql://postgres:${DB_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=disable"
-  #     # Disable SSL verification for self-signed certificates
-  #     NODE_TLS_REJECT_UNAUTHORIZED: "0"
-  #     NODE_EXTRA_CA_CERTS: ""
-  #     SSL_CERT_FILE: ""
-  #     SSL_KEY_FILE: ""
-  #     # Minimal connection pool to avoid timeouts
-  #     DB_POOL_MIN: "1"
-  #     DB_POOL_MAX: "1"
-  #     DB_POOL_ACQUIRE_TIMEOUT: "60000"
-  #     CACHE_ENABLED: "true"
-  #     CACHE_STORE: "redis"
-  #     REDIS: "redis://redis:6379"
-  #     ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@nomad.now}"
-  #     ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
-  #     PUBLIC_URL: "${PUBLIC_URL:-http://localhost:8055}"
-  #     AUTH_PROVIDERS: ""
-  #     AUTH_DISABLE_DEFAULT: "false"
-  #     TELEMETRY: "false"
-  #     STORAGE_LOCATIONS: "local"
-  #     STORAGE_LOCAL_DRIVER: "local"
-  #     STORAGE_LOCAL_ROOT: "/directus/uploads"
-  #     # SSL configuration handled in connection string
-  #     # Additional database optimizations
-  #     DB_MIGRATIONS: "true"
-  #     DB_MIGRATIONS_TABLE: "directus_migrations"
-  #   volumes:
-  #     - directus_uploads:/directus/uploads
-  #     - directus_snapshots:/directus/snapshots
-  #   depends_on:
-  #     redis:
-  #       condition: service_healthy
-  #   # Enhanced network configuration for better DNS resolution
-  #   sysctls:
-  #     - net.ipv6.conf.all.disable_ipv6=1
-  #     - net.ipv6.conf.default.disable_ipv6=1
-  #   dns:
-  #     - 8.8.8.8
-  #     - 1.1.1.1
-  #     - 8.8.4.4
-  #   restart: unless-stopped
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:8055/health"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-  #   networks:
-  #     - nomad-network
+  # Directus CMS - Using direct Supabase connection
+  directus:
+    image: directus/directus:latest
+    container_name: nomad-directus
+    ports:
+      - "8055:8055"
+    environment:
+      KEY: "${KEY}"
+      SECRET: "${SECRET}"
+      # Use direct Supabase database connection (not pooler)
+      DB_CLIENT: "pg"
+      DB_HOST: "db.xdpjstyoeqgvaacduzdw.supabase.co"
+      DB_PORT: "5432"
+      DB_DATABASE: "postgres"
+      DB_USER: "postgres.xdpjstyoeqgvaacduzdw"
+      DB_PASSWORD: "${DB_PASSWORD}"
+      # SSL configuration for direct connection
+      DB_SSL: "true"
+      DB_SSL_REJECT_UNAUTHORIZED: "false"
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
+      # Connection pool settings
+      DB_POOL_MIN: "1"
+      DB_POOL_MAX: "5"
+      DB_POOL_ACQUIRE_TIMEOUT: "60000"
+      DB_POOL_IDLE_TIMEOUT: "30000"
+      # Cache configuration
+      CACHE_ENABLED: "true"
+      CACHE_STORE: "redis"
+      REDIS: "redis://redis:6379"
+      # Admin configuration
+      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@nomad.now}"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+      PUBLIC_URL: "${PUBLIC_URL:-http://localhost:8055}"
+      # Auth configuration
+      AUTH_PROVIDERS: ""
+      AUTH_DISABLE_DEFAULT: "false"
+      # Other settings
+      TELEMETRY: "false"
+      STORAGE_LOCATIONS: "local"
+      STORAGE_LOCAL_DRIVER: "local"
+      STORAGE_LOCAL_ROOT: "/directus/uploads"
+      # Database migrations
+      DB_MIGRATIONS: "true"
+      DB_MIGRATIONS_TABLE: "directus_migrations"
+    volumes:
+      - directus_uploads:/directus/uploads
+      - directus_snapshots:/directus/snapshots
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8055/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - nomad-network
 
   # Redis Cache
   redis:
