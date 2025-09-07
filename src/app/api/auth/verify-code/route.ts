@@ -187,12 +187,16 @@ export async function POST(request: NextRequest) {
         
         console.log('📝 Creating user with explicit ip_address field and proper type casting for email:', email)
         
-        // 尝试使用原始 SQL 查询来绕过类型转换问题
+        // 使用 upsert 策略，明确提供 ip_address 字段并正确处理类型转换
         const { data: newUser, error: createError } = await supabase
           .from('users')
-          .insert({
+          .upsert({
             email,
-            name: userName
+            name: userName,
+            ip_address: '127.0.0.1'
+          }, {
+            onConflict: 'email',
+            ignoreDuplicates: false
           })
           .select('id, email, name, created_at, current_city, avatar_url')
           .single()
