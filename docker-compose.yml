@@ -31,59 +31,41 @@ services:
     networks:
       - nomad-network
 
-  # Directus CMS - Using direct Supabase connection
-  directus:
-    image: directus/directus:latest
-    container_name: nomad-directus
+  # Strapi CMS - More stable alternative to Directus
+  strapi:
+    image: strapi/strapi:latest
+    container_name: nomad-strapi
     ports:
-      - "8055:8055"
+      - "8055:1337"
     environment:
-      KEY: "${KEY}"
-      SECRET: "${SECRET}"
-      # Use direct Supabase database connection (not pooler)
-      DB_CLIENT: "pg"
-      DB_HOST: "db.xdpjstyoeqgvaacduzdw.supabase.co"
-      DB_PORT: "5432"
-      DB_DATABASE: "postgres"
-      DB_USER: "postgres.xdpjstyoeqgvaacduzdw"
-      DB_PASSWORD: "${DB_PASSWORD}"
-      # SSL configuration for direct connection
-      DB_SSL: "true"
-      DB_SSL_REJECT_UNAUTHORIZED: "false"
-      NODE_TLS_REJECT_UNAUTHORIZED: "0"
-      # Connection pool settings
-      DB_POOL_MIN: "1"
-      DB_POOL_MAX: "5"
-      DB_POOL_ACQUIRE_TIMEOUT: "60000"
-      DB_POOL_IDLE_TIMEOUT: "30000"
-      # Cache configuration
-      CACHE_ENABLED: "true"
-      CACHE_STORE: "redis"
-      REDIS: "redis://redis:6379"
+      # Database configuration
+      DATABASE_CLIENT: "postgres"
+      DATABASE_HOST: "aws-0-ap-southeast-1.pooler.supabase.com"
+      DATABASE_PORT: "6543"
+      DATABASE_NAME: "postgres"
+      DATABASE_USERNAME: "postgres"
+      DATABASE_PASSWORD: "${DB_PASSWORD}"
+      DATABASE_SSL: "false"
+      # App configuration
+      APP_KEYS: "${KEY}"
+      API_TOKEN_SALT: "${SECRET}"
+      ADMIN_JWT_SECRET: "${SECRET}"
+      TRANSFER_TOKEN_SALT: "${SECRET}"
+      JWT_SECRET: "${SECRET}"
       # Admin configuration
       ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@nomad.now}"
       ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
-      PUBLIC_URL: "${PUBLIC_URL:-http://localhost:8055}"
-      # Auth configuration
-      AUTH_PROVIDERS: ""
-      AUTH_DISABLE_DEFAULT: "false"
-      # Other settings
-      TELEMETRY: "false"
-      STORAGE_LOCATIONS: "local"
-      STORAGE_LOCAL_DRIVER: "local"
-      STORAGE_LOCAL_ROOT: "/directus/uploads"
-      # Database migrations
-      DB_MIGRATIONS: "true"
-      DB_MIGRATIONS_TABLE: "directus_migrations"
+      # Server configuration
+      HOST: "0.0.0.0"
+      PORT: "1337"
+      NODE_ENV: "production"
+      # Disable SSL verification for Supabase
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
     volumes:
-      - directus_uploads:/directus/uploads
-      - directus_snapshots:/directus/snapshots
-    depends_on:
-      redis:
-        condition: service_healthy
+      - strapi_uploads:/opt/app/public/uploads
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8055/health"]
+      test: ["CMD", "curl", "-f", "http://localhost:1337/admin"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -111,6 +93,5 @@ networks:
     driver: bridge
 
 volumes:
-  directus_uploads:
-  directus_snapshots:
+  strapi_uploads:
   redis_data: 
