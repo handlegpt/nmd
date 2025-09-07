@@ -1074,6 +1074,247 @@
       "disclaimer": {
         "title": "重要声明",
         "description": "本计算器提供估算结果，仅供参考。实际税务情况取决于个人具体情况、最新税法变化和各国规定。在做出任何税务决定前，请务必咨询专业的税务顾问。"
+    }
+  },
+  "recommendationForm": {
+    "place": {
+      "fields": {
+        "priceLevel": "价格等级",
+        "priceLevels": {
+          "cheap": "便宜",
+          "economical": "经济实惠",
+          "moderate": "中等",
+          "expensive": "昂贵",
+          "veryExpensive": "非常昂贵"
+        },
+        "noiseLevel": "噪音等级",
+        "noiseLevels": {
+          "quiet": "安静",
+          "moderate": "中等",
+          "loud": "嘈杂"
+        },
+        "socialAtmosphere": "社交氛围",
+        "socialLevels": {
+          "low": "低",
+          "medium": "中等",
+          "high": "高"
+        },
+        "tags": "标签"
+      }
+    },
+    "city": {
+      "suggestedHighlights": {
+        "nomadFriendly": "数字游民友好",
+        "fastWifi": "快速WiFi",
+        "lowCost": "低成本",
+        "visaConvenient": "签证便利",
+        "goodClimate": "气候宜人",
+        "foodRich": "美食丰富",
+        "culturalDiverse": "文化多元",
+        "convenientTransport": "交通便利",
+        "safeLiving": "生活安全",
+        "englishFriendly": "英语友好",
+        "activeCommunity": "活跃社区",
+        "workspaces": "工作空间",
+        "coffeeCulture": "咖啡文化",
+        "outdoorActivities": "户外活动",
+        "nightlife": "夜生活"
+      },
+      "suggestedTags": {
+        "budgetFriendly": "预算友好",
+        "fastWifi": "快速WiFi",
+        "easyVisa": "签证容易",
+        "goodClimate": "气候宜人",
+        "goodFood": "美食丰富",
+        "culturalRich": "文化丰富",
+        "convenientTransport": "交通便利",
+        "safe": "安全",
+        "englishFriendly": "英语友好",
+        "goodCommunity": "社区良好",
+        "workspaces": "工作空间",
+        "coffeeCulture": "咖啡文化",
+        "outdoor": "户外",
+        "nightlife": "夜生活",
+        "shopping": "购物"
       }
     }
+  },
+  "recommendations": {
+    "title": "城市推荐",
+    "description": "基于您的偏好为您推荐最适合的数字游民城市",
+    "algorithmExplanation": "我们根据WiFi速度、生活成本、签证天数、气候舒适度和社交氛围生成推荐。",
+    "preferences": "偏好设置",
+    "quickPresets": "快速预设：",
+    "presets": {
+      "budget": "预算优先",
+      "digital": "数字游民",
+      "social": "社交优先",
+      "balanced": "平衡"
+    },
+    "presetDescriptions": {
+      "budget": "低成本优先推荐",
+      "digital": "工作便利优先",
+      "social": "社交氛围优先",
+      "balanced": "平衡推荐"
+    },
+    "priorityLevels": {
+      "low": "低优先级",
+      "medium": "中等优先级",
+      "high": "高优先级"
+    },
+    "priorityIndicator": "优先级指示器",
+    "instantRecommendations": "即时推荐",
+    "generate": "生成推荐",
+    "setPreferences": "设置偏好以获取个性化推荐"
+  },
+  "cityComparison": {
+    "title": "城市对比",
+    "overallScoreLabel": "综合评分",
+    "overallScoreDescription": "基于多个维度的综合评分",
+    "points": "分",
+    "wifiSpeed": "WiFi速度",
+    "averageWifiSpeed": "平均WiFi速度",
+    "costOfLiving": "生活成本",
+    "monthlyCostUSD": "月成本（美元）",
+    "perMonth": "/月",
+    "visaConvenience": "签证便利性",
+    "stayDays": "停留天数",
+    "days": "天",
+    "climateComfort": "气候舒适度",
+    "climateScoreByLatitude": "基于纬度的气候评分",
+    "socialAtmosphere": "社交氛围",
+    "socialScoreByVisaAndCost": "基于签证和成本的社交评分",
+    "metricsSelector": "指标选择器",
+    "dataTable": "数据表格",
+    "chartView": "图表视图",
+    "addCity": "添加城市",
+    "loadingCities": "正在加载城市..."
+  },
+  "cities": {
+    "filters": "筛选",
+    "citiesFound": "找到 {count} 个城市",
+    "votes": "票",
+    "costOfLiving": "生活成本",
+    "wifiSpeed": "WiFi速度",
+    "visaType": "签证类型",
+    "days": "天",
+    "rateCity": "评价城市",
+    "addToFavorites": "添加到收藏",
+    "viewDetails": "查看详情",
+    "viewAllCities": "查看所有城市"
+  },
+  "localNomads": {
+    "tagCategories": {
+      "lifestyle": "生活方式",
+      "work": "工作",
+      "interests": "兴趣",
+      "personality": "性格"
+    },
+    "lifestyleTags": {
+      "earlyBird": "早起鸟",
+      "nightOwl": "夜猫子",
+      "minimalist": "极简主义者",
+      "adventurer": "冒险家"
+    },
+    "workTags": {
+      "developer": "开发者",
+      "designer": "设计师",
+      "writer": "作家",
+      "entrepreneur": "企业家"
+    },
+    "interestTags": {
+      "photography": "摄影",
+      "music": "音乐",
+      "cooking": "烹饪",
+      "fitness": "健身"
+    },
+    "personalityTags": {
+      "extrovert": "外向",
+      "introvert": "内向",
+      "creative": "创意",
+      "analytical": "分析型"
+    },
+    "badgeTypes": {
+      "localGuide": "本地向导",
+      "coffeeHero": "咖啡英雄",
+      "cityExplorer": "城市探索者",
+      "communityBuilder": "社区建设者"
+    },
+    "badgeDescriptions": {
+      "localGuide": "熟悉当地情况的本地向导",
+      "coffeeHero": "咖啡文化专家",
+      "cityExplorer": "城市探索专家",
+      "communityBuilder": "社区建设者"
+    },
+    "enableLocation": "启用定位",
+    "getPersonalizedRecommendations": "获取个性化推荐",
+    "allowLocation": "允许定位",
+    "selectCityManually": "手动选择城市",
+    "totalNomads": "总游民数",
+    "availableNow": "现在可用",
+    "successRate": "成功率",
+    "trustAndResponse": "信任和响应",
+    "requestsGetResponse": "请求得到响应",
+    "recent30DaysData": "最近30天数据",
+    "basedOnRealRequests": "基于真实请求",
+    "firstNomadInCity": "城市首位游民",
+    "inviteFriends": "邀请朋友",
+    "shareInviteLink": "分享邀请链接",
+    "hotCities": "热门城市",
+    "viewMoreHotCities": "查看更多热门城市"
+  },
+  "common": {
+    "goSee": "去看看"
+  },
+  "quickStart": {
+    "step1": {
+      "title": "设置您的偏好",
+      "description": "告诉我们您对WiFi、成本、气候等的偏好",
+      "action": "开始设置"
+    },
+    "step2": {
+      "title": "获取个性化推荐",
+      "description": "基于您的偏好获得最适合的城市推荐",
+      "action": "查看推荐"
+    },
+    "step3": {
+      "title": "探索城市详情",
+      "description": "深入了解每个城市的详细信息",
+      "action": "探索城市"
+    },
+    "step4": {
+      "title": "连接当地游民",
+      "description": "与当地数字游民建立联系",
+      "action": "开始连接"
+    },
+    "open": "打开",
+    "tooltip": "快速开始指南"
+  },
+  "footer": {
+    "cities": "城市",
+    "visaGuide": "签证指南",
+    "tools": "工具",
+    "about": "关于",
+    "contact": "联系",
+    "description": "数字游民的全面指南和实用资源",
+    "product": "产品",
+    "company": "公司",
+    "allRightsReserved": "版权所有",
+    "madeWith": "用 ❤️ 制作",
+    "privacy": "隐私政策",
+    "terms": "服务条款"
+  },
+  "site": {
+    "title": "NomadNow - 数字游民生活指南",
+    "description": "发现最适合数字游民的城市，优化税务策略，与全球游民社区建立联系。",
+    "ogTitle": "NomadNow - 数字游民生活指南",
+    "ogDescription": "发现最适合数字游民的城市，优化税务策略，与全球游民社区建立联系。"
+  },
+  "preferences": {
+    "wifiQuality": "WiFi质量",
+    "costOfLiving": "生活成本",
+    "climateComfort": "气候舒适度",
+    "socialAtmosphere": "社交氛围",
+    "visaConvenience": "签证便利性"
+  }
 }
