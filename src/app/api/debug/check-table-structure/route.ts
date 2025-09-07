@@ -7,10 +7,7 @@ export async function GET(request: NextRequest) {
   try {
     // 使用原始 SQL 查询来检查表结构
     const { data, error } = await supabase
-      .from('information_schema.columns')
-      .select('column_name, data_type, is_nullable, column_default')
-      .eq('table_name', 'users')
-      .order('ordinal_position')
+      .rpc('get_table_structure', { table_name: 'users' })
 
     if (error) {
       console.error('❌ Table structure query error:', error)

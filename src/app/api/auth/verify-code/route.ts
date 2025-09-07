@@ -8,6 +8,21 @@ export async function POST(request: NextRequest) {
   console.log('🔍 Verify-code API called')
   
   try {
+    // 获取用户真实 IP 地址
+    const getClientIP = (request: NextRequest): string => {
+      const forwarded = request.headers.get('x-forwarded-for')
+      const realIP = request.headers.get('x-real-ip')
+      const cfConnectingIP = request.headers.get('cf-connecting-ip')
+      
+      if (cfConnectingIP) return cfConnectingIP
+      if (realIP) return realIP
+      if (forwarded) return forwarded.split(',')[0].trim()
+      
+      return '127.0.0.1' // 默认本地 IP
+    }
+    
+    const clientIP = getClientIP(request)
+    console.log('🌐 Client IP address:', clientIP)
     // 1. 解析请求体
     console.log('📝 Step 1: Parsing request body')
     let body
@@ -193,7 +208,7 @@ export async function POST(request: NextRequest) {
           .upsert({
             email,
             name: userName,
-            ip_address: '127.0.0.1'
+            ip_address: clientIP
           }, {
             onConflict: 'email',
             ignoreDuplicates: false
