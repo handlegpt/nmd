@@ -317,25 +317,25 @@ export default function SetupPage() {
           id="profile" 
           label={t('setup.tabs.profile')} 
           icon={UserIcon} 
-          completed={settings.profile.name && settings.profile.email && settings.profile.currentLocation}
+          completed={!!(settings.profile.name && settings.profile.email && settings.profile.currentLocation)}
         />
         <TabButton 
           id="preferences" 
           label={t('setup.tabs.preferences')} 
           icon={PaletteIcon}
-          completed={settings.preferences.language && settings.preferences.theme}
+          completed={!!(settings.preferences.language && settings.preferences.theme)}
         />
         <TabButton 
           id="visa" 
           label={t('setup.tabs.visa')} 
           icon={ShieldIcon}
-          completed={settings.visa.passportCountry && settings.visa.currentCountry && settings.visa.visaType}
+          completed={!!(settings.visa.passportCountry && settings.visa.currentCountry && settings.visa.visaType)}
         />
         <TabButton 
           id="travel" 
           label={t('setup.tabs.travel')} 
           icon={MapPinIcon}
-          completed={settings.travel.budget.min > 0 && settings.travel.preferences.climate.length > 0}
+          completed={!!(settings.travel.budget.min > 0 && settings.travel.preferences.climate.length > 0)}
         />
         <TabButton 
           id="privacy" 
