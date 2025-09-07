@@ -26,6 +26,7 @@ import { getCities } from '@/lib/api'
 import UnifiedVoteSystem, { VoteItem } from './UnifiedVoteSystem'
 import FixedLink from './FixedLink'
 import RecentCityVote from './RecentCityVote'
+import VoteModal from './VoteModal'
 
 interface EnhancedCityRankingProps {
   limit?: number
@@ -64,7 +65,21 @@ export default function EnhancedCityRanking({
   // 获取真实城市数据
   useEffect(() => {
     fetchCities()
+    loadFavorites()
   }, [])
+
+  // 加载收藏状态
+  const loadFavorites = () => {
+    try {
+      const savedFavorites = localStorage.getItem('cityFavorites')
+      if (savedFavorites) {
+        const favoriteIds = JSON.parse(savedFavorites)
+        setFavorites(new Set(favoriteIds))
+      }
+    } catch (error) {
+      console.error('Error loading favorites:', error)
+    }
+  }
 
   // 当城市数据或筛选条件变化时，重新筛选和排序
   useEffect(() => {
@@ -245,11 +260,19 @@ export default function EnhancedCityRanking({
         duration: 2000
       })
     }
+    
+    // 保存到localStorage
+    try {
+      localStorage.setItem('cityFavorites', JSON.stringify([...newFavorites]))
+    } catch (error) {
+      console.error('Error saving favorites:', error)
+    }
+    
     setFavorites(newFavorites)
   }
 
-  const handleVoteSubmitted = (voteData: any) => {
-    logInfo('Vote submitted', voteData, 'EnhancedCityRanking')
+  const handleVoteSubmitted = () => {
+    logInfo('Vote submitted', 'EnhancedCityRanking')
     addNotification({
       type: 'success',
       message: t('voteSystem.voteSubmitted')
@@ -426,7 +449,7 @@ export default function EnhancedCityRanking({
 
       {/* Recent City Vote Section */}
       {showCurrentCityVote && (
-        <RecentCityVote onVoteSubmitted={() => handleVoteSubmitted({})} />
+        <RecentCityVote onVoteSubmitted={handleVoteSubmitted} />
       )}
 
       {/* Professional City Cards Grid - Professional Tool Experience */}
@@ -529,6 +552,7 @@ export default function EnhancedCityRanking({
                   </button>
                   <button 
                     onClick={() => handleToggleFavorite(city.id)}
+                    title={favorites.has(city.id) ? t('cities.removeFromFavorites') : t('cities.addToFavorites')}
                     className={`px-3 py-2 text-xs font-medium rounded-lg transition-colors ${
                       favorites.has(city.id) 
                         ? 'bg-red-100 hover:bg-red-200 text-red-700' 
@@ -572,61 +596,12 @@ export default function EnhancedCityRanking({
 
       {/* Rating Modal */}
       {ratingModalOpen && selectedCity && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-lg font-semibold mb-4">
-              {t('cities.rateCity')}: {selectedCity.name}
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('cities.overallRating')}
-                </label>
-                <div className="flex space-x-1">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <button
-                      key={star}
-                      className="text-2xl hover:scale-110 transition-transform"
-                    >
-                      ⭐
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('cities.comment')}
-                </label>
-                <textarea
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  rows={3}
-                  placeholder={t('cities.shareYourExperience')}
-                />
-              </div>
-            </div>
-            <div className="flex justify-end space-x-3 mt-6">
-              <button
-                onClick={() => setRatingModalOpen(false)}
-                className="px-4 py-2 text-gray-600 hover:text-gray-800"
-              >
-                {t('common.cancel')}
-              </button>
-              <button
-                onClick={() => {
-                  addNotification({
-                    type: 'success',
-                    message: t('cities.ratingSubmitted'),
-                    duration: 3000
-                  })
-                  setRatingModalOpen(false)
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                {t('cities.submitRating')}
-              </button>
-            </div>
-          </div>
-        </div>
+        <VoteModal
+          city={selectedCity}
+          isOpen={ratingModalOpen}
+          onClose={() => setRatingModalOpen(false)}
+          onVoteSubmitted={handleVoteSubmitted}
+        />
       )}
     </>
   )
