@@ -31,47 +31,47 @@ services:
     networks:
       - nomad-network
 
-  # Strapi CMS - More stable alternative to Directus
-  strapi:
-    image: strapi/strapi:latest
-    container_name: nomad-strapi
-    ports:
-      - "8055:1337"
-    environment:
-      # Database configuration
-      DATABASE_CLIENT: "postgres"
-      DATABASE_HOST: "aws-0-ap-southeast-1.pooler.supabase.com"
-      DATABASE_PORT: "6543"
-      DATABASE_NAME: "postgres"
-      DATABASE_USERNAME: "postgres"
-      DATABASE_PASSWORD: "${DB_PASSWORD}"
-      DATABASE_SSL: "false"
-      # App configuration
-      APP_KEYS: "${KEY}"
-      API_TOKEN_SALT: "${SECRET}"
-      ADMIN_JWT_SECRET: "${SECRET}"
-      TRANSFER_TOKEN_SALT: "${SECRET}"
-      JWT_SECRET: "${SECRET}"
-      # Admin configuration
-      ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@nomad.now}"
-      ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
-      # Server configuration
-      HOST: "0.0.0.0"
-      PORT: "1337"
-      NODE_ENV: "production"
-      # Disable SSL verification for Supabase
-      NODE_TLS_REJECT_UNAUTHORIZED: "0"
-    volumes:
-      - strapi_uploads:/opt/app/public/uploads
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:1337/admin"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
-    networks:
-      - nomad-network
+  # Strapi CMS - Temporarily disabled due to Supabase connection issues
+  # strapi:
+  #   image: strapi/strapi:latest
+  #   container_name: nomad-strapi
+  #   ports:
+  #     - "8055:1337"
+  #   environment:
+  #     # Database configuration
+  #     DATABASE_CLIENT: "postgres"
+  #     DATABASE_HOST: "aws-0-ap-southeast-1.pooler.supabase.com"
+  #     DATABASE_PORT: "6543"
+  #     DATABASE_NAME: "postgres"
+  #     DATABASE_USERNAME: "postgres"
+  #     DATABASE_PASSWORD: "${DB_PASSWORD}"
+  #     DATABASE_SSL: "false"
+  #     # App configuration
+  #     APP_KEYS: "${KEY}"
+  #     API_TOKEN_SALT: "${SECRET}"
+  #     ADMIN_JWT_SECRET: "${SECRET}"
+  #     TRANSFER_TOKEN_SALT: "${SECRET}"
+  #     JWT_SECRET: "${SECRET}"
+  #     # Admin configuration
+  #     ADMIN_EMAIL: "${ADMIN_EMAIL:-admin@nomad.now}"
+  #     ADMIN_PASSWORD: "${ADMIN_PASSWORD}"
+  #     # Server configuration
+  #     HOST: "0.0.0.0"
+  #     PORT: "1337"
+  #     NODE_ENV: "production"
+  #     # Disable SSL verification for Supabase
+  #     NODE_TLS_REJECT_UNAUTHORIZED: "0"
+  #   volumes:
+  #     - strapi_uploads:/opt/app/public/uploads
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:1337/admin"]
+  #     interval: 30s
+  #     timeout: 10s
+  #     retries: 3
+  #     start_period: 60s
+  #   networks:
+  #     - nomad-network
 
   # Redis Cache
   redis:
