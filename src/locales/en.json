@@ -2054,6 +2054,9 @@
       "allDifficulties": "All Difficulties",
       "strategyType": "Strategy Type",
       "allTypes": "All Types",
+      "applicationRequirements": "Application Requirements",
+      "implementationSteps": "Implementation Steps",
+      "practicalTips": "Practical Tips",
       "strategies": {
         "nhrPortugal": {
           "title": "Portugal NHR Program (2024 Update)",
@@ -2099,7 +2102,8 @@
             "Choose suitable jurisdiction",
             "Establish residence",
             "Set up tax structure",
-            "Maintain compliance"
+            "Maintain compliance",
+            "Regular compliance reviews"
           ],
           "tips": [
             "Understand local tax laws",
@@ -2111,6 +2115,8 @@
         "companyStructure": {
           "title": "Company Structure Optimization",
           "description": "Optimize tax structure through offshore companies, suitable for high-income business owners",
+          "savings": "$20,000-60,000/year",
+          "timeToImplement": "6-12 months",
           "requirements": [
             "High income business owner",
             "International business operations",
@@ -2135,6 +2141,8 @@
         "digitalNomadVisa": {
           "title": "Digital Nomad Visa",
           "description": "Utilize specialized visas to optimize tax situation, simple and easy to implement",
+          "savings": "$5,000-20,000/year",
+          "timeToImplement": "2-4 months",
           "requirements": [
             "Remote work capability",
             "Stable income source",
@@ -2159,6 +2167,8 @@
         "taxTreatyOptimization": {
           "title": "Tax Treaty Optimization",
           "description": "Utilize bilateral tax treaties to reduce double taxation",
+          "savings": "$8,000-25,000/year",
+          "timeToImplement": "3-6 months",
           "requirements": [
             "Business in multiple countries",
             "Understanding of tax treaties",
