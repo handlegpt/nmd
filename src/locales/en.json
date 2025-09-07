@@ -1055,7 +1055,92 @@
     "pleaseProvideRating": "Please provide at least an overall rating"
   },
   "setup": {
-    "settingsSaved": "Settings saved!"
+    "title": "Personal Settings",
+    "subtitle": "Configure your personal information and preferences",
+    "profileCompletion": "Profile Completion",
+    "autoSave": "Auto-save",
+    "settingsSaved": "Settings saved!",
+    "tabs": {
+      "profile": "Profile",
+      "preferences": "Preferences", 
+      "visa": "Visa Info",
+      "travel": "Travel",
+      "privacy": "Privacy"
+    },
+    "profile": {
+      "title": "Profile Information",
+      "name": "Name",
+      "email": "Email",
+      "currentLocation": "Current Location",
+      "timezone": "Timezone",
+      "profession": "Profession",
+      "bio": "Bio",
+      "skills": "Skills",
+      "interests": "Interests",
+      "skillsPlaceholder": "JavaScript, React, Design, Marketing",
+      "interestsPlaceholder": "Photography, Hiking, Coffee, Technology",
+      "skillsHint": "Separate skills with commas",
+      "interestsHint": "Separate interests with commas"
+    },
+    "preferences": {
+      "title": "Preferences & Settings",
+      "language": "Language",
+      "theme": "Theme",
+      "currency": "Currency",
+      "units": "Units",
+      "notifications": {
+        "title": "Notification Settings",
+        "visaReminders": "Visa Expiry Reminders",
+        "cityRecommendations": "City Recommendations",
+        "weeklyDigest": "Weekly Digest",
+        "emailUpdates": "Email Updates",
+        "priceAlerts": "Price Alerts",
+        "weatherUpdates": "Weather Updates"
+      }
+    },
+    "visa": {
+      "title": "Visa & Immigration Information",
+      "passportCountry": "Passport Country",
+      "currentCountry": "Current Country",
+      "visaType": "Visa Type",
+      "expiryDate": "Expiry Date",
+      "multipleEntries": "Multiple Entry Visa",
+      "workPermit": "Work Permit Included",
+      "status": "Visa Status",
+      "daysUntilExpiry": "Days until visa expiry",
+      "expiryWarning": "⚠️ Your visa expires soon! Consider renewing or extending it."
+    },
+    "travel": {
+      "title": "Travel Preferences & Budget",
+      "budget": {
+        "title": "Budget Range",
+        "minBudget": "Min Budget (per month)",
+        "maxBudget": "Max Budget (per month)",
+        "currency": "Currency"
+      },
+      "experience": {
+        "countriesVisited": "Countries Visited",
+        "yearsNomading": "Years Nomading",
+        "preferredStayDuration": "Preferred Stay Duration"
+      }
+    },
+    "privacy": {
+      "title": "Privacy & Data Settings",
+      "showLocation": "Show my current location to other users",
+      "showLocationDesc": "Allow other nomads to see your current city",
+      "showTravelHistory": "Show my travel history",
+      "showTravelHistoryDesc": "Display your visited cities and countries",
+      "allowDataCollection": "Allow data collection for recommendations",
+      "allowDataCollectionDesc": "Help improve our recommendations by sharing usage data",
+      "marketingEmails": "Receive marketing emails",
+      "marketingEmailsDesc": "Get updates about new features and promotions"
+    },
+    "actions": {
+      "exportSettings": "Export Settings",
+      "importSettings": "Import Settings",
+      "saveSettings": "Save Settings",
+      "saving": "Saving..."
+    }
   },
   "contact": {
     "faq": {

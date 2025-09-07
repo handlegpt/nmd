@@ -385,7 +385,10 @@ export default function TaxPage() {
         {/* Content based on active category */}
         {activeCategory === 'assessment' && (
           <div className="max-w-4xl mx-auto">
-            <TaxNeedsAssessment />
+            <TaxNeedsAssessment 
+              onNavigateToCalculator={() => setActiveCategory('calculator')}
+              onNavigateToStrategies={() => setActiveCategory('strategies')}
+            />
           </div>
         )}
 

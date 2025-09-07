@@ -555,6 +555,40 @@
       "countries": "国家对比",
       "deadlines": "截止提醒"
     },
+    "calculator": {
+      "tabs": {
+        "calculator": "计算器",
+        "feie": "FEIE",
+        "presence": "居住测试",
+        "residency": "税务居民"
+      },
+      "countries": {
+        "portugal": "葡萄牙",
+        "thailand": "泰国",
+        "mexico": "墨西哥",
+        "spain": "西班牙",
+        "germany": "德国",
+        "estonia": "爱沙尼亚",
+        "costaRica": "哥斯达黎加",
+        "malaysia": "马来西亚"
+      },
+      "countryNotes": {
+        "portugal": "NHR计划2024年政策收紧，仅限高技能职业",
+        "thailand": "外国收入不汇入泰国则免税",
+        "mexico": "领土税制，外国收入不汇入免税",
+        "spain": "贝克汉姆法，前5年优惠税率24%",
+        "germany": "全球征税，高税率但基础设施完善",
+        "estonia": "数字游民签证，e-Residency计划",
+        "costaRica": "领土税制，数字游民签证",
+        "malaysia": "MM2H签证，外国收入不汇入免税"
+      },
+      "overview": {
+        "title": "税务优化概览",
+        "maxSavings": "最大节税",
+        "countryCount": "推荐国家",
+        "lowestRate": "最低税率"
+      }
+    },
     "deadlines": {
       "title": "税务截止日期提醒",
       "selectCountry": "选择你的国籍国家",
@@ -611,21 +645,127 @@
           "title": "葡萄牙NHR计划（2024年更新）",
           "description": "10年优惠税率，但政策已大幅收紧，仅限高技能职业"
         },
+        "nhrPlan": {
+          "requirements": [
+            "必须在2024年12月31日前申请",
+            "需要高技能职业证明（IT、金融、医疗等）",
+            "年收入需达到葡萄牙平均工资的4倍",
+            "不能是过去5年的葡萄牙税务居民",
+            "需要提供详细的收入来源证明",
+            "必须通过严格的背景调查"
+          ],
+          "steps": [
+            "准备职业资格证明文件",
+            "收集收入来源证明材料",
+            "联系葡萄牙税务顾问",
+            "提交NHR申请",
+            "等待审批结果",
+            "获得批准后开始享受优惠税率",
+            "每年提交合规报告"
+          ],
+          "tips": [
+            "申请时间紧迫，建议尽快行动",
+            "确保所有文件真实有效",
+            "考虑聘请专业税务顾问",
+            "保持详细的收入记录",
+            "了解政策变化风险"
+          ]
+        },
         "territorialTax": {
           "title": "领土税制策略",
-          "description": "利用领土税制国家，外国收入免税，适合数字游民"
+          "description": "利用领土税制国家，外国收入免税，适合数字游民",
+          "requirements": [
+            "选择领土税制国家居住",
+            "外国收入不汇入居住国",
+            "在当地停留超过183天",
+            "保持详细的收入记录"
+          ],
+          "steps": [
+            "研究领土税制国家",
+            "选择合适的居住地",
+            "规划居住时间",
+            "开设当地银行账户",
+            "建立收入分离机制",
+            "定期审查合规性"
+          ],
+          "tips": [
+            "泰国、墨西哥、哥斯达黎加是热门选择",
+            "注意居住天数要求",
+            "避免收入汇入居住国",
+            "保持详细的旅行记录"
+          ]
         },
         "companyStructure": {
           "title": "公司结构优化",
-          "description": "通过离岸公司优化税务结构，适合高收入企业主"
+          "description": "通过离岸公司优化税务结构，适合高收入企业主",
+          "requirements": [
+            "年收入超过10万美元",
+            "有稳定的客户基础",
+            "能够证明商业实质",
+            "愿意承担合规成本"
+          ],
+          "steps": [
+            "选择合适的离岸管辖区",
+            "注册离岸公司",
+            "开设公司银行账户",
+            "建立商业实质",
+            "制定收入分配策略",
+            "定期提交合规报告"
+          ],
+          "tips": [
+            "爱沙尼亚、新加坡是热门选择",
+            "确保有真实的商业活动",
+            "避免被认定为避税安排",
+            "咨询专业税务顾问"
+          ]
         },
         "digitalNomadVisa": {
           "title": "数字游民签证",
-          "description": "利用专门签证优化税务状况，简单易行"
+          "description": "利用专门签证优化税务状况，简单易行",
+          "requirements": [
+            "远程工作或自由职业",
+            "月收入达到最低要求",
+            "有健康保险",
+            "无犯罪记录证明"
+          ],
+          "steps": [
+            "选择数字游民签证国家",
+            "准备申请材料",
+            "提交签证申请",
+            "获得签证批准",
+            "规划居住时间",
+            "享受税务优惠"
+          ],
+          "tips": [
+            "葡萄牙、爱沙尼亚、哥斯达黎加有专门签证",
+            "通常需要年收入证明",
+            "签证期限通常1-2年",
+            "可以续签"
+          ]
         },
-        "taxTreaty": {
+        "taxTreatyOptimization": {
           "title": "税收协定优化",
-          "description": "利用双边税收协定减少双重征税"
+          "description": "利用双边税收协定减少双重征税",
+          "requirements": [
+            "在两个国家都有收入",
+            "了解相关税收协定",
+            "能够证明税务居民身份",
+            "有详细的收入记录"
+          ],
+          "steps": [
+            "研究相关税收协定",
+            "确定税务居民身份",
+            "计算协定优惠",
+            "准备申请材料",
+            "提交协定申请",
+            "享受协定优惠"
+          ],
+          "tips": [
+            "美国与多个国家有税收协定",
+            "需要证明真实的税务居民身份",
+            "协定优惠通常有时限",
+            "咨询专业税务顾问"
+          ]
         }
       },
       "difficulty": {
@@ -642,7 +782,94 @@
       },
       "successRate": "成功率",
       "hasAdvisor": "有顾问",
-      "hideAdvisors": "隐藏顾问",
+      "hideAdvisors": "隐藏顾问"
+    },
+    "taxAssessment": {
+      "questions": {
+        "income": "你的年收入范围是？",
+        "passport": "你的护照国家是？",
+        "residence": "你的居住模式是？",
+        "workType": "你的工作类型是？",
+        "visaStatus": "你的签证状态是？"
+      },
+      "incomeOptions": {
+        "under50k": "5万美元以下",
+        "under50kDesc": "基础税务优化，重点关注合规",
+        "50k100k": "5-10万美元",
+        "50k100kDesc": "中等收入，可考虑简单优化策略",
+        "100k200k": "10-20万美元",
+        "100k200kDesc": "高收入，需要专业税务规划",
+        "over200k": "20万美元以上",
+        "over200kDesc": "超高收入，需要复杂税务结构"
+      },
+      "passportOptions": {
+        "us": "美国",
+        "usDesc": "全球征税，需要FEIE策略",
+        "eu": "欧盟",
+        "euDesc": "欧盟内部税务优化",
+        "uk": "英国",
+        "ukDesc": "脱欧后税务策略",
+        "canada": "加拿大",
+        "canadaDesc": "加拿大税务居民",
+        "australia": "澳大利亚",
+        "australiaDesc": "澳大利亚税务居民",
+        "other": "其他",
+        "otherDesc": "其他国家护照"
+      },
+      "residenceOptions": {
+        "single": "单一居住地",
+        "singleDesc": "主要在一个国家居住",
+        "multiple": "多国居住",
+        "multipleDesc": "在多个国家都有居住",
+        "nomadic": "游牧式生活",
+        "nomadicDesc": "经常变换居住地"
+      },
+      "workTypeOptions": {
+        "freelance": "自由职业",
+        "freelanceDesc": "为客户提供服务的自由职业者",
+        "remote": "远程工作",
+        "remoteDesc": "为雇主远程工作",
+        "business": "企业主",
+        "businessDesc": "拥有自己的企业",
+        "mixed": "混合模式",
+        "mixedDesc": "多种工作模式结合"
+      },
+      "visaStatusOptions": {
+        "tourist": "旅游签证",
+        "touristDesc": "短期旅游签证",
+        "digitalNomad": "数字游民签证",
+        "digitalNomadDesc": "专门的数字游民签证",
+        "resident": "居民身份",
+        "residentDesc": "长期居民身份",
+        "citizen": "公民身份",
+        "citizenDesc": "拥有公民身份"
+      },
+      "navigation": {
+        "question": "问题",
+        "previous": "上一步",
+        "next": "下一步",
+        "viewResults": "查看结果"
+      },
+      "results": {
+        "title": "税务需求评估结果",
+        "subtitle": "基于你的情况，我们为你定制了以下建议",
+        "incomeLevel": "收入水平",
+        "passportCountry": "护照国家",
+        "residencePattern": "居住模式",
+        "potentialSavings": "节税潜力",
+        "riskLevel": "风险等级",
+        "lowRisk": "低风险",
+        "mediumRisk": "中等风险",
+        "highRisk": "高风险",
+        "recommendedStrategies": "推荐策略",
+        "riskWarnings": "风险警告",
+        "recommendedCountries": "推荐国家",
+        "nextSteps": "下一步建议",
+        "useCalculator": "使用税务计算器",
+        "viewStrategies": "查看策略指南",
+        "reassess": "重新评估"
+      }
+    },
       "expectedSavings": "预期节省",
       "implementationTime": "实施时间",
       "riskLevel": "风险等级",

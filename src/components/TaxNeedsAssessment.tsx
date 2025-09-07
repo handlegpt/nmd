@@ -39,7 +39,15 @@ interface AssessmentResult {
   category: 'beginner' | 'intermediate' | 'advanced';
 }
 
-export default function TaxNeedsAssessment() {
+interface TaxNeedsAssessmentProps {
+  onNavigateToCalculator?: () => void;
+  onNavigateToStrategies?: () => void;
+}
+
+export default function TaxNeedsAssessment({ 
+  onNavigateToCalculator, 
+  onNavigateToStrategies 
+}: TaxNeedsAssessmentProps) {
   const { t } = useTranslation();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -416,14 +424,14 @@ export default function TaxNeedsAssessment() {
             <div className="bg-white rounded-lg shadow-lg p-6">
               <div className="space-y-3">
                 <button
-                  onClick={() => {/* Navigate to calculator */}}
+                  onClick={() => onNavigateToCalculator?.()}
                   className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
                 >
                   <Calculator className="h-5 w-5 mr-2" />
                   {t('taxAssessment.results.useCalculator')}
                 </button>
                 <button
-                  onClick={() => {/* Navigate to strategies */}}
+                  onClick={() => onNavigateToStrategies?.()}
                   className="w-full px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors flex items-center justify-center"
                 >
                   <BookOpen className="h-5 w-5 mr-2" />
