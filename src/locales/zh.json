@@ -98,6 +98,112 @@
     "quickActions": "快速操作",
     "enterCustomLocation": "输入自定义位置",
     "locationFailed": "位置获取失败",
+  "notifications": {
+    "welcome": "欢迎来到Nomad Now！",
+    "visaExpiry": "您的签证即将到期",
+    "logoutSuccess": "登出成功",
+    "loginSuccess": "登录成功",
+    "dataSync": "数据同步完成",
+    "comingSoon": "通知中心即将推出",
+    "title": "通知"
+  },
+  "auth": {
+    "signIn": "登录"
+  },
+  "mobileMenu": {
+    "homeDescription": "发现最适合数字游民的城市",
+    "citiesDescription": "探索全球数字游民城市",
+    "visaGuideDescription": "各国签证申请指南",
+    "taxDescription": "税务策略和计算工具",
+    "dashboardDescription": "个人仪表板和设置"
+  },
+  "common": {
+    "viewDetails": "查看详情"
+  },
+  "cities": {
+    "addCity": "添加城市"
+  },
+  "places": {
+    "title": "游民地点推荐",
+    "description": "发现适合数字游民的绝佳地点",
+    "addPlace": "添加推荐",
+    "evaluate": "评价",
+    "viewDetails": "查看详情",
+    "filterByCategory": "按类别筛选",
+    "all": "全部",
+    "filterByRegion": "按地区筛选",
+    "allRegions": "全部地区",
+    "asia": "亚洲",
+    "europe": "欧洲",
+    "americas": "美洲",
+    "sortBy": "排序方式",
+    "sortByRating": "按评分排序",
+    "sortBySpeed": "按网速排序",
+    "sortByPrice": "按价格排序",
+    "community": "社区",
+    "recommendations": "推荐",
+    "openNow": "现在营业",
+    "outlets": "插座",
+    "seating": "座位",
+    "noise": "噪音",
+    "quickBrowse": "快速浏览"
+  },
+  "recommendationForm": {
+    "place": {
+      "title": "推荐地点",
+      "submitButton": "提交推荐",
+      "suggestedTags": {
+        "quiet": "安静",
+        "fastWifi": "网速快",
+        "goodCoffee": "咖啡好",
+        "reasonablePrice": "价格合理",
+        "convenientLocation": "位置便利",
+        "wellEquipped": "设施完善",
+        "goodCommunity": "社区氛围好",
+        "beautifulView": "风景优美",
+        "goodFood": "食物美味",
+        "goodService": "服务好",
+        "open24Hours": "24小时营业",
+        "petFriendly": "宠物友好",
+        "latteArt": "拉花艺术",
+        "WiFi快": "WiFi快",
+        "海滩附近": "海滩附近",
+        "河景": "河景",
+        "高端设施": "高端设施",
+        "历史建筑": "历史建筑",
+        "优雅环境": "优雅环境",
+        "价格实惠": "价格实惠",
+        "清迈": "清迈"
+      },
+      "fields": {
+        "name": "名称",
+        "namePlaceholder": "输入地点名称",
+        "category": "类别",
+        "address": "地址",
+        "addressPlaceholder": "输入详细地址",
+        "location": "位置",
+        "locationPlaceholder": "选择城市",
+        "locationHelp": "选择该地点所在的城市",
+        "description": "描述",
+        "descriptionPlaceholder": "描述这个地点的特色...",
+        "wifiSpeed": "WiFi速度",
+        "wifiSpeedPlaceholder": "输入WiFi速度（Mbps）"
+      },
+      "priceLevels": {
+        "cheap": "便宜",
+        "economical": "经济",
+        "moderate": "中等",
+        "expensive": "昂贵",
+        "veryExpensive": "非常昂贵"
+      }
+    }
+  },
+  "cityComparison": {
+    "defaultExample": "默认示例",
+    "defaultExampleDescription": "选择城市开始对比",
+    "startComparing": "开始对比",
+    "addCitiesNow": "立即添加城市"
+  },
     "locationPlaceholder": "输入城市名称",
         "wifiSpeedTest": "WiFi速度测试",
     "weather": "天气",
