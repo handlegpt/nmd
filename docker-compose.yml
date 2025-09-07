@@ -42,8 +42,10 @@ services:
       SECRET: "${SECRET}"
       # Supabase PostgreSQL database configuration for Directus
       DB_CLIENT: "pg"
-      # Use connection string approach with proper SSL handling
-      DB_CONNECTION_STRING: "postgresql://postgres:${DB_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require"
+      # Use connection string with SSL disabled for Supabase compatibility
+      DB_CONNECTION_STRING: "postgresql://postgres:${DB_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=disable"
+      # Disable SSL verification for self-signed certificates
+      NODE_TLS_REJECT_UNAUTHORIZED: "0"
       NODE_EXTRA_CA_CERTS: ""
       SSL_CERT_FILE: ""
       SSL_KEY_FILE: ""
