@@ -2840,6 +2840,7 @@
     "nextTimezone": "Next Timezone",
     "locationPlaceholder": "e.g., Tokyo, Osaka...",
     "enterCustomLocation": "Enter Custom Location",
+    "locationFailed": "Location detection failed",
     "enterLocation": "Enter Manually",
     "weatherSunny": "Sunny",
     "locationPermissionPrompt": "Allow location access for precise location",

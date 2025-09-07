@@ -19,6 +19,34 @@ export default function HeroSection() {
   const [showLocationInput, setShowLocationInput] = useState(false)
   const [customLocation, setCustomLocation] = useState('')
   const [showVisaReminder, setShowVisaReminder] = useState(false)
+  
+  // Weather state
+  const [weather, setWeather] = useState({
+    temperature: 22,
+    description: 'sunny',
+    icon: '01d',
+    loading: false
+  })
+  const [locationCoords, setLocationCoords] = useState<{lat: number, lon: number} | null>(null)
+
+  // Function to fetch weather data
+  const fetchWeather = async (lat: number, lon: number, city?: string) => {
+    setWeather(prev => ({ ...prev, loading: true }))
+    try {
+      const response = await fetch(`/api/weather?lat=${lat}&lon=${lon}&city=${city || ''}`)
+      const data = await response.json()
+      
+      setWeather({
+        temperature: data.temperature,
+        description: data.description,
+        icon: data.icon,
+        loading: false
+      })
+    } catch (error) {
+      console.log('Weather fetch failed:', error)
+      setWeather(prev => ({ ...prev, loading: false }))
+    }
+  }
 
   // Function to refresh location using IP-based geolocation
   const refreshLocation = async () => {
@@ -28,16 +56,24 @@ export default function HeroSection() {
       const response = await fetch('https://api.ipapi.com/api/check?access_key=free')
       const data = await response.json()
       
-      if (data.city) {
+      if (data.city && data.latitude && data.longitude) {
         setCurrentLocation(data.city)
+        setLocationCoords({ lat: data.latitude, lon: data.longitude })
+        // 获取天气数据
+        fetchWeather(data.latitude, data.longitude, data.city)
       } else if (data.region) {
         setCurrentLocation(data.region)
+        // 如果没有精确坐标，不获取天气
       } else {
-        setCurrentLocation(t('home.hero.liveInfo.unknownLocation'))
+        // 位置获取失败，显示手动输入选项
+        setCurrentLocation(t('home.hero.liveInfo.locationFailed'))
+        setShowLocationInput(true)
       }
     } catch (error) {
       console.log('IP geolocation failed:', error)
-      setCurrentLocation(t('home.hero.liveInfo.unknownLocation'))
+      // 位置获取失败，显示手动输入选项
+      setCurrentLocation(t('home.hero.liveInfo.locationFailed'))
+      setShowLocationInput(true)
     } finally {
       setIsLoading(false)
     }
@@ -456,8 +492,12 @@ export default function HeroSection() {
                     {/* Weather */}
                     <div className="flex flex-col items-center space-y-1">
                       <Sun className="h-5 w-5 text-yellow-600" />
-                      <span className="text-sm font-medium text-gray-900">22°C</span>
-                      <span className="text-xs text-gray-600">☀️ {t('home.hero.liveInfo.weather')}</span>
+                      <span className="text-sm font-medium text-gray-900">
+                        {weather.loading ? '--°C' : `${weather.temperature}°C`}
+                      </span>
+                      <span className="text-xs text-gray-600">
+                        {weather.loading ? '⏳' : '☀️'} {t('home.hero.liveInfo.weather')}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -625,11 +665,22 @@ export default function HeroSection() {
                         className="flex-1 px-3 py-2 text-sm border border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                       <button 
-                        onClick={() => {
+                        onClick={async () => {
                           if (customLocation.trim()) {
                             setCurrentLocation(customLocation.trim())
                             setShowLocationInput(false)
                             setCustomLocation('')
+                            
+                            // 尝试通过城市名获取坐标和天气
+                            try {
+                              // 这里可以调用地理编码API获取坐标
+                              // 暂时使用模拟坐标
+                              const mockCoords = { lat: 35.6762, lon: 139.6503 } // 东京坐标作为示例
+                              setLocationCoords(mockCoords)
+                              fetchWeather(mockCoords.lat, mockCoords.lon, customLocation.trim())
+                            } catch (error) {
+                              console.log('Failed to get weather for custom location:', error)
+                            }
                           }
                         }}
                         className="btn btn-sm btn-blue hover:bg-blue-600 text-white"

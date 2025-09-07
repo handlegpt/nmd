@@ -97,6 +97,7 @@
     "affordable": "经济实惠",
     "quickActions": "快速操作",
     "enterCustomLocation": "输入自定义位置",
+    "locationFailed": "位置获取失败",
     "locationPlaceholder": "输入城市名称",
         "wifiSpeedTest": "WiFi速度测试",
     "weather": "天气",
