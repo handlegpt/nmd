@@ -15,6 +15,6 @@ export default function robots(): MetadataRoute.Robots {
         '*.xml'
       ],
     },
-    sitemap: 'https://nomadnow.app/sitemap.xml',
+    sitemap: 'https://nomad.now/sitemap.xml',
   }
 }

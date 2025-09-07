@@ -12,7 +12,7 @@ const nextConfig = {
       'res.cloudinary.com',
       'images.unsplash.com',
       'via.placeholder.com',
-      'nomadnow.app'
+      'nomad.now'
     ],
     formats: ['image/webp', 'image/avif'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],

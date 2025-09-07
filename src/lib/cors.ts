@@ -17,8 +17,8 @@ const defaultCorsConfig: CorsConfig = {
   origin: [
     'http://localhost:3000',
     'http://localhost:3011',
-    'https://nomadnow.app',
-    'https://www.nomadnow.app'
+    'https://nomad.now',
+    'https://www.nomad.now'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: [
@@ -179,8 +179,8 @@ export function getCorsConfig(): CorsConfig {
   return {
     ...defaultCorsConfig,
     origin: [
-      'https://nomadnow.app',
-      'https://www.nomadnow.app'
+      'https://nomad.now',
+      'https://www.nomad.now'
     ],
     credentials: true
   }

@@ -43,7 +43,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL('https://nomadnow.app'),
+  metadataBase: new URL('https://nomad.now'),
   alternates: {
     canonical: '/',
     languages: {
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://nomadnow.app',
+    url: 'https://nomad.now',
     siteName: 'NomadNow',
     title: 'NomadNow - Digital Nomad Life Guide',
     description: 'Discover the best cities for digital nomads, optimize tax strategies, and connect with the global nomad community.',
@@ -114,7 +114,7 @@ export default function RootLayout({
         {/* Preconnect to external domains for performance */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://api.nomadnow.app" />
+        <link rel="preconnect" href="https://api.nomad.now" />
         
         {/* DNS prefetch for performance */}
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
@@ -146,11 +146,11 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "NomadNow",
-              "url": "https://nomadnow.app",
+              "url": "https://nomad.now",
               "description": "The ultimate life guide for digital nomads, providing global city information, tax optimization advice, community connections and practical tools",
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": "https://nomadnow.app/search?q={search_term_string}",
+                "target": "https://nomad.now/search?q={search_term_string}",
                 "query-input": "required name=search_term_string"
               },
               "sameAs": [
@@ -169,14 +169,14 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "NomadNow",
-              "url": "https://nomadnow.app",
-              "logo": "https://nomadnow.app/logo.png",
+              "url": "https://nomad.now",
+              "logo": "https://nomad.now/logo.png",
               "description": "Digital nomad life guide platform",
               "foundingDate": "2024",
               "contactPoint": {
                 "@type": "ContactPoint",
                 "contactType": "customer service",
-                "email": "support@nomadnow.app"
+                "email": "support@nomad.now"
               }
             })
           }}

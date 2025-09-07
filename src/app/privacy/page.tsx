@@ -302,7 +302,7 @@ export default function PrivacyPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h4>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm">privacy@nomadnow.app</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">privacy@nomad.now</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">

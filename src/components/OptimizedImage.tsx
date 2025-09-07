@@ -52,7 +52,7 @@ export default function OptimizedImage({
   // 优化图片URL
   const getOptimizedSrc = (originalSrc: string) => {
     // 如果是外部图片，使用图片优化服务
-    if (originalSrc.startsWith('http') && !originalSrc.includes('nomadnow.app')) {
+    if (originalSrc.startsWith('http') && !originalSrc.includes('nomad.now')) {
       // 使用Cloudinary或其他图片优化服务
       return `https://res.cloudinary.com/nomadnow/image/fetch/f_auto,q_${quality},w_${width || 800}/${encodeURIComponent(originalSrc)}`
     }

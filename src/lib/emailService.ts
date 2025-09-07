@@ -39,7 +39,7 @@ export async function sendVerificationEmail(
     
     // 发送邮件
     const { data, error } = await resend.emails.send({
-      from: 'NOMAD.NOW <noreply@nomadnow.app>',
+      from: 'NOMAD.NOW <noreply@nomad.now>',
       to: [email],
       subject: emailTemplate.subject,
       html: emailTemplate.html
@@ -89,7 +89,7 @@ export async function sendTestEmail(email: string): Promise<EmailSendResult> {
     const resend = new Resend(resendApiKey)
     
     const { data, error } = await resend.emails.send({
-      from: 'NOMAD.NOW <noreply@nomadnow.app>',
+      from: 'NOMAD.NOW <noreply@nomad.now>',
       to: [email],
       subject: 'Test Email from NOMAD.NOW',
       html: `

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'Nomad Now',
-    url: 'https://nomadnow.app/nomadplaces',
+    url: 'https://nomad.now/nomadplaces',
   },
   twitter: {
     card: 'summary_large_image',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: 'Discover the best places for digital nomads worldwide. Find coworking spaces, cafes, restaurants, and accommodation with WiFi speeds, costs, and nomad-friendly ratings.',
   },
   alternates: {
-    canonical: 'https://nomadnow.app/nomadplaces',
+    canonical: 'https://nomad.now/nomadplaces',
   },
 }
 

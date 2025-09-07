@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'Nomad Now',
-    url: 'https://nomadnow.app/nomadvisaguide',
+    url: 'https://nomad.now/nomadvisaguide',
   },
   twitter: {
     card: 'summary_large_image',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: 'Complete digital nomad visa guide with country requirements, application processes, and stay duration limits.',
   },
   alternates: {
-    canonical: 'https://nomadnow.app/nomadvisaguide',
+    canonical: 'https://nomad.now/nomadvisaguide',
   },
 }
 

@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'en_US',
     siteName: 'Nomad Now',
-    url: 'https://nomadnow.app/nomadtax',
+    url: 'https://nomad.now/nomadtax',
   },
   twitter: {
     card: 'summary_large_image',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: 'Complete digital nomad tax optimization guide with calculators, strategies, and country comparisons.',
   },
   alternates: {
-    canonical: 'https://nomadnow.app/nomadtax',
+    canonical: 'https://nomad.now/nomadtax',
   },
 }
 

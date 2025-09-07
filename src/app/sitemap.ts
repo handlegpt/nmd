@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { getCities } from '@/lib/api'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://nomadnow.app'
+  const baseUrl = 'https://nomad.now'
   
   // 静态页面
   const staticPages = [

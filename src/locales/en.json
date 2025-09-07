@@ -183,7 +183,7 @@
     "moderate": "Moderate",
     "easy": "Easy",
     "hotel": "Hotel",
-    "requirements": "Requirements",
+      "requirements": "Requirements",
     "applicationDifficulty": "Application Difficulty",
     "stayDuration": "Stay Duration",
     "visaType": "Visa Type",
@@ -223,8 +223,8 @@
     "quickInfo": "Quick Info",
     "timezone": "Timezone",
     "coordinates": "Coordinates",
-    "utilities": "Utilities",
-    "entertainment": "Entertainment",
+      "utilities": "Utilities",
+      "entertainment": "Entertainment",
     "transportation": "Transportation",
     "food": "Food",
     "accommodation": "Accommodation",
@@ -260,7 +260,7 @@
     "hotels": "Hotels",
     "apartmentRental": "Apartment Rental",
     "coworkingSpaces": "Coworking Spaces",
-    "taxi": "Taxi",
+      "taxi": "Taxi",
     "publicTransport": "Public Transport",
     "airport": "Airport",
     "accommodationInfo": "Accommodation Information",
@@ -979,7 +979,7 @@
     "message": "Message",
     "days": "Days",
     "meetups": "Meetups",
-    "timezone": "Timezone",
+      "timezone": "Timezone",
     "interests": "Interests",
     "lastSeen": "Last Seen",
     "userProfile": "User Profile",
@@ -1209,7 +1209,7 @@
     "contactUs": {
       "title": "Contact Us",
       "description": "If you have any questions about this Privacy Policy or our data practices, please contact us:",
-      "email": "Email: privacy@nomadnow.app",
+      "email": "Email: privacy@nomad.now",
       "address": "Address: [Your Company Address]"
     }
   },
@@ -2054,7 +2054,7 @@
         "medium": "Medium",
         "hard": "Hard"
       },
-      "categories": {
+    "categories": {
         "taxHaven": "Tax Haven",
         "territorial": "Territorial Tax",
         "companyStructure": "Company Structure",
@@ -3409,4 +3409,4 @@
       "practicalTips": "Practical Tips"
     }
   }
-}
+} 

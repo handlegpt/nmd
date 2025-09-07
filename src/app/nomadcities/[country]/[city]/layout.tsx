@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: CityLayoutProps): Promise<Met
         description: `Explore digital nomad life in ${cityData.name}, ${cityData.country}: Cost of living $${cityData.cost_of_living}/month, WiFi speed ${cityData.wifi_speed}Mbps, visa stay ${cityData.visa_days} days.`,
       },
       alternates: {
-        canonical: `https://nomadnow.app/nomadcities/${country}/${city}`,
+        canonical: `https://nomad.now/nomadcities/${country}/${city}`,
       },
     }
   } catch (error) {
