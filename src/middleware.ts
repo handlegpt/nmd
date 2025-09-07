@@ -160,8 +160,7 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * 匹配所有请求路径，除了以下开头的路径：
-     * - api (API routes)
+     * 匹配所有请求路径，包括 API 路由，除了以下开头的路径：
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
