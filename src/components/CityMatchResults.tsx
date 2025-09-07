@@ -155,7 +155,7 @@ export default function CityMatchResults({ matches, onClose }: CityMatchResultsP
             {/* 操作按钮 */}
             <div className="mt-4 pt-4 border-t border-gray-200">
               <FixedLink
-                href={`/nomadcities/${match.city.name.toLowerCase().replace(/\s+/g, '-')}`}
+                href={`/nomadcities/${match.city.country.toLowerCase().replace(/\s+/g, '-')}/${match.city.name.toLowerCase().replace(/\s+/g, '-')}`}
                 className="btn btn-primary w-full"
               >
                 {t('cities.viewDetails')}
