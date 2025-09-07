@@ -183,7 +183,7 @@
     "moderate": "Moderate",
     "easy": "Easy",
     "hotel": "Hotel",
-      "requirements": "Requirements",
+    "requirements": "Requirements",
     "applicationDifficulty": "Application Difficulty",
     "stayDuration": "Stay Duration",
     "visaType": "Visa Type",
@@ -210,25 +210,12 @@
       "hard": "Hard"
     },
     "nomadCommunity": "Nomad Community",
-    "communityActivity": {
-      "low": "Low",
-      "medium": "Medium",
-      "high": "High"
-    },
+    "communityActivity": "Community Activity",
     "activeNomads": "Active Nomads",
     "aboutCity": "About {city}",
     "cityDescription": "{city} is a vibrant city in {country} with a cost of living around ${cost}/month, WiFi speeds averaging {wifi}Mbps, and visa-free stays of up to {visa} days for most nationalities.",
-    "pros": {
-      "affordableCost": "Affordable cost of living",
-      "goodWifi": "Good WiFi infrastructure",
-      "longVisa": "Long visa-free stay",
-      "nomadFriendly": "Nomad-friendly environment"
-    },
-    "cons": {
-      "languageBarrier": "Language barrier",
-      "weatherIssues": "Weather issues",
-      "transportation": "Transportation challenges"
-    },
+    "pros": "Pros",
+    "cons": "Cons",
     "actions": "Actions",
     "rateCity": "Rate City",
     "addToFavorites": "Add to Favorites",
@@ -236,17 +223,14 @@
     "quickInfo": "Quick Info",
     "timezone": "Timezone",
     "coordinates": "Coordinates",
-      "utilities": "Utilities",
-      "entertainment": "Entertainment",
+    "utilities": "Utilities",
+    "entertainment": "Entertainment",
     "transportation": "Transportation",
     "food": "Food",
     "accommodation": "Accommodation",
     "costBreakdown": "Monthly Cost Breakdown",
-    "cons": "Cons",
-    "pros": "Pros",
     "stayDays": "Stay Days",
     "convenienceScore": "Convenience Score",
-    "communityActivity": "Community Activity",
     "overallScore": "Overall Score",
     "euro50to100": "€50-100",
     "euro800to1200": "€800-1200",
@@ -276,7 +260,7 @@
     "hotels": "Hotels",
     "apartmentRental": "Apartment Rental",
     "coworkingSpaces": "Coworking Spaces",
-      "taxi": "Taxi",
+    "taxi": "Taxi",
     "publicTransport": "Public Transport",
     "airport": "Airport",
     "accommodationInfo": "Accommodation Information",
@@ -458,7 +442,7 @@
   },
   "profile": {
     "title": "Profile",
-    "subtitle": "Manage your digital nomad profile",
+    "subtitle": "Manage your personal information and preferences",
     "name": "Name",
     "currentCity": "Current City",
     "currentCityExample": "e.g., Bangkok, Thailand",
@@ -466,7 +450,7 @@
     "professionExample": "e.g., Software Developer",
     "company": "Company",
     "companyExample": "e.g., Remote Company",
-    "bioPlaceholder": "Tell us about yourself, your interests, and your digital nomad journey...",
+    "bioPlaceholder": "Tell us about yourself...",
     "skills": "Skills",
     "interests": "Interests",
     "socialLinks": "Social Links",
@@ -524,29 +508,14 @@
     "budgetRange": "Budget Range",
     "travelPreferences": "Travel Preferences",
     "whatsapp": "WhatsApp",
-    "phone": "Phone",
     "contact": "Contact",
-    "saving": "Saving...",
-    "save": "Save",
     "notSet": "Not set",
-    "socialLinks": "Social Links",
-    "addInterest": "Add Interest",
-    "interests": "Interests",
-    "addSkill": "Add Skill",
-    "skills": "Skills",
-    "company": "Company",
-    "profession": "Profession",
     "professional": "Professional Information",
-    "bioPlaceholder": "Tell us about yourself...",
     "bio": "Bio",
     "cityPlaceholder": "Enter your current city",
-    "currentCity": "Current City",
     "namePlaceholder": "Enter your name",
-    "name": "Name",
     "personalInfo": "Personal Information",
-    "edit": "Edit Profile",
-    "subtitle": "Manage your personal information and preferences",
-    "title": "Profile"
+    "edit": "Edit Profile"
   },
   "dashboard": {
     "pushNotificationsDesc": "Receive real-time alerts and updates",
@@ -1010,7 +979,7 @@
     "message": "Message",
     "days": "Days",
     "meetups": "Meetups",
-      "timezone": "Timezone",
+    "timezone": "Timezone",
     "interests": "Interests",
     "lastSeen": "Last Seen",
     "userProfile": "User Profile",
@@ -1045,19 +1014,18 @@
     "createMeetup": "Create Meetup",
     "rating": "Rating",
     "organizer": "Organizer",
-    "status": "Status",
+    "status": {
+      "upcoming": "Upcoming",
+      "ongoing": "Ongoing",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    },
     "categories": {
       "learning": "Learning",
       "adventure": "Adventure",
       "social": "Social",
       "coworking": "Coworking",
       "coffee": "Coffee"
-    },
-    "status": {
-      "upcoming": "Upcoming",
-      "ongoing": "Ongoing",
-      "completed": "Completed",
-      "cancelled": "Cancelled"
     },
     "title": "Nomad Connect"
   },
@@ -1159,132 +1127,11 @@
   },
   "privacy": {
     "title": "Privacy Policy",
-    "subtitle": "Your privacy is important to us. This policy explains how we collect, use, and protect your information.",
+    "subtitle": "How we collect, use, and protect your information",
     "lastUpdated": "Last updated: {date}",
     "introduction": {
-      "title": "Introduction",
-      "description": "At Nomad Now, we are committed to protecting your privacy and ensuring the security of your personal information. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our platform."
-    },
-    "informationWeCollect": {
-      "title": "Information We Collect",
-      "description": "We collect information to provide better services to all our users. The types of information we collect depend on how you use our services.",
-      "personalInfo": {
-        "title": "Personal Information"
-      },
-      "usageData": {
-        "title": "Usage Data"
-      },
-      "personalInfoItems": {
-        "0": "Name and contact information",
-        "1": "Profile information (profession, skills, interests)",
-        "2": "Location data (when you choose to share)",
-        "3": "Travel preferences and history"
-      },
-      "usageDataItems": {
-        "0": "Pages visited and features used",
-        "1": "Search queries and preferences",
-        "2": "Device information and browser type",
-        "3": "IP address and approximate location"
-      }
-    },
-    "howWeUseInfo": {
-      "title": "How We Use Your Information",
-      "description": "We use the information we collect to provide, maintain, and improve our services.",
-      "purposes": {
-        "0": "Provide and maintain our services",
-        "1": "Personalize your experience",
-        "2": "Improve our platform and features",
-        "3": "Send important updates and notifications",
-        "4": "Respond to your inquiries and support requests"
-      }
-    },
-    "dataSharing": {
-      "title": "Data Sharing and Disclosure",
-      "description": "We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:",
-      "circumstances": {
-        "0": "With your explicit consent",
-        "1": "To comply with legal obligations",
-        "2": "To protect our rights and safety",
-        "3": "With service providers who assist in operating our platform (under strict confidentiality agreements)"
-      }
-    },
-    "dataSecurity": {
-      "title": "Data Security",
-      "description": "We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
-      "measures": {
-        "0": "Encryption of data in transit and at rest",
-        "1": "Regular security assessments and updates",
-        "2": "Access controls and authentication",
-        "3": "Secure data storage and backup procedures"
-      }
-    },
-    "yourRights": {
-      "title": "Your Rights and Choices",
-      "description": "You have the right to:",
-      "rights": {
-        "0": "Access and review your personal information",
-        "1": "Update or correct your information",
-        "2": "Delete your account and associated data",
-        "3": "Opt-out of certain communications",
-        "4": "Control location sharing and permissions"
-      }
-    },
-    "cookies": {
-      "title": "Cookies and Tracking",
-      "description": "We use cookies and similar technologies to enhance your experience, analyze usage, and provide personalized content.",
-      "types": {
-        "essential": "Essential cookies for basic functionality",
-        "analytics": "Analytics cookies to understand usage patterns",
-        "preferences": "Preference cookies to remember your settings"
-      }
-    },
-    "contactUs": {
-      "title": "Contact Us",
-      "description": "If you have any questions about this Privacy Policy or our data practices, please contact us:",
-      "email": "Email: privacy@nomadnow.app",
-      "address": "Address: [Your Company Address]"
-    },
-    "yourRights": {
-      "rights": [
-        "Access and review your personal information",
-        "Update or correct your information",
-        "Delete your account and associated data",
-        "Opt-out of certain communications",
-        "Control location sharing and permissions"
-      ],
-      "description": "You have the right to:",
-      "title": "Your Rights and Choices"
-    },
-    "dataSecurity": {
-      "measures": [
-        "Encryption of data in transit and at rest",
-        "Regular security assessments and updates",
-        "Access controls and authentication",
-        "Secure data storage and backup procedures"
-      ],
-      "description": "We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
-      "title": "Data Security"
-    },
-    "dataSharing": {
-      "circumstances": [
-        "With your explicit consent",
-        "To comply with legal obligations",
-        "To protect our rights and safety",
-        "With service providers who assist in operating our platform (under strict confidentiality agreements)"
-      ],
-      "description": "We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:",
-      "title": "Data Sharing and Disclosure"
-    },
-    "howWeUseInfo": {
-      "purposes": [
-        "Provide and maintain our services",
-        "Personalize your experience",
-        "Improve our platform and features",
-        "Send important updates and notifications",
-        "Respond to your inquiries and support requests"
-      ],
-      "description": "We use the collected information to provide, improve, and personalize our services.",
-      "title": "How We Use Your Information"
+      "description": "At NOMAD.NOW, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our services.",
+      "title": "Introduction"
     },
     "informationWeCollect": {
       "usageData": {
@@ -1308,13 +1155,63 @@
       "description": "We collect information you provide directly to us and information we obtain automatically when you use our services.",
       "title": "Information We Collect"
     },
-    "introduction": {
-      "description": "At NOMAD.NOW, we respect your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use our services.",
-      "title": "Introduction"
+    "howWeUseInfo": {
+      "purposes": [
+        "Provide and maintain our services",
+        "Personalize your experience",
+        "Improve our platform and features",
+        "Send important updates and notifications",
+        "Respond to your inquiries and support requests"
+      ],
+      "description": "We use the collected information to provide, improve, and personalize our services.",
+      "title": "How We Use Your Information"
     },
-    "lastUpdated": "Last updated: {date}",
-    "subtitle": "How we collect, use, and protect your information",
-    "title": "Privacy Policy"
+    "dataSharing": {
+      "circumstances": [
+        "With your explicit consent",
+        "To comply with legal obligations",
+        "To protect our rights and safety",
+        "With service providers who assist in operating our platform (under strict confidentiality agreements)"
+      ],
+      "description": "We do not sell, trade, or rent your personal information to third parties. We may share your information only in the following circumstances:",
+      "title": "Data Sharing and Disclosure"
+    },
+    "dataSecurity": {
+      "measures": [
+        "Encryption of data in transit and at rest",
+        "Regular security assessments and updates",
+        "Access controls and authentication",
+        "Secure data storage and backup procedures"
+      ],
+      "description": "We implement appropriate security measures to protect your personal information against unauthorized access, alteration, disclosure, or destruction.",
+      "title": "Data Security"
+    },
+    "yourRights": {
+      "rights": [
+        "Access and review your personal information",
+        "Update or correct your information",
+        "Delete your account and associated data",
+        "Opt-out of certain communications",
+        "Control location sharing and permissions"
+      ],
+      "description": "You have the right to:",
+      "title": "Your Rights and Choices"
+    },
+    "cookies": {
+      "title": "Cookies and Tracking",
+      "description": "We use cookies and similar technologies to enhance your experience, analyze usage, and provide personalized content.",
+      "types": {
+        "essential": "Essential cookies for basic functionality",
+        "analytics": "Analytics cookies to understand usage patterns",
+        "preferences": "Preference cookies to remember your settings"
+      }
+    },
+    "contactUs": {
+      "title": "Contact Us",
+      "description": "If you have any questions about this Privacy Policy or our data practices, please contact us:",
+      "email": "Email: privacy@nomadnow.app",
+      "address": "Address: [Your Company Address]"
+    }
   },
   "about": {
     "team": {
@@ -1584,10 +1481,10 @@
     "title": "AI Personalized Recommendations"
   },
   "places": {
-    "title": "Places",
+    "title": "Nomad Place Recommendations",
     "subtitle": "Discover amazing places for digital nomads",
     "searchPlaceholder": "Search places...",
-    "addPlace": "Add Place",
+    "addPlace": "Add Recommendation",
     "evaluate": "Evaluate",
     "noise": "Low Noise",
     "seating": "Wide Seating",
@@ -1597,7 +1494,21 @@
     "sortByPrice": "Price",
     "sortBySpeed": "Speed",
     "sortByRating": "Rating",
-    "filters": "Filters",
+    "filters": {
+      "library": "Library",
+      "park": "Park",
+      "bank": "Bank",
+      "shopping": "Shopping",
+      "transport": "Transport",
+      "hotel": "Hotel",
+      "pharmacy": "Pharmacy",
+      "hospital": "Hospital",
+      "restaurant": "Restaurant",
+      "coliving": "Coliving",
+      "coworking": "Coworking",
+      "cafe": "Cafe",
+      "all": "All"
+    },
     "clearAll": "Clear All",
     "category": "Category",
     "city": "City",
@@ -1714,21 +1625,6 @@
       "recent": "Most Recent",
       "rating": "Highest Rating"
     },
-    "filters": {
-      "library": "Library",
-      "park": "Park",
-      "bank": "Bank",
-      "shopping": "Shopping",
-      "transport": "Transport",
-      "hotel": "Hotel",
-      "pharmacy": "Pharmacy",
-      "hospital": "Hospital",
-      "restaurant": "Restaurant",
-      "coliving": "Coliving",
-      "coworking": "Coworking",
-      "cafe": "Cafe",
-      "all": "All"
-    },
     "categories": {
       "other": "📍 Other",
       "shopping": "🛍 Shopping Center",
@@ -1751,10 +1647,7 @@
     "recommendationScore": "Recommendation Score",
     "recommendations": "recommendations",
     "quickBrowse": "Quick Browse",
-    "addPlace": "Add Recommendation",
-    "searchPlaceholder": "Search places...",
-    "description": "Discover the best places for remote work",
-    "title": "Nomad Place Recommendations"
+    "description": "Discover the best places for remote work"
   },
   "guides": {
     "categories": {
@@ -1962,6 +1855,23 @@
     "title": "Reviews"
   },
   "tax": {
+    "calculator": {
+      "disclaimer": {
+        "title": "Important Disclaimer",
+        "description": "This tax calculator provides estimates only. Tax laws vary by country and individual circumstances. Please consult with a qualified tax professional for accurate advice."
+      },
+      "visaDifficulty": {
+        "easy": "Easy",
+        "medium": "Medium",
+        "hard": "Hard"
+      },
+      "costOfLiving": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High"
+      },
+      "digitalNomadFriendly": "Digital Nomad Friendly"
+    },
     "deadlines": {
       "title": "Tax Deadline Reminder",
       "selectCountry": "Select your nationality country",
@@ -1987,10 +1897,9 @@
       "noUrgentDeadlines": "🎉 No urgent tax deadlines!",
       "dueToday": "Due today",
       "daysAgo": " days ago",
-      "daysLeft": " days left",
       "countries": {
         "us": "United States",
-        "uk": "United Kingdom", 
+        "uk": "United Kingdom",
         "ca": "Canada",
         "au": "Australia",
         "ie": "Ireland"
@@ -2142,10 +2051,10 @@
       },
       "difficulty": {
         "easy": "Easy",
-        "medium": "Medium", 
+        "medium": "Medium",
         "hard": "Hard"
       },
-    "categories": {
+      "categories": {
         "taxHaven": "Tax Haven",
         "territorial": "Territorial Tax",
         "companyStructure": "Company Structure",
@@ -2180,164 +2089,7 @@
         "low": "Low",
         "medium": "Medium",
         "high": "High"
-      },
-      "strategies": {
-        "companyStructure": {
-          "savings": "$20,000-60,000/year",
-          "timeToImplement": "6-12 months"
-        },
-        "digitalNomadVisa": {
-          "savings": "$5,000-20,000/year",
-          "timeToImplement": "2-4 months"
-        },
-        "taxTreatyOptimization": {
-          "savings": "$8,000-25,000/year",
-          "timeToImplement": "3-6 months"
-        }
       }
-    },
-    "calculator": {
-      "potentialSavings": "Potential Savings",
-      "taxableIncome": "Taxable Income",
-      "feieLimit": "FEIE Limit",
-      "feieCheck": "FEIE Eligibility Check",
-      "calculatorDisclaimer": "This calculator provides estimates for reference only. Actual tax situations depend on individual circumstances, latest tax law changes, and country regulations. Please consult professional tax advisors before making any tax decisions.",
-      "importantNotice": "Important Notice",
-      "danger": "Danger",
-      "warning": "Warning",
-      "safe": "Safe",
-      "statusOverview": "Status Overview",
-      "daysLimit": "days",
-      "daysSpent": "Days Spent",
-      "residencyTrackingDesc": "Monitor days spent in multiple countries to avoid triggering tax residency (usually 183 days)",
-      "residencyTracking": "Tax Residency Tracking",
-      "needMoreDays": "Need more days",
-      "eligibleForFEIE": "Eligible for FEIE",
-      "progress": "Progress",
-      "progressTracking": "Progress Tracking",
-      "daysOutsideUSPlaceholder": "Enter days",
-      "daysOutsideUS": "Days Outside US",
-      "testPeriodEnd": "Test Period End",
-      "testPeriodStart": "Test Period Start",
-      "presenceTest": "Physical Presence Test",
-      "canSave": "Can Save",
-      "feieEligible": "FEIE Eligible",
-      "savings": "Savings",
-      "netIncome": "Net Income",
-      "taxAmount": "Tax Amount",
-      "effectiveRate": "Effective Rate",
-      "results": "Calculation Results",
-      "selectCountries": "Select countries to compare",
-      "annualIncomePlaceholder": "Enter annual income",
-      "annualIncome": "Annual Income",
-    "tabs": {
-        "calculator": "Tax Calculator",
-        "feie": "FEIE Calculator",
-        "presence": "Presence Test",
-        "residency": "Residency Tracker"
-      },
-      "countries": {
-        "portugal": "Portugal",
-        "thailand": "Thailand",
-        "mexico": "Mexico",
-        "spain": "Spain",
-        "germany": "Germany",
-        "estonia": "Estonia",
-        "costaRica": "Costa Rica",
-        "malaysia": "Malaysia"
-      },
-      "countryNotes": {
-        "portugal": "NHR policy tightened",
-        "thailand": "Territorial tax system",
-        "mexico": "Territorial tax system",
-        "spain": "Beckham Law",
-        "germany": "High tax rate",
-        "estonia": "Digital nomad friendly",
-        "costaRica": "Territorial tax system",
-        "malaysia": "MM2H visa"
-      },
-      "overview": {
-        "title": "Tax Comparison Overview",
-        "maxSavings": "Maximum Savings Potential",
-        "countryCount": "Countries Compared",
-        "lowestRate": "Lowest Effective Rate"
-      },
-      "detailedResults": {
-        "title": "Detailed Calculation Results",
-        "taxRateComparison": "Tax Rate Comparison",
-        "feieApplicable": "FEIE Applicable: Can Save",
-        "recommendedRanking": "Recommended Ranking (by savings potential)",
-        "annualIncome": "Annual Income",
-        "taxAmount": "Tax Amount",
-        "netIncome": "Net Income",
-        "savingsAmount": "Savings Amount",
-        "effectiveRate": "Effective Rate",
-        "taxRate": "Tax Rate"
-      },
-      "feie": {
-        "title": "FEIE Eligibility Check",
-        "annualIncome": "Annual Income",
-        "feieLimit": "FEIE Limit",
-        "taxableIncome": "Taxable Income",
-        "potentialSavings": "Potential Savings",
-        "importantReminder": "Important Reminder",
-        "reminder1": "Must meet physical presence test (330 days) or bona fide residence test",
-        "reminder2": "Only applies to US federal income tax, not state taxes",
-        "reminder3": "Consult tax professionals to confirm eligibility",
-        "reminder4": "Actual savings depend on specific circumstances",
-        "feieLimitYear": "FEIE Limit"
-      },
-      "presence": {
-        "title": "Physical Presence Test",
-        "testPeriodStart": "Test Period Start",
-        "testPeriodEnd": "Test Period End",
-        "daysOutsideUS": "Days Outside US",
-        "progressTracking": "Progress Tracking",
-        "progress": "Progress",
-        "daysRequired": "days required",
-        "eligibleForFEIE": "Eligible for FEIE",
-        "needMoreDays": "Need more days",
-        "daysOutsideUSInput": "Enter number of days",
-        "daysFormat": "days"
-      },
-      "residency": {
-        "title": "Tax Residency Tracking",
-        "description": "Monitor days spent in each country to avoid triggering tax residency (usually 183 days)",
-        "daysSpent": "Days Spent",
-        "daysLimit": "/ 183 days",
-        "statusOverview": "Status Overview",
-        "safe": "Safe",
-        "warning": "Warning",
-        "danger": "Danger",
-        "daysInput": "days",
-        "daysFormat": "days"
-      }
-    },
-    "deadlines": {
-      "deadlineDisclaimer": "This reminder system provides general tax deadline information. Actual deadlines may vary due to personal circumstances, filing extensions, and other factors. Please refer to the latest information from official tax authorities and consult professional tax advisors for complex situations.",
-      "professionalTip": "Consult tax professionals for complex situations",
-      "organizationTip": "Keep important documents organized throughout the year",
-      "extensionTip": "Consider filing extensions where available (US citizens get automatic 2-month extension)",
-      "reminderTipsDesc": "Set up calendar alerts 2-4 weeks before each deadline",
-      "reminderTips": "Reminder Tips",
-      "urgent": "Urgent: Please handle soon",
-      "dueToday": "Due today",
-      "daysAgo": "days ago",
-      "daysUntil": "days until",
-      "selectCountriesToView": "Select countries to see tax deadlines",
-      "yourDeadlines": "Your Tax Deadlines",
-      "hideCompleted": "Hide Completed",
-      "showCompleted": "Show Completed",
-      "copyUrgentDeadlines": "Copy Urgent Deadlines",
-      "exportToCalendar": "Export to Calendar",
-      "noUrgentDeadlines": "No urgent tax deadlines!",
-      "completed": "Completed",
-      "upcomingDeadlines": "Upcoming Deadlines",
-      "urgentDeadlines": "Urgent Deadlines",
-      "statusSummary": "Status Summary",
-      "selectCountries": "Select Your Countries",
-      "description": "Personalized reminders based on your citizenship, export to calendar and stay organized across multiple countries",
-      "title": "Tax Deadline Reminder"
     },
     "optimizationTips": {
       "keepGoodRecordsDesc": "Maintain all tax-related documents including income certificates, residency certificates, etc.",
@@ -2601,7 +2353,7 @@
     "addToFavorites": "Add to Favorites",
     "selectForComparison": "Select for Comparison",
     "stable": "Stable",
-      "luxury": "Luxury",
+    "luxury": "Luxury",
     "expensive": "Expensive",
     "moderate": "Moderate",
     "affordable": "Affordable",
@@ -2622,7 +2374,7 @@
     "spanish": "Spanish",
     "english": "English",
     "allLanguages": "All Languages",
-      "language": "Language",
+    "language": "Language",
     "over200Mbps": "200+ Mbps",
     "over100Mbps": "100+ Mbps",
     "over50Mbps": "50+ Mbps",
@@ -2805,19 +2557,19 @@
   },
   "home": {
     "placeCategories": {
-      "cafe": "Cafe",
-      "coworking": "Coworking",
-      "coliving": "Coliving",
-      "restaurant": "Restaurant",
-      "hospital": "Hospital",
-      "pharmacy": "Pharmacy",
-      "hotel": "Hotel",
-      "transport": "Transport",
-      "shopping": "Shopping",
-      "bank": "Bank",
-      "park": "Park",
+      "other": "Other",
       "library": "Library",
-      "other": "Other"
+      "park": "Park",
+      "bank": "Bank",
+      "shopping": "Shopping",
+      "transport": "Transport",
+      "hotel": "Hotel",
+      "pharmacy": "Pharmacy",
+      "hospital": "Hospital",
+      "restaurant": "Restaurant",
+      "coliving": "Coliving Space",
+      "coworking": "Coworking Space",
+      "cafe": "Cafe"
     },
     "cta": {
       "button": "Get Started",
@@ -2837,7 +2589,7 @@
       "title": "Global Nomad Community"
     },
     "features": {
-  "community": {
+      "community": {
         "description": "Connect with fellow digital nomads worldwide",
         "title": "Community"
       },
@@ -2932,21 +2684,6 @@
     "filterByRegion": "Filter by region",
     "all": "All",
     "filterByCategory": "Filter by category",
-    "placeCategories": {
-      "other": "Other",
-      "library": "Library",
-      "park": "Park",
-      "bank": "Bank",
-      "shopping": "Shopping",
-      "transport": "Transport",
-      "hotel": "Hotel",
-      "pharmacy": "Pharmacy",
-      "hospital": "Hospital",
-      "restaurant": "Restaurant",
-      "coliving": "Coliving Space",
-      "coworking": "Coworking Space",
-      "cafe": "Cafe"
-    },
     "refreshData": "Refresh Data",
     "nextDestination": "Next Destination",
     "switchCity": "Switch City",
@@ -3060,7 +2797,7 @@
         "totalDays": "Total Days",
         "totalCities": "Total Cities",
         "explore": "Explore",
-    "viewDetails": "View Details",
+        "viewDetails": "View Details",
         "weather": "Weather",
         "wifiSpeedTest": "WiFi Speed Test",
         "locationPlaceholder": "Enter city name",
@@ -3079,7 +2816,7 @@
         "fromUserRecommendations": "From {count} user recommendations",
         "popularCafe": "Popular Cafe",
         "monthlyAverage": "Monthly Average",
-    "costOfLiving": "Cost of Living",
+        "costOfLiving": "Cost of Living",
         "wifiRating": "WiFi Rating",
         "setReminder": "Set Reminder",
         "days": "days",
@@ -3241,7 +2978,7 @@
     "peopleOnline": "people online",
     "viewMoreHotCities": "View More Hot Cities",
     "hotCities": "Hot Cities",
-    "inviteReward": "Get 1 month premium for each friend invited",
+    "inviteReward": "Get 1 month premium for each invite (max 3 months, reward sent when friend completes registration)",
     "copyLink": "Copy Link",
     "generateQR": "Generate QR Code",
     "inviteLink": "Link",
@@ -3313,14 +3050,12 @@
     "avgConnectionTime": "Average Connection Time",
     "exploreGlobal": "Explore Global",
     "enableLocationToDiscover": "Enable location to discover nearby Nomads",
-    "enableLocation": "Enable Location",
     "getPersonalizedRecommendations": "Get personalized recommendations based on location",
     "allowLocation": "Allow Location",
     "selectCityManually": "Select City Manually",
     "recent30DaysData": "Recent 30 days data",
     "basedOnRealRequests": "Based on {count} real requests",
     "shareInviteLink": "Share invite link or explore popular cities",
-    "inviteReward": "Get 1 month premium for each invite (max 3 months, reward sent when friend completes registration)",
     "baliBeachCoworkingDesc": "Beachside coworking, enjoy sunshine and sea breeze",
     "baliBeachCoworking": "Bali Beach Coworking",
     "chiangMaiDevCoworkDesc": "Developer coworking space, share tech and project experience",
@@ -3356,7 +3091,6 @@
       "nomads": "nomads",
       "cities": "cities"
     },
-    "successRate": "Success Rate",
     "totalNomads": "Total Nomads",
     "heroDescription": "Discover local nomads in your area, share experiences, and build meaningful connections over coffee. Join a community of digital nomads who understand your lifestyle.",
     "heroTitle": "Connect with Fellow Nomads",
@@ -3675,4 +3409,4 @@
       "practicalTips": "Practical Tips"
     }
   }
-} 
+}

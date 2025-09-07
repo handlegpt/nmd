@@ -996,6 +996,37 @@
           "high": "高"
         },
         "tags": "标签"
+      },
+      "suggestedTags": {
+        "latteArt": "拉花艺术",
+        "goodCoffee": "好咖啡",
+        "WiFi快": "WiFi快",
+        "海滩附近": "海滩附近",
+        "河景": "河景",
+        "高端设施": "高端设施",
+        "历史建筑": "历史建筑",
+        "优雅环境": "优雅环境",
+        "价格实惠": "价格实惠",
+        "清迈": "清迈",
+        "quiet": "安静",
+        "fastWifi": "WiFi快",
+        "goodCoffee": "好咖啡",
+        "reasonablePrice": "价格合理",
+        "convenientLocation": "位置便利",
+        "wellEquipped": "设施完善",
+        "goodCommunity": "社区氛围好",
+        "beautifulView": "风景优美",
+        "goodFood": "食物美味",
+        "goodService": "服务好",
+        "open24Hours": "24小时营业",
+        "petFriendly": "宠物友好"
+      },
+      "priceLevels": {
+        "cheap": "便宜",
+        "economical": "经济实惠",
+        "moderate": "中等",
+        "expensive": "昂贵",
+        "veryExpensive": "非常昂贵"
       }
     }
   },
@@ -1048,6 +1079,20 @@
     "wifi": "WiFi",
     "price": "价格",
     "workFriendly": "办公友好",
+    "filterByCategory": "按类别筛选",
+    "all": "全部",
+    "filterByRegion": "按地区筛选",
+    "allRegions": "所有地区",
+    "asia": "亚洲",
+    "europe": "欧洲",
+    "americas": "美洲",
+    "sortBySpeed": "按速度排序",
+    "community": "社区",
+    "openNow": "现在营业",
+    "outlets": "插座",
+    "seating": "座位",
+    "noise": "噪音",
+    "evaluate": "评价",
     "loginToFavorite": "请登录后添加收藏",
     "addedToFavorites": "已添加到收藏",
     "removedFromFavorites": "已从收藏中移除",
@@ -2375,7 +2420,8 @@
     "tryAgain": "重试",
     "days": "天",
     "testWifi": "测试WiFi",
-    "exploreCities": "探索城市"
+    "exploreCities": "探索城市",
+    "goSee": "去看看"
   },
   "cities": {
     "title": "城市列表",
