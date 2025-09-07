@@ -1870,7 +1870,54 @@
         "medium": "Medium",
         "high": "High"
       },
-      "digitalNomadFriendly": "Digital Nomad Friendly"
+      "digitalNomadFriendly": "Digital Nomad Friendly",
+      "countries": {
+        "portugal": "Portugal",
+        "thailand": "Thailand",
+        "mexico": "Mexico",
+        "spain": "Spain",
+        "germany": "Germany",
+        "estonia": "Estonia",
+        "costaRica": "Costa Rica",
+        "malaysia": "Malaysia"
+      },
+      "countryNotes": {
+        "portugal": "NHR program available (conditions tightened in 2024)",
+        "thailand": "Territorial tax system, foreign income exempt if not remitted",
+        "mexico": "Territorial tax system, US tax treaty benefits",
+        "spain": "Beckham Law available for high earners",
+        "germany": "High tax rates but excellent infrastructure",
+        "estonia": "E-residency program, corporate tax benefits",
+        "costaRica": "Territorial tax system, digital nomad visa available",
+        "malaysia": "MM2H program, low cost of living"
+      },
+      "tabs": {
+        "calculator": "Calculator",
+        "feie": "FEIE",
+        "presence": "Physical Presence",
+        "residency": "Tax Residency"
+      },
+      "annualIncome": "Annual Income",
+      "annualIncomePlaceholder": "Enter your annual income",
+      "selectCountries": "Select countries to compare",
+      "overview": {
+        "title": "Tax Overview",
+        "maxSavings": "Maximum Savings",
+        "countryCount": "Countries Compared",
+        "lowestRate": "Lowest Tax Rate"
+      },
+      "detailedResults": {
+        "title": "Detailed Results",
+        "effectiveRate": "Effective Tax Rate",
+        "annualIncome": "Annual Income",
+        "taxAmount": "Tax Amount",
+        "netIncome": "Net Income",
+        "savingsAmount": "Savings Amount",
+        "taxRateComparison": "Tax Rate Comparison",
+        "feieApplicable": "FEIE Applicable",
+        "recommendedRanking": "Recommended Ranking",
+        "taxRate": "Tax Rate"
+      }
     },
     "deadlines": {
       "title": "Tax Deadline Reminder",
