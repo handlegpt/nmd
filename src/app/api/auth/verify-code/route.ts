@@ -202,15 +202,12 @@ export async function POST(request: NextRequest) {
         
         console.log('📝 Creating user with explicit ip_address field and proper type casting for email:', email)
         
-        // 尝试使用 upsert 操作，不提供 ip_address 字段，让数据库处理
+        // 尝试使用 insert 操作，不提供 ip_address 字段，让数据库处理
         const { data: newUser, error: createError } = await supabase
           .from('users')
-          .upsert({
+          .insert({
             email,
             name: userName
-          }, {
-            onConflict: 'email',
-            ignoreDuplicates: false
           })
           .select('id, email, name, created_at, current_city, avatar_url')
           .single()
