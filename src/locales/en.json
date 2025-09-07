@@ -2018,21 +2018,126 @@
           "title": "Portugal NHR Program (2024 Update)",
           "description": "10-year preferential tax rate, but policy has been significantly tightened, limited to high-skilled professions"
         },
+        "nhrPlan": {
+          "requirements": [
+            "Application before January 1, 2024 (deadline passed)",
+            "Or high-skilled profession with annual income €75,000+",
+            "Reside in Portugal for 183+ days per year",
+            "Not a Portuguese tax resident in the past 5 years",
+            "Certificate of high-skilled profession",
+            "Income certificate"
+          ],
+          "steps": [
+            "Establish residence in Portugal",
+            "Submit NHR application",
+            "Prepare high-skilled profession certificate",
+            "Obtain income certificate",
+            "Register as tax resident",
+            "Enjoy 10-year preferential tax rate",
+            "Maintain ongoing compliance"
+          ],
+          "tips": [
+            "Pay attention to application deadline",
+            "Prepare high-skilled profession certificate",
+            "Keep income records",
+            "Consult tax advisor",
+            "Maintain ongoing compliance"
+          ]
+        },
         "territorialTax": {
           "title": "Territorial Tax Strategy",
-          "description": "Utilize territorial tax countries, foreign income tax-free, suitable for digital nomads"
+          "description": "Utilize territorial tax countries, foreign income tax-free, suitable for digital nomads",
+          "requirements": [
+            "Choose a territorial tax country",
+            "Establish tax residence",
+            "Keep foreign income separate",
+            "Maintain proper documentation"
+          ],
+          "steps": [
+            "Research territorial tax countries",
+            "Choose suitable jurisdiction",
+            "Establish residence",
+            "Set up tax structure",
+            "Maintain compliance"
+          ],
+          "tips": [
+            "Understand local tax laws",
+            "Keep detailed records",
+            "Consult local tax advisor",
+            "Stay updated on changes"
+          ]
         },
         "companyStructure": {
           "title": "Company Structure Optimization",
-          "description": "Optimize tax structure through offshore companies, suitable for high-income business owners"
+          "description": "Optimize tax structure through offshore companies, suitable for high-income business owners",
+          "requirements": [
+            "High income business owner",
+            "International business operations",
+            "Legal compliance knowledge",
+            "Professional tax advice"
+          ],
+          "steps": [
+            "Analyze current structure",
+            "Choose optimal jurisdiction",
+            "Set up offshore company",
+            "Transfer assets",
+            "Maintain compliance",
+            "Regular reviews"
+          ],
+          "tips": [
+            "Work with qualified advisors",
+            "Understand local laws",
+            "Keep detailed records",
+            "Regular compliance reviews"
+          ]
         },
         "digitalNomadVisa": {
           "title": "Digital Nomad Visa",
-          "description": "Utilize specialized visas to optimize tax situation, simple and easy to implement"
+          "description": "Utilize specialized visas to optimize tax situation, simple and easy to implement",
+          "requirements": [
+            "Remote work capability",
+            "Stable income source",
+            "Valid passport",
+            "Health insurance"
+          ],
+          "steps": [
+            "Research visa options",
+            "Choose suitable country",
+            "Gather required documents",
+            "Submit application",
+            "Maintain visa status",
+            "Comply with local laws"
+          ],
+          "tips": [
+            "Check visa requirements",
+            "Prepare documentation early",
+            "Understand local tax laws",
+            "Maintain compliance"
+          ]
         },
-        "taxTreaty": {
+        "taxTreatyOptimization": {
           "title": "Tax Treaty Optimization",
-          "description": "Utilize bilateral tax treaties to reduce double taxation"
+          "description": "Utilize bilateral tax treaties to reduce double taxation",
+          "requirements": [
+            "Business in multiple countries",
+            "Understanding of tax treaties",
+            "Professional tax advice",
+            "Proper documentation"
+          ],
+          "steps": [
+            "Identify applicable treaties",
+            "Analyze tax implications",
+            "Structure business operations",
+            "Implement treaty benefits",
+            "Maintain compliance",
+            "Regular reviews"
+          ],
+          "tips": [
+            "Work with tax professionals",
+            "Understand treaty provisions",
+            "Keep detailed records",
+            "Stay updated on changes"
+          ]
         }
       },
       "difficulty": {
@@ -3564,7 +3669,10 @@
           "2": "Consult professional advisors",
           "3": "Avoid treaty abuse"
         }
-      }
+      },
+      "applicationRequirements": "Application Requirements",
+      "implementationSteps": "Implementation Steps",
+      "practicalTips": "Practical Tips"
     }
   }
 } 
