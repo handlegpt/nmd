@@ -202,13 +202,18 @@ export async function POST(request: NextRequest) {
         
         console.log('📝 Creating user with explicit ip_address field and proper type casting for email:', email)
         
-        // 使用原始 SQL 查询来正确处理 ip_address 字段的类型转换
+        // 尝试使用 upsert 操作，不提供 ip_address 字段，让数据库处理
         const { data: newUser, error: createError } = await supabase
-          .rpc('create_user_with_ip', {
-            user_email: email,
-            user_name: userName,
-            user_ip: clientIP
+          .from('users')
+          .upsert({
+            email,
+            name: userName
+          }, {
+            onConflict: 'email',
+            ignoreDuplicates: false
           })
+          .select('id, email, name, created_at, current_city, avatar_url')
+          .single()
 
         if (createError) {
           console.error('❌ Create user error:', createError)
