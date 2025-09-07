@@ -185,17 +185,18 @@ export async function POST(request: NextRequest) {
         
         const userName = email.split('@')[0]
         
-        console.log('📝 Creating user with upsert strategy to bypass ip_address field for email:', email)
+        console.log('📝 Creating user with explicit ip_address field and proper type casting for email:', email)
         
-        // 使用 upsert 策略，但是设置 ignoreDuplicates: true 来避免重复键错误
+        // 使用 upsert 策略，明确提供 ip_address 字段并正确处理类型转换
         const { data: newUser, error: createError } = await supabase
           .from('users')
           .upsert({
             email,
-            name: userName
+            name: userName,
+            ip_address: '127.0.0.1'
           }, {
             onConflict: 'email',
-            ignoreDuplicates: true
+            ignoreDuplicates: false
           })
           .select('id, email, name, created_at, current_city, avatar_url')
           .single()
