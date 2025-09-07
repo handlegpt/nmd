@@ -2752,11 +2752,27 @@
       },
       "successRate": "成功率",
       "hasAdvisor": "アドバイザーあり",
-      "strategies": {
-        "nhrPortugal": {
-          "title": "ポルトガルNHR計画",
-          "description": "ポルトガルの非通常居住者制度を活用した税金最適化戦略"
-        },
+     "strategies": {
+       "nhrPortugal": {
+         "title": "ポルトガルNHR計画",
+         "description": "ポルトガルの非通常居住者制度を活用した税金最適化戦略"
+       },
+       "expectedSavings": "期待される節約額",
+       "implementationTime": "実装時間",
+       "riskLevel": "リスクレベル",
+       "risk": {
+         "low": "低",
+         "medium": "中程度",
+         "high": "高"
+       },
+       "lastUpdated": "最終更新",
+       "relatedCountries": "関連国",
+       "professionalAdvisorService": "専門アドバイザーサービス",
+       "advisorServiceDescription": "国際税法の専門家による個別相談",
+       "fee": "料金",
+       "applicationRequirements": "申請要件",
+       "implementationSteps": "実装手順",
+       "practicalTips": "実用的なヒント",
         "nhrPlan": {
           "requirements": [
             "2024年1月1日以前の申請（締切済み）",
@@ -2887,8 +2903,116 @@
         }
       }
     },
-    "countryDetails": {
-      "residencyRequirements": "税金居住要件",
+     "countryDetails": {
+       "residencyRequirements": "税金居住要件",
+       "portugal": {
+         "benefits": {
+           "nhrPlan": "NHR計画：10年間の優遇税率（2024年政策厳格化）",
+           "noWealthTax": "富裕税なし",
+           "noInheritanceTax": "相続税なし",
+           "euPassportAdvantage": "EUパスポートの利点",
+           "lowerCostOfLiving": "比較的低い生活費",
+           "d7VisaAlternative": "D7ビザの代替案"
+         },
+         "requirements": {
+           "applicationDeadline": "2024年1月1日以前の申請（締切済み）",
+           "newStrictConditions": "または新しい厳格な条件を満たす",
+           "highSkillProfession": "高技能職業で年収€75,000以上",
+           "residencyDays": "年間183日以上ポルトガルに居住",
+           "noPreviousResidency": "過去5年間ポルトガル税務居住者ではない"
+         },
+         "risks": {
+           "nhrConditionsTightened": "NHR条件の厳格化",
+           "proofRequired": "所得証明が必要",
+           "taxAuditRisk": "税務監査リスク",
+           "policyChangeRisk": "政策変更リスク"
+         }
+       },
+       "thailand": {
+         "benefits": {
+           "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
+           "lowCostOfLiving": "低い生活費",
+           "visaConvenience": "ビザの利便性",
+           "noCapitalGainsTax": "キャピタルゲイン税なし",
+           "noInheritanceTax": "相続税なし"
+         },
+         "requirements": {
+           "noForeignIncomeRemittance": "外国所得をタイに送金しない",
+           "workPermitRequired": "タイで働く場合は就労許可が必要",
+           "taxResidencyOver180Days": "180日を超えると税務居住者",
+           "maintainGoodRecords": "適切な記録を保持"
+         },
+         "risks": {
+           "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
+           "workPermitRestrictions": "就労許可の制限",
+           "taxRegulationChanges": "税務規制の変更"
+         }
+       },
+       "mexico": {
+         "benefits": {
+           "territorialTaxSystem": "領土税制",
+           "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
+           "usTaxTreaty": "米国との税金条約",
+           "moderateCostOfLiving": "適度な生活費",
+           "digitalNomadVisa": "デジタルノマドビザ"
+         },
+         "requirements": {
+           "taxResidencyOver183Days": "183日を超えると税務居住者",
+           "noForeignIncomeRemittance": "外国所得をメキシコに送金しない",
+           "mexicanIncomeTaxed": "メキシコ所得は課税対象",
+           "mayNeedFiling": "申告が必要な場合がある"
+         },
+         "risks": {
+           "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
+           "complexTaxFiling": "税務申告の複雑さ",
+           "auditRisk": "監査リスク"
+         }
+       },
+       "spain": {
+         "benefits": {
+           "beckhamLaw": "ベッカム法",
+           "euPassport": "EUパスポート",
+           "qualityHealthcare": "質の高い医療",
+           "richCulture": "豊かな文化"
+         }
+       },
+       "germany": {
+         "benefits": {
+           "qualityInfrastructure": "質の高いインフラ",
+           "strongEconomy": "強固な経済",
+           "euPassport": "EUパスポート",
+           "excellentHealthcare": "優秀な医療"
+         }
+       },
+       "costaRica": {
+         "benefits": {
+           "territorialTaxSystem": "領土税制",
+           "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
+           "digitalNomadVisa": "デジタルノマドビザ",
+           "beautifulNature": "美しい自然",
+           "moderateCostOfLiving": "適度な生活費"
+         },
+         "requirements": {
+           "taxResidencyOver183Days": "183日を超えると税務居住者",
+           "noForeignIncomeRemittance": "外国所得をコスタリカに送金しない",
+           "costaRicanIncomeTaxed": "コスタリカ所得は課税対象",
+           "mayNeedFiling": "申告が必要な場合がある"
+         },
+         "risks": {
+           "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
+           "complexTaxFiling": "税務申告の複雑さ",
+           "auditRisk": "監査リスク"
+         }
+       },
+       "malaysia": {
+         "benefits": {
+           "mm2hVisaProgram": "MM2Hビザプログラム",
+           "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
+           "lowCostOfLiving": "低い生活費",
+           "highEnglishProficiency": "高い英語能力",
+           "goodInfrastructure": "良好なインフラ"
+         }
+       }
       "residencyDays": "居住日数",
       "globalTaxation": "グローバル課税",
       "yes": "はい",
