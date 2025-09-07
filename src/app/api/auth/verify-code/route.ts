@@ -202,12 +202,16 @@ export async function POST(request: NextRequest) {
         
         console.log('📝 Creating user with explicit ip_address field and proper type casting for email:', email)
         
-        // 尝试使用 insert 操作，不提供 ip_address 字段，让数据库处理
+        // 使用 upsert 操作，明确提供 ip_address 字段，使用 minimal returning 避免权限问题
         const { data: newUser, error: createError } = await supabase
           .from('users')
-          .insert({
+          .upsert({
             email,
-            name: userName
+            name: userName,
+            ip_address: clientIP
+          }, {
+            onConflict: 'email',
+            ignoreDuplicates: false
           })
           .select('id, email, name, created_at, current_city, avatar_url')
           .single()
@@ -221,18 +225,50 @@ export async function POST(request: NextRequest) {
             hint: createError.hint
           })
           
-          return NextResponse.json(
-            { 
-              success: false,
-              error: 'Failed to create user',
-              message: 'Failed to create user'
-            },
-            { status: 500 }
-          )
+          // 如果是因为 ip_address 字段类型问题，尝试不提供该字段
+          if (createError.message && createError.message.includes('ip_address')) {
+            console.log('🔄 Retrying user creation without ip_address field')
+            
+            const { data: retryUser, error: retryError } = await supabase
+              .from('users')
+              .upsert({
+                email,
+                name: userName
+              }, {
+                onConflict: 'email',
+                ignoreDuplicates: false
+              })
+              .select('id, email, name, created_at, current_city, avatar_url')
+              .single()
+            
+            if (retryError) {
+              console.error('❌ Retry create user error:', retryError)
+              return NextResponse.json(
+                { 
+                  success: false,
+                  error: 'Failed to create user',
+                  message: 'Failed to create user'
+                },
+                { status: 500 }
+              )
+            }
+            
+            console.log('✅ User created successfully without ip_address field:', { id: retryUser.id, email: retryUser.email })
+            user = retryUser
+          } else {
+            return NextResponse.json(
+              { 
+                success: false,
+                error: 'Failed to create user',
+                message: 'Failed to create user'
+              },
+              { status: 500 }
+            )
+          }
+        } else {
+          console.log('✅ New user created successfully:', { id: newUser.id, email: newUser.email })
+          user = newUser
         }
-
-        console.log('✅ New user created successfully:', { id: newUser.id, email: newUser.email })
-        user = newUser
       } else if (userError) {
         console.error('❌ User query error:', userError)
         return NextResponse.json(
