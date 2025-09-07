@@ -780,7 +780,8 @@
     "visas": "Visa Management",
     "overview": "Overview",
     "title": "Dashboard",
-    "loadingUserData": "Loading user data..."
+    "loadingUserData": "Loading user data...",
+    "setCity": "Set Current City"
   },
   "components": {
     "notificationSystem": {

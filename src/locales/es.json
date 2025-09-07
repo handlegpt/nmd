@@ -1918,7 +1918,8 @@
     "emailNotifications": "Notificaciones por Email",
     "emailNotificationsDesc": "Recibe actualizaciones importantes y recordatorios",
     "pushNotifications": "Notificaciones Push",
-    "pushNotificationsDesc": "Recibe alertas y actualizaciones en tiempo real"
+    "pushNotificationsDesc": "Recibe alertas y actualizaciones en tiempo real",
+    "setCity": "Establecer Ciudad Actual"
   },
   "privacy": {
     "title": "Política de Privacidad",

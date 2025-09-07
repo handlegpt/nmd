@@ -2117,7 +2117,8 @@
     "emailNotifications": "邮件通知",
     "emailNotificationsDesc": "接收重要更新和提醒",
     "pushNotifications": "推送通知",
-    "pushNotificationsDesc": "接收实时提醒和更新"
+    "pushNotificationsDesc": "接收实时提醒和更新",
+    "setCity": "设置当前城市"
   },
   "privacy": {
     "title": "隐私政策",

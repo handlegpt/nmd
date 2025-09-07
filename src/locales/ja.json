@@ -1725,7 +1725,8 @@
     "emailNotifications": "メール通知",
     "emailNotificationsDesc": "重要な更新とリマインダーを受信",
     "pushNotifications": "プッシュ通知",
-    "pushNotificationsDesc": "リアルタイムアラートと更新を受信"
+    "pushNotificationsDesc": "リアルタイムアラートと更新を受信",
+    "setCity": "現在の都市を設定"
   },
   "privacy": {
     "title": "プライバシーポリシー",
