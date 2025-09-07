@@ -38,14 +38,14 @@ services:
     ports:
       - "8055:1337"
     environment:
-      # Database configuration - Using correct Supabase direct connection
+      # Database configuration - Using Supabase connection pooler
       DATABASE_CLIENT: "postgres"
-      DATABASE_HOST: "db.xdpjstyoeqgvaacduzdw.supabase.co"
-      DATABASE_PORT: "5432"
+      DATABASE_HOST: "aws-0-ap-southeast-1.pooler.supabase.com"
+      DATABASE_PORT: "6543"
       DATABASE_NAME: "postgres"
       DATABASE_USERNAME: "postgres"
       DATABASE_PASSWORD: "${DB_PASSWORD}"
-      DATABASE_SSL: "true"
+      DATABASE_SSL: "false"
       # App configuration
       APP_KEYS: "${KEY}"
       API_TOKEN_SALT: "${SECRET}"
