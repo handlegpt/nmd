@@ -42,17 +42,8 @@ services:
       SECRET: "${SECRET}"
       # Supabase PostgreSQL database configuration for Directus
       DB_CLIENT: "pg"
-      # Use Supabase connection pooler (correct configuration)
-      DB_HOST: "aws-0-ap-southeast-1.pooler.supabase.com"
-      DB_PORT: "6543"
-      DB_DATABASE: "postgres"
-      DB_USER: "postgres"
-      DB_PASSWORD: "${DB_PASSWORD}"
-      # Force disable SSL at the database level
-      DB_SSL: "false"
-      DB_SSL_REJECT_UNAUTHORIZED: "false"
-      # Additional Node.js SSL configuration to bypass all SSL validation
-      NODE_TLS_REJECT_UNAUTHORIZED: "0"
+      # Use connection string approach with proper SSL handling
+      DB_CONNECTION_STRING: "postgresql://postgres:${DB_PASSWORD}@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require"
       NODE_EXTRA_CA_CERTS: ""
       SSL_CERT_FILE: ""
       SSL_KEY_FILE: ""
