@@ -59,10 +59,11 @@ export async function sendVerificationEmail(
     console.log('📧 Resend response - error:', error)
 
     if (error) {
+      console.error('❌ Resend API error details:', error)
       logError('Failed to send email via Resend', error, 'EmailService')
       return {
         success: false,
-        error: error.message || 'Failed to send email'
+        error: `Failed to send verification code: ${error.message || 'Unknown error'}`
       }
     }
 
@@ -78,10 +79,11 @@ export async function sendVerificationEmail(
     }
 
   } catch (error) {
+    console.error('❌ Unexpected error in email service:', error)
     logError('Unexpected error in email service', error, 'EmailService')
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: `Unexpected error: ${error instanceof Error ? error.message : 'Unknown error'}`
     }
   }
 }
