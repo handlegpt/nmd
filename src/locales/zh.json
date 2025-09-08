@@ -1289,69 +1289,6 @@
         "description": "本计算器提供估算结果，仅供参考。实际税务情况取决于个人具体情况、最新税法变化和各国规定。在做出任何税务决定前，请务必咨询专业的税务顾问。"
     }
   },
-  "recommendationForm": {
-    "place": {
-      "fields": {
-        "priceLevel": "价格等级",
-        "priceLevels": {
-          "cheap": "便宜",
-          "economical": "经济实惠",
-          "moderate": "中等",
-          "expensive": "昂贵",
-          "veryExpensive": "非常昂贵"
-        },
-        "noiseLevel": "噪音等级",
-        "noiseLevels": {
-          "quiet": "安静",
-          "moderate": "中等",
-          "loud": "嘈杂"
-        },
-        "socialAtmosphere": "社交氛围",
-        "socialLevels": {
-          "low": "低",
-          "medium": "中等",
-          "high": "高"
-        },
-        "tags": "标签"
-      }
-    },
-    "city": {
-      "suggestedHighlights": {
-        "nomadFriendly": "数字游民友好",
-        "fastWifi": "快速WiFi",
-        "lowCost": "低成本",
-        "visaConvenient": "签证便利",
-        "goodClimate": "气候宜人",
-        "foodRich": "美食丰富",
-        "culturalDiverse": "文化多元",
-        "convenientTransport": "交通便利",
-        "safeLiving": "生活安全",
-        "englishFriendly": "英语友好",
-        "activeCommunity": "活跃社区",
-        "workspaces": "工作空间",
-        "coffeeCulture": "咖啡文化",
-        "outdoorActivities": "户外活动",
-        "nightlife": "夜生活"
-      },
-      "suggestedTags": {
-        "budgetFriendly": "预算友好",
-        "fastWifi": "快速WiFi",
-        "easyVisa": "签证容易",
-        "goodClimate": "气候宜人",
-        "goodFood": "美食丰富",
-        "culturalRich": "文化丰富",
-        "convenientTransport": "交通便利",
-        "safe": "安全",
-        "englishFriendly": "英语友好",
-        "goodCommunity": "社区良好",
-        "workspaces": "工作空间",
-        "coffeeCulture": "咖啡文化",
-        "outdoor": "户外",
-        "nightlife": "夜生活",
-        "shopping": "购物"
-      }
-    }
-  },
   "recommendations": {
     "title": "城市推荐",
     "description": "基于您的偏好为您推荐最适合的数字游民城市",
