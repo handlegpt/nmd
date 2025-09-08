@@ -2619,7 +2619,11 @@
       "cityExplorer": "Explore city for over 30 days",
       "coffeeHero": "Successfully organize multiple coffee meetups",
       "localGuide": "Help new nomads understand the city"
-    }
+    },
+    "totalNomads": "Total Nomads",
+    "trustAndResponse": "Trust & Response",
+    "requestsGetResponse": "requests get response",
+    "workTogether": "🧑‍💻 Work Together"
   },
   "cityFilters": {
     "nomadCities": "ノマド都市",
