@@ -606,6 +606,7 @@
     "loading": "Cargando...",
     "loadingCities": "Cargando ciudades...",
     "loadingLocationData": "Cargando datos de ubicación...",
+    "addToFavorites": "Agregar a Favoritos",
     "filters": {
       "all": "Todas las Ciudades",
       "visaFree": "Sin Visa",
@@ -1613,7 +1614,8 @@
     "tryAgain": "Intentar de Nuevo",
     "days": "días",
     "testWifi": "Probar WiFi",
-    "exploreCities": "Explorar Ciudades"
+    "exploreCities": "Explorar Ciudades",
+    "goSee": "Ir a Ver"
   },
 
   "components": {
@@ -2274,6 +2276,7 @@
         "veryExpensive": "$$$$$ Muy Caro"
       },
       "suggestedTags": {
+        "latteArt": "Arte del Latte",
         "quiet": "Tranquilo",
         "fastWifi": "WiFi Rápido",
         "goodCoffee": "Buen Café",
@@ -2284,11 +2287,17 @@
         "beautifulView": "Vista Hermosa",
         "goodFood": "Buena Comida",
         "goodService": "Buen Servicio",
-        "open24Hours": "24 Horas",
-        "petFriendly": "Mascotas Permitidas",
-        "latteArt": "Arte del Latte",
-        "nearBeach": "Cerca de la Playa",
-        "riverView": "Vista al Río",
+        "elegantEnvironment": "Ambiente Elegante",
+        "open24Hours": "Abierto 24 Horas",
+        "petFriendly": "Pet Friendly",
+        "WiFi快": "WiFi Rápido",
+        "海滩附近": "Cerca de la Playa",
+        "河景": "Vista al Río",
+        "高端设施": "Instalaciones de Lujo",
+        "历史建筑": "Edificio Histórico",
+        "优雅环境": "Ambiente Elegante",
+        "价格实惠": "Precio Asequible",
+        "清迈": "Chiang Mai",
         "premiumFacilities": "Instalaciones Premium",
         "affordablePrice": "Precio Asequible",
         "chiangMai": "Chiang Mai",
