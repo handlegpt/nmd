@@ -127,10 +127,22 @@
     "dashboardDescription": "个人仪表板和设置"
   },
   "common": {
-    "viewDetails": "查看详情"
+    "viewDetails": "查看详情",
+    "goSee": "去看看"
   },
   "cities": {
-    "addCity": "添加城市"
+    "addCity": "添加城市",
+    "filters": "筛选",
+    "citiesFound": "找到 {count} 个城市",
+    "votes": "票",
+    "costOfLiving": "生活成本",
+    "wifiSpeed": "WiFi速度",
+    "visaType": "签证类型",
+    "days": "天",
+    "rateCity": "评价城市",
+    "addToFavorites": "添加到收藏",
+    "viewDetails": "查看详情",
+    "viewAllCities": "查看所有城市"
   },
   "places": {
     "title": "游民地点推荐",
@@ -1368,19 +1380,6 @@
     "generate": "生成推荐",
     "setPreferences": "设置偏好以获取个性化推荐"
   },
-  "cities": {
-    "filters": "筛选",
-    "citiesFound": "找到 {count} 个城市",
-    "votes": "票",
-    "costOfLiving": "生活成本",
-    "wifiSpeed": "WiFi速度",
-    "visaType": "签证类型",
-    "days": "天",
-    "rateCity": "评价城市",
-    "addToFavorites": "添加到收藏",
-    "viewDetails": "查看详情",
-    "viewAllCities": "查看所有城市"
-  },
   "localNomads": {
     "discover": "发现",
     "myMeetups": "我的聚会",
@@ -1499,9 +1498,6 @@
     "shareInviteLink": "分享邀请链接",
     "hotCities": "热门城市",
     "viewMoreHotCities": "查看更多热门城市"
-  },
-  "common": {
-    "goSee": "去看看"
   },
   "quickStart": {
     "step1": {
