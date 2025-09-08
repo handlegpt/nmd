@@ -48,8 +48,12 @@ export async function sendVerificationEmail(
     console.log('📧 Sending email to:', email)
     console.log('📧 Email subject:', emailTemplate.subject)
     
+    // 从环境变量获取发送域名，如果没有则使用默认值
+    const fromEmail = process.env.RESEND_FROM || 'NOMAD.NOW <noreply@nomadnow.app>'
+    console.log('📧 Using from email:', fromEmail)
+    
     const { data, error } = await resend.emails.send({
-      from: 'NOMAD.NOW <noreply@nomadnow.app>',
+      from: fromEmail,
       to: [email],
       subject: emailTemplate.subject,
       html: emailTemplate.html
@@ -103,8 +107,11 @@ export async function sendTestEmail(email: string): Promise<EmailSendResult> {
     const { Resend } = await import('resend')
     const resend = new Resend(resendApiKey)
     
+    // 从环境变量获取发送域名，如果没有则使用默认值
+    const fromEmail = process.env.RESEND_FROM || 'NOMAD.NOW <noreply@nomadnow.app>'
+    
     const { data, error } = await resend.emails.send({
-      from: 'NOMAD.NOW <noreply@nomadnow.app>',
+      from: fromEmail,
       to: [email],
       subject: 'Test Email from NOMAD.NOW',
       html: `
