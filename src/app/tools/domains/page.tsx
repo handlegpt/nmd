@@ -115,6 +115,16 @@ export default function DomainTrackerPage() {
   const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
   const [showBulkActions, setShowBulkActions] = useState(false);
 
+  // Transaction filtering and analysis
+  const [transactionFilters, setTransactionFilters] = useState({
+    search: '',
+    type: '',
+    domain: '',
+    dateRange: 'all', // all, thisMonth, lastMonth, thisYear, custom
+    sortBy: 'date',
+    sortOrder: 'desc' as 'asc' | 'desc'
+  });
+
   // Initialize empty state
   useEffect(() => {
     // Set loading to false immediately since we start with empty data
@@ -151,22 +161,6 @@ export default function DomainTrackerPage() {
     }
   };
 
-  const getTransactionTypeColor = (type: string) => {
-    switch (type) {
-      case 'buy':
-        return 'bg-red-100 text-red-800';
-      case 'renew':
-        return 'bg-orange-100 text-orange-800';
-      case 'sell':
-        return 'bg-green-100 text-green-800';
-      case 'transfer':
-        return 'bg-blue-100 text-blue-800';
-      case 'fee':
-        return 'bg-gray-100 text-gray-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
 
   const calculateDaysUntilExpiry = (date: string) => {
     const expiryDate = new Date(date);
@@ -367,6 +361,132 @@ export default function DomainTrackerPage() {
       setSelectedDomains([]);
     } else {
       setSelectedDomains(filteredDomains.map(d => d.id));
+    }
+  };
+
+  // 交易分析和统计函数
+  const getFilteredAndSortedTransactions = () => {
+    let filtered = transactions.filter(transaction => {
+      // 搜索筛选
+      if (transactionFilters.search && 
+          !transaction.notes.toLowerCase().includes(transactionFilters.search.toLowerCase())) {
+        return false;
+      }
+      // 类型筛选
+      if (transactionFilters.type && transaction.type !== transactionFilters.type) {
+        return false;
+      }
+      // 域名筛选
+      if (transactionFilters.domain && transaction.domain_id !== transactionFilters.domain) {
+        return false;
+      }
+      // 日期范围筛选
+      if (transactionFilters.dateRange !== 'all') {
+        const transactionDate = new Date(transaction.date);
+        const now = new Date();
+        const thisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const thisYear = new Date(now.getFullYear(), 0, 1);
+        
+        switch (transactionFilters.dateRange) {
+          case 'thisMonth':
+            if (transactionDate < thisMonth) return false;
+            break;
+          case 'lastMonth':
+            if (transactionDate < lastMonth || transactionDate >= thisMonth) return false;
+            break;
+          case 'thisYear':
+            if (transactionDate < thisYear) return false;
+            break;
+        }
+      }
+      return true;
+    });
+
+    // 排序
+    filtered.sort((a, b) => {
+      let aValue: any = a[transactionFilters.sortBy as keyof DomainTransaction];
+      let bValue: any = b[transactionFilters.sortBy as keyof DomainTransaction];
+
+      if (transactionFilters.sortBy === 'date') {
+        aValue = new Date(a.date).getTime();
+        bValue = new Date(b.date).getTime();
+      }
+
+      if (transactionFilters.sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
+    return filtered;
+  };
+
+  // 获取交易统计
+  const getTransactionStats = () => {
+    const filtered = getFilteredAndSortedTransactions();
+    const stats = {
+      total: filtered.length,
+      totalAmount: filtered.reduce((sum, t) => sum + t.amount, 0),
+      buyAmount: filtered.filter(t => t.type === 'buy').reduce((sum, t) => sum + t.amount, 0),
+      sellAmount: filtered.filter(t => t.type === 'sell').reduce((sum, t) => sum + t.amount, 0),
+      renewAmount: filtered.filter(t => t.type === 'renew').reduce((sum, t) => sum + t.amount, 0),
+      feeAmount: filtered.filter(t => t.type === 'fee').reduce((sum, t) => sum + t.amount, 0),
+      transferAmount: filtered.filter(t => t.type === 'transfer').reduce((sum, t) => sum + t.amount, 0)
+    };
+    return stats;
+  };
+
+  // 获取月度交易趋势
+  const getMonthlyTransactionTrend = () => {
+    const monthlyData: { [key: string]: { buy: number, sell: number, renew: number, fee: number, transfer: number } } = {};
+    
+    transactions.forEach(transaction => {
+      const date = new Date(transaction.date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      
+      if (!monthlyData[monthKey]) {
+        monthlyData[monthKey] = { buy: 0, sell: 0, renew: 0, fee: 0, transfer: 0 };
+      }
+      
+      monthlyData[monthKey][transaction.type as keyof typeof monthlyData[string]] += transaction.amount;
+    });
+
+    return Object.entries(monthlyData)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .slice(-12) // 最近12个月
+      .map(([month, data]) => ({
+        month,
+        ...data,
+        total: data.buy + data.sell + data.renew + data.fee + data.transfer
+      }));
+  };
+
+  // 获取交易类型分布
+  const getTransactionTypeDistribution = () => {
+    const distribution = transactions.reduce((acc, transaction) => {
+      acc[transaction.type] = (acc[transaction.type] || 0) + 1;
+      return acc;
+    }, {} as { [key: string]: number });
+
+    return Object.entries(distribution).map(([type, count]) => ({
+      type,
+      count,
+      percentage: (count / transactions.length) * 100,
+      amount: transactions.filter(t => t.type === type).reduce((sum, t) => sum + t.amount, 0)
+    }));
+  };
+
+  // 获取交易类型颜色
+  const getTransactionTypeColor = (type: string) => {
+    switch (type) {
+      case 'buy': return 'bg-red-100 text-red-800';
+      case 'sell': return 'bg-green-100 text-green-800';
+      case 'renew': return 'bg-blue-100 text-blue-800';
+      case 'transfer': return 'bg-yellow-100 text-yellow-800';
+      case 'fee': return 'bg-gray-100 text-gray-800';
+      default: return 'bg-gray-100 text-gray-800';
     }
   };
 
@@ -1121,18 +1241,231 @@ export default function DomainTrackerPage() {
     );
   };
 
-  const renderTransactions = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">{t('domainTracker.transactions.title')}</h2>
-        <button 
-          onClick={() => setShowAddTransactionModal(true)}
-          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        >
-          <Plus className="h-4 w-4" />
-          <span>{t('domainTracker.transactions.addTransaction')}</span>
-        </button>
-      </div>
+  const renderTransactions = () => {
+    const filteredTransactions = getFilteredAndSortedTransactions();
+    const transactionStats = getTransactionStats();
+    const monthlyTrend = getMonthlyTransactionTrend();
+    const typeDistribution = getTransactionTypeDistribution();
+    
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-900">{t('domainTracker.transactions.title')}</h2>
+          <button 
+            onClick={() => setShowAddTransactionModal(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus className="h-4 w-4" />
+            <span>{t('domainTracker.transactions.addTransaction')}</span>
+          </button>
+        </div>
+
+        {/* Transaction Statistics Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Transactions</p>
+                <p className="text-3xl font-bold text-gray-900">{transactionStats.total}</p>
+              </div>
+              <DollarSign className="h-8 w-8 text-blue-600" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Total Amount</p>
+                <p className="text-3xl font-bold text-gray-900">${transactionStats.totalAmount.toFixed(2)}</p>
+              </div>
+              <TrendingUp className="h-8 w-8 text-green-600" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Buy Amount</p>
+                <p className="text-3xl font-bold text-red-600">${transactionStats.buyAmount.toFixed(2)}</p>
+              </div>
+              <ArrowDown className="h-8 w-8 text-red-600" />
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Sell Amount</p>
+                <p className="text-3xl font-bold text-green-600">${transactionStats.sellAmount.toFixed(2)}</p>
+              </div>
+              <ArrowUp className="h-8 w-8 text-green-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Advanced Filter Bar */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search notes..."
+                value={transactionFilters.search}
+                onChange={(e) => setTransactionFilters(prev => ({ ...prev, search: e.target.value }))}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Type Filter */}
+            <select
+              value={transactionFilters.type}
+              onChange={(e) => setTransactionFilters(prev => ({ ...prev, type: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All Types</option>
+              <option value="buy">Buy</option>
+              <option value="sell">Sell</option>
+              <option value="renew">Renew</option>
+              <option value="transfer">Transfer</option>
+              <option value="fee">Fee</option>
+            </select>
+
+            {/* Domain Filter */}
+            <select
+              value={transactionFilters.domain}
+              onChange={(e) => setTransactionFilters(prev => ({ ...prev, domain: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All Domains</option>
+              {domains.map(domain => (
+                <option key={domain.id} value={domain.id}>{domain.domain_name}</option>
+              ))}
+            </select>
+
+            {/* Date Range Filter */}
+            <select
+              value={transactionFilters.dateRange}
+              onChange={(e) => setTransactionFilters(prev => ({ ...prev, dateRange: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="all">All Time</option>
+              <option value="thisMonth">This Month</option>
+              <option value="lastMonth">Last Month</option>
+              <option value="thisYear">This Year</option>
+            </select>
+
+            {/* Sort By */}
+            <select
+              value={transactionFilters.sortBy}
+              onChange={(e) => setTransactionFilters(prev => ({ ...prev, sortBy: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="date">Date</option>
+              <option value="amount">Amount</option>
+              <option value="type">Type</option>
+            </select>
+          </div>
+
+          {/* Sort Order */}
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setTransactionFilters(prev => ({ ...prev, sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' }))}
+                className="flex items-center space-x-2 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                {transactionFilters.sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                <span>{transactionFilters.sortOrder === 'asc' ? 'Ascending' : 'Descending'}</span>
+              </button>
+              
+              <span className="text-sm text-gray-600">
+                Showing {filteredTransactions.length} of {transactions.length} transactions
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Monthly Trend Chart */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <TrendingUp className="h-5 w-5 text-blue-500 mr-2" />
+              Monthly Transaction Trend
+            </h3>
+            <div className="space-y-3">
+              {monthlyTrend.length > 0 ? (
+                monthlyTrend.map((month, index) => (
+                  <div key={month.month} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                        {index + 1}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{month.month}</p>
+                        <p className="text-sm text-gray-600">
+                          Buy: ${month.buy.toFixed(0)} | Sell: ${month.sell.toFixed(0)}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-lg font-bold text-gray-900">${month.total.toFixed(0)}</p>
+                      <p className="text-sm text-gray-600">Total</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <TrendingUp className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                  <p>No transaction data</p>
+                  <p className="text-sm">Add transactions to see trends</p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Transaction Type Distribution */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <BarChart3 className="h-5 w-5 text-green-500 mr-2" />
+              Transaction Type Distribution
+            </h3>
+            <div className="space-y-3">
+              {typeDistribution.length > 0 ? (
+                typeDistribution.map((item, index) => (
+                  <div key={item.type} className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-3 h-3 rounded-full" style={{
+                        backgroundColor: `hsl(${index * 60}, 70%, 50%)`
+                      }}></div>
+                      <span className="text-sm font-medium text-gray-900 capitalize">{item.type}</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-20 bg-gray-200 rounded-full h-2">
+                        <div 
+                          className="h-2 rounded-full" 
+                          style={{
+                            width: `${item.percentage}%`,
+                            backgroundColor: `hsl(${index * 60}, 70%, 50%)`
+                          }}
+                        ></div>
+                      </div>
+                      <span className="text-sm text-gray-600 w-12 text-right">{item.count}</span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <BarChart3 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                  <p>No data available</p>
+                  <p className="text-sm">Add transactions to see distribution</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
         <div className="overflow-x-auto">
@@ -1157,13 +1490,20 @@ export default function DomainTrackerPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {transactions.length === 0 ? (
+              {filteredTransactions.length === 0 ? (
                 <tr>
                   <td colSpan={5} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center">
                       <DollarSign className="h-12 w-12 text-gray-400 mb-4" />
-                      <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions yet</h3>
-                      <p className="text-gray-600 mb-4">Add your first transaction to start tracking your domain investments.</p>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        {transactions.length === 0 ? 'No transactions yet' : 'No transactions match your filters'}
+                      </h3>
+                      <p className="text-gray-600 mb-4">
+                        {transactions.length === 0 
+                          ? 'Add your first transaction to start tracking your domain investments.'
+                          : 'Try adjusting your filters to see more transactions.'
+                        }
+                      </p>
                       <button 
                         onClick={() => setShowAddTransactionModal(true)}
                         className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -1175,7 +1515,7 @@ export default function DomainTrackerPage() {
                   </td>
                 </tr>
               ) : (
-                transactions.map((transaction) => {
+                filteredTransactions.map((transaction) => {
                 const domain = domains.find(d => d.id === transaction.domain_id);
                 return (
                   <tr key={transaction.id} className="hover:bg-gray-50">
@@ -1205,7 +1545,8 @@ export default function DomainTrackerPage() {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   const renderAnalytics = () => (
     <div className="space-y-6">
