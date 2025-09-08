@@ -19,7 +19,12 @@ import {
   Download,
   Upload,
   LogIn,
-  UserPlus
+  UserPlus,
+  Users,
+  Star,
+  ArrowUp,
+  ArrowDown,
+  X
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/GlobalStateContext';
@@ -97,6 +102,18 @@ export default function DomainTrackerPage() {
     currency: 'USD',
     notes: ''
   });
+
+  // Portfolio filtering and batch operations
+  const [filters, setFilters] = useState({
+    search: '',
+    registrar: '',
+    status: '',
+    tag: '',
+    sortBy: 'domain_name',
+    sortOrder: 'asc' as 'asc' | 'desc'
+  });
+  const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
+  const [showBulkActions, setShowBulkActions] = useState(false);
 
   // Initialize empty state
   useEffect(() => {
@@ -215,6 +232,142 @@ export default function DomainTrackerPage() {
     return Object.entries(distribution)
       .map(([registrar, count]) => ({ registrar, count, percentage: (count / domains.length) * 100 }))
       .sort((a, b) => b.count - a.count);
+  };
+
+  // 筛选和排序域名
+  const getFilteredAndSortedDomains = () => {
+    let filtered = domains.filter(domain => {
+      // 搜索筛选
+      if (filters.search && !domain.domain_name.toLowerCase().includes(filters.search.toLowerCase())) {
+        return false;
+      }
+      // 注册商筛选
+      if (filters.registrar && domain.registrar !== filters.registrar) {
+        return false;
+      }
+      // 状态筛选
+      if (filters.status && domain.status !== filters.status) {
+        return false;
+      }
+      // 标签筛选
+      if (filters.tag && !domain.tags.includes(filters.tag)) {
+        return false;
+      }
+      return true;
+    });
+
+    // 排序
+    filtered.sort((a, b) => {
+      let aValue: any = a[filters.sortBy as keyof Domain];
+      let bValue: any = b[filters.sortBy as keyof Domain];
+
+      // 处理特殊字段
+      if (filters.sortBy === 'total_cost') {
+        aValue = a.purchase_cost + a.total_renewal_paid;
+        bValue = b.purchase_cost + b.total_renewal_paid;
+      } else if (filters.sortBy === 'roi') {
+        const aTotalCost = a.purchase_cost + a.total_renewal_paid;
+        const bTotalCost = b.purchase_cost + b.total_renewal_paid;
+        aValue = aTotalCost > 0 ? ((a.estimated_value - aTotalCost) / aTotalCost) * 100 : 0;
+        bValue = bTotalCost > 0 ? ((b.estimated_value - bTotalCost) / bTotalCost) * 100 : 0;
+      }
+
+      if (typeof aValue === 'string') {
+        aValue = aValue.toLowerCase();
+        bValue = bValue.toLowerCase();
+      }
+
+      if (filters.sortOrder === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
+    return filtered;
+  };
+
+  // 获取所有唯一的注册商
+  const getUniqueRegistrars = () => {
+    return [...new Set(domains.map(d => d.registrar))].sort();
+  };
+
+  // 获取所有唯一的标签
+  const getUniqueTags = () => {
+    const allTags = domains.flatMap(d => d.tags);
+    return [...new Set(allTags)].sort();
+  };
+
+  // 批量操作函数
+  const handleBulkAction = (action: string) => {
+    if (selectedDomains.length === 0) return;
+
+    switch (action) {
+      case 'delete':
+        if (confirm(`Are you sure you want to delete ${selectedDomains.length} domains?`)) {
+          setDomains(prev => prev.filter(d => !selectedDomains.includes(d.id)));
+          setTransactions(prev => prev.filter(t => !selectedDomains.includes(t.domain_id)));
+          setSelectedDomains([]);
+          setShowBulkActions(false);
+          // 重新计算统计
+          const deletedDomains = domains.filter(d => selectedDomains.includes(d.id));
+          const deletedCost = deletedDomains.reduce((sum, d) => sum + d.purchase_cost + d.total_renewal_paid, 0);
+          const deletedRevenue = transactions.filter(t => selectedDomains.includes(t.domain_id) && t.type === 'sell')
+            .reduce((sum, t) => sum + t.amount, 0);
+          
+          setStats(prev => {
+            const newTotalDomains = prev.totalDomains - selectedDomains.length;
+            const newTotalCost = prev.totalCost - deletedCost;
+            const newTotalRevenue = prev.totalRevenue - deletedRevenue;
+            const newTotalProfit = newTotalRevenue - newTotalCost;
+            const newROI = newTotalCost > 0 ? (newTotalProfit / newTotalCost) * 100 : 0;
+            
+            return {
+              totalDomains: newTotalDomains,
+              totalCost: newTotalCost,
+              totalRevenue: newTotalRevenue,
+              totalProfit: newTotalProfit,
+              roi: newROI,
+              expiringSoon: prev.expiringSoon,
+              forSale: prev.forSale
+            };
+          });
+        }
+        break;
+      case 'mark_for_sale':
+        setDomains(prev => prev.map(d => 
+          selectedDomains.includes(d.id) ? { ...d, status: 'for_sale' as const } : d
+        ));
+        setSelectedDomains([]);
+        setShowBulkActions(false);
+        break;
+      case 'mark_active':
+        setDomains(prev => prev.map(d => 
+          selectedDomains.includes(d.id) ? { ...d, status: 'active' as const } : d
+        ));
+        setSelectedDomains([]);
+        setShowBulkActions(false);
+        break;
+    }
+  };
+
+  // 选择/取消选择域名
+  const toggleDomainSelection = (domainId: string) => {
+    setSelectedDomains(prev => 
+      prev.includes(domainId) 
+        ? prev.filter(id => id !== domainId)
+        : [...prev, domainId]
+    );
+  };
+
+  // 全选/取消全选
+  const toggleSelectAll = () => {
+    const filteredDomains = getFilteredAndSortedDomains();
+    if (selectedDomains.length === filteredDomains.length) {
+      setSelectedDomains([]);
+    } else {
+      setSelectedDomains(filteredDomains.map(d => d.id));
+    }
   };
 
   const handleAddDomain = () => {
@@ -645,37 +798,160 @@ export default function DomainTrackerPage() {
     </div>
   );
 
-  const renderPortfolio = () => (
-    <div className="space-y-6">
-      {/* Search and Filter Bar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search domains..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
+  const renderPortfolio = () => {
+    const filteredDomains = getFilteredAndSortedDomains();
+    
+    return (
+      <div className="space-y-6">
+        {/* Advanced Search and Filter Bar */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-4">
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search domains..."
+                value={filters.search}
+                onChange={(e) => setFilters(prev => ({ ...prev, search: e.target.value }))}
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+            </div>
+
+            {/* Registrar Filter */}
+            <select
+              value={filters.registrar}
+              onChange={(e) => setFilters(prev => ({ ...prev, registrar: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All Registrars</option>
+              {getUniqueRegistrars().map(registrar => (
+                <option key={registrar} value={registrar}>{registrar}</option>
+              ))}
+            </select>
+
+            {/* Status Filter */}
+            <select
+              value={filters.status}
+              onChange={(e) => setFilters(prev => ({ ...prev, status: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="for_sale">For Sale</option>
+              <option value="sold">Sold</option>
+              <option value="expired">Expired</option>
+            </select>
+
+            {/* Tag Filter */}
+            <select
+              value={filters.tag}
+              onChange={(e) => setFilters(prev => ({ ...prev, tag: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">All Tags</option>
+              {getUniqueTags().map(tag => (
+                <option key={tag} value={tag}>{tag}</option>
+              ))}
+            </select>
+
+            {/* Sort By */}
+            <select
+              value={filters.sortBy}
+              onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="domain_name">Domain Name</option>
+              <option value="registrar">Registrar</option>
+              <option value="purchase_cost">Purchase Cost</option>
+              <option value="total_cost">Total Cost</option>
+              <option value="estimated_value">Estimated Value</option>
+              <option value="roi">ROI</option>
+              <option value="next_renewal_date">Next Renewal</option>
+            </select>
+          </div>
+
+          {/* Sort Order and Action Buttons */}
+          <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setFilters(prev => ({ ...prev, sortOrder: prev.sortOrder === 'asc' ? 'desc' : 'asc' }))}
+                className="flex items-center space-x-2 px-3 py-2 text-sm bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                {filters.sortOrder === 'asc' ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
+                <span>{filters.sortOrder === 'asc' ? 'Ascending' : 'Descending'}</span>
+              </button>
+              
+              {selectedDomains.length > 0 && (
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-600">{selectedDomains.length} selected</span>
+                  <button
+                    onClick={() => setSelectedDomains([])}
+                    className="text-sm text-blue-600 hover:text-blue-800"
+                  >
+                    Clear
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setShowAddDomainModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                <span>{t('domainTracker.portfolio.addDomain')}</span>
+              </button>
+              <button 
+                onClick={() => console.log('Import domains functionality coming soon')}
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <Upload className="h-4 w-4" />
+                <span>{t('domainTracker.portfolio.import')}</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <button 
-            onClick={() => setShowAddDomainModal(true)}
-            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus className="h-4 w-4" />
-            <span>{t('domainTracker.portfolio.addDomain')}</span>
-          </button>
-          <button 
-            onClick={() => console.log('Import domains functionality coming soon')}
-            className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-          >
-            <Upload className="h-4 w-4" />
-            <span>{t('domainTracker.portfolio.import')}</span>
-          </button>
-        </div>
-      </div>
+
+        {/* Bulk Actions Bar */}
+        {selectedDomains.length > 0 && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <span className="text-sm font-medium text-blue-900">
+                  {selectedDomains.length} domain{selectedDomains.length > 1 ? 's' : ''} selected
+                </span>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleBulkAction('mark_for_sale')}
+                    className="px-3 py-1 text-sm bg-yellow-100 text-yellow-800 rounded hover:bg-yellow-200 transition-colors"
+                  >
+                    Mark for Sale
+                  </button>
+                  <button
+                    onClick={() => handleBulkAction('mark_active')}
+                    className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded hover:bg-green-200 transition-colors"
+                  >
+                    Mark Active
+                  </button>
+                  <button
+                    onClick={() => handleBulkAction('delete')}
+                    className="px-3 py-1 text-sm bg-red-100 text-red-800 rounded hover:bg-red-200 transition-colors"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+              <button
+                onClick={() => setSelectedDomains([])}
+                className="text-blue-600 hover:text-blue-800"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
 
       {/* Domains Table */}
       <div className="bg-white rounded-lg shadow-md overflow-hidden">
@@ -683,6 +959,14 @@ export default function DomainTrackerPage() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <input
+                    type="checkbox"
+                    checked={selectedDomains.length === filteredDomains.length && filteredDomains.length > 0}
+                    onChange={toggleSelectAll}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Domain
                 </th>
@@ -699,10 +983,16 @@ export default function DomainTrackerPage() {
                   Est. Value
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  ROI
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Next Renewal
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tags
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Actions
@@ -712,7 +1002,7 @@ export default function DomainTrackerPage() {
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredDomains.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-6 py-12 text-center">
+                  <td colSpan={11} className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center">
                       <Globe className="h-12 w-12 text-gray-400 mb-4" />
                       <h3 className="text-lg font-medium text-gray-900 mb-2">No domains yet</h3>
@@ -732,17 +1022,23 @@ export default function DomainTrackerPage() {
                 const totalCost = domain.purchase_cost + domain.total_renewal_paid;
                 const daysUntilExpiry = calculateDaysUntilExpiry(domain.next_renewal_date);
                 
+                const roi = totalCost > 0 ? ((domain.estimated_value - totalCost) / totalCost) * 100 : 0;
+                
                 return (
                   <tr key={domain.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <input
+                        type="checkbox"
+                        checked={selectedDomains.includes(domain.id)}
+                        onChange={() => toggleDomainSelection(domain.id)}
+                        className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                      />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
                         <div className="text-sm font-medium text-gray-900">{domain.domain_name}</div>
                         <div className="text-sm text-gray-500">
-                          {domain.tags.map(tag => (
-                            <span key={tag} className="inline-block bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs mr-1">
-                              {tag}
-                            </span>
-                          ))}
+                          Purchased: {new Date(domain.purchase_date).toLocaleDateString()}
                         </div>
                       </div>
                     </td>
@@ -758,6 +1054,11 @@ export default function DomainTrackerPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       ${domain.estimated_value.toFixed(2)}
                     </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className={`font-medium ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {roi.toFixed(1)}%
+                      </span>
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div>
                         <div>{new Date(domain.next_renewal_date).toLocaleDateString()}</div>
@@ -770,6 +1071,19 @@ export default function DomainTrackerPage() {
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(domain.status)}`}>
                         {domain.status.replace('_', ' ')}
                       </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-wrap gap-1">
+                        {domain.tags.length > 0 ? (
+                          domain.tags.map(tag => (
+                            <span key={tag} className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                              {tag}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-gray-400 text-xs">No tags</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
@@ -804,7 +1118,8 @@ export default function DomainTrackerPage() {
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   const renderTransactions = () => (
     <div className="space-y-6">
