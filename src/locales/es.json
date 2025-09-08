@@ -464,8 +464,89 @@
   },
 
   "tools": {
-    "title": "Herramientas Esenciales para Nómadas",
-    "description": "Herramientas y servicios curados que los nómadas digitales realmente usan. Desde banca hasta seguro, plataformas de trabajo remoto hasta aprendizaje de idiomas - todo lo que necesitas para tu estilo de vida nómada.",
+    "title": "Centro de Herramientas Nómadas",
+    "subtitle": "Calculadoras, rastreadores y planificadores esenciales para hacer la vida nómada digital más fácil.",
+    "searchPlaceholder": "Buscar herramientas por nombre, categoría o función...",
+    "filterByCategory": "Filtrar por categoría:",
+    "categories": {
+      "all": "Todas las Herramientas",
+      "calculators": "Calculadoras",
+      "trackers": "Rastreadores",
+      "planners": "Planificadores"
+    },
+    "quickAccess": {
+      "title": "Acceso Rápido",
+      "subtitle": "Fijar tus herramientas favoritas"
+    },
+    "status": {
+      "live": "✅ En Vivo",
+      "comingSoon": "🚧 Próximamente",
+      "inDesign": "🎨 En Diseño",
+      "planned": "📋 Planificado"
+    },
+    "actions": {
+      "launchTool": "Lanzar Herramienta",
+      "getNotified": "Recibir Notificación",
+      "joinWaitlist": "Unirse a Lista de Espera"
+    },
+    "features": {
+      "keyFeatures": "Características Clave:",
+      "moreFeatures": "más características"
+    },
+    "popular": "Popular",
+    "toolsFound": "herramientas encontradas",
+    "noToolsFound": {
+      "title": "No se encontraron herramientas",
+      "description": "Intenta ajustar tu búsqueda o criterios de filtro"
+    },
+    "cta": {
+      "title": "Vota por la Próxima Herramienta",
+      "description": "Estamos construyendo una caja de herramientas integral para nómadas digitales. ¡Ayúdanos a priorizar qué construir a continuación!",
+      "voteForTools": "Votar por Herramientas",
+      "viewRoadmap": "Ver Hoja de Ruta"
+    },
+    "tools": {
+      "costCalculator": {
+        "title": "Calculadora de Costo de Vida",
+        "description": "Planifica tu presupuesto y compara costos entre ciudades"
+      },
+      "visaCounter": {
+        "title": "Contador de Días de Visa",
+        "description": "Rastrea tus días de visa y evita exceder el tiempo"
+      },
+      "taxCalculator": {
+        "title": "Calculadora de Impuestos",
+        "description": "Calcula obligaciones fiscales potenciales entre países"
+      },
+      "travelTracker": {
+        "title": "Rastreador de Viajes",
+        "description": "Rastrea tus viajes y estancias en diferentes destinos"
+      },
+      "wifiTracker": {
+        "title": "Rastreador de Velocidad WiFi",
+        "description": "Monitorea velocidades de internet en todo el mundo"
+      },
+      "timeZoneManager": {
+        "title": "Administrador de Zonas Horarias",
+        "description": "Gestiona múltiples zonas horarias para trabajo global"
+      },
+      "tripPlanner": {
+        "title": "Planificador de Viajes",
+        "description": "Planifica tu próximo destino con confianza"
+      },
+      "budgetPlanner": {
+        "title": "Planificador de Presupuesto",
+        "description": "Planifica y rastrea tus gastos eficientemente"
+      },
+      "workScheduler": {
+        "title": "Planificador de Horario de Trabajo",
+        "description": "Planifica tu horario de trabajo entre zonas horarias"
+      },
+      "domainTracker": {
+        "title": "Rastreador de Dominios",
+        "description": "Rastrea inversiones en dominios, costos y ganancias con análisis detallados"
+      }
+    },
     "categories": {
       "banking": "Servicios Bancarios",
       "insurance": "Servicios de Seguro",

@@ -2684,6 +2684,89 @@
     "addTrajectory": "Add Trajectory"
   },
   "tools": {
+    "title": "Nomad Tools Hub",
+    "subtitle": "Essential calculators, trackers, and planners to make digital nomad life easier.",
+    "searchPlaceholder": "Search tools by name, category, or feature...",
+    "filterByCategory": "Filter by category:",
+    "categories": {
+      "all": "All Tools",
+      "calculators": "Calculators",
+      "trackers": "Trackers",
+      "planners": "Planners"
+    },
+    "quickAccess": {
+      "title": "Quick Access",
+      "subtitle": "Pin your favorite tools"
+    },
+    "status": {
+      "live": "✅ Live",
+      "comingSoon": "🚧 Coming Soon",
+      "inDesign": "🎨 In Design",
+      "planned": "📋 Planned"
+    },
+    "actions": {
+      "launchTool": "Launch Tool",
+      "getNotified": "Get Notified",
+      "joinWaitlist": "Join Waitlist"
+    },
+    "features": {
+      "keyFeatures": "Key Features:",
+      "moreFeatures": "more features"
+    },
+    "popular": "Popular",
+    "toolsFound": "tools found",
+    "noToolsFound": {
+      "title": "No tools found",
+      "description": "Try adjusting your search or filter criteria"
+    },
+    "cta": {
+      "title": "Vote for the Next Tool",
+      "description": "We're building a comprehensive toolbox for digital nomads. Help us prioritize what to build next!",
+      "voteForTools": "Vote for Tools",
+      "viewRoadmap": "View Roadmap"
+    },
+    "tools": {
+      "costCalculator": {
+        "title": "Cost of Living Calculator",
+        "description": "Plan your budget and compare costs between cities"
+      },
+      "visaCounter": {
+        "title": "Visa Day Counter",
+        "description": "Track your visa days and avoid overstays"
+      },
+      "taxCalculator": {
+        "title": "Tax Calculator",
+        "description": "Calculate potential tax obligations across countries"
+      },
+      "travelTracker": {
+        "title": "Travel Tracker",
+        "description": "Track your travels and stays across destinations"
+      },
+      "wifiTracker": {
+        "title": "WiFi Speed Tracker",
+        "description": "Monitor internet speeds worldwide"
+      },
+      "timeZoneManager": {
+        "title": "Time Zone Manager",
+        "description": "Manage multiple time zones for global work"
+      },
+      "tripPlanner": {
+        "title": "Trip Planner",
+        "description": "Plan your next destination with confidence"
+      },
+      "budgetPlanner": {
+        "title": "Budget Planner",
+        "description": "Plan and track your expenses efficiently"
+      },
+      "workScheduler": {
+        "title": "Work Schedule Planner",
+        "description": "Plan your work schedule across time zones"
+      },
+      "domainTracker": {
+        "title": "Domain Tracker",
+        "description": "Track domain investments, costs, and profits with detailed analytics"
+      }
+    },
     "missingTool": {
       "button": "Suggest a Tool",
       "description": "We're constantly updating our recommendations. Have a favorite tool that should be on this list?",

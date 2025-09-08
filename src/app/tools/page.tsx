@@ -25,8 +25,10 @@ import {
   Eye,
   ChevronRight
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 export default function ToolsPage() {
+  const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [pinnedTools, setPinnedTools] = useState<string[]>(['cost-calculator', 'visa-counter', 'wifi-tracker', 'time-zones']);
@@ -36,8 +38,8 @@ export default function ToolsPage() {
     // Calculators
     {
       id: 'cost-calculator',
-      title: 'Cost of Living Calculator',
-      description: 'Plan your budget and compare costs between cities',
+      title: t('tools.tools.costCalculator.title'),
+      description: t('tools.tools.costCalculator.description'),
       icon: DollarSign,
       emoji: '🧮',
       category: 'calculators',
@@ -49,8 +51,8 @@ export default function ToolsPage() {
     },
     {
       id: 'visa-counter',
-      title: 'Visa Day Counter',
-      description: 'Track your visa days and avoid overstays',
+      title: t('tools.tools.visaCounter.title'),
+      description: t('tools.tools.visaCounter.description'),
       icon: Calendar,
       emoji: '📅',
       category: 'calculators',
@@ -62,8 +64,8 @@ export default function ToolsPage() {
     },
     {
       id: 'tax-calculator',
-      title: 'Tax Calculator',
-      description: 'Calculate potential tax obligations across countries',
+      title: t('tools.tools.taxCalculator.title'),
+      description: t('tools.tools.taxCalculator.description'),
       icon: Calculator,
       emoji: '📊',
       category: 'calculators',
@@ -77,8 +79,8 @@ export default function ToolsPage() {
     // Trackers
     {
       id: 'travel-tracker',
-      title: 'Travel Tracker',
-      description: 'Track your travels and stays across destinations',
+      title: t('tools.tools.travelTracker.title'),
+      description: t('tools.tools.travelTracker.description'),
       icon: MapPin,
       emoji: '📍',
       category: 'trackers',
@@ -90,8 +92,8 @@ export default function ToolsPage() {
     },
     {
       id: 'wifi-tracker',
-      title: 'WiFi Speed Tracker',
-      description: 'Monitor internet speeds worldwide',
+      title: t('tools.tools.wifiTracker.title'),
+      description: t('tools.tools.wifiTracker.description'),
       icon: Wifi,
       emoji: '📶',
       category: 'trackers',
@@ -103,8 +105,8 @@ export default function ToolsPage() {
     },
     {
       id: 'time-zones',
-      title: 'Time Zone Manager',
-      description: 'Manage multiple time zones for global work',
+      title: t('tools.tools.timeZoneManager.title'),
+      description: t('tools.tools.timeZoneManager.description'),
       icon: Clock,
       emoji: '🌍',
       category: 'trackers',
@@ -118,8 +120,8 @@ export default function ToolsPage() {
     // Planners
     {
       id: 'trip-planner',
-      title: 'Trip Planner',
-      description: 'Plan your next destination with confidence',
+      title: t('tools.tools.tripPlanner.title'),
+      description: t('tools.tools.tripPlanner.description'),
       icon: Globe,
       emoji: '✈️',
       category: 'planners',
@@ -131,8 +133,8 @@ export default function ToolsPage() {
     },
     {
       id: 'budget-planner',
-      title: 'Budget Planner',
-      description: 'Plan and track your expenses efficiently',
+      title: t('tools.tools.budgetPlanner.title'),
+      description: t('tools.tools.budgetPlanner.description'),
       icon: CreditCard,
       emoji: '💰',
       category: 'planners',
@@ -144,8 +146,8 @@ export default function ToolsPage() {
     },
     {
       id: 'work-scheduler',
-      title: 'Work Schedule Planner',
-      description: 'Plan your work schedule across time zones',
+      title: t('tools.tools.workScheduler.title'),
+      description: t('tools.tools.workScheduler.description'),
       icon: Briefcase,
       emoji: '🗓️',
       category: 'planners',
@@ -159,8 +161,8 @@ export default function ToolsPage() {
     // Trackers - Domain Tracker
     {
       id: 'domain-tracker',
-      title: 'Domain Tracker',
-      description: 'Track domain investments, costs, and profits with detailed analytics',
+      title: t('tools.tools.domainTracker.title'),
+      description: t('tools.tools.domainTracker.description'),
       icon: Globe,
       emoji: '🌐',
       category: 'trackers',
@@ -173,10 +175,10 @@ export default function ToolsPage() {
   ];
 
   const categories = [
-    { key: 'all', label: 'All Tools', icon: Wrench },
-    { key: 'calculators', label: 'Calculators', icon: Calculator },
-    { key: 'trackers', label: 'Trackers', icon: MapPin },
-    { key: 'planners', label: 'Planners', icon: Globe }
+    { key: 'all', label: t('tools.categories.all'), icon: Wrench },
+    { key: 'calculators', label: t('tools.categories.calculators'), icon: Calculator },
+    { key: 'trackers', label: t('tools.categories.trackers'), icon: MapPin },
+    { key: 'planners', label: t('tools.categories.planners'), icon: Globe }
   ];
 
   // 过滤和搜索逻辑
@@ -211,25 +213,25 @@ export default function ToolsPage() {
     switch (status) {
       case 'live':
         return { 
-          label: '✅ Live', 
+          label: t('tools.status.live'), 
           color: 'bg-green-100 text-green-800 border-green-200',
           bgColor: 'bg-green-50'
         };
       case 'coming-soon':
         return { 
-          label: '🚧 Coming Soon', 
+          label: t('tools.status.comingSoon'), 
           color: 'bg-yellow-100 text-yellow-800 border-yellow-200',
           bgColor: 'bg-yellow-50'
         };
       case 'in-design':
         return { 
-          label: '🎨 In Design', 
+          label: t('tools.status.inDesign'), 
           color: 'bg-blue-100 text-blue-800 border-blue-200',
           bgColor: 'bg-blue-50'
         };
       default:
         return { 
-          label: '📋 Planned', 
+          label: t('tools.status.planned'), 
           color: 'bg-gray-100 text-gray-800 border-gray-200',
           bgColor: 'bg-gray-50'
         };
@@ -284,11 +286,11 @@ export default function ToolsPage() {
           <div className="flex items-center justify-center mb-4">
             <Wrench className="h-12 w-12 text-blue-600 mr-3" />
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Nomad Tools Hub
+              {t('tools.title')}
             </h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Essential calculators, trackers, and planners to make digital nomad life easier.
+            {t('tools.subtitle')}
           </p>
         </div>
 
@@ -299,7 +301,7 @@ export default function ToolsPage() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search tools by name, category, or feature..."
+                placeholder={t('tools.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -307,7 +309,7 @@ export default function ToolsPage() {
             </div>
             <div className="flex items-center gap-2">
               <Filter className="h-5 w-5 text-gray-400" />
-              <span className="text-sm text-gray-600">Filter by category:</span>
+              <span className="text-sm text-gray-600">{t('tools.filterByCategory')}</span>
             </div>
           </div>
         </div>
@@ -339,9 +341,9 @@ export default function ToolsPage() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 flex items-center">
                 <Star className="h-6 w-6 text-yellow-500 mr-2" />
-                Quick Access
+                {t('tools.quickAccess.title')}
               </h2>
-              <span className="text-sm text-gray-500">Pin your favorite tools</span>
+              <span className="text-sm text-gray-500">{t('tools.quickAccess.subtitle')}</span>
             </div>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -380,10 +382,10 @@ export default function ToolsPage() {
         <div className="mb-12">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900">
-              {activeCategory === 'all' ? 'All Tools' : categories.find(c => c.key === activeCategory)?.label}
+              {activeCategory === 'all' ? t('tools.categories.all') : categories.find(c => c.key === activeCategory)?.label}
             </h2>
             <span className="text-sm text-gray-500">
-              {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''} found
+              {filteredTools.length} {t('tools.toolsFound')}
             </span>
           </div>
 
@@ -400,7 +402,7 @@ export default function ToolsPage() {
                     <div className="absolute top-4 right-4 z-10">
                       <div className="flex items-center bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">
                         <TrendingUp className="h-3 w-3 mr-1" />
-                        Popular
+                        {t('tools.popular')}
                       </div>
                     </div>
                   )}
@@ -449,7 +451,7 @@ export default function ToolsPage() {
 
                     {/* Features Preview */}
                     <div className="mb-4">
-                      <div className="text-xs text-gray-500 mb-2">Key Features:</div>
+                      <div className="text-xs text-gray-500 mb-2">{t('tools.features.keyFeatures')}</div>
                       <ul className="space-y-1">
                         {tool.features.slice(0, 2).map((feature, index) => (
                           <li key={index} className="text-xs text-gray-600 flex items-center">
@@ -459,7 +461,7 @@ export default function ToolsPage() {
                         ))}
                         {tool.features.length > 2 && (
                           <li className="text-xs text-gray-500">
-                            +{tool.features.length - 2} more features
+                            +{tool.features.length - 2} {t('tools.features.moreFeatures')}
                           </li>
                         )}
                       </ul>
@@ -475,8 +477,8 @@ export default function ToolsPage() {
                       }`}
                     >
                       <span>
-                        {tool.status === 'live' ? 'Launch Tool' : 
-                         tool.status === 'in-design' ? 'Join Waitlist' : 'Get Notified'}
+                        {tool.status === 'live' ? t('tools.actions.launchTool') : 
+                         tool.status === 'in-design' ? t('tools.actions.joinWaitlist') : t('tools.actions.getNotified')}
                       </span>
                       <ChevronRight className="h-4 w-4" />
                     </button>
@@ -489,8 +491,8 @@ export default function ToolsPage() {
           {filteredTools.length === 0 && (
             <div className="text-center py-12">
               <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No tools found</h3>
-              <p className="text-gray-600">Try adjusting your search or filter criteria</p>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">{t('tools.noToolsFound.title')}</h3>
+              <p className="text-gray-600">{t('tools.noToolsFound.description')}</p>
             </div>
           )}
         </div>
@@ -501,19 +503,19 @@ export default function ToolsPage() {
           <div className="relative text-center">
             <div className="flex items-center justify-center mb-4">
               <Target className="h-8 w-8 mr-3" />
-              <h2 className="text-3xl font-bold">Vote for the Next Tool</h2>
+              <h2 className="text-3xl font-bold">{t('tools.cta.title')}</h2>
             </div>
             <p className="text-blue-100 mb-6 max-w-2xl mx-auto text-lg">
-              We're building a comprehensive toolbox for digital nomads. Help us prioritize what to build next!
+              {t('tools.cta.description')}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button className="bg-white text-blue-600 px-8 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors flex items-center justify-center space-x-2">
                 <Heart className="h-5 w-5" />
-                <span>Vote for Tools</span>
+                <span>{t('tools.cta.voteForTools')}</span>
               </button>
               <button className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition-colors flex items-center justify-center space-x-2">
                 <Eye className="h-5 w-5" />
-                <span>View Roadmap</span>
+                <span>{t('tools.cta.viewRoadmap')}</span>
               </button>
             </div>
           </div>

@@ -492,8 +492,89 @@
   },
 
   "tools": {
-    "title": "ノマドの必須ツール",
-    "description": "デジタルノマドが実際に使用する厳選されたツールとサービス。銀行から保険、リモートワークプラットフォームから言語学習まで - ノマドライフスタイルに必要なすべてが揃っています。",
+    "title": "ノマドツールハブ",
+    "subtitle": "デジタルノマドの生活をより簡単にする必須の計算機、トラッカー、プランナー。",
+    "searchPlaceholder": "名前、カテゴリ、または機能でツールを検索...",
+    "filterByCategory": "カテゴリでフィルター：",
+    "categories": {
+      "all": "すべてのツール",
+      "calculators": "計算機",
+      "trackers": "トラッカー",
+      "planners": "プランナー"
+    },
+    "quickAccess": {
+      "title": "クイックアクセス",
+      "subtitle": "お気に入りのツールをピン留め"
+    },
+    "status": {
+      "live": "✅ ライブ",
+      "comingSoon": "🚧 近日公開",
+      "inDesign": "🎨 デザイン中",
+      "planned": "📋 計画中"
+    },
+    "actions": {
+      "launchTool": "ツールを起動",
+      "getNotified": "通知を受け取る",
+      "joinWaitlist": "ウェイトリストに参加"
+    },
+    "features": {
+      "keyFeatures": "主要機能：",
+      "moreFeatures": "その他の機能"
+    },
+    "popular": "人気",
+    "toolsFound": "個のツールが見つかりました",
+    "noToolsFound": {
+      "title": "ツールが見つかりません",
+      "description": "検索またはフィルター条件を調整してみてください"
+    },
+    "cta": {
+      "title": "次のツールに投票",
+      "description": "デジタルノマド向けの包括的なツールボックスを構築しています。次に何を構築すべきか優先順位を決めるのを手伝ってください！",
+      "voteForTools": "ツールに投票",
+      "viewRoadmap": "ロードマップを見る"
+    },
+    "tools": {
+      "costCalculator": {
+        "title": "生活費計算機",
+        "description": "予算を計画し、都市間のコストを比較"
+      },
+      "visaCounter": {
+        "title": "ビザ日数カウンター",
+        "description": "ビザの日数を追跡し、オーバーステイを回避"
+      },
+      "taxCalculator": {
+        "title": "税金計算機",
+        "description": "各国の潜在的税務義務を計算"
+      },
+      "travelTracker": {
+        "title": "旅行トラッカー",
+        "description": "目的地での旅行と滞在を追跡"
+      },
+      "wifiTracker": {
+        "title": "WiFi速度トラッカー",
+        "description": "世界中のインターネット速度を監視"
+      },
+      "timeZoneManager": {
+        "title": "タイムゾーンマネージャー",
+        "description": "グローバルワーク用の複数タイムゾーンを管理"
+      },
+      "tripPlanner": {
+        "title": "旅行プランナー",
+        "description": "自信を持って次の目的地を計画"
+      },
+      "budgetPlanner": {
+        "title": "予算プランナー",
+        "description": "支出を効率的に計画・追跡"
+      },
+      "workScheduler": {
+        "title": "ワークスケジュールプランナー",
+        "description": "タイムゾーンをまたいだワークスケジュールを計画"
+      },
+      "domainTracker": {
+        "title": "ドメイントラッカー",
+        "description": "詳細な分析でドメイン投資、コスト、利益を追跡"
+      }
+    },
     "categories": {
       "banking": "銀行サービス",
       "insurance": "保険サービス",
