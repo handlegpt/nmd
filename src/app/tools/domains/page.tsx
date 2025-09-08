@@ -2305,6 +2305,16 @@ export default function DomainTrackerPage() {
                   {newDomain.renewal_cycle_type === 'custom' && `Domain renews every ${newDomain.renewal_cycle_years} year(s)`}
                 </p>
               </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date *</label>
+                <input 
+                  type="date" 
+                  value={newDomain.expiry_date}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, expiry_date: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">Enter the actual domain registration expiry date (not based on purchase date)</p>
+              </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <button 
@@ -2410,6 +2420,16 @@ export default function DomainTrackerPage() {
                   {newDomain.renewal_cycle_type === 'triennial' && 'Domain renews every 3 years (e.g., .tt domains)'}
                   {newDomain.renewal_cycle_type === 'custom' && `Domain renews every ${newDomain.renewal_cycle_years} year(s)`}
                 </p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date *</label>
+                <input 
+                  type="date" 
+                  value={newDomain.expiry_date}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, expiry_date: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">Enter the actual domain registration expiry date (not based on purchase date)</p>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
