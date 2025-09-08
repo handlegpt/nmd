@@ -96,6 +96,129 @@
     "locationPlaceholder": "都市名を入力",
         "wifiSpeedTest": "WiFi速度テスト",
     "weather": "天気",
+    "places": {
+      "filterByCategory": "カテゴリでフィルター",
+      "all": "すべて",
+      "filterByRegion": "地域でフィルター",
+      "allRegions": "すべての地域",
+      "asia": "アジア",
+      "europe": "ヨーロッパ",
+      "americas": "アメリカ大陸",
+      "sortByRating": "評価でソート",
+      "sortBySpeed": "速度でソート",
+      "sortByPrice": "価格でソート",
+      "community": "コミュニティ",
+      "openNow": "営業中",
+      "outlets": "コンセント",
+      "seating": "座席",
+      "noise": "騒音",
+      "evaluate": "評価"
+    },
+    "recommendationForm": {
+      "place": {
+        "suggestedTags": {
+          "latteArt": "ラテアート",
+          "goodCoffee": "美味しいコーヒー",
+          "WiFi快": "WiFi快",
+          "海滩附近": "ビーチ近く",
+          "河景": "川の景色",
+          "高端设施": "高級施設",
+          "历史建筑": "歴史的建造物",
+          "优雅环境": "優雅な環境",
+          "价格实惠": "お手頃価格",
+          "清迈": "チェンマイ",
+          "quiet": "静か",
+          "fastWifi": "高速WiFi",
+          "reasonablePrice": "手頃な価格",
+          "convenientLocation": "便利な立地",
+          "wellEquipped": "設備充実",
+          "goodCommunity": "良いコミュニティ",
+          "beautifulView": "美しい景色",
+          "goodFood": "美味しい料理",
+          "goodService": "良いサービス",
+          "open24Hours": "24時間営業",
+          "petFriendly": "ペット可"
+        },
+        "priceLevels": {
+          "cheap": "安い",
+          "economical": "経済的",
+          "moderate": "普通",
+          "expensive": "高い",
+          "veryExpensive": "非常に高い"
+        }
+      }
+    },
+    "cityComparison": {
+      "points": "ポイント",
+      "wifiSpeed": "WiFi速度",
+      "averageWifiSpeed": "平均WiFi速度",
+      "costOfLiving": "生活費",
+      "monthlyCostUSD": "月額費用（USD）",
+      "perMonth": "月額",
+      "visaConvenience": "ビザの利便性",
+      "stayDays": "滞在日数",
+      "days": "日",
+      "climateComfort": "気候の快適さ",
+      "climateScoreByLatitude": "緯度による気候スコア",
+      "socialAtmosphere": "社交的な雰囲気",
+      "socialScoreByVisaAndCost": "ビザと費用による社交スコア"
+    },
+    "localNomads": {
+      "tagCategories": {
+        "lifestyle": "ライフスタイル",
+        "work": "仕事",
+        "interests": "興味",
+        "personality": "性格"
+      },
+      "lifestyleTags": {
+        "earlyBird": "早起き",
+        "nightOwl": "夜型",
+        "minimalist": "ミニマリスト",
+        "adventurer": "冒険家"
+      },
+      "workTags": {
+        "developer": "開発者",
+        "designer": "デザイナー",
+        "writer": "ライター",
+        "entrepreneur": "起業家"
+      },
+      "interestTags": {
+        "photography": "写真",
+        "music": "音楽",
+        "cooking": "料理",
+        "fitness": "フィットネス"
+      },
+      "personalityTags": {
+        "extrovert": "外向的",
+        "introvert": "内向的",
+        "creative": "創造的",
+        "analytical": "分析的"
+      },
+      "badgeTypes": {
+        "localGuide": "ローカルガイド",
+        "coffeeHero": "コーヒーヒーロー",
+        "cityExplorer": "シティエクスプローラー",
+        "communityBuilder": "コミュニティビルダー"
+      },
+      "badgeDescriptions": {
+        "localGuide": "地元の知識が豊富",
+        "coffeeHero": "コーヒー愛好家",
+        "cityExplorer": "都市探検家",
+        "communityBuilder": "コミュニティ構築者"
+      },
+      "totalNomads": "総ノマド数",
+      "trustAndResponse": "信頼とレスポンス",
+      "requestsGetResponse": "リクエストにレスポンス"
+    },
+    "common": {
+      "goSee": "見に行く"
+    },
+    "cities": {
+      "citiesFound": "都市が見つかりました",
+      "rateCity": "都市を評価",
+      "addToFavorites": "お気に入りに追加",
+      "viewAllCities": "すべての都市を見る"
+    },
     "speedTest": "速度テスト",
         "currentLocation": "現在地",
     "viewDetails": "詳細を見る",
