@@ -3,7 +3,6 @@
   "subtitle": "デジタルノマドの包括的ガイド",
   "description": "ビザ、税金、住宅、保険などのデジタルノマド情報",
   "language": "言語",
-  
   "navigation": {
     "home": "ホーム",
     "tools": "ツール",
@@ -17,12 +16,11 @@
     "dashboard": "ダッシュボード",
     "language": "言語"
   },
-
   "home": {
     "placeCategories": {
       "cafe": "カフェ",
-      "coworking": "コワーキング",
-      "coliving": "コリビング",
+      "coworking": "コワーキングスペース",
+      "coliving": "コリビングスペース",
       "restaurant": "レストラン",
       "hospital": "病院",
       "pharmacy": "薬局",
@@ -43,7 +41,6 @@
     "title": "デジタルノマド情報ハブ",
     "subtitle": "デジタルノマドの包括的ガイド",
     "description": "ビザ情報、税金ガイダンス、必須ツールを見つけ、グローバルノマドコミュニティとつながりましょう。",
-
     "hero": {
       "badge": "デジタルノマドの必須ツール",
       "title": "あなたの",
@@ -61,13 +58,13 @@
         "subtitle": "あなたの現在地",
         "currentTime": "現在時刻",
         "currentLocation": "現在地",
-            "gettingLocation": "位置を取得中...",
-    "unknownLocation": "不明な位置",
-    "locationPermissionDenied": "位置情報の許可が拒否されました",
-    "enableLocation": "位置情報を有効にする",
-    "enterManually": "手動で入力",
-    "refreshLocation": "位置情報を更新",
-            "visaRemaining": "ビザ残り",
+        "gettingLocation": "位置を取得中...",
+        "unknownLocation": "不明な位置",
+        "locationPermissionDenied": "位置情報の許可が拒否されました",
+        "enableLocation": "位置情報を有効にする",
+        "enterManually": "手動で入力",
+        "refreshLocation": "位置情報を更新",
+        "visaRemaining": "ビザ残り",
         "visaSetup": "ビザ設定",
         "visaSetupDescription": "ビザ情報を設定して、有効期限を追跡し、リマインダーを受け取る",
         "setupVisa": "ビザを設定",
@@ -76,259 +73,242 @@
         "visaBenefit3": "自信を持って次の目的地を計画",
         "days": "日",
         "setReminder": "リマインダーを設定",
-    "wifiRating": "WiFi評価",
-    "costOfLiving": "生活費",
-    "monthlyAverage": "月平均",
-    "popularCafe": "人気カフェ",
-    "fromUserRecommendations": "{count}人のユーザーからの推薦",
-    "switchCity": "都市を切り替え",
-    "recommendedDestination": "おすすめの目的地",
-    "budgetCalculator": "予算計算機",
-    "speedTest": "速度テスト",
-    "travelPlanning": "旅行計画",
+        "wifiRating": "WiFi評価",
+        "costOfLiving": "生活費",
+        "monthlyAverage": "月平均",
+        "popularCafe": "人気カフェ",
+        "fromUserRecommendations": "{count}人のユーザーからの推薦",
+        "switchCity": "都市を切り替え",
+        "recommendedDestination": "おすすめの目的地",
+        "budgetCalculator": "予算計算機",
+        "speedTest": "速度テスト",
+        "travelPlanning": "旅行計画",
         "myNextDestination": "次の目的地",
-    "recentlyVisited": "最近訪問した都市",
-    "locationUnavailable": "位置情報利用不可",
-    "moderate": "中程度",
-    "affordable": "手頃",
-    "quickActions": "クイックアクション",
-    "enterCustomLocation": "カスタム位置を入力",
-    "locationPlaceholder": "都市名を入力",
+        "recentlyVisited": "最近訪問",
+        "locationUnavailable": "位置情報利用不可",
+        "moderate": "中程度",
+        "affordable": "手頃",
+        "quickActions": "クイックアクション",
+        "enterCustomLocation": "カスタム位置を入力",
+        "locationPlaceholder": "都市名を入力",
         "wifiSpeedTest": "WiFi速度テスト",
-    "weather": "天気",
-    "places": {
-      "filterByCategory": "カテゴリでフィルター",
-      "all": "すべて",
-      "filterByRegion": "地域でフィルター",
-      "allRegions": "すべての地域",
-      "asia": "アジア",
-      "europe": "ヨーロッパ",
-      "americas": "アメリカ大陸",
-      "sortByRating": "評価でソート",
-      "sortBySpeed": "速度でソート",
-      "sortByPrice": "価格でソート",
-      "community": "コミュニティ",
-      "openNow": "営業中",
-      "outlets": "コンセント",
-      "seating": "座席",
-      "noise": "騒音",
-      "evaluate": "評価"
-    },
-    "recommendationForm": {
-      "place": {
-        "suggestedTags": {
-          "latteArt": "ラテアート",
-          "goodCoffee": "美味しいコーヒー",
-          "WiFi快": "WiFi快",
-          "海滩附近": "ビーチ近く",
-          "河景": "川の景色",
-          "高端设施": "高級施設",
-          "历史建筑": "歴史的建造物",
-          "优雅环境": "優雅な環境",
-          "价格实惠": "お手頃価格",
-          "清迈": "チェンマイ",
-          "quiet": "静か",
-          "fastWifi": "高速WiFi",
-          "reasonablePrice": "手頃な価格",
-          "convenientLocation": "便利な立地",
-          "wellEquipped": "設備充実",
-          "goodCommunity": "良いコミュニティ",
-          "beautifulView": "美しい景色",
-          "goodFood": "美味しい料理",
-          "goodService": "良いサービス",
-          "open24Hours": "24時間営業",
-          "petFriendly": "ペット可"
+        "weather": "天気",
+        "places": {
+          "filterByCategory": "カテゴリでフィルター",
+          "all": "すべて",
+          "filterByRegion": "地域でフィルター",
+          "allRegions": "すべての地域",
+          "asia": "アジア",
+          "europe": "ヨーロッパ",
+          "americas": "アメリカ大陸",
+          "sortByRating": "評価でソート",
+          "sortBySpeed": "速度でソート",
+          "sortByPrice": "価格でソート",
+          "community": "コミュニティ",
+          "openNow": "営業中",
+          "outlets": "コンセント",
+          "seating": "座席",
+          "noise": "騒音",
+          "evaluate": "評価"
         },
-        "priceLevels": {
-          "cheap": "安い",
-          "economical": "経済的",
-          "moderate": "普通",
-          "expensive": "高い",
-          "veryExpensive": "非常に高い"
-        }
+        "recommendationForm": {
+          "place": {
+            "suggestedTags": {
+              "latteArt": "ラテアート",
+              "goodCoffee": "美味しいコーヒー",
+              "WiFi快": "WiFi快",
+              "海滩附近": "ビーチ近く",
+              "河景": "川の景色",
+              "高端设施": "高級施設",
+              "历史建筑": "歴史的建造物",
+              "优雅环境": "優雅な環境",
+              "价格实惠": "お手頃価格",
+              "清迈": "チェンマイ",
+              "quiet": "静か",
+              "fastWifi": "高速WiFi",
+              "reasonablePrice": "手頃な価格",
+              "convenientLocation": "便利な立地",
+              "wellEquipped": "設備充実",
+              "goodCommunity": "良いコミュニティ",
+              "beautifulView": "美しい景色",
+              "goodFood": "美味しい料理",
+              "goodService": "良いサービス",
+              "open24Hours": "24時間営業",
+              "petFriendly": "ペット可"
+            },
+            "priceLevels": {
+              "cheap": "安い",
+              "economical": "経済的",
+              "moderate": "普通",
+              "expensive": "高い",
+              "veryExpensive": "非常に高い"
+            }
+          }
+        },
+        "cityComparison": {
+          "points": "ポイント",
+          "wifiSpeed": "WiFi速度",
+          "averageWifiSpeed": "平均WiFi速度",
+          "costOfLiving": "生活費",
+          "monthlyCostUSD": "月額費用（USD）",
+          "perMonth": "月額",
+          "visaConvenience": "ビザの利便性",
+          "stayDays": "滞在日数",
+          "days": "日",
+          "climateComfort": "気候の快適さ",
+          "climateScoreByLatitude": "緯度による気候スコア",
+          "socialAtmosphere": "社交的な雰囲気",
+          "socialScoreByVisaAndCost": "ビザと費用による社交スコア"
+        },
+        "localNomads": {
+          "tagCategories": {
+            "lifestyle": "ライフスタイル",
+            "work": "仕事",
+            "interests": "興味",
+            "personality": "性格"
+          },
+          "lifestyleTags": {
+            "earlyBird": "早起き",
+            "nightOwl": "夜型",
+            "minimalist": "ミニマリスト",
+            "adventurer": "冒険家"
+          },
+          "workTags": {
+            "developer": "開発者",
+            "designer": "デザイナー",
+            "writer": "ライター",
+            "entrepreneur": "起業家"
+          },
+          "interestTags": {
+            "photography": "写真",
+            "music": "音楽",
+            "cooking": "料理",
+            "fitness": "フィットネス"
+          },
+          "personalityTags": {
+            "extrovert": "外向的",
+            "introvert": "内向的",
+            "creative": "創造的",
+            "analytical": "分析的"
+          },
+          "badgeTypes": {
+            "localGuide": "ローカルガイド",
+            "coffeeHero": "コーヒーヒーロー",
+            "cityExplorer": "シティエクスプローラー",
+            "communityBuilder": "コミュニティビルダー"
+          },
+          "badgeDescriptions": {
+            "localGuide": "地元の知識が豊富",
+            "coffeeHero": "コーヒー愛好家",
+            "cityExplorer": "都市探検家",
+            "communityBuilder": "コミュニティ構築者"
+          },
+          "totalNomads": "総ノマド数",
+          "trustAndResponse": "信頼とレスポンス",
+          "requestsGetResponse": "リクエストにレスポンス"
+        },
+        "common": {
+          "goSee": "見に行く"
+        },
+        "cities": {
+          "citiesFound": "都市が見つかりました",
+          "rateCity": "都市を評価",
+          "addToFavorites": "お気に入りに追加",
+          "viewAllCities": "すべての都市を見る"
+        },
+        "viewDetails": "詳細を見る",
+        "explore": "探索",
+        "totalCities": "総都市数",
+        "totalDays": "総日数",
+        "currentCity": "現在の都市",
+        "consecutiveDays": "連続日数",
+        "noTrajectory": "なし",
+        "myTravelTrajectory": "私の旅行軌跡",
+        "import": "インポート",
+        "export": "エクスポート",
+        "addTrajectory": "軌跡を追加",
+        "noTrajectoryRecord": "軌跡記録がありません。旅行の記録を始めましょう！",
+        "cityName": "都市名",
+        "country": "国",
+        "startDate": "開始日",
+        "endDate": "終了日",
+        "daysStayed": "滞在日数",
+        "type": "タイプ",
+        "residence": "居住",
+        "visit": "訪問",
+        "work": "仕事",
+        "notes": "メモ",
+        "update": "更新",
+        "add": "追加",
+        "importTrajectoryData": "軌跡データをインポート",
+        "importTrajectoryDescription": "軌跡データを含むJSONファイルを選択してください。ファイルには都市軌跡の配列が含まれている必要があります。",
+        "cancel": "キャンセル",
+        "cityList": "都市リスト",
+        "travelTrajectory": "旅行軌跡",
+        "failedToLoadCities": "都市の読み込みに失敗しました",
+        "tryAgain": "再試行",
+        "nomadDashboard": "ノマドダッシュボード",
+        "hi": "こんにちは",
+        "searchCitiesCafesUsers": "都市、カフェ、ユーザーを検索",
+        "quickPicks": "クイックピック",
+        "nearMe": "📍 近く",
+        "topRated": "🔥 高評価",
+        "new": "新着",
+        "citiesToExplore": "探索する都市",
+        "viewAllCities": "すべての都市を見る",
+        "myFavorites": "❤️ お気に入り",
+        "monthlyCost": "月額費用",
+        "visaDays": "ビザ日数",
+        "recommendedForYou": "おすすめ",
+        "searchPlaceholder": "都市、カフェ、ユーザーを検索...",
+        "newCities": "🆕 新着",
+        "weeklyActivities": "📅 今週の活動",
+        "cityRankings": "🏆 都市ランキング",
+        "searchIcon": "🔍",
+        "noFavorites": "お気に入りの都市がありません",
+        "addToFavorites": "お気に入り",
+        "cityFilters": "フィルター",
+        "sortBy": "並び替え",
+        "region": "地域",
+        "wifiSpeed": "WiFi速度",
+        "costLevel": "生活費レベル",
+        "allRegions": "すべての地域",
+        "asia": "アジア",
+        "europe": "ヨーロッパ",
+        "americas": "アメリカ",
+        "daysPlus": "日以上",
+        "mbpsPlus": "Mbps以上",
+        "costBelow": "コスト以下",
+        "recentVisit": "最近の訪問",
+        "hoursAgo": "時間前",
+        "daysAgo": "日前",
+        "rateCity": "都市を評価",
+        "costRating": "コスト評価",
+        "visaRating": "ビザ評価",
+        "overallRating": "総合評価",
+        "noRating": "評価なし",
+        "votes": "票",
+        "loginRequired": "まずログインしてください",
+        "loginRequiredDescription": "ログインして旅行軌跡を表示・管理してください",
+        "goToLogin": "ログインへ",
+        "citiesFound": "都市",
+        "loginToRate": "都市を評価するにはログインしてください",
+        "loginToFavorite": "お気に入りに追加するにはログインしてください",
+        "addedToFavorites": "お気に入りに追加しました",
+        "removedFromFavorites": "お気に入りから削除しました",
+        "comment": "コメント",
+        "shareYourExperience": "この都市での体験を共有してください...",
+        "ratingSubmitted": "評価を送信しました",
+        "submitRating": "評価を送信"
       }
     },
-    "cityComparison": {
-      "points": "ポイント",
-      "wifiSpeed": "WiFi速度",
-      "averageWifiSpeed": "平均WiFi速度",
-      "costOfLiving": "生活費",
-      "monthlyCostUSD": "月額費用（USD）",
-      "perMonth": "月額",
-      "visaConvenience": "ビザの利便性",
-      "stayDays": "滞在日数",
-      "days": "日",
-      "climateComfort": "気候の快適さ",
-      "climateScoreByLatitude": "緯度による気候スコア",
-      "socialAtmosphere": "社交的な雰囲気",
-      "socialScoreByVisaAndCost": "ビザと費用による社交スコア"
-    },
-    "localNomads": {
-      "tagCategories": {
-        "lifestyle": "ライフスタイル",
-        "work": "仕事",
-        "interests": "興味",
-        "personality": "性格"
-      },
-      "lifestyleTags": {
-        "earlyBird": "早起き",
-        "nightOwl": "夜型",
-        "minimalist": "ミニマリスト",
-        "adventurer": "冒険家"
-      },
-      "workTags": {
-        "developer": "開発者",
-        "designer": "デザイナー",
-        "writer": "ライター",
-        "entrepreneur": "起業家"
-      },
-      "interestTags": {
-        "photography": "写真",
-        "music": "音楽",
-        "cooking": "料理",
-        "fitness": "フィットネス"
-      },
-      "personalityTags": {
-        "extrovert": "外向的",
-        "introvert": "内向的",
-        "creative": "創造的",
-        "analytical": "分析的"
-      },
-      "badgeTypes": {
-        "localGuide": "ローカルガイド",
-        "coffeeHero": "コーヒーヒーロー",
-        "cityExplorer": "シティエクスプローラー",
-        "communityBuilder": "コミュニティビルダー"
-      },
-      "badgeDescriptions": {
-        "localGuide": "地元の知識が豊富",
-        "coffeeHero": "コーヒー愛好家",
-        "cityExplorer": "都市探検家",
-        "communityBuilder": "コミュニティ構築者"
-      },
-      "totalNomads": "総ノマド数",
-      "trustAndResponse": "信頼とレスポンス",
-      "requestsGetResponse": "リクエストにレスポンス"
-    },
-    "common": {
-      "goSee": "見に行く"
-    },
-    "cities": {
-      "citiesFound": "都市が見つかりました",
-      "rateCity": "都市を評価",
-      "addToFavorites": "お気に入りに追加",
-      "viewAllCities": "すべての都市を見る"
-    },
-    "speedTest": "速度テスト",
-        "currentLocation": "現在地",
-    "viewDetails": "詳細を見る",
-    "explore": "探索",
-    "totalCities": "総都市数",
-    "totalDays": "総日数",
-    "currentCity": "現在の都市",
-    "consecutiveDays": "連続日数",
-    "noTrajectory": "なし",
-    "myTravelTrajectory": "私の旅行軌跡",
-    "import": "インポート",
-    "export": "エクスポート",
-    "addTrajectory": "軌跡を追加",
-    "noTrajectoryRecord": "軌跡記録がありません。旅行の記録を始めましょう！",
-    "cityName": "都市名",
-    "country": "国",
-    "startDate": "開始日",
-    "endDate": "終了日",
-    "daysStayed": "滞在日数",
-    "type": "タイプ",
-    "residence": "居住",
-    "visit": "訪問",
-    "work": "仕事",
-    "notes": "メモ",
-    "update": "更新",
-    "add": "追加",
-    "importTrajectoryData": "軌跡データをインポート",
-    "importTrajectoryDescription": "軌跡データを含むJSONファイルを選択してください。ファイルには都市軌跡の配列が含まれている必要があります。",
-    "cancel": "キャンセル",
-    "cityList": "都市リスト",
-    "travelTrajectory": "旅行軌跡",
-    "failedToLoadCities": "都市の読み込みに失敗しました",
-        "tryAgain": "再試行",
-    "currentLocation": "現在地",
-    "weather": "天気",
-    "nomadDashboard": "ノマドダッシュボード",
-    "hi": "こんにちは",
-    "searchCitiesCafesUsers": "都市、カフェ、ユーザーを検索",
-    "quickPicks": "クイックピック",
-    "nearMe": "近く",
-    "topRated": "高評価",
-    "new": "新着",
-    "citiesToExplore": "探索する都市",
-    "viewAllCities": "すべての都市を見る",
-    "myFavorites": "お気に入り",
-    "wifiRating": "WiFi評価",
-    "monthlyCost": "月額費用",
-    "visaDays": "ビザ日数",
-    "recentlyVisited": "最近訪問",
-    "recommendedForYou": "おすすめ",
-    "searchPlaceholder": "都市、カフェ、ユーザーを検索...",
-    "nearMe": "📍 近く",
-    "topRated": "🔥 高評価",
-    "newCities": "🆕 新着",
-    "myFavorites": "❤️ お気に入り",
-    "weeklyActivities": "📅 今週の活動",
-    "cityRankings": "🏆 都市ランキング",
-    "searchIcon": "🔍",
-    "noFavorites": "お気に入りの都市がありません",
-    "addToFavorites": "お気に入りに追加",
-    "cityFilters": "フィルター",
-    "sortBy": "並び替え",
-    "region": "地域",
-    "visaDays": "ビザ日数",
-    "wifiSpeed": "WiFi速度",
-    "costLevel": "生活費レベル",
-    "allRegions": "すべての地域",
-    "asia": "アジア",
-    "europe": "ヨーロッパ",
-    "americas": "アメリカ",
-    "daysPlus": "日以上",
-    "mbpsPlus": "Mbps以上",
-    "costBelow": "コスト以下",
-    "recentVisit": "最近の訪問",
-    "hoursAgo": "時間前",
-    "daysAgo": "日前",
-    "rateCity": "都市を評価",
-    "addToFavorites": "お気に入り",
-    "wifiRating": "WiFi評価",
-    "costRating": "コスト評価",
-    "visaRating": "ビザ評価",
-    "overallRating": "総合評価",
-    "noRating": "評価なし",
-    "votes": "票",
-    "loginRequired": "まずログインしてください",
-    "loginRequiredDescription": "ログインして旅行軌跡を表示・管理してください",
-    "goToLogin": "ログインへ",
-    "cityList": "都市リスト",
-    "travelTrajectory": "旅行軌跡",
-    "citiesFound": "都市",
-    "rateCity": "都市を評価",
-    "loginToRate": "都市を評価するにはログインしてください",
-    "loginToFavorite": "お気に入りに追加するにはログインしてください",
-    "addedToFavorites": "お気に入りに追加しました",
-    "removedFromFavorites": "お気に入りから削除しました",
-    "overallRating": "総合評価",
-    "comment": "コメント",
-    "shareYourExperience": "この都市での体験を共有してください...",
-    "ratingSubmitted": "評価を送信しました",
-    "submitRating": "評価を送信",
-    "viewAllCities": "すべての都市を見る"
-        }
-      },
     "currentLocation": "現在地",
     "lastUpdated": "最終更新",
     "quickInfo": "クイック情報",
     "visaStatus": "ビザステータス",
     "visaNotSet": "ビザ情報が設定されていません",
     "visaSetupDescription": "ビザ情報を設定して残り日数を追跡し、リマインダーを受け取る",
-    "setupVisa": "ビザを設定",
+    "setupVisa": "ビザ設定",
     "testWifi": "WiFiテスト",
     "costCalculator": "コスト計算機",
     "todayWeather": "今日の天気",
@@ -359,21 +339,6 @@
     "switchCity": "都市切り替え",
     "nextDestination": "次の目的地",
     "refreshData": "データ更新",
-    "placeCategories": {
-      "cafe": "カフェ",
-      "coworking": "コワーキングスペース",
-      "coliving": "コリビングスペース",
-      "restaurant": "レストラン",
-      "hospital": "病院",
-      "pharmacy": "薬局",
-      "hotel": "ホテル",
-      "transport": "交通",
-      "shopping": "ショッピング",
-      "bank": "銀行",
-      "park": "公園",
-      "library": "図書館",
-      "other": "その他"
-    },
     "filterByCategory": "カテゴリでフィルター",
     "all": "すべて",
     "filterByRegion": "地域でフィルター",
@@ -394,7 +359,6 @@
     "weather": "天気",
     "wifiSpeed": "WiFi速度",
     "visaRemaining": "ビザ残り日数",
-    "setupVisa": "ビザ設定",
     "setupVisaTitle": "ビザ情報を設定",
     "setupVisaDescription": "ビザの有効期限を設定して残り日数を追跡",
     "setupVisaButton": "ビザを設定",
@@ -451,7 +415,7 @@
       "title": "必要なすべて",
       "subtitle": "デジタルノマドの旅のための包括的リソース",
       "essentialTools": {
-    "title": "必須ツール",
+        "title": "必須ツール",
         "description": "デジタル銀行、保険、リモートワークプラットフォーム"
       },
       "nomadCities": {
@@ -462,7 +426,6 @@
         "title": "税金ガイダンス",
         "description": "183日ルールと二重課税条約"
       },
-      
       "guides": {
         "title": "ガイドとリソース",
         "description": "ビザ申請、引っ越しチェックリスト、ヒント"
@@ -490,17 +453,16 @@
       "button": "始める"
     }
   },
-
   "tools": {
     "title": "ノマドツールハブ",
-    "subtitle": "デジタルノマドの生活をより簡単にする必須の計算機、トラッカー、プランナー。",
+    "subtitle": "デジタルノマドのツールとサービス",
     "searchPlaceholder": "名前、カテゴリ、または機能でツールを検索...",
     "filterByCategory": "カテゴリでフィルター：",
     "categories": {
-      "all": "すべてのツール",
-      "calculators": "計算機",
-      "trackers": "トラッカー",
-      "planners": "プランナー"
+      "banking": "銀行サービス",
+      "insurance": "保険サービス",
+      "remoteWork": "リモートワークプラットフォーム",
+      "languageLearning": "言語学習"
     },
     "quickAccess": {
       "title": "クイックアクセス",
@@ -575,18 +537,11 @@
         "description": "詳細な分析でドメイン投資、コスト、利益を追跡"
       }
     },
-    "categories": {
-      "banking": "銀行サービス",
-      "insurance": "保険サービス",
-      "remoteWork": "リモートワークプラットフォーム",
-      "languageLearning": "言語学習"
-    },
     "missingTool": {
       "title": "ツールが不足していますか？",
       "description": "私たちは常に推奨事項を更新しています。このリストに載るべきお気に入りのツールはありますか？",
       "button": "ツールを提案"
     },
-    "subtitle": "デジタルノマドのツールとサービス",
     "banking": {
       "title": "銀行サービス",
       "description": "デジタルノマドのデジタル銀行ソリューション",
@@ -594,21 +549,33 @@
         {
           "name": "Revolut",
           "description": "優れた為替レートのマルチ通貨口座",
-          "features": ["外国為替手数料なし", "無料ATM引き出し", "マルチ通貨サポート"],
+          "features": [
+            "外国為替手数料なし",
+            "無料ATM引き出し",
+            "マルチ通貨サポート"
+          ],
           "rating": 4.8,
           "url": "https://revolut.com"
         },
         {
           "name": "Wise (TransferWise)",
           "description": "国際送金とボーダーレス口座",
-          "features": ["低い送金手数料", "リアルタイム為替レート", "ボーダーレス口座"],
+          "features": [
+            "低い送金手数料",
+            "リアルタイム為替レート",
+            "ボーダーレス口座"
+          ],
           "rating": 4.7,
           "url": "https://wise.com"
         },
         {
           "name": "N26",
           "description": "グローバル機能を持つヨーロッパのデジタル銀行",
-          "features": ["無料ATM引き出し", "リアルタイム通知", "旅行保険"],
+          "features": [
+            "無料ATM引き出し",
+            "リアルタイム通知",
+            "旅行保険"
+          ],
           "rating": 4.5,
           "url": "https://n26.com"
         }
@@ -621,21 +588,33 @@
         {
           "name": "SafetyWing",
           "description": "ノマドのグローバル健康保険",
-          "features": ["180+カ国カバー", "Covid-19カバー", "柔軟なプラン"],
+          "features": [
+            "180+カ国カバー",
+            "Covid-19カバー",
+            "柔軟なプラン"
+          ],
           "rating": 4.6,
           "url": "https://safetywing.com"
         },
         {
           "name": "World Nomads",
           "description": "アドベンチャースポーツカバーの旅行保険",
-          "features": ["アドベンチャースポーツカバー", "24/7緊急サポート", "柔軟な期間"],
+          "features": [
+            "アドベンチャースポーツカバー",
+            "24/7緊急サポート",
+            "柔軟な期間"
+          ],
           "rating": 4.4,
           "url": "https://worldnomads.com"
         },
         {
           "name": "Genki",
           "description": "グローバル市民のデジタル健康保険",
-          "features": ["デジタルファースト", "グローバルカバー", "簡単な請求プロセス"],
+          "features": [
+            "デジタルファースト",
+            "グローバルカバー",
+            "簡単な請求プロセス"
+          ],
           "rating": 4.3,
           "url": "https://genki.world"
         }
@@ -648,21 +627,33 @@
         {
           "name": "Upwork",
           "description": "様々なスキルのフリーランスプラットフォーム",
-          "features": ["幅広いプロジェクト", "安全な支払いシステム", "スキルベースマッチング"],
+          "features": [
+            "幅広いプロジェクト",
+            "安全な支払いシステム",
+            "スキルベースマッチング"
+          ],
           "rating": 4.2,
           "url": "https://upwork.com"
         },
         {
           "name": "Fiverr",
           "description": "ギグベースのフリーランスマーケットプレイス",
-          "features": ["迅速なプロジェクト完了", "サービスパッケージ", "グローバルクライアント"],
+          "features": [
+            "迅速なプロジェクト完了",
+            "サービスパッケージ",
+            "グローバルクライアント"
+          ],
           "rating": 4.1,
           "url": "https://fiverr.com"
         },
         {
           "name": "Toptal",
           "description": "トップ人材のプレミアムフリーランスネットワーク",
-          "features": ["高品質プロジェクト", "トップティアクライアント", "競争力のある料金"],
+          "features": [
+            "高品質プロジェクト",
+            "トップティアクライアント",
+            "競争力のある料金"
+          ],
           "rating": 4.5,
           "url": "https://toptal.com"
         }
@@ -675,28 +666,39 @@
         {
           "name": "Duolingo",
           "description": "無料の言語学習アプリ",
-          "features": ["ゲーム化された学習", "40+言語", "無料基本プラン"],
+          "features": [
+            "ゲーム化された学習",
+            "40+言語",
+            "無料基本プラン"
+          ],
           "rating": 4.3,
           "url": "https://duolingo.com"
         },
         {
           "name": "italki",
           "description": "オンライン言語指導プラットフォーム",
-          "features": ["ネイティブスピーカー", "柔軟なスケジュール", "会話練習"],
+          "features": [
+            "ネイティブスピーカー",
+            "柔軟なスケジュール",
+            "会話練習"
+          ],
           "rating": 4.4,
           "url": "https://italki.com"
         },
         {
           "name": "Babbel",
           "description": "会話に焦点を当てた言語学習",
-          "features": ["音声認識", "リアル会話", "文法フォーカス"],
+          "features": [
+            "音声認識",
+            "リアル会話",
+            "文法フォーカス"
+          ],
           "rating": 4.2,
           "url": "https://babbel.com"
         }
       ]
     }
   },
-
   "cities": {
     "title": "都市一覧",
     "searchPlaceholder": "都市を検索...",
@@ -798,9 +800,30 @@
         "description": "好みを調整するか、すべての都市を閲覧してください"
       },
       "backToAll": "すべての都市に戻る"
-    }
+    },
+    "removeFromFavorites": "Remove from Favorites",
+    "addToFavorites": "Add to Favorites",
+    "viewAllCities": "View All Cities",
+    "rateCity": "Rate City",
+    "loginToRate": "Please log in to rate cities",
+    "loginToFavorite": "Please log in to add favorites",
+    "addedToFavorites": "Added to favorites",
+    "removedFromFavorites": "Removed from favorites",
+    "overallRating": "Overall Rating",
+    "comment": "Comment",
+    "shareYourExperience": "Share your experience with this city...",
+    "ratingSubmitted": "Rating submitted successfully",
+    "submitRating": "Submit Rating",
+    "citiesFound": "Cities Found",
+    "totalCities": "Total Cities",
+    "totalDays": "Total Days",
+    "currentCity": "Current City",
+    "consecutiveDays": "Consecutive Days",
+    "myTravelTrajectory": "My Travel Trajectory",
+    "import": "Import",
+    "export": "Export",
+    "addTrajectory": "Add Trajectory"
   },
-
   "tax_reminder": {
     "title": "税金リマインダー",
     "subtitle": "税金義務のコンプライアンスを維持",
@@ -840,7 +863,6 @@
       ]
     }
   },
-
   "guides": {
     "title": "ガイドとリソース",
     "description": "デジタルノマドの包括的ガイドと実用的なリソース",
@@ -895,9 +917,6 @@
       ]
     }
   },
-
-
-
   "about": {
     "title": "NOMAD.NOWについて",
     "subtitle": "デジタルノマドのための最も重要な情報ツール - 時間、場所、意思決定支援",
@@ -945,7 +964,6 @@
       "belief": "テクノロジーとコミュニティの力を通じて、デジタルノマドの生活をより良くできると信じています。"
     }
   },
-
   "contact": {
     "title": "お問い合わせ",
     "subtitle": "ご質問、ご提案、またはパートナーシップのご関心がございますか？お聞かせください",
@@ -955,12 +973,12 @@
       "email": "メールアドレス",
       "subject": "件名",
       "message": "メッセージ",
-          "send": "メッセージを送信",
-    "sending": "送信中...",
-    "successMessage": "メッセージが送信されました！すぐに返信いたします。",
-    "namePlaceholder": "お名前",
-    "emailPlaceholder": "your@email.com",
-    "messagePlaceholder": "ご質問やご提案を詳しくお聞かせください..."
+      "send": "メッセージを送信",
+      "sending": "送信中...",
+      "successMessage": "メッセージが送信されました！すぐに返信いたします。",
+      "namePlaceholder": "お名前",
+      "emailPlaceholder": "your@email.com",
+      "messagePlaceholder": "ご質問やご提案を詳しくお聞かせください..."
     },
     "info": {
       "title": "連絡先情報",
@@ -1001,12 +1019,7 @@
       "adventure": "冒険",
       "learning": "学習"
     },
-    "status": {
-      "upcoming": "予定",
-      "ongoing": "進行中",
-      "completed": "完了",
-      "cancelled": "キャンセル済み"
-    },
+    "status": "ステータス",
     "organizer": "主催者",
     "rating": "評価",
     "createMeetup": "ミートアップを作成",
@@ -1043,7 +1056,6 @@
     "interests": "興味・関心",
     "timezone": "タイムゾーン",
     "meetups": "ミートアップ数",
-    "rating": "評価",
     "days": "日数",
     "message": "メッセージ",
     "history": "履歴",
@@ -1071,11 +1083,10 @@
     "participationRate": "参加率",
     "averageRating": "平均評価",
     "failedToLoadHistory": "履歴の読み込みに失敗しました",
-    "searchPlaceholder": "ミートアップを検索...",
+    "searchPlaceholder": "メッセージ、ユーザー、またはタグを検索...",
     "export": "エクスポート",
     "historyExported": "履歴が正常にエクスポートされました",
     "exportFailed": "履歴のエクスポートに失敗しました",
-    "status": "ステータス",
     "type": "タイプ",
     "dateFrom": "開始日",
     "loadMore": "さらに読み込む",
@@ -1092,7 +1103,6 @@
     "replyPlaceholder": "返信を入力してください...",
     "noMessages": "まだメッセージがありません",
     "startConversation": "最初に会話を始めましょう！",
-    "searchPlaceholder": "メッセージ、ユーザー、またはタグを検索...",
     "filterAll": "すべてのタイプ",
     "filterGeneral": "一般チャット",
     "filterBy": "フィルター",
@@ -1140,7 +1150,6 @@
     "within25km": "25km以内",
     "within50km": "50km以内",
     "allDistances": "すべての距離",
-    "filterGeneral": "一般チャット",
     "filterQuestion": "質問",
     "filterInfo": "情報",
     "filterHelp": "ヘルプ",
@@ -1300,11 +1309,6 @@
     "submitVote": "投票を送信",
     "submitting": "送信中..."
   },
-
-
-
-
-
   "recommendations": {
     "title": "AIパーソナライズ推奨",
     "description": "あなたの設定に基づいてカスタマイズされた都市推奨を生成",
@@ -1343,7 +1347,6 @@
     "priorityIndicator": "優先度インジケーター",
     "algorithmExplanation": "WiFi速度、生活費、ビザ日数、気候の快適さ、社交雰囲気に基づいて推奨を生成します。"
   },
-
   "preferences": {
     "title": "設定",
     "basic": "基本",
@@ -1409,20 +1412,9 @@
       "timezone": "タイムゾーン"
     }
   },
-
-
-
-
-
-
-
-
-
   "common": {
     "home": "ホーム",
     "loading": "読み込み中...",
-    "loadingCities": "都市を読み込み中...",
-    "loadingLocationData": "位置データを読み込み中...",
     "learnMore": "詳細を見る",
     "viewDetails": "詳細を見る",
     "back": "戻る",
@@ -1445,17 +1437,14 @@
     "profile": "プロフィール",
     "login": "ログイン",
     "search": "検索",
-    "attempts": "試行",
+    "attempts": "回試行",
     "remaining": "残り",
     "expand": "展開",
     "collapse": "折りたたみ",
     "reset": "リセット",
     "tryAgain": "再試行",
-    "days": "日",
-    "testWifi": "WiFiテスト",
-    "exploreCities": "都市を探索"
+    "days": "日"
   },
-
   "notifications": {
     "noNotifications": "通知なし",
     "markAsRead": "既読にする",
@@ -1466,7 +1455,6 @@
     "loginSuccess": "ログイン成功",
     "logoutSuccess": "ログアウトしました"
   },
-
   "mobileMenu": {
     "title": "メニュー",
     "homeDescription": "デジタルノマド都市を探索",
@@ -1482,10 +1470,6 @@
     "aboutUs": "私たちについて",
     "contactUs": "お問い合わせ"
   },
-
-
-
-
   "components": {
     "notificationSystem": {
       "title": "通知",
@@ -1493,8 +1477,6 @@
       "markAllAsRead": "すべて既読にする",
       "noNotifications": "通知はありません"
     },
-
-
     "cityComparison": {
       "title": "都市比較",
       "description": "都市を並べて比較",
@@ -1616,7 +1598,18 @@
     "profileCompleteness": "プロフィール完成度",
     "unlockMoreBadges": "より多くのバッジを解除",
     "completeInfoToUpgrade": "情報を完成させてアップグレード",
-    "quickActions": "クイックアクション",
+    "quickActions": {
+      "title": "クイックアクション",
+      "subtitle": "⚡ コア機能へのクイックアクセス",
+      "exploreCities": "都市を探索",
+      "exploreCitiesDesc": "新しい目的地を発見",
+      "findNomads": "Nomadを探す",
+      "findNomadsDesc": "仲間とつながる",
+      "coffeeMap": "コーヒーマップ",
+      "coffeeMapDesc": "素晴らしい場所を発見",
+      "visaGuide": "ビザガイド",
+      "visaGuideDesc": "入国要件を学ぶ"
+    },
     "exploreCities": "都市を探索",
     "findPlaces": "場所を探す",
     "connect": "つながる",
@@ -1658,18 +1651,6 @@
     "upgradeCityExplorer": "City Explorer Lv2にアップグレード",
     "unlockNetworkerBadge": "Networkerバッジを解除",
     "learnMore": "詳細を見る",
-    "quickActions": {
-      "title": "クイックアクション",
-      "subtitle": "⚡ コア機能へのクイックアクセス",
-      "exploreCities": "都市を探索",
-      "exploreCitiesDesc": "新しい目的地を発見",
-      "findNomads": "Nomadを探す",
-      "findNomadsDesc": "仲間とつながる",
-      "coffeeMap": "コーヒーマップ",
-      "coffeeMapDesc": "素晴らしい場所を発見",
-      "visaGuide": "ビザガイド",
-      "visaGuideDesc": "入国要件を学ぶ"
-    },
     "badgeProgress": {
       "cities": "都市",
       "days": "日",
@@ -1693,9 +1674,9 @@
       "unlocked": "おめでとうございます！{count}個の達成バッジをアンロックしました！"
     },
     "recommendations": {
-              "exploreNearby": "{city}の近くの都市を探索",
-        "exploreNearbyDesc": "近くのデジタルノマドに適した都市を発見",
-        "connectNomads": "{count}人のNomadsとつながる",
+      "exploreNearby": "{city}の近くの都市を探索",
+      "exploreNearbyDesc": "近くのデジタルノマドに適した都市を発見",
+      "connectNomads": "{count}人のNomadsとつながる",
       "newbieTip": "ノマド初心者向けのヒント",
       "newbieTipDesc": "より深い地元文化を体験するために長期ビザの申請を検討してください",
       "experiencedTip": "経験豊富なノマド向けのヒント",
@@ -2000,39 +1981,6 @@
     "detailedVoteSubmitted": "詳細評価が正常に送信されました",
     "voteFailed": "投票の送信に失敗しました。再試行してください"
   },
-  "common": {
-    "home": "ホーム",
-    "loading": "読み込み中...",
-    "learnMore": "詳細を見る",
-    "viewDetails": "詳細を見る",
-    "back": "戻る",
-    "visitWebsite": "ウェブサイトを訪問",
-    "suggestTool": "ツールを提案",
-    "getCityGuide": "都市ガイドを取得",
-    "nomadScore": "ノマドスコア",
-    "costOfLiving": "生活費",
-    "internet": "インターネット",
-    "safety": "安全性",
-    "visa": "ビザ",
-    "highlights": "ハイライト",
-    "localTips": "地元のヒント",
-    "select": "選択してください",
-    "add": "追加",
-    "cancel": "キャンセル",
-    "submitting": "送信中...",
-    "retry": "再試行",
-    "refresh": "更新",
-    "profile": "プロフィール",
-    "login": "ログイン",
-    "search": "検索",
-    "attempts": "回試行",
-    "remaining": "残り",
-    "expand": "展開",
-    "collapse": "折りたたみ",
-    "reset": "リセット",
-    "tryAgain": "再試行",
-    "days": "日"
-  },
   "auth": {
     "signIn": "ログイン",
     "logout": "ログアウト",
@@ -2066,7 +2014,6 @@
     "noAccount": "アカウントをお持ちでない方は",
     "signUp": "サインアップ",
     "loginSuccess": "ログイン成功！リダイレクト中...",
-    "logout": "ログアウト",
     "verificationFailed": "認証に失敗しました",
     "networkError": "ネットワークエラー、再試行してください",
     "codeSent": "認証コードが正常に送信されました",
@@ -2103,89 +2050,95 @@
     }
   },
   "search": {
-    "advancedFilters": "高度なフィルター",
-    "clearAll": "すべてクリア",
-    "results": "{filtered} / {total} 件の結果を表示",
-    "all": "すべて"
+    "placeholder": "都市、場所、またはユーザーを検索...",
+    "search": "検索",
+    "loading": "検索中...",
+    "suggestions": "検索提案",
+    "noResults": "結果が見つかりません",
+    "recent": "最近の検索",
+    "clearHistory": "履歴をクリア",
+    "popular": "人気の検索",
+    "browseCities": "都市を閲覧",
+    "findNomads": "ノマドを見つける"
   },
   "recommendationForm": {
     "place": {
+      "title": "場所を推薦",
+      "submitButton": "推薦を送信",
       "fields": {
-        "tags": "タグ",
-        "socialLevels": {
-          "high": "高い",
-          "medium": "中程度",
-          "low": "低い"
-        },
-        "socialAtmosphere": "ソーシャル雰囲気",
-        "noiseLevels": {
-          "loud": "うるさい",
-          "moderate": "中程度",
-          "quiet": "静か"
-        },
-        "noiseLevel": "騒音レベル",
-        "priceLevel": "価格レベル",
-        "wifiSpeedPlaceholder": "WiFi速度をMbpsで入力",
-        "wifiSpeed": "WiFi速度",
-        "descriptionPlaceholder": "場所とおすすめ理由を説明してください",
-        "description": "説明",
-        "longitudePlaceholder": "経度を入力",
-        "longitude": "経度",
-        "latitudePlaceholder": "緯度を入力",
-        "latitude": "緯度",
-        "locationHelp": "一般的なエリアまたは地域（オプション）",
-        "locationPlaceholder": "例：渋谷、東京またはセントラルパークエリア",
-        "location": "場所",
-        "addressPlaceholder": "住所を入力",
-        "address": "住所",
-        "category": "カテゴリ",
+        "name": "場所名",
         "namePlaceholder": "場所名を入力",
-        "name": "場所名"
-      },
-      "priceLevels": {
-        "cheap": "$ 安い",
-        "economical": "$$ 経済的",
-        "moderate": "$$$ 中程度",
-        "expensive": "$$$$ 高い",
-        "veryExpensive": "$$$$$ 非常に高い"
+        "category": "カテゴリ",
+        "address": "住所",
+        "addressPlaceholder": "完全な住所を入力",
+        "location": "位置",
+        "locationPlaceholder": "例：渋谷区、東京またはセントラルパークエリア",
+        "locationHelp": "一般的なエリアまたは地区（オプション）",
+        "latitude": "緯度",
+        "latitudePlaceholder": "緯度を入力",
+        "longitude": "経度",
+        "longitudePlaceholder": "経度を入力",
+        "description": "説明",
+        "descriptionPlaceholder": "場所と推薦理由を説明",
+        "wifiSpeed": "WiFi速度",
+        "wifiSpeedPlaceholder": "WiFi速度をMbpsで入力",
+        "priceLevel": "価格レベル",
+        "noiseLevel": "騒音レベル",
+        "noiseLevels": {
+          "quiet": "静か",
+          "moderate": "普通",
+          "loud": "うるさい"
+        },
+        "socialAtmosphere": "社交雰囲気",
+        "socialLevels": {
+          "low": "低",
+          "medium": "中",
+          "high": "高"
+        },
+        "tags": "タグ"
       },
       "suggestedTags": {
-        "quiet": "静か",
-        "fastWifi": "WiFi速い",
-        "goodCoffee": "コーヒー美味しい",
-        "reasonablePrice": "価格合理的",
-        "convenientLocation": "立地便利",
-        "wellEquipped": "設備充実",
-        "goodCommunity": "コミュニティ良い",
-        "beautifulView": "景色美しい",
-        "goodFood": "食べ物美味しい",
-        "goodService": "サービス良い",
-        "open24Hours": "24時間営業",
-        "petFriendly": "ペット可",
-        "latteArt": "ラテアート",
-        "nearBeach": "ビーチ近く",
-        "riverView": "川の景色",
-        "premiumFacilities": "高級施設",
-        "affordablePrice": "手頃な価格",
-        "chiangMai": "チェンマイ",
-        "historicalBuilding": "歴史的建物",
-        "elegantEnvironment": "優雅な環境",
-        "stableWifi": "WiFi安定",
-        "culturalExperience": "文化体験",
-        "freeVisit": "無料見学",
-        "influencerSpot": "インフルエンサースポット",
-        "communityActivities": "コミュニティ活動",
-        "WiFi快": "WiFi速い",
-        "海滩附近": "ビーチ近く",
-        "河景": "川の景色",
-        "高端设施": "高級施設",
-        "历史建筑": "歴史的建物",
-        "优雅环境": "優雅な環境",
-        "价格实惠": "手頃な価格",
-        "清迈": "チェンマイ"
+        "quiet": "Quiet",
+        "fastWifi": "Fast WiFi",
+        "goodCoffee": "Good Coffee",
+        "reasonablePrice": "Reasonable Price",
+        "convenientLocation": "Convenient Location",
+        "wellEquipped": "Well Equipped",
+        "goodCommunity": "Good Community",
+        "beautifulView": "Beautiful View",
+        "goodFood": "Good Food",
+        "goodService": "Good Service",
+        "open24Hours": "24 Hours",
+        "petFriendly": "Pet Friendly",
+        "latteArt": "Latte Art",
+        "nearBeach": "Near Beach",
+        "riverView": "River View",
+        "premiumFacilities": "Premium Facilities",
+        "affordablePrice": "Affordable Price",
+        "chiangMai": "Chiang Mai",
+        "historicalBuilding": "Historical Building",
+        "elegantEnvironment": "Elegant Environment",
+        "stableWifi": "Stable WiFi",
+        "culturalExperience": "Cultural Experience",
+        "freeVisit": "Free Visit",
+        "influencerSpot": "Influencer Spot",
+        "communityActivities": "Community Activities",
+        "WiFi快": "Fast WiFi",
+        "海滩附近": "Near Beach",
+        "河景": "River View",
+        "高端设施": "Premium Facilities",
+        "历史建筑": "Historical Building",
+        "优雅环境": "Elegant Environment",
+        "价格实惠": "Affordable Price",
+        "清迈": "Chiang Mai"
       },
-      "submitButton": "おすすめを送信",
-      "title": "場所をおすすめ"
+      "priceLevels": {
+        "cheap": "$ Cheap",
+        "economical": "$$ Economical",
+        "moderate": "$$$ Moderate",
+        "expensive": "$$$$ Expensive",
+        "veryExpensive": "$$$$$ Very Expensive"
+      }
     },
     "city": {
       "title": "新しい都市を推薦",
@@ -2278,69 +2231,37 @@
         "startupAtmosphere": "スタートアップ環境",
         "internationalLevel": "国際的"
       }
-    },
-    "place": {
-      "title": "場所を推薦",
-      "submitButton": "推薦を送信",
-      "fields": {
-        "name": "場所名",
-        "namePlaceholder": "場所名を入力",
-        "category": "カテゴリ",
-        "address": "住所",
-        "addressPlaceholder": "完全な住所を入力",
-        "location": "位置",
-        "locationPlaceholder": "例：渋谷区、東京またはセントラルパークエリア",
-        "locationHelp": "一般的なエリアまたは地区（オプション）",
-        "latitude": "緯度",
-        "latitudePlaceholder": "緯度を入力",
-        "longitude": "経度",
-        "longitudePlaceholder": "経度を入力",
-        "description": "説明",
-        "descriptionPlaceholder": "場所と推薦理由を説明",
-        "wifiSpeed": "WiFi速度",
-        "wifiSpeedPlaceholder": "WiFi速度をMbpsで入力",
-        "priceLevel": "価格レベル",
-        "noiseLevel": "騒音レベル",
-        "noiseLevels": {
-          "quiet": "静か",
-          "moderate": "普通",
-          "loud": "うるさい"
-        },
-        "socialAtmosphere": "社交雰囲気",
-        "socialLevels": {
-          "low": "低",
-          "medium": "中",
-          "high": "高"
-        },
-        "tags": "タグ"
-      }
     }
   },
   "cityDetail": {
     "overview": "概要",
     "prosCons": "メリット・デメリット",
     "costOfLiving": "生活費",
-    "reviews": "レビュー",
+    "reviews": {
+      "sarahComment": "リスボンは私が訪れた中で最もデジタルノマドに適した都市の一つです。WiFiが速く、生活費が合理的で、コミュニティの雰囲気が素晴らしいです。強くお勧めします！",
+      "mikeComment": "全体的に良い体験でしたが、ピークシーズンは宿泊費が高くなります。事前予約をお勧めします。",
+      "emmaComment": "ここのコワーキングスペースは素晴らしく、多くの志を同じくする友達に出会えました。"
+    },
     "visaInfo": "ビザ情報",
     "transportAccommodation": "交通・宿泊",
     "transportInfo": "交通情報",
     "accommodationInfo": "宿泊情報",
     "airport": "空港",
-    "publicTransport": "公共交通",
+    "publicTransport": "公共交通機関",
     "taxi": "タクシー",
     "coworkingSpaces": "コワーキングスペース",
     "apartmentRental": "アパート賃貸",
     "hotels": "ホテル",
-    "distanceFromCenter": "市街地からの距離",
-    "monthlyPass": "月間パス",
-    "rideSharing": "ライドシェアサービス",
-    "startingPrice": "初乗り料金",
+    "distanceFromCenter": "市街地から約{km}km",
+    "monthlyPass": "月額パス €{price}",
+    "rideSharing": "Uber、Boltライドシェア",
+    "startingPrice": "料金 €{price}から",
     "monthlyFee": "月額料金",
     "monthlyRent": "月額家賃",
-    "perNight": "一泊",
+    "perNight": "1泊あたり",
     "lisbonAirport": "リスボンポルテラ空港 (LIS)",
     "about7km": "市街地から約7km",
-    "metroBusTram": "メトロ、バス、路面電車のネットワーク",
+    "metroBusTram": "地下鉄、バス、路面電車ネットワーク",
     "uberBolt": "Uber、Boltなどのライドシェアサービス",
     "weWorkOutsite": "WeWork、Outsiteなど",
     "cityCenter1Bedroom": "市街地の1ベッドルームアパート",
@@ -2357,11 +2278,24 @@
     "euro800to1200": "€800-1200",
     "euro50to100": "€50-100",
     "overallScore": "総合スコア",
-    "communityActivity": "コミュニティ活動",
+    "communityActivity": {
+      "low": "低",
+      "medium": "中程度",
+      "high": "高"
+    },
     "convenienceScore": "利便性スコア",
     "stayDays": "滞在日数",
-    "pros": "メリット",
-    "cons": "デメリット",
+    "pros": {
+      "affordableCost": "手頃な生活費",
+      "goodWifi": "良好なWiFiインフラ",
+      "longVisa": "長期ビザなし滞在",
+      "nomadFriendly": "ノマドフレンドリーな環境"
+    },
+    "cons": {
+      "languageBarrier": "言語の壁",
+      "weatherIssues": "天候の問題",
+      "transportation": "交通の課題"
+    },
     "costBreakdown": "月額生活費内訳",
     "accommodation": "宿泊費",
     "food": "食費",
@@ -2374,7 +2308,6 @@
     "visaType": "ビザタイプ",
     "stayDuration": "滞在期間",
     "applicationDifficulty": "申請難易度",
-    "applicationFee": "申請料",
     "requirements": "申請要件",
     "quickStats": "クイック統計",
     "costLevel": {
@@ -2396,25 +2329,9 @@
       "hard": "困難"
     },
     "nomadCommunity": "デジタルノマドコミュニティ",
-    "communityActivity": {
-      "low": "低",
-      "medium": "中程度",
-      "high": "高"
-    },
     "activeNomads": "アクティブノマド",
     "aboutCity": "{city}について",
     "cityDescription": "{city}は{country}の活気ある都市で、生活費は約${cost}/月、WiFi速度は平均{wifi}Mbps、ほとんどの国籍で{visa}日間のビザなし滞在が可能です。",
-    "pros": {
-      "affordableCost": "手頃な生活費",
-      "goodWifi": "良好なWiFiインフラ",
-      "longVisa": "長期ビザなし滞在",
-      "nomadFriendly": "ノマドフレンドリーな環境"
-    },
-    "cons": {
-      "languageBarrier": "言語の壁",
-      "weatherIssues": "天候の問題",
-      "transportation": "交通の課題"
-    },
     "actions": "アクション",
     "rateCity": "都市を評価",
     "addToFavorites": "お気に入りに追加",
@@ -2422,26 +2339,7 @@
     "quickInfo": "クイック情報",
     "timezone": "タイムゾーン",
     "coordinates": "座標",
-    "validPassport": "有効なパスポート（6ヶ月以上）",
-    "roundTripTicket": "往復航空券",
-    "accommodationProof": "宿泊証明",
-    "financialProof": "資金証明",
-    "transportInfo": "交通情報",
-    "airport": "空港",
-    "publicTransport": "公共交通機関",
-    "taxi": "タクシー",
-    "accommodationInfo": "宿泊情報",
-    "coworkingSpaces": "コワーキングスペース",
-    "apartmentRental": "アパート賃貸",
     "hotel": "ホテル",
-    "monthlyFee": "月額料金",
-    "monthlyRent": "月額家賃",
-    "perNight": "1泊あたり",
-    "distanceFromCenter": "市街地から約{km}km",
-    "metroBusTram": "地下鉄、バス、路面電車ネットワーク",
-    "monthlyPass": "月額パス €{price}",
-    "rideSharing": "Uber、Boltライドシェア",
-    "startingPrice": "料金 €{price}から",
     "easy": "簡単",
     "moderate": "普通",
     "difficult": "困難",
@@ -2470,22 +2368,12 @@
       "culturalDifferences": "文化的差異",
       "internetCensorship": "インターネット検閲"
     },
-    "reviews": {
-      "sarahComment": "リスボンは私が訪れた中で最もデジタルノマドに適した都市の一つです。WiFiが速く、生活費が合理的で、コミュニティの雰囲気が素晴らしいです。強くお勧めします！",
-      "mikeComment": "全体的に良い体験でしたが、ピークシーズンは宿泊費が高くなります。事前予約をお勧めします。",
-      "emmaComment": "ここのコワーキングスペースは素晴らしく、多くの志を同じくする友達に出会えました。"
-    },
     "structuredData": {
       "description": "は{country}の都市で、デジタルノマドの生活と仕事に適しています。"
     },
     "photos": "写真",
     "viewDetails": "詳細を見る",
-    "visaType": "ビザタイプ",
-    "stayDays": "滞在日数",
-    "applicationDifficulty": "申請難易度",
-    "easy": "簡単",
     "days": "日",
-    "other": "その他",
     "categories": {
       "all": "すべて",
       "coffee": "コーヒー",
@@ -2503,11 +2391,6 @@
       "wework": "柔軟なコワーキングスペースを提供。",
       "airbnb": "短期アパートとホームステイ。",
       "uber": "便利なタクシーとライドシェアサービス。"
-    },
-    "reviews": {
-      "sarahComment": "リスボンは私が訪れた中で最もデジタルノマドに適した都市の一つです。WiFiが速く、生活費が合理的で、コミュニティの雰囲気が素晴らしいです。強くお勧めします！",
-      "mikeComment": "全体的に良い体験でしたが、ピークシーズンは宿泊費が高くなります。事前予約をお勧めします。",
-      "emmaComment": "ここのコワーキングスペースは素晴らしく、多くの志を同じくする友達に出会えました。"
     },
     "nomadPlaces": {
       "cafeFabrica": {
@@ -2577,7 +2460,7 @@
     "realtimeData": "リアルタイムデータ",
     "searchAndConnect": "検索と接続",
     "searchNomads": "ノマドを検索",
-    "searchPlaceholder": "名前、都市、興味で検索...",
+    "searchPlaceholder": "名前、職業、または場所でノマドを検索...",
     "filters": "フィルター",
     "filterByCity": "都市でフィルター",
     "filterByInterest": "興味でフィルター",
@@ -2595,14 +2478,14 @@
     "baliBeachCoworking": "バリビーチコワーキング",
     "baliBeachCoworkingDesc": "ビーチサイドコワーキング、日光と海風を楽しむ",
     "enableLocationToDiscover": "位置情報を有効にして近くのノマドを発見",
-    "enableLocation": "位置を有効にする",
+    "enableLocation": "位置情報を有効にする",
     "getPersonalizedRecommendations": "位置に基づいたパーソナライズされた推奨を取得",
     "allowLocation": "位置を許可",
     "selectCityManually": "手動で都市を選択",
     "recent30DaysData": "最近30日間のデータ",
     "basedOnRealRequests": "{count}回の実際のリクエストに基づく",
     "shareInviteLink": "招待リンクを共有するか、人気都市を探索",
-    "inviteReward": "1人招待するごとに1ヶ月プレミアム（最大3ヶ月、友人が登録完了時に配布）",
+    "inviteReward": "友達1人につき1ヶ月のプレミアムを獲得",
     "exploreGlobal": "グローバルを探索",
     "successRate": "成功率",
     "avgConnectionTime": "平均接続時間",
@@ -2632,15 +2515,12 @@
     "readyToConnectDescription": "今日最初のコーヒーミートアップを始めて、ノマドネットワークを拡大しましょう",
     "startConversation": "会話を始める",
     "scheduleMeetup": "ミートアップをスケジュール",
-    "enableLocation": "位置情報を有効にする",
     "enableLocationDescription": "あなたの位置に基づいてパーソナライズされた推奨事項を取得",
     "enable": "有効にする",
     "detectingLocation": "位置を検出中...",
     "locationAccessRequired": "位置情報アクセスが必要",
-    "retry": "再試行",
     "locationDetected": "位置が検出されました",
     "locationDetectedDescription": "{city}、{country}近くのノマドを表示",
-    "searchPlaceholder": "名前、職業、または場所でノマドを検索...",
     "filterByDistance": "距離でフィルター",
     "filterByInterests": "興味でフィルター",
     "showFilters": "フィルターを表示",
@@ -2663,10 +2543,6 @@
     "compatibility": "{percentage}%の相性",
     "lastSeen": "最後にオンライン{time}",
     "meetupCount": "{count}ミートアップ",
-    "online": "オンライン",
-    "offline": "オフライン",
-    "available": "利用可能",
-    "busy": "忙しい",
     "firstNomadInCity": "この都市の最初のノマドです！",
     "inviteFriends": "友達を招待するか、人気のノマド都市を探索",
     "shareLink": "リンクを共有",
@@ -2675,7 +2551,6 @@
     "inviteLink": "リンク",
     "generateQR": "QRコードを生成",
     "copyLink": "リンクをコピー",
-    "inviteReward": "友達1人につき1ヶ月のプレミアムを獲得",
     "hotCities": "人気都市",
     "viewMoreHotCities": "より多くの人気都市を見る",
     "peopleOnline": "人がオンライン",
@@ -2698,7 +2573,53 @@
     "communityBuilder": "コミュニティビルダー",
     "meetupMaster": "ミートアップマスター",
     "loadingGlobalMap": "グローバルノマドマップを読み込み中",
-    "discoverGlobalHotspots": "世界中のデジタルノマドホットスポットを発見"
+    "discoverGlobalHotspots": "世界中のデジタルノマドホットスポットを発見",
+    "tagCategories": {
+      "personality": "Personality",
+      "interests": "Interests",
+      "work": "Work",
+      "lifestyle": "Lifestyle"
+    },
+    "lifestyleTags": {
+      "adventurer": "Adventurer",
+      "minimalist": "Minimalist",
+      "nightOwl": "Night Owl",
+      "earlyBird": "Early Bird"
+    },
+    "workTags": {
+      "entrepreneur": "Entrepreneur",
+      "writer": "Writer",
+      "designer": "Designer",
+      "developer": "Developer"
+    },
+    "interestTags": {
+      "fitness": "Fitness",
+      "cooking": "Cooking",
+      "music": "Music",
+      "photography": "Photography"
+    },
+    "personalityTags": {
+      "analytical": "Analytical",
+      "creative": "Creative",
+      "introvert": "Introvert",
+      "extrovert": "Extrovert"
+    },
+    "badgeTypes": {
+      "helpfulNomad": "Helpful Nomad",
+      "meetupMaster": "Meetup Master",
+      "communityBuilder": "Community Builder",
+      "cityExplorer": "City Explorer",
+      "coffeeHero": "Coffee Hero",
+      "localGuide": "Local Guide"
+    },
+    "badgeDescriptions": {
+      "helpfulNomad": "Help other nomads solve problems",
+      "meetupMaster": "Organize over 10 meetups",
+      "communityBuilder": "Actively build community",
+      "cityExplorer": "Explore city for over 30 days",
+      "coffeeHero": "Successfully organize multiple coffee meetups",
+      "localGuide": "Help new nomads understand the city"
+    }
   },
   "cityFilters": {
     "nomadCities": "ノマド都市",
@@ -2783,65 +2704,39 @@
       "deadlines": "期限リマインダー"
     },
     "calculator": {
-      "tabs": {
-        "calculator": "計算機",
-        "feie": "FEIE",
-        "presence": "プレゼンス",
-        "residency": "居住"
-      },
-      "countries": {
-        "portugal": "ポルトガル",
-        "thailand": "タイ",
-        "mexico": "メキシコ",
-        "spain": "スペイン",
-        "germany": "ドイツ",
-        "estonia": "エストニア",
-        "costaRica": "コスタリカ",
-        "malaysia": "マレーシア"
-      },
-      "countryNotes": {
-        "portugal": "NHR計画利用可能（2024年から条件厳格化）",
-        "thailand": "領土税制、外国所得送金なしは非課税",
-        "mexico": "領土税制、米国との税金条約",
-        "spain": "ベッカム法、最初の5年間利用可能",
-        "germany": "グローバル税制、高税負担",
-        "estonia": "領土税制、e-residency利用可能",
-        "costaRica": "領土税制、デジタルノマドビザ",
-        "malaysia": "MM2Hプログラム、外国所得送金なしは非課税"
-      },
-      "disclaimer": {
-        "title": "免責事項",
-        "description": "この計算機は参考用の推定値を提供します。実際の税務状況は個人の状況、最新の税法変更、国の規制によって異なります。税務上の決定を行う前に、専門の税務アドバイザーにご相談ください。"
-      },
-      "overview": {
-        "title": "結果概要",
-        "maxSavings": "最大節税効果",
-        "countryCount": "分析国数",
-        "lowestRate": "最低税率"
-      },
-      "detailedResults": {
-        "title": "詳細結果",
-        "effectiveRate": "実効税率",
-        "annualIncome": "年間所得",
-        "taxAmount": "税金額",
-        "netIncome": "純所得",
-        "savingsAmount": "節税額",
-        "taxRateComparison": "税率比較",
-        "feieApplicable": "FEIE適用可能",
-        "recommendedRanking": "推奨ランキング",
-        "taxRate": "税率"
-      },
-      "visaDifficulty": {
-        "easy": "簡単",
-        "medium": "中程度",
-        "hard": "困難"
-      },
-      "costOfLiving": {
-        "low": "低い",
-        "medium": "中程度",
-        "high": "高い"
-      },
-      "digitalNomadFriendly": "デジタルノマドフレンドリー"
+      "annualIncome": "年間所得",
+      "annualIncomePlaceholder": "年間所得を入力",
+      "selectCountries": "比較する国を選択",
+      "results": "計算結果",
+      "effectiveRate": "実効税率",
+      "taxAmount": "税額",
+      "netIncome": "純所得",
+      "savings": "節約額",
+      "feieEligible": "FEIE資格",
+      "canSave": "節約可能",
+      "presenceTest": "物理的存在テスト",
+      "testPeriodStart": "テスト期間開始",
+      "testPeriodEnd": "テスト期間終了",
+      "daysOutsideUS": "米国外滞在日数",
+      "daysOutsideUSPlaceholder": "日数を入力",
+      "progressTracking": "進捗追跡",
+      "progress": "進捗",
+      "eligibleForFEIE": "FEIE資格あり",
+      "needMoreDays": "より多くの日数が必要",
+      "residencyTracking": "税金居住追跡",
+      "residencyTrackingDesc": "複数の国での滞在日数を監視し、税金居住（通常183日）を引き起こさないようにする",
+      "daysSpent": "滞在日数",
+      "daysLimit": "日",
+      "statusOverview": "ステータス概要",
+      "safe": "安全",
+      "warning": "警告",
+      "danger": "危険",
+      "importantNotice": "重要な注意事項",
+      "calculatorDisclaimer": "この計算機は参考用の推定値のみを提供します。実際の税務状況は、個人の状況、最新の税法変更、および国の規制によって異なります。税務上の決定を行う前に、専門の税務アドバイザーに相談してください。",
+      "feieCheck": "FEIE資格チェック",
+      "feieLimit": "FEIE制限",
+      "taxableIncome": "課税所得",
+      "potentialSavings": "潜在的な節約額"
     },
     "currentStep": "現在のステップ：",
     "step1": "1️⃣ ニーズ評価",
@@ -2876,27 +2771,27 @@
       },
       "successRate": "成功率",
       "hasAdvisor": "アドバイザーあり",
-     "strategies": {
-       "nhrPortugal": {
-         "title": "ポルトガルNHR計画",
-         "description": "ポルトガルの非通常居住者制度を活用した税金最適化戦略"
-       },
-       "expectedSavings": "期待される節約額",
-       "implementationTime": "実装時間",
-       "riskLevel": "リスクレベル",
-       "risk": {
-         "low": "低",
-         "medium": "中程度",
-         "high": "高"
-       },
-       "lastUpdated": "最終更新",
-       "relatedCountries": "関連国",
-       "professionalAdvisorService": "専門アドバイザーサービス",
-       "advisorServiceDescription": "国際税法の専門家による個別相談",
-       "fee": "料金",
-       "applicationRequirements": "申請要件",
-       "implementationSteps": "実装手順",
-       "practicalTips": "実用的なヒント",
+      "strategies": {
+        "nhrPortugal": {
+          "title": "ポルトガルNHR計画",
+          "description": "ポルトガルの非通常居住者制度を活用した税金最適化戦略"
+        },
+        "expectedSavings": "期待される節約額",
+        "implementationTime": "実装時間",
+        "riskLevel": "リスクレベル",
+        "risk": {
+          "low": "低",
+          "medium": "中程度",
+          "high": "高"
+        },
+        "lastUpdated": "最終更新",
+        "relatedCountries": "関連国",
+        "professionalAdvisorService": "専門アドバイザーサービス",
+        "advisorServiceDescription": "国際税法の専門家による個別相談",
+        "fee": "料金",
+        "applicationRequirements": "申請要件",
+        "implementationSteps": "実装手順",
+        "practicalTips": "実用的なヒント",
         "nhrPlan": {
           "requirements": [
             "2024年1月1日以前の申請（締切済み）",
@@ -3027,127 +2922,8 @@
         }
       }
     },
-     "countryDetails": {
-       "residencyRequirements": "税金居住要件",
-       "portugal": {
-         "benefits": {
-           "nhrPlan": "NHR計画：10年間の優遇税率（2024年政策厳格化）",
-           "noWealthTax": "富裕税なし",
-           "noInheritanceTax": "相続税なし",
-           "euPassportAdvantage": "EUパスポートの利点",
-           "lowerCostOfLiving": "比較的低い生活費",
-           "d7VisaAlternative": "D7ビザの代替案"
-         },
-         "requirements": {
-           "applicationDeadline": "2024年1月1日以前の申請（締切済み）",
-           "newStrictConditions": "または新しい厳格な条件を満たす",
-           "highSkillProfession": "高技能職業で年収€75,000以上",
-           "residencyDays": "年間183日以上ポルトガルに居住",
-           "noPreviousResidency": "過去5年間ポルトガル税務居住者ではない"
-         },
-         "risks": {
-           "nhrConditionsTightened": "NHR条件の厳格化",
-           "proofRequired": "所得証明が必要",
-           "taxAuditRisk": "税務監査リスク",
-           "policyChangeRisk": "政策変更リスク"
-         }
-       },
-       "thailand": {
-         "benefits": {
-           "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
-           "lowCostOfLiving": "低い生活費",
-           "visaConvenience": "ビザの利便性",
-           "noCapitalGainsTax": "キャピタルゲイン税なし",
-           "noInheritanceTax": "相続税なし"
-         },
-         "requirements": {
-           "noForeignIncomeRemittance": "外国所得をタイに送金しない",
-           "workPermitRequired": "タイで働く場合は就労許可が必要",
-           "taxResidencyOver180Days": "180日を超えると税務居住者",
-           "maintainGoodRecords": "適切な記録を保持"
-         },
-         "risks": {
-           "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
-           "workPermitRestrictions": "就労許可の制限",
-           "taxRegulationChanges": "税務規制の変更"
-         }
-       },
-       "mexico": {
-         "benefits": {
-           "territorialTaxSystem": "領土税制",
-           "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
-           "usTaxTreaty": "米国との税金条約",
-           "moderateCostOfLiving": "適度な生活費",
-           "digitalNomadVisa": "デジタルノマドビザ"
-         },
-         "requirements": {
-           "taxResidencyOver183Days": "183日を超えると税務居住者",
-           "noForeignIncomeRemittance": "外国所得をメキシコに送金しない",
-           "mexicanIncomeTaxed": "メキシコ所得は課税対象",
-           "mayNeedFiling": "申告が必要な場合がある"
-         },
-         "risks": {
-           "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
-           "complexTaxFiling": "税務申告の複雑さ",
-           "auditRisk": "監査リスク"
-         }
-       },
-       "spain": {
-         "benefits": {
-           "beckhamLaw": "ベッカム法",
-           "euPassport": "EUパスポート",
-           "qualityHealthcare": "質の高い医療",
-           "richCulture": "豊かな文化"
-         }
-       },
-       "germany": {
-         "benefits": {
-           "qualityInfrastructure": "質の高いインフラ",
-           "strongEconomy": "強固な経済",
-           "euPassport": "EUパスポート",
-           "excellentHealthcare": "優秀な医療"
-         }
-       },
-       "costaRica": {
-         "benefits": {
-           "territorialTaxSystem": "領土税制",
-           "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
-           "digitalNomadVisa": "デジタルノマドビザ",
-           "beautifulNature": "美しい自然",
-           "moderateCostOfLiving": "適度な生活費"
-         },
-         "requirements": {
-           "taxResidencyOver183Days": "183日を超えると税務居住者",
-           "noForeignIncomeRemittance": "外国所得をコスタリカに送金しない",
-           "costaRicanIncomeTaxed": "コスタリカ所得は課税対象",
-           "mayNeedFiling": "申告が必要な場合がある"
-         },
-         "risks": {
-           "remittedIncomeTaxed": "送金された外国所得が課税される可能性",
-           "complexTaxFiling": "税務申告の複雑さ",
-           "auditRisk": "監査リスク"
-         }
-       },
-       "malaysia": {
-         "benefits": {
-           "mm2hVisaProgram": "MM2Hビザプログラム",
-           "foreignIncomeExempt": "外国所得の非課税（送金しない場合）",
-           "lowCostOfLiving": "低い生活費",
-           "highEnglishProficiency": "高い英語能力",
-           "goodInfrastructure": "良好なインフラ"
-         }
-       },
-      "residencyDays": "居住日数",
-      "globalTaxation": "グローバル課税",
-      "yes": "はい",
-      "no": "いいえ",
-      "taxRateInfo": "税率情報",
-      "foreignIncomeTax": "外国所得税",
-      "localIncomeTax": "現地所得税",
-      "mainBenefits": "主な利点",
-      "requirements": "要件",
-      "potentialRisks": "潜在的なリスク",
-      "nomadFriendlyRating": "ノマドフレンドリー評価",
+    "countryDetails": {
+      "residencyRequirements": "税金居住要件",
       "portugal": {
         "benefits": {
           "nhrPlan": "NHR計画：10年間の優遇税率（2024年政策厳格化）",
@@ -3255,7 +3031,18 @@
           "highEnglishProficiency": "高い英語能力",
           "goodInfrastructure": "良好なインフラ"
         }
-      }
+      },
+      "residencyDays": "居住日数",
+      "globalTaxation": "グローバル課税",
+      "yes": "はい",
+      "no": "いいえ",
+      "taxRateInfo": "税率情報",
+      "foreignIncomeTax": "外国所得税",
+      "localIncomeTax": "現地所得税",
+      "mainBenefits": "主な利点",
+      "requirements": "要件",
+      "potentialRisks": "潜在的なリスク",
+      "nomadFriendlyRating": "ノマドフレンドリー評価"
     },
     "importantNotice": {
       "title": "重要な注意事項",
@@ -3322,41 +3109,6 @@
         "personalTaxReturn": "個人税務申告",
         "selfEmployedFiling": "自営業申告"
       }
-    },
-    "calculator": {
-      "annualIncome": "年間所得",
-      "annualIncomePlaceholder": "年間所得を入力",
-      "selectCountries": "比較する国を選択",
-      "results": "計算結果",
-      "effectiveRate": "実効税率",
-      "taxAmount": "税額",
-      "netIncome": "純所得",
-      "savings": "節約額",
-      "feieEligible": "FEIE資格",
-      "canSave": "節約可能",
-      "presenceTest": "物理的存在テスト",
-      "testPeriodStart": "テスト期間開始",
-      "testPeriodEnd": "テスト期間終了",
-      "daysOutsideUS": "米国外滞在日数",
-      "daysOutsideUSPlaceholder": "日数を入力",
-      "progressTracking": "進捗追跡",
-      "progress": "進捗",
-      "eligibleForFEIE": "FEIE資格あり",
-      "needMoreDays": "より多くの日数が必要",
-      "residencyTracking": "税金居住追跡",
-      "residencyTrackingDesc": "複数の国での滞在日数を監視し、税金居住（通常183日）を引き起こさないようにする",
-      "daysSpent": "滞在日数",
-      "daysLimit": "日",
-      "statusOverview": "ステータス概要",
-      "safe": "安全",
-      "warning": "警告",
-      "danger": "危険",
-      "importantNotice": "重要な注意事項",
-      "calculatorDisclaimer": "この計算機は参考用の推定値のみを提供します。実際の税務状況は、個人の状況、最新の税法変更、および国の規制によって異なります。税務上の決定を行う前に、専門の税務アドバイザーに相談してください。",
-      "feieCheck": "FEIE資格チェック",
-      "feieLimit": "FEIE制限",
-      "taxableIncome": "課税所得",
-      "potentialSavings": "潜在的な節約額"
     }
   },
   "reviews": {
@@ -3432,19 +3184,6 @@
       "description": "あなたの経験を共有し、他のノマドが選択するのを助ける",
       "action": "評価を開始"
     }
-  },
-
-  "search": {
-    "placeholder": "都市、場所、またはユーザーを検索...",
-    "search": "検索",
-    "loading": "検索中...",
-    "suggestions": "検索提案",
-    "noResults": "結果が見つかりません",
-    "recent": "最近の検索",
-    "clearHistory": "履歴をクリア",
-    "popular": "人気の検索",
-    "browseCities": "都市を閲覧",
-    "findNomads": "ノマドを見つける"
   },
   "liveStats": {
     "title": "ライブ統計",
@@ -3563,7 +3302,7 @@
     "subtitle": "ドメイン投資、コスト、利益を詳細な分析で追跡",
     "tabs": {
       "overview": "概要",
-      "portfolio": "ポートフォリオ", 
+      "portfolio": "ポートフォリオ",
       "transactions": "取引履歴",
       "analytics": "分析レポート",
       "alerts": "アラート設定",
@@ -3683,4 +3422,4 @@
     "socialScoreByVisaAndCost": "ビザとコストに基づく社会的スコア",
     "selectMetrics": "指標を選択"
   }
-} 
+}
