@@ -2771,15 +2771,7 @@
       "button": "Suggest a Tool",
       "description": "We're constantly updating our recommendations. Have a favorite tool that should be on this list?",
       "title": "Missing a Tool?"
-    },
-    "categories": {
-      "languageLearning": "Language Learning",
-      "remoteWork": "Remote Work Platforms",
-      "insurance": "Insurance Services",
-      "banking": "Banking Services"
-    },
-    "description": "Curated tools and services that digital nomads actually use. From banking to insurance, remote work platforms to language learning - everything you need for your nomadic lifestyle.",
-    "title": "Essential Tools for Nomads"
+    }
   },
   "home": {
     "placeCategories": {
