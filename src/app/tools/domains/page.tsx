@@ -88,7 +88,7 @@ export default function DomainTrackerPage() {
     purchase_cost: 0,
     renewal_cost: 0,
     estimated_value: 0,
-    tags: []
+    tags: [] as string[]
   });
   const [newTransaction, setNewTransaction] = useState({
     domain_id: '',
