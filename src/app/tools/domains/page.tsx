@@ -80,6 +80,8 @@ export default function DomainTrackerPage() {
   const [loading, setLoading] = useState(true);
   const [showAddDomainModal, setShowAddDomainModal] = useState(false);
   const [showAddTransactionModal, setShowAddTransactionModal] = useState(false);
+  const [showEditDomainModal, setShowEditDomainModal] = useState(false);
+  const [editingDomain, setEditingDomain] = useState<Domain | null>(null);
   const [newDomain, setNewDomain] = useState({
     domain_name: '',
     registrar: '',
@@ -96,76 +98,10 @@ export default function DomainTrackerPage() {
     notes: ''
   });
 
-  // Mock data for development
+  // Initialize empty state
   useEffect(() => {
-    // Simulate loading data
-    setTimeout(() => {
-      setDomains([
-        {
-          id: '1',
-          domain_name: 'nomadlife.com',
-          registrar: 'Namecheap',
-          purchase_date: '2023-01-15',
-          purchase_cost: 12.99,
-          renewal_cost: 12.99,
-          total_renewal_paid: 12.99,
-          next_renewal_date: '2024-01-15',
-          status: 'active',
-          estimated_value: 500,
-          tags: ['investment', 'lifestyle'],
-          created_at: '2023-01-15T00:00:00Z',
-          updated_at: '2023-01-15T00:00:00Z'
-        },
-        {
-          id: '2',
-          domain_name: 'digitalnomad.tools',
-          registrar: 'Cloudflare',
-          purchase_date: '2023-03-20',
-          purchase_cost: 15.00,
-          renewal_cost: 15.00,
-          total_renewal_paid: 0,
-          next_renewal_date: '2024-03-20',
-          status: 'for_sale',
-          estimated_value: 200,
-          tags: ['tools', 'business'],
-          created_at: '2023-03-20T00:00:00Z',
-          updated_at: '2023-03-20T00:00:00Z'
-        }
-      ]);
-      
-      setTransactions([
-        {
-          id: '1',
-          domain_id: '1',
-          type: 'buy',
-          amount: 12.99,
-          currency: 'USD',
-          date: '2023-01-15',
-          notes: 'Initial purchase'
-        },
-        {
-          id: '2',
-          domain_id: '1',
-          type: 'renew',
-          amount: 12.99,
-          currency: 'USD',
-          date: '2024-01-15',
-          notes: 'Annual renewal'
-        }
-      ]);
-      
-      setStats({
-        totalDomains: 2,
-        totalCost: 40.98,
-        totalRevenue: 0,
-        totalProfit: -40.98,
-        roi: -100,
-        expiringSoon: 1,
-        forSale: 1
-      });
-      
-      setLoading(false);
-    }, 1000);
+    // Set loading to false immediately since we start with empty data
+    setLoading(false);
   }, []);
 
   const tabs = [
@@ -345,6 +281,76 @@ export default function DomainTrackerPage() {
     setShowAddTransactionModal(false);
   };
 
+  const handleEditDomain = (domain: Domain) => {
+    setEditingDomain(domain);
+    setNewDomain({
+      domain_name: domain.domain_name,
+      registrar: domain.registrar,
+      purchase_cost: domain.purchase_cost,
+      renewal_cost: domain.renewal_cost,
+      estimated_value: domain.estimated_value,
+      tags: domain.tags
+    });
+    setShowEditDomainModal(true);
+  };
+
+  const handleUpdateDomain = () => {
+    if (!editingDomain || !newDomain.domain_name || !newDomain.registrar) {
+      alert('Please fill in required fields');
+      return;
+    }
+
+    const updatedDomain: Domain = {
+      ...editingDomain,
+      domain_name: newDomain.domain_name,
+      registrar: newDomain.registrar,
+      purchase_cost: newDomain.purchase_cost,
+      renewal_cost: newDomain.renewal_cost,
+      estimated_value: newDomain.estimated_value,
+      tags: newDomain.tags,
+      updated_at: new Date().toISOString()
+    };
+
+    setDomains(prev => prev.map(domain => 
+      domain.id === editingDomain.id ? updatedDomain : domain
+    ));
+
+    // Reset form and close modal
+    setNewDomain({
+      domain_name: '',
+      registrar: '',
+      purchase_cost: 0,
+      renewal_cost: 0,
+      estimated_value: 0,
+      tags: []
+    });
+    setEditingDomain(null);
+    setShowEditDomainModal(false);
+  };
+
+  const handleDeleteDomain = (domainId: string) => {
+    if (window.confirm('Are you sure you want to delete this domain? This action cannot be undone.')) {
+      // Remove domain
+      setDomains(prev => prev.filter(domain => domain.id !== domainId));
+      
+      // Remove related transactions
+      setTransactions(prev => prev.filter(transaction => transaction.domain_id !== domainId));
+      
+      // Update stats
+      const domainToDelete = domains.find(d => d.id === domainId);
+      if (domainToDelete) {
+        const totalCost = domainToDelete.purchase_cost + domainToDelete.total_renewal_paid;
+        setStats(prev => ({
+          ...prev,
+          totalDomains: prev.totalDomains - 1,
+          totalCost: prev.totalCost - totalCost,
+          totalProfit: prev.totalProfit + totalCost,
+          roi: prev.totalCost > totalCost ? ((prev.totalRevenue - (prev.totalCost - totalCost)) / (prev.totalCost - totalCost)) * 100 : 0
+        }));
+      }
+    }
+  };
+
   const renderOverview = () => (
     <div className="space-y-6">
       {/* Key Metrics Cards */}
@@ -515,7 +521,25 @@ export default function DomainTrackerPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredDomains.map((domain) => {
+              {filteredDomains.length === 0 ? (
+                <tr>
+                  <td colSpan={8} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center">
+                      <Globe className="h-12 w-12 text-gray-400 mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No domains yet</h3>
+                      <p className="text-gray-600 mb-4">Start tracking your domain investments by adding your first domain.</p>
+                      <button 
+                        onClick={() => setShowAddDomainModal(true)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span>Add Your First Domain</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                filteredDomains.map((domain) => {
                 const totalCost = domain.purchase_cost + domain.total_renewal_paid;
                 const daysUntilExpiry = calculateDaysUntilExpiry(domain.next_renewal_date);
                 
@@ -560,20 +584,32 @@ export default function DomainTrackerPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
-                        <button className="text-blue-600 hover:text-blue-900">
+                        <button 
+                          className="text-blue-600 hover:text-blue-900"
+                          title="View Details"
+                        >
                           <Eye className="h-4 w-4" />
                         </button>
-                        <button className="text-gray-600 hover:text-gray-900">
+                        <button 
+                          onClick={() => handleEditDomain(domain)}
+                          className="text-gray-600 hover:text-gray-900"
+                          title="Edit Domain"
+                        >
                           <Edit className="h-4 w-4" />
                         </button>
-                        <button className="text-red-600 hover:text-red-900">
+                        <button 
+                          onClick={() => handleDeleteDomain(domain.id)}
+                          className="text-red-600 hover:text-red-900"
+                          title="Delete Domain"
+                        >
                           <Trash2 className="h-4 w-4" />
                         </button>
                       </div>
                     </td>
                   </tr>
                 );
-              })}
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -617,7 +653,25 @@ export default function DomainTrackerPage() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {transactions.map((transaction) => {
+              {transactions.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center">
+                    <div className="flex flex-col items-center">
+                      <DollarSign className="h-12 w-12 text-gray-400 mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No transactions yet</h3>
+                      <p className="text-gray-600 mb-4">Add your first transaction to start tracking your domain investments.</p>
+                      <button 
+                        onClick={() => setShowAddTransactionModal(true)}
+                        className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                      >
+                        <Plus className="h-4 w-4" />
+                        <span>Add Transaction</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                transactions.map((transaction) => {
                 const domain = domains.find(d => d.id === transaction.domain_id);
                 return (
                   <tr key={transaction.id} className="hover:bg-gray-50">
@@ -640,7 +694,8 @@ export default function DomainTrackerPage() {
                     </td>
                   </tr>
                 );
-              })}
+                })
+              )}
             </tbody>
           </table>
         </div>
@@ -892,6 +947,95 @@ export default function DomainTrackerPage() {
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Add Domain
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Domain Modal */}
+      {showEditDomainModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-4">Edit Domain</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Domain Name *</label>
+                <input 
+                  type="text" 
+                  placeholder="example.com"
+                  value={newDomain.domain_name}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, domain_name: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Registrar *</label>
+                <input 
+                  type="text" 
+                  placeholder="Cloudflare, GoDaddy, etc."
+                  value={newDomain.registrar}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, registrar: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Cost ($)</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  placeholder="12.99"
+                  value={newDomain.purchase_cost || ''}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, purchase_cost: parseFloat(e.target.value) || 0 }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Renewal Cost ($)</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  placeholder="12.99"
+                  value={newDomain.renewal_cost || ''}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cost: parseFloat(e.target.value) || 0 }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Value ($)</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  placeholder="500"
+                  value={newDomain.estimated_value || ''}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, estimated_value: parseFloat(e.target.value) || 0 }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button 
+                onClick={() => {
+                  setShowEditDomainModal(false);
+                  setEditingDomain(null);
+                  setNewDomain({
+                    domain_name: '',
+                    registrar: '',
+                    purchase_cost: 0,
+                    renewal_cost: 0,
+                    estimated_value: 0,
+                    tags: []
+                  });
+                }}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleUpdateDomain}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Update Domain
               </button>
             </div>
           </div>
