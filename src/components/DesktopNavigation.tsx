@@ -28,6 +28,10 @@ export default function DesktopNavigation() {
     {
       name: t('navigation.tax'),
       href: '/nomadtax',
+    },
+    {
+      name: t('navigation.tools'),
+      href: '/tools',
     }
   ]
 

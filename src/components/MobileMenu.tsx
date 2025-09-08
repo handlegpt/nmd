@@ -51,6 +51,12 @@ export default function MobileMenu() {
       description: t('mobileMenu.taxDescription')
     },
     {
+      href: '/tools',
+      icon: Settings,
+      label: t('navigation.tools'),
+      description: t('mobileMenu.toolsDescription')
+    },
+    {
       href: '/dashboard',
       icon: User,
       label: t('navigation.dashboard'),
