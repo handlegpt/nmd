@@ -154,6 +154,21 @@ export default function ToolsPage() {
       features: ['Time zone coordination', 'Meeting scheduling', 'Availability tracking', 'Calendar sync'],
       popularity: 65,
       lastUpdated: '2024-01-21'
+    },
+    
+    // Trackers - Domain Tracker
+    {
+      id: 'domain-tracker',
+      title: 'Domain Tracker',
+      description: 'Track domain investments, costs, and profits with detailed analytics',
+      icon: Globe,
+      emoji: '🌐',
+      category: 'trackers',
+      status: 'live',
+      tags: ['domains', 'investment', 'tracking', 'analytics'],
+      features: ['Portfolio management', 'Cost tracking', 'ROI calculations', 'Renewal reminders'],
+      popularity: 78,
+      lastUpdated: '2024-01-23'
     }
   ];
 
@@ -223,10 +238,32 @@ export default function ToolsPage() {
 
   const handleToolClick = (tool: any) => {
     if (tool.status === 'live') {
-      // 实际工具跳转逻辑
-      console.log(`Launching ${tool.title}`);
+      // Route to specific tool pages
+      switch (tool.id) {
+        case 'domain-tracker':
+          window.location.href = '/tools/domains';
+          break;
+        case 'cost-calculator':
+          // Route to cost calculator when implemented
+          console.log('Cost calculator coming soon');
+          break;
+        case 'visa-counter':
+          // Route to visa counter when implemented
+          console.log('Visa counter coming soon');
+          break;
+        case 'wifi-tracker':
+          // Route to wifi tracker when implemented
+          console.log('WiFi tracker coming soon');
+          break;
+        case 'travel-tracker':
+          // Route to travel tracker when implemented
+          console.log('Travel tracker coming soon');
+          break;
+        default:
+          console.log(`Launching ${tool.title}`);
+      }
     } else {
-      // 显示等待名单弹窗
+      // Show waitlist modal
       console.log(`Show waitlist for ${tool.title}`);
     }
   };
