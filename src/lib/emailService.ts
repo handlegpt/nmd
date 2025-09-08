@@ -26,6 +26,9 @@ export async function sendVerificationEmail(
       }
     }
 
+    console.log('📧 Resend API Key found:', resendApiKey ? 'Yes' : 'No')
+    console.log('📧 API Key length:', resendApiKey?.length || 0)
+
     // 生成邮件模板
     const emailTemplate = generateVerificationEmailTemplate({
       code,
@@ -34,16 +37,26 @@ export async function sendVerificationEmail(
     })
 
     // 动态导入Resend，避免构建时错误
+    console.log('📧 Importing Resend...')
     const { Resend } = await import('resend')
+    console.log('📧 Resend imported successfully')
+    
     const resend = new Resend(resendApiKey)
+    console.log('📧 Resend client created')
     
     // 发送邮件
+    console.log('📧 Sending email to:', email)
+    console.log('📧 Email subject:', emailTemplate.subject)
+    
     const { data, error } = await resend.emails.send({
       from: 'NOMAD.NOW <noreply@nomadnow.app>',
       to: [email],
       subject: emailTemplate.subject,
       html: emailTemplate.html
     })
+    
+    console.log('📧 Resend response - data:', data)
+    console.log('📧 Resend response - error:', error)
 
     if (error) {
       logError('Failed to send email via Resend', error, 'EmailService')
