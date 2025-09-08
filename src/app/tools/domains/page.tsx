@@ -44,6 +44,12 @@ interface Domain {
   tags: string[];
   created_at: string;
   updated_at: string;
+  // Renewal cycle fields
+  renewal_cycle_years: number; // 续费周期（年数）
+  renewal_cycle_type: 'annual' | 'biennial' | 'triennial' | 'custom'; // 续费类型
+  last_renewal_amount: number; // 上次续费金额
+  last_renewal_date: string; // 上次续费日期
+  next_renewal_amount: number; // 下次续费金额（可能因价格变动而不同）
 }
 
 interface DomainTransaction {
@@ -93,9 +99,14 @@ export default function DomainTrackerPage() {
     purchase_date: '',
     purchase_cost: 0,
     renewal_cost: 0,
-    estimated_value: 0,
     expiry_date: '',
-    tags: [] as string[]
+    tags: [] as string[],
+    // Renewal cycle fields
+    renewal_cycle_years: 1,
+    renewal_cycle_type: 'annual' as 'annual' | 'biennial' | 'triennial' | 'custom',
+    last_renewal_amount: 0,
+    last_renewal_date: '',
+    next_renewal_amount: 0
   });
   const [newTransaction, setNewTransaction] = useState({
     domain_id: '',
@@ -226,6 +237,28 @@ export default function DomainTrackerPage() {
     }, 0);
   };
 
+  // Renewal cycle cost calculation functions
+  const getAnnualizedCost = (domain: Domain) => {
+    return domain.renewal_cost / domain.renewal_cycle_years;
+  };
+
+  const getActualCost = (domain: Domain, year: number) => {
+    const renewalYear = new Date(domain.next_renewal_date).getFullYear();
+    return year === renewalYear ? domain.renewal_cost : 0;
+  };
+
+  const calculateAnnualizedRenewalCost = () => {
+    return domains.reduce((total, domain) => {
+      return total + getAnnualizedCost(domain);
+    }, 0);
+  };
+
+  const calculateActualRenewalCost = (year: number) => {
+    return domains.reduce((total, domain) => {
+      return total + getActualCost(domain, year);
+    }, 0);
+  };
+
   // 计算即将到期的域名数量（30天内）
   const calculateExpiringSoon = () => {
     return domains.filter(domain => {
@@ -239,7 +272,9 @@ export default function DomainTrackerPage() {
     if (domains.length === 0) return 0;
     const totalROI = domains.reduce((sum, domain) => {
       const totalCost = domain.purchase_cost + domain.total_renewal_paid;
-      const profit = domain.estimated_value - totalCost;
+      const sellTransactions = transactions.filter(t => t.domain_id === domain.id && t.type === 'sell');
+      const totalRevenue = sellTransactions.reduce((sum, t) => sum + t.amount, 0);
+      const profit = totalRevenue - totalCost;
       return sum + (totalCost > 0 ? (profit / totalCost) * 100 : 0);
     }, 0);
     return totalROI / domains.length;
@@ -258,7 +293,9 @@ export default function DomainTrackerPage() {
     return domains
       .map(domain => {
         const totalCost = domain.purchase_cost + domain.total_renewal_paid;
-        const profit = domain.estimated_value - totalCost;
+        const sellTransactions = transactions.filter(t => t.domain_id === domain.id && t.type === 'sell');
+        const totalRevenue = sellTransactions.reduce((sum, t) => sum + t.amount, 0);
+        const profit = totalRevenue - totalCost;
         const roi = totalCost > 0 ? (profit / totalCost) * 100 : 0;
         return { ...domain, roi };
       })
@@ -311,8 +348,12 @@ export default function DomainTrackerPage() {
       } else if (filters.sortBy === 'roi') {
         const aTotalCost = a.purchase_cost + a.total_renewal_paid;
         const bTotalCost = b.purchase_cost + b.total_renewal_paid;
-        aValue = aTotalCost > 0 ? ((a.estimated_value - aTotalCost) / aTotalCost) * 100 : 0;
-        bValue = bTotalCost > 0 ? ((b.estimated_value - bTotalCost) / bTotalCost) * 100 : 0;
+        const aSellTransactions = transactions.filter(t => t.domain_id === a.id && t.type === 'sell');
+        const bSellTransactions = transactions.filter(t => t.domain_id === b.id && t.type === 'sell');
+        const aRevenue = aSellTransactions.reduce((sum, t) => sum + t.amount, 0);
+        const bRevenue = bSellTransactions.reduce((sum, t) => sum + t.amount, 0);
+        aValue = aTotalCost > 0 ? ((aRevenue - aTotalCost) / aTotalCost) * 100 : 0;
+        bValue = bTotalCost > 0 ? ((bRevenue - bTotalCost) / bTotalCost) * 100 : 0;
       }
 
       if (typeof aValue === 'string') {
@@ -721,10 +762,16 @@ export default function DomainTrackerPage() {
       total_renewal_paid: 0,
       next_renewal_date: expiryDate.toISOString().split('T')[0],
       status: 'active',
-      estimated_value: newDomain.estimated_value,
+      estimated_value: 0,
       tags: newDomain.tags,
       created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      // Renewal cycle fields
+      renewal_cycle_years: newDomain.renewal_cycle_years,
+      renewal_cycle_type: newDomain.renewal_cycle_type,
+      last_renewal_amount: newDomain.last_renewal_amount,
+      last_renewal_date: newDomain.last_renewal_date,
+      next_renewal_amount: newDomain.next_renewal_amount || newDomain.renewal_cost
     };
 
     setDomains(prev => [...prev, domain]);
@@ -758,9 +805,14 @@ export default function DomainTrackerPage() {
       purchase_date: '',
       purchase_cost: 0,
       renewal_cost: 0,
-      estimated_value: 0,
       expiry_date: '',
-      tags: []
+      tags: [],
+      // Renewal cycle fields
+      renewal_cycle_years: 1,
+      renewal_cycle_type: 'annual' as 'annual' | 'biennial' | 'triennial' | 'custom',
+      last_renewal_amount: 0,
+      last_renewal_date: '',
+      next_renewal_amount: 0
     });
     
     setShowAddDomainModal(false);
@@ -837,9 +889,14 @@ export default function DomainTrackerPage() {
       purchase_date: domain.purchase_date,
       purchase_cost: domain.purchase_cost,
       renewal_cost: domain.renewal_cost,
-      estimated_value: domain.estimated_value,
       expiry_date: domain.next_renewal_date,
-      tags: domain.tags
+      tags: domain.tags,
+      // Renewal cycle fields
+      renewal_cycle_years: domain.renewal_cycle_years || 1,
+      renewal_cycle_type: domain.renewal_cycle_type || 'annual',
+      last_renewal_amount: domain.last_renewal_amount || 0,
+      last_renewal_date: domain.last_renewal_date || '',
+      next_renewal_amount: domain.next_renewal_amount || domain.renewal_cost
     });
     setShowEditDomainModal(true);
   };
@@ -857,10 +914,16 @@ export default function DomainTrackerPage() {
       purchase_date: newDomain.purchase_date,
       purchase_cost: newDomain.purchase_cost,
       renewal_cost: newDomain.renewal_cost,
-      estimated_value: newDomain.estimated_value,
+      estimated_value: 0,
       next_renewal_date: newDomain.expiry_date,
       tags: newDomain.tags,
-      updated_at: new Date().toISOString()
+      updated_at: new Date().toISOString(),
+      // Renewal cycle fields
+      renewal_cycle_years: newDomain.renewal_cycle_years,
+      renewal_cycle_type: newDomain.renewal_cycle_type,
+      last_renewal_amount: newDomain.last_renewal_amount,
+      last_renewal_date: newDomain.last_renewal_date,
+      next_renewal_amount: newDomain.next_renewal_amount
     };
 
     setDomains(prev => prev.map(domain => 
@@ -874,9 +937,14 @@ export default function DomainTrackerPage() {
       purchase_date: '',
       purchase_cost: 0,
       renewal_cost: 0,
-      estimated_value: 0,
       expiry_date: '',
-      tags: []
+      tags: [],
+      // Renewal cycle fields
+      renewal_cycle_years: 1,
+      renewal_cycle_type: 'annual' as 'annual' | 'biennial' | 'triennial' | 'custom',
+      last_renewal_amount: 0,
+      last_renewal_date: '',
+      next_renewal_amount: 0
     });
     setEditingDomain(null);
     setShowEditDomainModal(false);
@@ -1028,7 +1096,6 @@ export default function DomainTrackerPage() {
                     <p className={`text-lg font-bold ${domain.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {domain.roi.toFixed(1)}%
                     </p>
-                    <p className="text-sm text-gray-600">${domain.estimated_value.toFixed(0)}</p>
                   </div>
                 </div>
               ))
@@ -1128,10 +1195,6 @@ export default function DomainTrackerPage() {
                     <p className="text-sm text-gray-600">{domain.registrar}</p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-green-800">
-                      ${domain.estimated_value}
-                    </p>
-                    <p className="text-sm text-gray-600">Est. Value</p>
                   </div>
                 </div>
               ))}
@@ -1208,7 +1271,6 @@ export default function DomainTrackerPage() {
               <option value="registrar">Registrar</option>
               <option value="purchase_cost">Purchase Cost</option>
               <option value="total_cost">Total Cost</option>
-              <option value="estimated_value">Estimated Value</option>
               <option value="roi">ROI</option>
               <option value="next_renewal_date">Next Renewal</option>
             </select>
@@ -1323,9 +1385,6 @@ export default function DomainTrackerPage() {
                   Total Cost
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Est. Value
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   ROI
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -1365,7 +1424,9 @@ export default function DomainTrackerPage() {
                 const totalCost = domain.purchase_cost + domain.total_renewal_paid;
                 const daysUntilExpiry = calculateDaysUntilExpiry(domain.next_renewal_date);
                 
-                const roi = totalCost > 0 ? ((domain.estimated_value - totalCost) / totalCost) * 100 : 0;
+                const sellTransactions = transactions.filter(t => t.domain_id === domain.id && t.type === 'sell');
+                const totalRevenue = sellTransactions.reduce((sum, t) => sum + t.amount, 0);
+                const roi = totalCost > 0 ? ((totalRevenue - totalCost) / totalCost) * 100 : 0;
                 
                 return (
                   <tr key={domain.id} className="hover:bg-gray-50">
@@ -1393,9 +1454,6 @@ export default function DomainTrackerPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       ${totalCost.toFixed(2)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${domain.estimated_value.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <span className={`font-medium ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -2208,17 +2266,6 @@ export default function DomainTrackerPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Value ($)</label>
-                <input 
-                  type="number" 
-                  step="0.01"
-                  placeholder="500"
-                  value={newDomain.estimated_value || ''}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, estimated_value: parseFloat(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <button 
@@ -2286,17 +2333,6 @@ export default function DomainTrackerPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Value ($)</label>
-                <input 
-                  type="number" 
-                  step="0.01"
-                  placeholder="500"
-                  value={newDomain.estimated_value || ''}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, estimated_value: parseFloat(e.target.value) || 0 }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-              </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
               <button 
@@ -2309,9 +2345,14 @@ export default function DomainTrackerPage() {
                     purchase_date: '',
                     purchase_cost: 0,
                     renewal_cost: 0,
-                    estimated_value: 0,
                     expiry_date: '',
-                    tags: []
+                    tags: [],
+                    // Renewal cycle fields
+                    renewal_cycle_years: 1,
+                    renewal_cycle_type: 'annual' as 'annual' | 'biennial' | 'triennial' | 'custom',
+                    last_renewal_amount: 0,
+                    last_renewal_date: '',
+                    next_renewal_amount: 0
                   });
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
