@@ -93,6 +93,7 @@ export default function DomainTrackerPage() {
     purchase_cost: 0,
     renewal_cost: 0,
     estimated_value: 0,
+    expiry_date: '',
     tags: [] as string[]
   });
   const [newTransaction, setNewTransaction] = useState({
@@ -125,11 +126,48 @@ export default function DomainTrackerPage() {
     sortOrder: 'desc' as 'asc' | 'desc'
   });
 
-  // Initialize empty state
+  // Initialize data from localStorage
   useEffect(() => {
-    // Set loading to false immediately since we start with empty data
+    try {
+      // Load domains from localStorage
+      const savedDomains = localStorage.getItem('domainTracker_domains');
+      if (savedDomains) {
+        const parsedDomains = JSON.parse(savedDomains);
+        setDomains(parsedDomains);
+      }
+
+      // Load transactions from localStorage
+      const savedTransactions = localStorage.getItem('domainTracker_transactions');
+      if (savedTransactions) {
+        const parsedTransactions = JSON.parse(savedTransactions);
+        setTransactions(parsedTransactions);
+      }
+
+      // Load stats from localStorage
+      const savedStats = localStorage.getItem('domainTracker_stats');
+      if (savedStats) {
+        const parsedStats = JSON.parse(savedStats);
+        setStats(parsedStats);
+      }
+    } catch (error) {
+      console.error('Error loading data from localStorage:', error);
+    }
+    
     setLoading(false);
   }, []);
+
+  // Save data to localStorage whenever domains, transactions, or stats change
+  useEffect(() => {
+    if (!loading) {
+      try {
+        localStorage.setItem('domainTracker_domains', JSON.stringify(domains));
+        localStorage.setItem('domainTracker_transactions', JSON.stringify(transactions));
+        localStorage.setItem('domainTracker_stats', JSON.stringify(stats));
+      } catch (error) {
+        console.error('Error saving data to localStorage:', error);
+      }
+    }
+  }, [domains, transactions, stats, loading]);
 
   const tabs = [
     { key: 'overview', label: t('domainTracker.tabs.overview'), icon: BarChart3 },
@@ -496,15 +534,27 @@ export default function DomainTrackerPage() {
       return;
     }
 
+    // 使用用户提供的到期日期，如果没有提供则默认为购买日期+1年
+    const purchaseDate = new Date();
+    let expiryDate: Date;
+    
+    if (newDomain.expiry_date) {
+      expiryDate = new Date(newDomain.expiry_date);
+    } else {
+      // 默认1年期限
+      expiryDate = new Date(purchaseDate);
+      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+    }
+
     const domain: Domain = {
       id: Date.now().toString(),
       domain_name: newDomain.domain_name,
       registrar: newDomain.registrar,
-      purchase_date: new Date().toISOString().split('T')[0],
+      purchase_date: purchaseDate.toISOString().split('T')[0],
       purchase_cost: newDomain.purchase_cost,
       renewal_cost: newDomain.renewal_cost || newDomain.purchase_cost,
       total_renewal_paid: 0,
-      next_renewal_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      next_renewal_date: expiryDate.toISOString().split('T')[0],
       status: 'active',
       estimated_value: newDomain.estimated_value,
       tags: newDomain.tags,
@@ -543,6 +593,7 @@ export default function DomainTrackerPage() {
       purchase_cost: 0,
       renewal_cost: 0,
       estimated_value: 0,
+      expiry_date: '',
       tags: []
     });
     
@@ -620,6 +671,7 @@ export default function DomainTrackerPage() {
       purchase_cost: domain.purchase_cost,
       renewal_cost: domain.renewal_cost,
       estimated_value: domain.estimated_value,
+      expiry_date: domain.next_renewal_date,
       tags: domain.tags
     });
     setShowEditDomainModal(true);
@@ -653,6 +705,7 @@ export default function DomainTrackerPage() {
       purchase_cost: 0,
       renewal_cost: 0,
       estimated_value: 0,
+      expiry_date: '',
       tags: []
     });
     setEditingDomain(null);
@@ -1869,6 +1922,7 @@ export default function DomainTrackerPage() {
                     purchase_cost: 0,
                     renewal_cost: 0,
                     estimated_value: 0,
+                    expiry_date: '',
                     tags: []
                   });
                 }}
