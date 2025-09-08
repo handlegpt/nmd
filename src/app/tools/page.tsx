@@ -516,7 +516,7 @@ export default function ToolsPage() {
               <button className="bg-transparent border-2 border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-blue-600 transition-colors flex items-center justify-center space-x-2">
                 <Eye className="h-5 w-5" />
                 <span>{t('tools.cta.viewRoadmap')}</span>
-              </button>
+            </button>
             </div>
           </div>
         </div>

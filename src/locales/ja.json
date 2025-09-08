@@ -415,7 +415,7 @@
       "title": "必要なすべて",
       "subtitle": "デジタルノマドの旅のための包括的リソース",
       "essentialTools": {
-        "title": "必須ツール",
+    "title": "必須ツール",
         "description": "デジタル銀行、保険、リモートワークプラットフォーム"
       },
       "nomadCities": {
@@ -3426,4 +3426,4 @@
     "socialScoreByVisaAndCost": "ビザとコストに基づく社会的スコア",
     "selectMetrics": "指標を選択"
   }
-}
+} 
