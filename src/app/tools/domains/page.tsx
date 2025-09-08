@@ -703,11 +703,12 @@ export default function DomainTrackerPage() {
     let expiryDate: Date;
     
     if (newDomain.expiry_date) {
+      // 使用用户提供的到期日期
       expiryDate = new Date(newDomain.expiry_date);
     } else {
-      // 默认1年期限，从购入日期开始计算
-      expiryDate = new Date(purchaseDate);
-      expiryDate.setFullYear(expiryDate.getFullYear() + 1);
+      // 如果没有提供到期日期，提示用户必须设置
+      alert('Please set the domain expiry date. This should be the actual domain registration expiry date, not based on purchase date.');
+      return;
     }
 
     const domain: Domain = {
@@ -2174,6 +2175,16 @@ export default function DomainTrackerPage() {
                   onChange={(e) => setNewDomain(prev => ({ ...prev, registrar: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Date</label>
+                <input 
+                  type="date" 
+                  value={newDomain.purchase_date}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, purchase_date: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">Leave empty to set today's date</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Cost ($)</label>
