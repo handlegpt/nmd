@@ -3032,6 +3032,252 @@
       "countries": "Comparación de Países",
       "deadlines": "Recordatorio de Fechas Límite"
     },
+    "calculator": {
+      "tabs": {
+        "calculator": "Calculadora",
+        "feie": "FEIE",
+        "presence": "Presencia",
+        "residency": "Residencia"
+      },
+      "countries": {
+        "portugal": "Portugal",
+        "thailand": "Tailandia",
+        "mexico": "México",
+        "spain": "España",
+        "germany": "Alemania",
+        "estonia": "Estonia",
+        "costaRica": "Costa Rica",
+        "malaysia": "Malasia"
+      },
+      "countryNotes": {
+        "portugal": "Plan NHR disponible (condiciones más estrictas desde 2024)",
+        "thailand": "Sistema fiscal territorial, ingresos extranjeros no remitidos libres de impuestos",
+        "mexico": "Sistema fiscal territorial, tratado fiscal con EE.UU.",
+        "spain": "Ley Beckham disponible para los primeros 5 años",
+        "germany": "Sistema fiscal global, alta carga fiscal",
+        "estonia": "Sistema fiscal territorial, e-residencia disponible",
+        "costaRica": "Sistema fiscal territorial, visa de nómada digital",
+        "malaysia": "Programa MM2H, ingresos extranjeros no remitidos libres de impuestos"
+      },
+      "disclaimer": {
+        "title": "Descargo de Responsabilidad",
+        "description": "Esta calculadora proporciona estimaciones solo para referencia. Las situaciones fiscales reales dependen de las circunstancias individuales, los últimos cambios en las leyes fiscales y las regulaciones del país. Por favor, consulta con asesores fiscales profesionales antes de tomar cualquier decisión fiscal."
+      },
+      "overview": {
+        "title": "Resumen de Resultados",
+        "maxSavings": "Máximo Ahorro Potencial",
+        "countryCount": "Países Analizados",
+        "lowestRate": "Tasa Más Baja"
+      },
+      "detailedResults": {
+        "title": "Resultados Detallados",
+        "effectiveRate": "Tasa Efectiva",
+        "annualIncome": "Ingresos Anuales",
+        "taxAmount": "Cantidad de Impuestos",
+        "netIncome": "Ingresos Netos",
+        "savingsAmount": "Cantidad de Ahorros",
+        "taxRateComparison": "Comparación de Tasas Fiscales",
+        "feieApplicable": "FEIE Aplicable",
+        "recommendedRanking": "Ranking Recomendado",
+        "taxRate": "Tasa Fiscal"
+      },
+      "visaDifficulty": {
+        "easy": "Fácil",
+        "medium": "Medio",
+        "hard": "Difícil"
+      },
+      "costOfLiving": {
+        "low": "Bajo",
+        "medium": "Medio",
+        "high": "Alto"
+      },
+      "digitalNomadFriendly": "Amigable para Nómadas Digitales"
+    },
+    "strategyGuide": {
+      "title": "Guía de Estrategias Fiscales",
+      "viewAdvisors": "Ver Asesores",
+      "difficultyFilter": "Filtrar por Dificultad",
+      "allDifficulties": "Todas las Dificultades",
+      "difficulty": {
+        "easy": "Fácil",
+        "medium": "Medio",
+        "hard": "Difícil"
+      },
+      "strategyType": "Tipo de Estrategia",
+      "allTypes": "Todos los Tipos",
+      "categories": {
+        "taxHaven": "Paraíso Fiscal",
+        "territorial": "Fiscalidad Territorial",
+        "companyStructure": "Estructura de Empresa",
+        "visaStrategy": "Estrategia de Visa",
+        "taxTreaty": "Tratado Fiscal"
+      },
+      "successRate": "Tasa de Éxito",
+      "hasAdvisor": "Tiene Asesor",
+      "strategies": {
+        "nhrPortugal": {
+          "title": "Plan NHR Portugal",
+          "description": "Plan de Residencia No Habitual de Portugal"
+        },
+        "nhrPlan": {
+          "requirements": {
+            "0": "Solicitud antes del 1 de enero de 2024 (cerrada)",
+            "1": "O cumplir nuevas condiciones estrictas",
+            "2": "Profesión de alta cualificación (TI, finanzas, ciencia, etc.)",
+            "3": "Ingresos anuales superiores a €75,000",
+            "4": "Residir en Portugal más de 183 días/año",
+            "5": "No ser residente fiscal portugués en los últimos 5 años"
+          },
+          "steps": {
+            "0": "Confirmar elegibilidad bajo nuevas condiciones de política",
+            "1": "Preparar documentación detallada de profesión e ingresos",
+            "2": "Abrir cuenta bancaria en Portugal",
+            "3": "Alquilar o comprar propiedad",
+            "4": "Solicitar número fiscal",
+            "5": "Presentar solicitud NHR (si aún es elegible)",
+            "6": "Esperar aprobación (típicamente 4-8 semanas)"
+          },
+          "tips": {
+            "0": "Condiciones de solicitud significativamente más estrictas después de 2024",
+            "1": "Priorizar otros países amigables fiscalmente",
+            "2": "Consultar asesores fiscales profesionales para evaluar elegibilidad",
+            "3": "Considerar alternativas como D7 visa",
+            "4": "Mantener registros detallados de profesión e ingresos"
+          }
+        },
+        "territorialTax": {
+          "title": "Fiscalidad Territorial",
+          "description": "Sistema fiscal que solo grava ingresos generados localmente",
+          "requirements": {
+            "0": "No remitir ingresos extranjeros al país",
+            "1": "Mantener ingresos extranjeros en cuentas offshore",
+            "2": "Cumplir con requisitos de residencia fiscal",
+            "3": "Mantener registros detallados de ingresos"
+          },
+          "steps": {
+            "0": "Investigar países con sistemas fiscales territoriales",
+            "1": "Establecer residencia fiscal en el país elegido",
+            "2": "Configurar cuentas bancarias offshore",
+            "3": "Implementar estructura de ingresos",
+            "4": "Mantener cumplimiento continuo",
+            "5": "Monitorear cambios en regulaciones"
+          },
+          "tips": {
+            "0": "Países populares: Tailandia, Costa Rica, Panamá",
+            "1": "Mantener ingresos extranjeros fuera del país",
+            "2": "Considerar implicaciones de tratados fiscales",
+            "3": "Consultar profesionales fiscales locales"
+          }
+        },
+        "companyStructure": {
+          "title": "Estructura de Empresa",
+          "description": "Crear estructura empresarial para optimización fiscal",
+          "savings": "Ahorros Potenciales: 15-30%",
+          "timeToImplement": "Tiempo de Implementación: 3-6 meses",
+          "requirements": {
+            "0": "Negocio elegible para estructura offshore",
+            "1": "Ingresos suficientes para justificar costos",
+            "2": "Cumplimiento con regulaciones locales",
+            "3": "Documentación empresarial adecuada"
+          },
+          "steps": {
+            "0": "Evaluar elegibilidad del negocio",
+            "1": "Seleccionar jurisdicción apropiada",
+            "2": "Incorporar empresa offshore",
+            "3": "Configurar cuentas bancarias",
+            "4": "Transferir operaciones empresariales",
+            "5": "Implementar cumplimiento fiscal"
+          },
+          "tips": {
+            "0": "Considerar costos de mantenimiento anual",
+            "1": "Asegurar cumplimiento con regulaciones locales",
+            "2": "Mantener registros empresariales detallados",
+            "3": "Consultar asesores fiscales especializados"
+          }
+        },
+        "digitalNomadVisa": {
+          "title": "Visa de Nómada Digital",
+          "description": "Obtener visa específica para nómadas digitales",
+          "savings": "Ahorros Potenciales: 10-25%",
+          "timeToImplement": "Tiempo de Implementación: 1-3 meses",
+          "requirements": {
+            "0": "Ingresos mínimos requeridos",
+            "1": "Seguro de salud válido",
+            "2": "Prueba de trabajo remoto",
+            "3": "Antecedentes penales limpios"
+          },
+          "steps": {
+            "0": "Investigar visas de nómada digital disponibles",
+            "1": "Preparar documentación requerida",
+            "2": "Solicitar visa de nómada digital",
+            "3": "Establecer residencia temporal",
+            "4": "Configurar cumplimiento fiscal",
+            "5": "Renovar según sea necesario"
+          },
+          "tips": {
+            "0": "Países populares: Estonia, Portugal, Costa Rica",
+            "1": "Verificar requisitos de ingresos mínimos",
+            "2": "Considerar duración de la visa",
+            "3": "Planificar renovación con anticipación"
+          }
+        },
+        "taxTreatyOptimization": {
+          "title": "Optimización de Tratados Fiscales",
+          "description": "Utilizar tratados fiscales para reducir impuestos",
+          "savings": "Ahorros Potenciales: 5-20%",
+          "timeToImplement": "Tiempo de Implementación: 2-4 meses",
+          "requirements": {
+            "0": "Tratado fiscal aplicable",
+            "1": "Cumplimiento con requisitos del tratado",
+            "2": "Documentación adecuada",
+            "3": "Residencia fiscal en país del tratado"
+          },
+          "steps": {
+            "0": "Identificar tratados fiscales aplicables",
+            "1": "Evaluar beneficios del tratado",
+            "2": "Establecer residencia fiscal",
+            "3": "Configurar estructura de ingresos",
+            "4": "Implementar cumplimiento del tratado",
+            "5": "Monitorear cambios en tratados"
+          },
+          "tips": {
+            "0": "Verificar términos específicos del tratado",
+            "1": "Mantener cumplimiento continuo",
+            "2": "Considerar implicaciones de cambio de residencia",
+            "3": "Consultar especialistas en tratados fiscales"
+          }
+        }
+      }
+    },
+    "deadlines": {
+      "selectCountry": "Selecciona tu país de nacionalidad",
+      "yourTaxDeadlines": "Tus Fechas Límite Fiscales",
+      "selectCountryToView": "Por favor selecciona un país para ver las fechas límite fiscales",
+      "daysLeft": " días restantes",
+      "reminderTip1": "Configura recordatorios de calendario 2-4 semanas antes de cada fecha límite",
+      "reminderTip2": "Considera solicitar extensiones (ciudadanos estadounidenses obtienen automáticamente 2 meses de extensión)",
+      "reminderTip3": "Mantén documentos importantes organizados durante todo el año",
+      "reminderTip4": "Consulta profesionales fiscales para situaciones complejas",
+      "disclaimer": "Aviso Importante",
+      "disclaimerText": "Este sistema de recordatorios proporciona información general sobre fechas límite fiscales. Las fechas límite reales pueden variar debido a circunstancias personales, solicitudes de extensión y otros factores. Por favor, consulta la información más reciente de las autoridades fiscales oficiales y consulta asesores fiscales profesionales para situaciones complejas.",
+      "countries": {
+        "us": "Estados Unidos",
+        "uk": "Reino Unido",
+        "ca": "Canadá",
+        "au": "Australia",
+        "ie": "Irlanda"
+      },
+      "descriptions": {
+        "annualTaxReturn": "Declaración de Impuestos Anual",
+        "fbarFiling": "Presentación FBAR (Cuenta Bancaria Extranjera)",
+        "q1EstimatedTax": "Impuesto Estimado Q1",
+        "q2EstimatedTax": "Impuesto Estimado Q2",
+        "selfAssessment": "Autoevaluación",
+        "taxPayment": "Pago de Impuestos",
+        "personalTaxReturn": "Declaración de Impuestos Personal",
+        "selfEmployedFiling": "Presentación de Trabajador Independiente"
+      }
+    },
     "currentStep": "Paso Actual:",
     "step1": "1️⃣ Evaluación de Necesidades",
     "step2": "2️⃣ Calculadora Fiscal",
@@ -3056,7 +3302,115 @@
       "mainBenefits": "Beneficios Principales",
       "requirements": "Requisitos",
       "potentialRisks": "Riesgos Potenciales",
-      "nomadFriendlyRating": "Calificación Amigable para Nómadas"
+      "nomadFriendlyRating": "Calificación Amigable para Nómadas",
+      "portugal": {
+        "benefits": {
+          "nhrPlan": "Plan NHR: Tasa fiscal preferencial de 10 años (política 2024 más estricta)",
+          "noWealthTax": "Sin impuesto sobre el patrimonio",
+          "noInheritanceTax": "Sin impuesto de sucesiones",
+          "euPassportAdvantage": "Ventaja del pasaporte de la UE",
+          "lowerCostOfLiving": "Costo de vida relativamente bajo",
+          "d7VisaAlternative": "Alternativa de visa D7"
+        },
+        "requirements": {
+          "applicationDeadline": "Solicitud antes del 1 de enero de 2024 (cerrada)",
+          "newStrictConditions": "O cumplir nuevas condiciones estrictas",
+          "highSkillProfession": "Profesión de alta cualificación, ingresos anuales superiores a €75,000",
+          "residencyDays": "Residir en Portugal más de 183 días al año",
+          "noPreviousResidency": "No puede ser residente fiscal portugués en los últimos 5 años"
+        },
+        "risks": {
+          "nhrConditionsTightened": "Condiciones de solicitud NHR significativamente más estrictas",
+          "proofRequired": "Necesidad de probar profesión de alta cualificación e ingresos",
+          "taxAuditRisk": "Puede enfrentar revisión de las autoridades fiscales portuguesas",
+          "policyChangeRisk": "Mayor riesgo de cambio de política"
+        }
+      },
+      "thailand": {
+        "benefits": {
+          "foreignIncomeExempt": "Ingresos extranjeros no remitidos están libres de impuestos",
+          "lowCostOfLiving": "Bajo costo de vida",
+          "visaConvenience": "Conveniencia de visa",
+          "noCapitalGainsTax": "Sin impuesto sobre ganancias de capital",
+          "noInheritanceTax": "Sin impuesto de sucesiones"
+        },
+        "requirements": {
+          "noForeignIncomeRemittance": "Ingresos extranjeros no remitidos a Tailandia",
+          "workPermitRequired": "Permiso de trabajo requerido para trabajar en Tailandia",
+          "taxResidencyOver180Days": "Estado de residencia fiscal requerido por más de 180 días",
+          "maintainGoodRecords": "Mantener buenos registros"
+        },
+        "risks": {
+          "remittedIncomeTaxed": "Ingresos extranjeros remitidos pueden estar sujetos a impuestos",
+          "workPermitRestrictions": "Restricciones estrictas de permiso de trabajo",
+          "taxRegulationChanges": "Las regulaciones fiscales pueden cambiar"
+        }
+      },
+      "mexico": {
+        "benefits": {
+          "territorialTaxSystem": "Sistema fiscal territorial",
+          "foreignIncomeExempt": "Ingresos extranjeros no remitidos están libres de impuestos",
+          "usTaxTreaty": "Tratado fiscal con Estados Unidos",
+          "moderateCostOfLiving": "Costo de vida moderado",
+          "digitalNomadVisa": "Visa de nómada digital"
+        },
+        "requirements": {
+          "taxResidencyOver183Days": "Convertirse en residente fiscal por más de 183 días",
+          "noForeignIncomeRemittance": "Ingresos extranjeros no remitidos a México",
+          "mexicanIncomeTaxed": "Ingresos mexicanos sujetos a impuestos",
+          "mayNeedFiling": "Puede necesitar presentar declaraciones"
+        },
+        "risks": {
+          "remittedIncomeTaxed": "Ingresos extranjeros remitidos pueden estar sujetos a impuestos",
+          "complexTaxFiling": "Declaración fiscal compleja",
+          "auditRisk": "Puede enfrentar auditoría"
+        }
+      },
+      "spain": {
+        "benefits": {
+          "beckhamLaw": "Ley Beckham (tasa fiscal preferencial para los primeros 5 años)",
+          "euPassport": "Pasaporte de la UE",
+          "qualityHealthcare": "Sistema de salud de calidad",
+          "richCulture": "Cultura rica"
+        }
+      },
+      "germany": {
+        "benefits": {
+          "qualityInfrastructure": "Infraestructura de calidad",
+          "strongEconomy": "Economía fuerte",
+          "euPassport": "Pasaporte de la UE",
+          "excellentHealthcare": "Sistema de salud excelente"
+        }
+      },
+      "costaRica": {
+        "benefits": {
+          "territorialTaxSystem": "Sistema fiscal territorial",
+          "foreignIncomeExempt": "Ingresos extranjeros no remitidos están libres de impuestos",
+          "digitalNomadVisa": "Visa de nómada digital",
+          "beautifulNature": "Entorno natural hermoso",
+          "moderateCostOfLiving": "Costo de vida moderado"
+        },
+        "requirements": {
+          "taxResidencyOver183Days": "Convertirse en residente fiscal por más de 183 días",
+          "noForeignIncomeRemittance": "Ingresos extranjeros no remitidos a Costa Rica",
+          "costaRicanIncomeTaxed": "Ingresos costarricenses sujetos a impuestos",
+          "mayNeedFiling": "Puede necesitar presentar declaraciones"
+        },
+        "risks": {
+          "remittedIncomeTaxed": "Ingresos extranjeros remitidos pueden estar sujetos a impuestos",
+          "complexTaxFiling": "Declaración fiscal compleja",
+          "auditRisk": "Puede enfrentar auditoría"
+        }
+      },
+      "malaysia": {
+        "benefits": {
+          "mm2hVisaProgram": "Programa de visa MM2H",
+          "foreignIncomeExempt": "Ingresos extranjeros no remitidos están libres de impuestos",
+          "lowCostOfLiving": "Bajo costo de vida",
+          "highEnglishProficiency": "Alto dominio del inglés",
+          "goodInfrastructure": "Buena infraestructura"
+        }
+      }
     },
     "importantNotice": {
       "title": "Aviso Importante",
@@ -3131,6 +3485,72 @@
       "feieLimit": "Límite FEIE",
       "taxableIncome": "Ingresos Imponibles",
       "potentialSavings": "Ahorros Potenciales"
+    }
+  },
+  "taxAssessment": {
+    "questions": {
+      "income": "¿Cuál es tu rango de ingresos anuales?",
+      "passport": "¿Cuál es tu nacionalidad/pasaporte?",
+      "residence": "¿Dónde resides actualmente?",
+      "workType": "¿Qué tipo de trabajo realizas?",
+      "visaStatus": "¿Cuál es tu estado de visa actual?"
+    },
+    "incomeOptions": {
+      "under50k": "Menos de $50,000",
+      "under50kDesc": "Ingresos bajos, enfoque en países con bajo costo de vida",
+      "50k100k": "$50,000 - $100,000",
+      "50k100kDesc": "Ingresos medios, considera países con impuestos moderados",
+      "100k200k": "$100,000 - $200,000",
+      "100k200kDesc": "Ingresos altos, optimización fiscal importante",
+      "over200k": "Más de $200,000",
+      "over200kDesc": "Ingresos muy altos, estrategias fiscales avanzadas"
+    },
+    "passportOptions": {
+      "us": "Estados Unidos",
+      "usDesc": "Ciudadano estadounidense, sujeto a impuestos globales",
+      "eu": "Unión Europea",
+      "euDesc": "Ciudadano de la UE, acceso a beneficios fiscales europeos",
+      "uk": "Reino Unido",
+      "ukDesc": "Ciudadano británico, consideraciones post-Brexit",
+      "canada": "Canadá",
+      "canadaDesc": "Ciudadano canadiense, tratados fiscales favorables",
+      "australia": "Australia",
+      "australiaDesc": "Ciudadano australiano, sistema fiscal territorial",
+      "other": "Otro",
+      "otherDesc": "Otra nacionalidad, verificar tratados fiscales"
+    },
+    "residenceOptions": {
+      "single": "Un solo país",
+      "singleDesc": "Residencia fija en un país",
+      "multiple": "Múltiples países",
+      "multipleDesc": "Divides tu tiempo entre varios países",
+      "nomadic": "Nómada",
+      "nomadicDesc": "Viajas constantemente sin residencia fija"
+    },
+    "workTypeOptions": {
+      "freelance": "Freelance/Contratista",
+      "freelanceDesc": "Trabajo independiente, múltiples clientes",
+      "remote": "Empleado remoto",
+      "remoteDesc": "Empleado de una empresa, trabajo remoto",
+      "business": "Propietario de negocio",
+      "businessDesc": "Tienes tu propia empresa o negocio",
+      "mixed": "Mixto",
+      "mixedDesc": "Combinación de empleo y trabajo independiente"
+    },
+    "visaStatusOptions": {
+      "tourist": "Visa de turista",
+      "touristDesc": "Viajas con visa de turista",
+      "digitalNomad": "Visa de nómada digital",
+      "digitalNomadDesc": "Tienes visa específica para nómadas digitales",
+      "resident": "Residente",
+      "residentDesc": "Tienes residencia en un país",
+      "citizen": "Ciudadano",
+      "citizenDesc": "Eres ciudadano del país donde resides"
+    },
+    "navigation": {
+      "question": "Pregunta {current} de {total}",
+      "previous": "Anterior",
+      "next": "Siguiente"
     }
   },
   "reviews": {

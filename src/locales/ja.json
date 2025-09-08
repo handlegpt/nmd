@@ -2924,6 +2924,67 @@
       "countries": "国別比較",
       "deadlines": "期限リマインダー"
     },
+    "calculator": {
+      "tabs": {
+        "calculator": "計算機",
+        "feie": "FEIE",
+        "presence": "プレゼンス",
+        "residency": "居住"
+      },
+      "countries": {
+        "portugal": "ポルトガル",
+        "thailand": "タイ",
+        "mexico": "メキシコ",
+        "spain": "スペイン",
+        "germany": "ドイツ",
+        "estonia": "エストニア",
+        "costaRica": "コスタリカ",
+        "malaysia": "マレーシア"
+      },
+      "countryNotes": {
+        "portugal": "NHR計画利用可能（2024年から条件厳格化）",
+        "thailand": "領土税制、外国所得送金なしは非課税",
+        "mexico": "領土税制、米国との税金条約",
+        "spain": "ベッカム法、最初の5年間利用可能",
+        "germany": "グローバル税制、高税負担",
+        "estonia": "領土税制、e-residency利用可能",
+        "costaRica": "領土税制、デジタルノマドビザ",
+        "malaysia": "MM2Hプログラム、外国所得送金なしは非課税"
+      },
+      "disclaimer": {
+        "title": "免責事項",
+        "description": "この計算機は参考用の推定値を提供します。実際の税務状況は個人の状況、最新の税法変更、国の規制によって異なります。税務上の決定を行う前に、専門の税務アドバイザーにご相談ください。"
+      },
+      "overview": {
+        "title": "結果概要",
+        "maxSavings": "最大節税効果",
+        "countryCount": "分析国数",
+        "lowestRate": "最低税率"
+      },
+      "detailedResults": {
+        "title": "詳細結果",
+        "effectiveRate": "実効税率",
+        "annualIncome": "年間所得",
+        "taxAmount": "税金額",
+        "netIncome": "純所得",
+        "savingsAmount": "節税額",
+        "taxRateComparison": "税率比較",
+        "feieApplicable": "FEIE適用可能",
+        "recommendedRanking": "推奨ランキング",
+        "taxRate": "税率"
+      },
+      "visaDifficulty": {
+        "easy": "簡単",
+        "medium": "中程度",
+        "hard": "困難"
+      },
+      "costOfLiving": {
+        "low": "低い",
+        "medium": "中程度",
+        "high": "高い"
+      },
+      "digitalNomadFriendly": "デジタルノマドフレンドリー"
+    },
     "currentStep": "現在のステップ：",
     "step1": "1️⃣ ニーズ評価",
     "step2": "2️⃣ 税金計算機",
@@ -3375,7 +3436,34 @@
       "extensionTip": "利用可能な場合は延長申請を検討（米国市民は自動的に2ヶ月延長を取得）",
       "organizationTip": "年間を通じて重要な書類を整理して保持",
       "professionalTip": "複雑な状況では税金専門家に相談",
-      "deadlineDisclaimer": "このリマインダーシステムは一般的な税金期限情報を提供します。実際の期限は個人の状況、提出延長、その他の要因により異なる場合があります。公式税金当局の最新情報を参照し、複雑な状況では専門の税金アドバイザーに相談してください。"
+      "deadlineDisclaimer": "このリマインダーシステムは一般的な税金期限情報を提供します。実際の期限は個人の状況、提出延長、その他の要因により異なる場合があります。公式税金当局の最新情報を参照し、複雑な状況では専門の税金アドバイザーに相談してください。",
+      "selectCountry": "あなたの国籍を選択",
+      "yourTaxDeadlines": "あなたの税金期限",
+      "selectCountryToView": "税金期限を表示するには国を選択してください",
+      "daysLeft": " 日残り",
+      "reminderTip1": "各期限の2-4週間前にカレンダーリマインダーを設定",
+      "reminderTip2": "延長申請を検討（米国市民は自動的に2ヶ月延長を取得）",
+      "reminderTip3": "年間を通じて重要な書類を整理して保持",
+      "reminderTip4": "複雑な状況では税金専門家に相談",
+      "disclaimer": "重要な注意事項",
+      "disclaimerText": "このリマインダーシステムは一般的な税金期限情報を提供します。実際の期限は個人の状況、提出延長、その他の要因により異なる場合があります。公式税金当局の最新情報を参照し、複雑な状況では専門の税金アドバイザーに相談してください。",
+      "countries": {
+        "us": "アメリカ合衆国",
+        "uk": "イギリス",
+        "ca": "カナダ",
+        "au": "オーストラリア",
+        "ie": "アイルランド"
+      },
+      "descriptions": {
+        "annualTaxReturn": "年間税務申告",
+        "fbarFiling": "FBAR申告（外国銀行口座）",
+        "q1EstimatedTax": "第1四半期推定税",
+        "q2EstimatedTax": "第2四半期推定税",
+        "selfAssessment": "自己申告",
+        "taxPayment": "税金支払い",
+        "personalTaxReturn": "個人税務申告",
+        "selfEmployedFiling": "自営業申告"
+      }
     },
     "calculator": {
       "annualIncome": "年間所得",
