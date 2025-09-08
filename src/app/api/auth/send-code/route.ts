@@ -52,34 +52,39 @@ export async function POST(request: NextRequest) {
 
     // 3. 检查数据库连接
     console.log('🔍 Step 3: Checking database connection')
-    try {
-      const { data: connectionTest, error: connectionError } = await supabase
-        .from('verification_codes')
-        .select('count')
-        .limit(1)
+    if (!supabase) {
+      console.warn('⚠️ Supabase not configured, using mock mode')
+      // 在数据库不可用时，直接进入模拟模式
+    } else {
+      try {
+        const { data: connectionTest, error: connectionError } = await supabase
+          .from('verification_codes')
+          .select('count')
+          .limit(1)
 
-      if (connectionError) {
-        console.error('❌ Database connection failed:', connectionError)
+        if (connectionError) {
+          console.error('❌ Database connection failed:', connectionError)
+          return NextResponse.json(
+            { 
+              success: false,
+              error: 'Database connection failed',
+              message: 'Database connection failed'
+            },
+            { status: 500 }
+          )
+        }
+        console.log('✅ Database connection successful')
+      } catch (dbError) {
+        console.error('❌ Database error:', dbError)
         return NextResponse.json(
           { 
             success: false,
-            error: 'Database connection failed',
-            message: 'Database connection failed'
+            error: 'Database error',
+            message: 'Database error'
           },
           { status: 500 }
         )
       }
-      console.log('✅ Database connection successful')
-    } catch (dbError) {
-      console.error('❌ Database error:', dbError)
-      return NextResponse.json(
-        { 
-          success: false,
-          error: 'Database error',
-          message: 'Database error'
-        },
-        { status: 500 }
-      )
     }
 
     // 4. 生成验证码
@@ -91,32 +96,46 @@ export async function POST(request: NextRequest) {
 
     // 5. 保存验证码到数据库
     console.log('🔍 Step 5: Saving verification code to database')
-    try {
-      // 先删除旧的验证码
-      const { error: deleteError } = await supabase
-        .from('verification_codes')
-        .delete()
-        .eq('email', email)
+    if (supabase) {
+      try {
+        // 先删除旧的验证码
+        const { error: deleteError } = await supabase
+          .from('verification_codes')
+          .delete()
+          .eq('email', email)
 
-      if (deleteError) {
-        console.error('⚠️ Failed to delete old verification codes:', deleteError)
-        // 不返回错误，继续执行
-      }
+        if (deleteError) {
+          console.error('⚠️ Failed to delete old verification codes:', deleteError)
+          // 不返回错误，继续执行
+        }
 
-      // 插入新的验证码
-      const { data: codeData, error: insertError } = await supabase
-        .from('verification_codes')
-        .insert({
-          email,
-          code,
-          expires_at: expiresAt.toISOString(),
-          created_at: new Date().toISOString()
-        })
-        .select()
-        .single()
+        // 插入新的验证码
+        const { data: codeData, error: insertError } = await supabase
+          .from('verification_codes')
+          .insert({
+            email,
+            code,
+            expires_at: expiresAt.toISOString(),
+            created_at: new Date().toISOString()
+          })
+          .select()
+          .single()
 
-      if (insertError) {
-        console.error('❌ Failed to insert verification code:', insertError)
+        if (insertError) {
+          console.error('❌ Failed to insert verification code:', insertError)
+          return NextResponse.json(
+            { 
+              success: false,
+              error: 'Failed to save verification code',
+              message: 'Failed to save verification code'
+            },
+            { status: 500 }
+          )
+        }
+
+        console.log('✅ Verification code saved to database:', codeData.id)
+      } catch (saveError) {
+        console.error('❌ Save verification code error:', saveError)
         return NextResponse.json(
           { 
             success: false,
@@ -126,18 +145,8 @@ export async function POST(request: NextRequest) {
           { status: 500 }
         )
       }
-
-      console.log('✅ Verification code saved to database:', codeData.id)
-    } catch (saveError) {
-      console.error('❌ Save verification code error:', saveError)
-      return NextResponse.json(
-        { 
-          success: false,
-          error: 'Failed to save verification code',
-          message: 'Failed to save verification code'
-        },
-        { status: 500 }
-      )
+    } else {
+      console.log('⚠️ Database not available, skipping verification code storage')
     }
 
     // 6. 发送验证码邮件
