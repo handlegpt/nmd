@@ -2265,6 +2265,45 @@ export default function DomainTrackerPage() {
                   onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cost: parseFloat(e.target.value) || 0 }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+                <p className="text-xs text-gray-500 mt-1">Enter the total renewal cost for the entire renewal period</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Renewal Cycle</label>
+                <select 
+                  value={newDomain.renewal_cycle_type}
+                  onChange={(e) => {
+                    const cycleType = e.target.value as 'annual' | 'biennial' | 'triennial' | 'custom';
+                    const cycleYears = cycleType === 'annual' ? 1 : cycleType === 'biennial' ? 2 : cycleType === 'triennial' ? 3 : newDomain.renewal_cycle_years;
+                    setNewDomain(prev => ({ 
+                      ...prev, 
+                      renewal_cycle_type: cycleType,
+                      renewal_cycle_years: cycleYears
+                    }));
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="annual">Annual (1 year)</option>
+                  <option value="biennial">Biennial (2 years)</option>
+                  <option value="triennial">Triennial (3 years)</option>
+                  <option value="custom">Custom</option>
+                </select>
+                {newDomain.renewal_cycle_type === 'custom' && (
+                  <input 
+                    type="number" 
+                    min="1"
+                    max="10"
+                    placeholder="Years"
+                    value={newDomain.renewal_cycle_years}
+                    onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cycle_years: parseInt(e.target.value) || 1 }))}
+                    className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  {newDomain.renewal_cycle_type === 'annual' && 'Domain renews every 1 year (e.g., .com domains)'}
+                  {newDomain.renewal_cycle_type === 'biennial' && 'Domain renews every 2 years (e.g., .ai domains)'}
+                  {newDomain.renewal_cycle_type === 'triennial' && 'Domain renews every 3 years (e.g., .tt domains)'}
+                  {newDomain.renewal_cycle_type === 'custom' && `Domain renews every ${newDomain.renewal_cycle_years} year(s)`}
+                </p>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
@@ -2332,6 +2371,45 @@ export default function DomainTrackerPage() {
                   onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cost: parseFloat(e.target.value) || 0 }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+                <p className="text-xs text-gray-500 mt-1">Enter the total renewal cost for the entire renewal period</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Renewal Cycle</label>
+                <select 
+                  value={newDomain.renewal_cycle_type}
+                  onChange={(e) => {
+                    const cycleType = e.target.value as 'annual' | 'biennial' | 'triennial' | 'custom';
+                    const cycleYears = cycleType === 'annual' ? 1 : cycleType === 'biennial' ? 2 : cycleType === 'triennial' ? 3 : newDomain.renewal_cycle_years;
+                    setNewDomain(prev => ({ 
+                      ...prev, 
+                      renewal_cycle_type: cycleType,
+                      renewal_cycle_years: cycleYears
+                    }));
+                  }}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                  <option value="annual">Annual (1 year)</option>
+                  <option value="biennial">Biennial (2 years)</option>
+                  <option value="triennial">Triennial (3 years)</option>
+                  <option value="custom">Custom</option>
+                </select>
+                {newDomain.renewal_cycle_type === 'custom' && (
+                  <input 
+                    type="number" 
+                    min="1"
+                    max="10"
+                    placeholder="Years"
+                    value={newDomain.renewal_cycle_years}
+                    onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cycle_years: parseInt(e.target.value) || 1 }))}
+                    className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                )}
+                <p className="text-xs text-gray-500 mt-1">
+                  {newDomain.renewal_cycle_type === 'annual' && 'Domain renews every 1 year (e.g., .com domains)'}
+                  {newDomain.renewal_cycle_type === 'biennial' && 'Domain renews every 2 years (e.g., .ai domains)'}
+                  {newDomain.renewal_cycle_type === 'triennial' && 'Domain renews every 3 years (e.g., .tt domains)'}
+                  {newDomain.renewal_cycle_type === 'custom' && `Domain renews every ${newDomain.renewal_cycle_years} year(s)`}
+                </p>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
