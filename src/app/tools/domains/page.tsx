@@ -29,6 +29,43 @@ import {
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/GlobalStateContext';
 
+// Security utility functions
+const sanitizeInput = (input: string): string => {
+  if (typeof input !== 'string') return '';
+  return input
+    .replace(/[<>]/g, '') // Remove potential HTML tags
+    .replace(/javascript:/gi, '') // Remove javascript: protocol
+    .replace(/on\w+=/gi, '') // Remove event handlers
+    .trim()
+    .substring(0, 1000); // Limit length
+};
+
+const validateDomainName = (domain: string): boolean => {
+  if (!domain || typeof domain !== 'string') return false;
+  const domainRegex = /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  return domainRegex.test(domain) && domain.length <= 253;
+};
+
+const validateNumericInput = (value: string, min: number = 0, max: number = 999999): number => {
+  const num = parseFloat(value);
+  if (isNaN(num) || num < min || num > max) {
+    return min;
+  }
+  return num;
+};
+
+const validateDateInput = (dateString: string): boolean => {
+  if (!dateString) return false;
+  const date = new Date(dateString);
+  const now = new Date();
+  const minDate = new Date('1900-01-01');
+  const maxDate = new Date(now.getFullYear() + 10, 11, 31); // 10 years from now
+  
+  return date >= minDate && date <= maxDate && !isNaN(date.getTime());
+};
+
+// Toast notification functions will be defined inside the component
+
 // Types for domain tracking
 interface Domain {
   id: string;
@@ -128,6 +165,17 @@ export default function DomainTrackerPage() {
   const [selectedDomains, setSelectedDomains] = useState<string[]>([]);
   const [showBulkActions, setShowBulkActions] = useState(false);
 
+  // Toast notification state
+  const [toast, setToast] = useState<{
+    show: boolean;
+    message: string;
+    type: 'success' | 'error' | 'warning' | 'info';
+  }>({
+    show: false,
+    message: '',
+    type: 'info'
+  });
+
   // Transaction filtering and analysis
   const [transactionFilters, setTransactionFilters] = useState({
     search: '',
@@ -147,6 +195,14 @@ export default function DomainTrackerPage() {
     sortBy: 'roi', // roi, cost, revenue, age
     sortOrder: 'desc' as 'asc' | 'desc'
   });
+
+  // Toast notification function
+  const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast(prev => ({ ...prev, show: false }));
+    }, 4000);
+  };
 
   // Initialize data from localStorage
   useEffect(() => {
@@ -734,31 +790,46 @@ export default function DomainTrackerPage() {
   };
 
   const handleAddDomain = () => {
-    if (!newDomain.domain_name || !newDomain.registrar) {
-      alert('Please fill in required fields');
+    // Input validation and sanitization
+    const sanitizedDomainName = sanitizeInput(newDomain.domain_name);
+    const sanitizedRegistrar = sanitizeInput(newDomain.registrar);
+    
+    if (!sanitizedDomainName || !sanitizedRegistrar) {
+      showToast('Please fill in required fields', 'error');
       return;
     }
+
+    if (!validateDomainName(sanitizedDomainName)) {
+      showToast('Please enter a valid domain name', 'error');
+      return;
+    }
+
+    // Validate dates
+    if (newDomain.purchase_date && !validateDateInput(newDomain.purchase_date)) {
+      showToast('Please enter a valid purchase date', 'error');
+      return;
+    }
+
+    if (!newDomain.expiry_date || !validateDateInput(newDomain.expiry_date)) {
+      showToast('Please set a valid domain expiry date. This should be the actual domain registration expiry date, not based on purchase date.', 'error');
+      return;
+    }
+
+    // Validate numeric inputs
+    const validatedPurchaseCost = validateNumericInput(newDomain.purchase_cost.toString(), 0, 1000000);
+    const validatedRenewalCost = validateNumericInput(newDomain.renewal_cost.toString(), 0, 1000000);
 
     // 使用用户提供的购入日期，如果没有提供则默认为今天
     const purchaseDate = newDomain.purchase_date ? new Date(newDomain.purchase_date) : new Date();
-    let expiryDate: Date;
-    
-    if (newDomain.expiry_date) {
-      // 使用用户提供的到期日期
-      expiryDate = new Date(newDomain.expiry_date);
-    } else {
-      // 如果没有提供到期日期，提示用户必须设置
-      alert('Please set the domain expiry date. This should be the actual domain registration expiry date, not based on purchase date.');
-      return;
-    }
+    const expiryDate = new Date(newDomain.expiry_date);
 
     const domain: Domain = {
-      id: Date.now().toString(),
-      domain_name: newDomain.domain_name,
-      registrar: newDomain.registrar,
+      id: crypto.randomUUID(),
+      domain_name: sanitizedDomainName,
+      registrar: sanitizedRegistrar,
       purchase_date: purchaseDate.toISOString().split('T')[0],
-      purchase_cost: newDomain.purchase_cost,
-      renewal_cost: newDomain.renewal_cost || newDomain.purchase_cost,
+      purchase_cost: validatedPurchaseCost,
+      renewal_cost: validatedRenewalCost || validatedPurchaseCost,
       total_renewal_paid: 0,
       next_renewal_date: expiryDate.toISOString().split('T')[0],
       status: 'active',
@@ -778,10 +849,10 @@ export default function DomainTrackerPage() {
     
     // Add purchase transaction
     const transaction: DomainTransaction = {
-      id: Date.now().toString() + '_tx',
+      id: crypto.randomUUID(),
       domain_id: domain.id,
       type: 'buy',
-      amount: newDomain.purchase_cost,
+      amount: validatedPurchaseCost,
       currency: 'USD',
       date: new Date().toISOString().split('T')[0],
       notes: 'Initial purchase'
@@ -816,22 +887,27 @@ export default function DomainTrackerPage() {
     });
     
     setShowAddDomainModal(false);
+    showToast('Domain added successfully!', 'success');
   };
 
   const handleAddTransaction = () => {
-    if (!newTransaction.domain_id || !newTransaction.amount) {
-      alert('Please fill in required fields');
+    // Input validation and sanitization
+    const sanitizedNotes = sanitizeInput(newTransaction.notes);
+    const validatedAmount = validateNumericInput(newTransaction.amount.toString(), 0, 1000000);
+    
+    if (!newTransaction.domain_id || !validatedAmount) {
+      showToast('Please fill in required fields', 'error');
       return;
     }
 
     const transaction: DomainTransaction = {
-      id: Date.now().toString(),
+      id: crypto.randomUUID(),
       domain_id: newTransaction.domain_id,
       type: newTransaction.type,
-      amount: newTransaction.amount,
+      amount: validatedAmount,
       currency: newTransaction.currency,
       date: new Date().toISOString().split('T')[0],
-      notes: newTransaction.notes
+      notes: sanitizedNotes
     };
 
     setTransactions(prev => [...prev, transaction]);
@@ -879,6 +955,7 @@ export default function DomainTrackerPage() {
     });
     
     setShowAddTransactionModal(false);
+    showToast('Transaction added successfully!', 'success');
   };
 
   const handleEditDomain = (domain: Domain) => {
@@ -2220,7 +2297,7 @@ export default function DomainTrackerPage() {
                   type="text" 
                   placeholder="example.com"
                   value={newDomain.domain_name}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, domain_name: e.target.value }))}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, domain_name: sanitizeInput(e.target.value) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -2230,7 +2307,7 @@ export default function DomainTrackerPage() {
                   type="text" 
                   placeholder="Cloudflare, GoDaddy, etc."
                   value={newDomain.registrar}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, registrar: e.target.value }))}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, registrar: sanitizeInput(e.target.value) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -2251,7 +2328,7 @@ export default function DomainTrackerPage() {
                   step="0.01"
                   placeholder="12.99"
                   value={newDomain.purchase_cost || ''}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, purchase_cost: parseFloat(e.target.value) || 0 }))}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, purchase_cost: validateNumericInput(e.target.value, 0, 1000000) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -2262,7 +2339,7 @@ export default function DomainTrackerPage() {
                   step="0.01"
                   placeholder="12.99"
                   value={newDomain.renewal_cost || ''}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cost: parseFloat(e.target.value) || 0 }))}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cost: validateNumericInput(e.target.value, 0, 1000000) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500 mt-1">Enter the total renewal cost for the entire renewal period</p>
@@ -2294,7 +2371,7 @@ export default function DomainTrackerPage() {
                     max="10"
                     placeholder="Years"
                     value={newDomain.renewal_cycle_years}
-                    onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cycle_years: parseInt(e.target.value) || 1 }))}
+                    onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cycle_years: Math.max(1, Math.min(10, parseInt(e.target.value) || 1)) }))}
                     className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 )}
@@ -2346,7 +2423,7 @@ export default function DomainTrackerPage() {
                   type="text" 
                   placeholder="example.com"
                   value={newDomain.domain_name}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, domain_name: e.target.value }))}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, domain_name: sanitizeInput(e.target.value) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -2356,7 +2433,7 @@ export default function DomainTrackerPage() {
                   type="text" 
                   placeholder="Cloudflare, GoDaddy, etc."
                   value={newDomain.registrar}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, registrar: e.target.value }))}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, registrar: sanitizeInput(e.target.value) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -2367,7 +2444,7 @@ export default function DomainTrackerPage() {
                   step="0.01"
                   placeholder="12.99"
                   value={newDomain.purchase_cost || ''}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, purchase_cost: parseFloat(e.target.value) || 0 }))}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, purchase_cost: validateNumericInput(e.target.value, 0, 1000000) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -2378,7 +2455,7 @@ export default function DomainTrackerPage() {
                   step="0.01"
                   placeholder="12.99"
                   value={newDomain.renewal_cost || ''}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cost: parseFloat(e.target.value) || 0 }))}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cost: validateNumericInput(e.target.value, 0, 1000000) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500 mt-1">Enter the total renewal cost for the entire renewal period</p>
@@ -2410,7 +2487,7 @@ export default function DomainTrackerPage() {
                     max="10"
                     placeholder="Years"
                     value={newDomain.renewal_cycle_years}
-                    onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cycle_years: parseInt(e.target.value) || 1 }))}
+                    onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cycle_years: Math.max(1, Math.min(10, parseInt(e.target.value) || 1)) }))}
                     className="w-full mt-2 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 )}
@@ -2508,7 +2585,7 @@ export default function DomainTrackerPage() {
                   step="0.01"
                   placeholder="12.99"
                   value={newTransaction.amount || ''}
-                  onChange={(e) => setNewTransaction(prev => ({ ...prev, amount: parseFloat(e.target.value) || 0 }))}
+                  onChange={(e) => setNewTransaction(prev => ({ ...prev, amount: validateNumericInput(e.target.value, 0, 1000000) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -2517,7 +2594,7 @@ export default function DomainTrackerPage() {
                 <textarea 
                   placeholder="Optional notes..."
                   value={newTransaction.notes}
-                  onChange={(e) => setNewTransaction(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={(e) => setNewTransaction(prev => ({ ...prev, notes: sanitizeInput(e.target.value) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   rows={3}
                 />
@@ -2537,6 +2614,28 @@ export default function DomainTrackerPage() {
                 Add Transaction
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed top-4 right-4 z-50">
+          <div className={`px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 ${
+            toast.type === 'success' ? 'bg-green-500 text-white' :
+            toast.type === 'error' ? 'bg-red-500 text-white' :
+            toast.type === 'warning' ? 'bg-yellow-500 text-white' :
+            'bg-blue-500 text-white'
+          }`}>
+            <div className="flex-1">
+              <p className="font-medium">{toast.message}</p>
+            </div>
+            <button
+              onClick={() => setToast(prev => ({ ...prev, show: false }))}
+              className="text-white hover:text-gray-200"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
         </div>
       )}
