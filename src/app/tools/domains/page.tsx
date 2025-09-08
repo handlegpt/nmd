@@ -64,6 +64,33 @@ const validateDateInput = (dateString: string): boolean => {
   return date >= minDate && date <= maxDate && !isNaN(date.getTime());
 };
 
+// Encryption/Decryption utilities for localStorage
+const encryptData = (data: any): string => {
+  try {
+    const jsonString = JSON.stringify(data);
+    // Simple base64 encoding with obfuscation (for demo purposes)
+    // In production, use proper encryption libraries like crypto-js
+    const obfuscated = btoa(jsonString).split('').reverse().join('');
+    return obfuscated;
+  } catch (error) {
+    console.error('Encryption error:', error);
+    return '';
+  }
+};
+
+const decryptData = (encryptedData: string): any => {
+  try {
+    if (!encryptedData) return null;
+    // Reverse the obfuscation
+    const deobfuscated = encryptedData.split('').reverse().join('');
+    const jsonString = atob(deobfuscated);
+    return JSON.parse(jsonString);
+  } catch (error) {
+    console.error('Decryption error:', error);
+    return null;
+  }
+};
+
 // Toast notification functions will be defined inside the component
 
 // Types for domain tracking
@@ -97,6 +124,8 @@ interface DomainTransaction {
   currency: string;
   date: string;
   notes: string;
+  platform?: string; // 交易平台 (如: GoDaddy, Namecheap, Afternic, Sedo等)
+  transaction_time?: string; // 具体交易时间 (可选，如果不填则使用date)
 }
 
 interface DomainStats {
@@ -150,7 +179,9 @@ export default function DomainTrackerPage() {
     type: 'buy' as 'buy' | 'renew' | 'sell' | 'transfer' | 'fee',
     amount: 0,
     currency: 'USD',
-    notes: ''
+    notes: '',
+    platform: '',
+    transaction_time: ''
   });
 
   // Portfolio filtering and batch operations
@@ -207,25 +238,31 @@ export default function DomainTrackerPage() {
   // Initialize data from localStorage
   useEffect(() => {
     try {
-      // Load domains from localStorage
+      // Load domains from localStorage (encrypted)
       const savedDomains = localStorage.getItem('domainTracker_domains');
       if (savedDomains) {
-        const parsedDomains = JSON.parse(savedDomains);
-        setDomains(parsedDomains);
+        const decryptedDomains = decryptData(savedDomains);
+        if (decryptedDomains) {
+          setDomains(decryptedDomains);
+        }
       }
 
-      // Load transactions from localStorage
+      // Load transactions from localStorage (encrypted)
       const savedTransactions = localStorage.getItem('domainTracker_transactions');
       if (savedTransactions) {
-        const parsedTransactions = JSON.parse(savedTransactions);
-        setTransactions(parsedTransactions);
+        const decryptedTransactions = decryptData(savedTransactions);
+        if (decryptedTransactions) {
+          setTransactions(decryptedTransactions);
+        }
       }
 
-      // Load stats from localStorage
+      // Load stats from localStorage (encrypted)
       const savedStats = localStorage.getItem('domainTracker_stats');
       if (savedStats) {
-        const parsedStats = JSON.parse(savedStats);
-        setStats(parsedStats);
+        const decryptedStats = decryptData(savedStats);
+        if (decryptedStats) {
+          setStats(decryptedStats);
+        }
       }
     } catch (error) {
       console.error('Error loading data from localStorage:', error);
@@ -238,9 +275,14 @@ export default function DomainTrackerPage() {
   useEffect(() => {
     if (!loading) {
       try {
-        localStorage.setItem('domainTracker_domains', JSON.stringify(domains));
-        localStorage.setItem('domainTracker_transactions', JSON.stringify(transactions));
-        localStorage.setItem('domainTracker_stats', JSON.stringify(stats));
+        // Encrypt data before saving to localStorage
+        const encryptedDomains = encryptData(domains);
+        const encryptedTransactions = encryptData(transactions);
+        const encryptedStats = encryptData(stats);
+        
+        localStorage.setItem('domainTracker_domains', encryptedDomains);
+        localStorage.setItem('domainTracker_transactions', encryptedTransactions);
+        localStorage.setItem('domainTracker_stats', encryptedStats);
       } catch (error) {
         console.error('Error saving data to localStorage:', error);
       }
@@ -893,10 +935,17 @@ export default function DomainTrackerPage() {
   const handleAddTransaction = () => {
     // Input validation and sanitization
     const sanitizedNotes = sanitizeInput(newTransaction.notes);
+    const sanitizedPlatform = sanitizeInput(newTransaction.platform);
     const validatedAmount = validateNumericInput(newTransaction.amount.toString(), 0, 1000000);
     
     if (!newTransaction.domain_id || !validatedAmount) {
       showToast('Please fill in required fields', 'error');
+      return;
+    }
+
+    // Validate transaction time if provided
+    if (newTransaction.transaction_time && !validateDateInput(newTransaction.transaction_time)) {
+      showToast('Please enter a valid transaction time', 'error');
       return;
     }
 
@@ -907,7 +956,9 @@ export default function DomainTrackerPage() {
       amount: validatedAmount,
       currency: newTransaction.currency,
       date: new Date().toISOString().split('T')[0],
-      notes: sanitizedNotes
+      notes: sanitizedNotes,
+      platform: sanitizedPlatform || undefined,
+      transaction_time: newTransaction.transaction_time || undefined
     };
 
     setTransactions(prev => [...prev, transaction]);
@@ -951,7 +1002,9 @@ export default function DomainTrackerPage() {
       type: 'buy',
       amount: 0,
       currency: 'USD',
-      notes: ''
+      notes: '',
+      platform: '',
+      transaction_time: ''
     });
     
     setShowAddTransactionModal(false);
@@ -2588,6 +2641,27 @@ export default function DomainTrackerPage() {
                   onChange={(e) => setNewTransaction(prev => ({ ...prev, amount: validateNumericInput(e.target.value, 0, 1000000) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+                <input 
+                  type="text" 
+                  placeholder="GoDaddy, Namecheap, Afternic, Sedo, etc."
+                  value={newTransaction.platform}
+                  onChange={(e) => setNewTransaction(prev => ({ ...prev, platform: sanitizeInput(e.target.value) }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">Optional: Where the transaction took place</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Time</label>
+                <input 
+                  type="datetime-local" 
+                  value={newTransaction.transaction_time}
+                  onChange={(e) => setNewTransaction(prev => ({ ...prev, transaction_time: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">Optional: Specific time of transaction (defaults to today if not set)</p>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
