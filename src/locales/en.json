@@ -3362,7 +3362,78 @@
         "lowCostOfLiving": "Low cost of living",
         "highEnglishProficiency": "High English proficiency",
         "goodInfrastructure": "Good infrastructure"
-      }
+    }
+  },
+  "domainTracker": {
+    "title": "Domain Tracker",
+    "subtitle": "Track your domain investments, costs, and profits with detailed analytics",
+    "tabs": {
+      "overview": "Overview",
+      "portfolio": "Portfolio", 
+      "transactions": "Transactions",
+      "analytics": "Analytics",
+      "alerts": "Alerts",
+      "settings": "Settings"
+    },
+    "overview": {
+      "totalDomains": "Total Domains",
+      "totalCost": "Total Cost",
+      "totalRevenue": "Total Revenue",
+      "roi": "ROI",
+      "expiringSoon": "Expiring Soon",
+      "forSale": "For Sale",
+      "days": "days",
+      "estValue": "Est. Value"
+    },
+    "portfolio": {
+      "searchPlaceholder": "Search domains...",
+      "addDomain": "Add Domain",
+      "import": "Import",
+      "domain": "Domain",
+      "registrar": "Registrar",
+      "purchaseCost": "Purchase Cost",
+      "totalCost": "Total Cost",
+      "estValue": "Est. Value",
+      "nextRenewal": "Next Renewal",
+      "status": "Status",
+      "actions": "Actions",
+      "active": "active",
+      "forSale": "for sale",
+      "sold": "sold",
+      "expired": "expired"
+    },
+    "transactions": {
+      "title": "Transaction History",
+      "addTransaction": "Add Transaction",
+      "date": "Date",
+      "domain": "Domain",
+      "type": "Type",
+      "amount": "Amount",
+      "notes": "Notes",
+      "buy": "buy",
+      "renew": "renew",
+      "sell": "sell",
+      "transfer": "transfer",
+      "fee": "fee"
+    },
+    "analytics": {
+      "title": "Analytics & Insights",
+      "registrarDistribution": "Registrar Distribution",
+      "statusDistribution": "Status Distribution"
+    },
+    "alerts": {
+      "title": "Alerts & Reminders",
+      "comingSoon": "Alert management system coming soon..."
+    },
+    "settings": {
+      "title": "Settings",
+      "comingSoon": "Settings configuration coming soon..."
+    },
+    "auth": {
+      "loginRequired": "Login Required",
+      "loginMessage": "Please log in to access your domain portfolio and track your investments.",
+      "loginButton": "Login",
+      "signupButton": "Sign Up"
     }
   },
   "deadlines": {
@@ -3551,5 +3622,116 @@
       "implementationSteps": "Implementation Steps",
       "practicalTips": "Practical Tips"
     }
+  },
+  "domainTracker": {
+    "title": "Domain Tracker",
+    "subtitle": "Track your domain investments, costs, and profits with detailed analytics",
+    "tabs": {
+      "overview": "Overview",
+      "portfolio": "Portfolio", 
+      "transactions": "Transactions",
+      "analytics": "Analytics",
+      "alerts": "Alerts",
+      "settings": "Settings"
+    },
+    "overview": {
+      "totalDomains": "Total Domains",
+      "totalCost": "Total Cost",
+      "totalRevenue": "Total Revenue",
+      "roi": "ROI",
+      "expiringSoon": "Expiring Soon",
+      "forSale": "For Sale",
+      "days": "days"
+    },
+    "portfolio": {
+      "searchPlaceholder": "Search domains...",
+      "addDomain": "Add Domain",
+      "import": "Import",
+      "domain": "Domain",
+      "registrar": "Registrar",
+      "purchaseCost": "Purchase Cost",
+      "totalCost": "Total Cost",
+      "estimatedValue": "Est. Value",
+      "nextRenewal": "Next Renewal",
+      "status": "Status",
+      "actions": "Actions",
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete"
+    },
+    "transactions": {
+      "title": "Transaction History",
+      "addTransaction": "Add Transaction",
+      "date": "Date",
+      "domain": "Domain",
+      "type": "Type",
+      "amount": "Amount",
+      "notes": "Notes"
+    },
+    "analytics": {
+      "title": "Analytics & Insights",
+      "registrarDistribution": "Registrar Distribution",
+      "statusDistribution": "Status Distribution"
+    },
+    "alerts": {
+      "title": "Alerts & Reminders",
+      "comingSoon": "Alert management system coming soon..."
+    },
+    "settings": {
+      "title": "Settings",
+      "comingSoon": "Settings configuration coming soon..."
+    },
+    "modals": {
+      "addDomain": {
+        "title": "Add New Domain",
+        "domainName": "Domain Name",
+        "domainNamePlaceholder": "example.com",
+        "registrar": "Registrar",
+        "purchaseDate": "Purchase Date",
+        "purchaseCost": "Purchase Cost",
+        "renewalCost": "Annual Renewal Cost",
+        "nextRenewalDate": "Next Renewal Date",
+        "estimatedValue": "Estimated Value",
+        "tags": "Tags",
+        "tagsPlaceholder": "investment, business, personal",
+        "cancel": "Cancel",
+        "add": "Add Domain"
+      },
+      "addTransaction": {
+        "title": "Add Transaction",
+        "domain": "Domain",
+        "type": "Transaction Type",
+        "amount": "Amount",
+        "currency": "Currency",
+        "date": "Date",
+        "notes": "Notes",
+        "notesPlaceholder": "Optional notes about this transaction",
+        "cancel": "Cancel",
+        "add": "Add Transaction"
+      }
+    },
+    "status": {
+      "active": "Active",
+      "for_sale": "For Sale",
+      "sold": "Sold",
+      "expired": "Expired"
+    },
+    "transactionTypes": {
+      "buy": "Buy",
+      "renew": "Renew",
+      "sell": "Sell",
+      "transfer": "Transfer",
+      "fee": "Fee"
+    },
+    "auth": {
+      "loginRequired": "Login Required",
+      "loginMessage": "Please log in to access your domain portfolio and track your investments.",
+      "loginButton": "Login",
+      "signupButton": "Sign Up"
+    },
+    "loading": "Loading domain tracker...",
+    "error": "Error loading data",
+    "noDomains": "No domains found. Add your first domain to get started!",
+    "noTransactions": "No transactions found. Add your first transaction to track costs and profits!"
   }
 } 

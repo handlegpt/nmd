@@ -1423,5 +1423,77 @@
     "climateComfort": "气候舒适度",
     "socialAtmosphere": "社交氛围",
     "visaConvenience": "签证便利性"
+  },
+  "domainTracker": {
+    "title": "域名追踪器",
+    "subtitle": "追踪您的域名投资、成本和利润，提供详细分析",
+    "tabs": {
+      "overview": "概览",
+      "portfolio": "投资组合", 
+      "transactions": "交易记录",
+      "analytics": "分析报告",
+      "alerts": "提醒设置",
+      "settings": "设置"
+    },
+    "overview": {
+      "totalDomains": "域名总数",
+      "totalCost": "总成本",
+      "totalRevenue": "总收入",
+      "roi": "投资回报率",
+      "expiringSoon": "即将到期",
+      "forSale": "待售",
+      "days": "天",
+      "estValue": "估值"
+    },
+    "portfolio": {
+      "searchPlaceholder": "搜索域名...",
+      "addDomain": "添加域名",
+      "import": "导入",
+      "domain": "域名",
+      "registrar": "注册商",
+      "purchaseCost": "购买成本",
+      "totalCost": "总成本",
+      "estValue": "估值",
+      "nextRenewal": "下次续费",
+      "status": "状态",
+      "actions": "操作",
+      "active": "活跃",
+      "forSale": "待售",
+      "sold": "已售",
+      "expired": "已过期"
+    },
+    "transactions": {
+      "title": "交易历史",
+      "addTransaction": "添加交易",
+      "date": "日期",
+      "domain": "域名",
+      "type": "类型",
+      "amount": "金额",
+      "notes": "备注",
+      "buy": "购买",
+      "renew": "续费",
+      "sell": "出售",
+      "transfer": "转移",
+      "fee": "费用"
+    },
+    "analytics": {
+      "title": "分析报告",
+      "registrarDistribution": "注册商分布",
+      "statusDistribution": "状态分布"
+    },
+    "alerts": {
+      "title": "提醒设置",
+      "comingSoon": "提醒管理系统即将推出..."
+    },
+    "settings": {
+      "title": "设置",
+      "comingSoon": "设置配置即将推出..."
+    },
+    "auth": {
+      "loginRequired": "需要登录",
+      "loginMessage": "请登录以访问您的域名投资组合并追踪您的投资。",
+      "loginButton": "登录",
+      "signupButton": "注册"
+    }
   }
 }

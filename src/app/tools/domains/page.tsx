@@ -17,8 +17,12 @@ import {
   Edit,
   Trash2,
   Download,
-  Upload
+  Upload,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { useUser } from '@/contexts/GlobalStateContext';
 
 // Types for domain tracking
 interface Domain {
@@ -58,6 +62,8 @@ interface DomainStats {
 }
 
 export default function DomainTrackerPage() {
+  const { t } = useLanguage();
+  const { user } = useUser();
   const [activeTab, setActiveTab] = useState('overview');
   const [domains, setDomains] = useState<Domain[]>([]);
   const [transactions, setTransactions] = useState<DomainTransaction[]>([]);
@@ -72,6 +78,8 @@ export default function DomainTrackerPage() {
   });
   const [searchQuery, setSearchQuery] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showAddDomainModal, setShowAddDomainModal] = useState(false);
+  const [showAddTransactionModal, setShowAddTransactionModal] = useState(false);
 
   // Mock data for development
   useEffect(() => {
@@ -146,12 +154,12 @@ export default function DomainTrackerPage() {
   }, []);
 
   const tabs = [
-    { key: 'overview', label: 'Overview', icon: BarChart3 },
-    { key: 'portfolio', label: 'Portfolio', icon: List },
-    { key: 'transactions', label: 'Transactions', icon: DollarSign },
-    { key: 'analytics', label: 'Analytics', icon: TrendingUp },
-    { key: 'alerts', label: 'Alerts', icon: AlertTriangle },
-    { key: 'settings', label: 'Settings', icon: Settings }
+    { key: 'overview', label: t('domainTracker.tabs.overview'), icon: BarChart3 },
+    { key: 'portfolio', label: t('domainTracker.tabs.portfolio'), icon: List },
+    { key: 'transactions', label: t('domainTracker.tabs.transactions'), icon: DollarSign },
+    { key: 'analytics', label: t('domainTracker.tabs.analytics'), icon: TrendingUp },
+    { key: 'alerts', label: t('domainTracker.tabs.alerts'), icon: AlertTriangle },
+    { key: 'settings', label: t('domainTracker.tabs.settings'), icon: Settings }
   ];
 
   const filteredDomains = domains.filter(domain =>
@@ -320,13 +328,19 @@ export default function DomainTrackerPage() {
           />
         </div>
         <div className="flex gap-2">
-          <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+          <button 
+            onClick={() => setShowAddDomainModal(true)}
+            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
             <Plus className="h-4 w-4" />
-            <span>Add Domain</span>
+            <span>{t('domainTracker.portfolio.addDomain')}</span>
           </button>
-          <button className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+          <button 
+            onClick={() => console.log('Import domains functionality coming soon')}
+            className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+          >
             <Upload className="h-4 w-4" />
-            <span>Import</span>
+            <span>{t('domainTracker.portfolio.import')}</span>
           </button>
         </div>
       </div>
@@ -433,10 +447,13 @@ export default function DomainTrackerPage() {
   const renderTransactions = () => (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-2xl font-bold text-gray-900">Transaction History</h2>
-        <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+        <h2 className="text-2xl font-bold text-gray-900">{t('domainTracker.transactions.title')}</h2>
+        <button 
+          onClick={() => setShowAddTransactionModal(true)}
+          className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+        >
           <Plus className="h-4 w-4" />
-          <span>Add Transaction</span>
+          <span>{t('domainTracker.transactions.addTransaction')}</span>
         </button>
       </div>
 
@@ -577,18 +594,64 @@ export default function DomainTrackerPage() {
     );
   }
 
+  // Show login prompt if user is not authenticated
+  if (!user) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
+          <div className="mb-6">
+            <Globe className="h-16 w-16 text-blue-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('domainTracker.auth.loginRequired')}</h2>
+            <p className="text-gray-600">{t('domainTracker.auth.loginMessage')}</p>
+          </div>
+          <div className="space-y-3">
+            <button 
+              onClick={() => window.location.href = '/login'}
+              className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <LogIn className="h-4 w-4" />
+              <span>{t('domainTracker.auth.loginButton')}</span>
+            </button>
+            <button 
+              onClick={() => window.location.href = '/signup'}
+              className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              <UserPlus className="h-4 w-4" />
+              <span>{t('domainTracker.auth.signupButton')}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center mb-4">
-            <Globe className="h-8 w-8 text-blue-600 mr-3" />
-            <h1 className="text-3xl font-bold text-gray-900">Domain Tracker</h1>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <Globe className="h-8 w-8 text-blue-600 mr-3" />
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">{t('domainTracker.title')}</h1>
+                <p className="text-gray-600">{t('domainTracker.subtitle')}</p>
+              </div>
+            </div>
+            <div className="flex space-x-3">
+              <button className="flex items-center space-x-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                <Download className="h-4 w-4" />
+                <span>Export</span>
+              </button>
+              <button 
+                onClick={() => setShowAddDomainModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Plus className="h-4 w-4" />
+                <span>{t('domainTracker.portfolio.addDomain')}</span>
+              </button>
+            </div>
           </div>
-          <p className="text-gray-600">
-            Track your domain investments, costs, and profits with detailed analytics
-          </p>
         </div>
 
         {/* Navigation Tabs */}
@@ -619,6 +682,115 @@ export default function DomainTrackerPage() {
         {/* Content */}
         {renderContent()}
       </div>
+
+      {/* Add Domain Modal */}
+      {showAddDomainModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-4">Add New Domain</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Domain Name</label>
+                <input 
+                  type="text" 
+                  placeholder="example.com"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Registrar</label>
+                <input 
+                  type="text" 
+                  placeholder="Cloudflare, GoDaddy, etc."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Cost</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  placeholder="12.99"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button 
+                onClick={() => setShowAddDomainModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  console.log('Add domain functionality coming soon');
+                  setShowAddDomainModal(false);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Add Domain
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Add Transaction Modal */}
+      {showAddTransactionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-4">Add New Transaction</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Domain</label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="">Select domain...</option>
+                  {domains.map(domain => (
+                    <option key={domain.id} value={domain.id}>{domain.domain_name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option value="buy">Buy</option>
+                  <option value="renew">Renew</option>
+                  <option value="sell">Sell</option>
+                  <option value="transfer">Transfer</option>
+                  <option value="fee">Fee</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  placeholder="12.99"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+            <div className="flex justify-end space-x-3 mt-6">
+              <button 
+                onClick={() => setShowAddTransactionModal(false)}
+                className="px-4 py-2 text-gray-600 hover:text-gray-800"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={() => {
+                  console.log('Add transaction functionality coming soon');
+                  setShowAddTransactionModal(false);
+                }}
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+              >
+                Add Transaction
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -3529,5 +3529,77 @@
     "ogAlt": "NomadNow - デジタルノマド生活ガイド",
     "structuredDataDescription": "デジタルノマドの究極の生活ガイドで、グローバル都市情報、税務最適化アドバイス、コミュニティ接続、実用的なツールを提供",
     "platformDescription": "デジタルノマド生活ガイドプラットフォーム"
+  },
+  "domainTracker": {
+    "title": "ドメイントラッカー",
+    "subtitle": "ドメイン投資、コスト、利益を詳細な分析で追跡",
+    "tabs": {
+      "overview": "概要",
+      "portfolio": "ポートフォリオ", 
+      "transactions": "取引履歴",
+      "analytics": "分析レポート",
+      "alerts": "アラート設定",
+      "settings": "設定"
+    },
+    "overview": {
+      "totalDomains": "ドメイン総数",
+      "totalCost": "総コスト",
+      "totalRevenue": "総収益",
+      "roi": "投資収益率",
+      "expiringSoon": "期限切れ間近",
+      "forSale": "売却中",
+      "days": "日",
+      "estValue": "推定価値"
+    },
+    "portfolio": {
+      "searchPlaceholder": "ドメインを検索...",
+      "addDomain": "ドメインを追加",
+      "import": "インポート",
+      "domain": "ドメイン",
+      "registrar": "レジストラ",
+      "purchaseCost": "購入コスト",
+      "totalCost": "総コスト",
+      "estValue": "推定価値",
+      "nextRenewal": "次回更新",
+      "status": "ステータス",
+      "actions": "アクション",
+      "active": "アクティブ",
+      "forSale": "売却中",
+      "sold": "売却済み",
+      "expired": "期限切れ"
+    },
+    "transactions": {
+      "title": "取引履歴",
+      "addTransaction": "取引を追加",
+      "date": "日付",
+      "domain": "ドメイン",
+      "type": "タイプ",
+      "amount": "金額",
+      "notes": "メモ",
+      "buy": "購入",
+      "renew": "更新",
+      "sell": "売却",
+      "transfer": "移転",
+      "fee": "手数料"
+    },
+    "analytics": {
+      "title": "分析レポート",
+      "registrarDistribution": "レジストラ分布",
+      "statusDistribution": "ステータス分布"
+    },
+    "alerts": {
+      "title": "アラート設定",
+      "comingSoon": "アラート管理システムは近日公開..."
+    },
+    "settings": {
+      "title": "設定",
+      "comingSoon": "設定構成は近日公開..."
+    },
+    "auth": {
+      "loginRequired": "ログインが必要",
+      "loginMessage": "ドメインポートフォリオにアクセスし、投資を追跡するにはログインしてください。",
+      "loginButton": "ログイン",
+      "signupButton": "サインアップ"
+    }
   }
 } 

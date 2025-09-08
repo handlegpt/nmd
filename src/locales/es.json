@@ -3167,5 +3167,77 @@
       "connected": "conectó",
       "explored": "exploró"
     }
+  },
+  "domainTracker": {
+    "title": "Rastreador de Dominios",
+    "subtitle": "Rastrea tus inversiones en dominios, costos y ganancias con análisis detallados",
+    "tabs": {
+      "overview": "Resumen",
+      "portfolio": "Portafolio", 
+      "transactions": "Transacciones",
+      "analytics": "Análisis",
+      "alerts": "Alertas",
+      "settings": "Configuración"
+    },
+    "overview": {
+      "totalDomains": "Total de Dominios",
+      "totalCost": "Costo Total",
+      "totalRevenue": "Ingresos Totales",
+      "roi": "ROI",
+      "expiringSoon": "Expirando Pronto",
+      "forSale": "En Venta",
+      "days": "días",
+      "estValue": "Valor Est."
+    },
+    "portfolio": {
+      "searchPlaceholder": "Buscar dominios...",
+      "addDomain": "Agregar Dominio",
+      "import": "Importar",
+      "domain": "Dominio",
+      "registrar": "Registrador",
+      "purchaseCost": "Costo de Compra",
+      "totalCost": "Costo Total",
+      "estValue": "Valor Est.",
+      "nextRenewal": "Próxima Renovación",
+      "status": "Estado",
+      "actions": "Acciones",
+      "active": "Activo",
+      "forSale": "En Venta",
+      "sold": "Vendido",
+      "expired": "Expirado"
+    },
+    "transactions": {
+      "title": "Historial de Transacciones",
+      "addTransaction": "Agregar Transacción",
+      "date": "Fecha",
+      "domain": "Dominio",
+      "type": "Tipo",
+      "amount": "Cantidad",
+      "notes": "Notas",
+      "buy": "Comprar",
+      "renew": "Renovar",
+      "sell": "Vender",
+      "transfer": "Transferir",
+      "fee": "Tarifa"
+    },
+    "analytics": {
+      "title": "Análisis",
+      "registrarDistribution": "Distribución de Registradores",
+      "statusDistribution": "Distribución de Estados"
+    },
+    "alerts": {
+      "title": "Configuración de Alertas",
+      "comingSoon": "Sistema de gestión de alertas próximamente..."
+    },
+    "settings": {
+      "title": "Configuración",
+      "comingSoon": "Configuración de configuración próximamente..."
+    },
+    "auth": {
+      "loginRequired": "Inicio de sesión requerido",
+      "loginMessage": "Por favor inicia sesión para acceder a tu portafolio de dominios y rastrear tus inversiones.",
+      "loginButton": "Iniciar Sesión",
+      "signupButton": "Registrarse"
+    }
   }
 } 
