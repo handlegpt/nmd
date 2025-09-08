@@ -3571,15 +3571,29 @@
     }
   },
   "domainTracker": {
-    "title": "Domain Tracker",
-    "subtitle": "Track your domain investments, costs, and profits with detailed analytics",
+    "title": "域名追踪器",
+    "subtitle": "追踪您的域名投资、成本和利润，提供详细分析",
     "tabs": {
-      "overview": "Overview",
-      "portfolio": "Portfolio",
-      "transactions": "Transactions",
-      "analytics": "Analytics",
-      "alerts": "Alerts",
-      "settings": "Settings"
+      "overview": "概览",
+      "portfolio": "投资组合",
+      "transactions": "交易记录",
+      "analytics": "分析",
+      "alerts": "提醒",
+      "settings": "设置"
+    },
+    "auth": {
+      "loginRequired": "需要登录",
+      "loginMessage": "请登录以使用域名追踪功能",
+      "loginButton": "登录",
+      "signupButton": "注册"
+    },
+    "portfolio": {
+      "addDomain": "添加域名",
+      "import": "导入"
+    },
+    "transactions": {
+      "title": "交易记录",
+      "addTransaction": "添加交易"
     },
     "overview": {
       "totalDomains": "Total Domains",

@@ -80,6 +80,21 @@ export default function DomainTrackerPage() {
   const [loading, setLoading] = useState(true);
   const [showAddDomainModal, setShowAddDomainModal] = useState(false);
   const [showAddTransactionModal, setShowAddTransactionModal] = useState(false);
+  const [newDomain, setNewDomain] = useState({
+    domain_name: '',
+    registrar: '',
+    purchase_cost: 0,
+    renewal_cost: 0,
+    estimated_value: 0,
+    tags: []
+  });
+  const [newTransaction, setNewTransaction] = useState({
+    domain_id: '',
+    type: 'buy' as 'buy' | 'renew' | 'sell' | 'transfer' | 'fee',
+    amount: 0,
+    currency: 'USD',
+    notes: ''
+  });
 
   // Mock data for development
   useEffect(() => {
@@ -206,6 +221,128 @@ export default function DomainTrackerPage() {
     const diffTime = expiryDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+
+  const handleAddDomain = () => {
+    if (!newDomain.domain_name || !newDomain.registrar) {
+      alert('Please fill in required fields');
+      return;
+    }
+
+    const domain: Domain = {
+      id: Date.now().toString(),
+      domain_name: newDomain.domain_name,
+      registrar: newDomain.registrar,
+      purchase_date: new Date().toISOString().split('T')[0],
+      purchase_cost: newDomain.purchase_cost,
+      renewal_cost: newDomain.renewal_cost || newDomain.purchase_cost,
+      total_renewal_paid: 0,
+      next_renewal_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
+      status: 'active',
+      estimated_value: newDomain.estimated_value,
+      tags: newDomain.tags,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+
+    setDomains(prev => [...prev, domain]);
+    
+    // Add purchase transaction
+    const transaction: DomainTransaction = {
+      id: Date.now().toString() + '_tx',
+      domain_id: domain.id,
+      type: 'buy',
+      amount: newDomain.purchase_cost,
+      currency: 'USD',
+      date: new Date().toISOString().split('T')[0],
+      notes: 'Initial purchase'
+    };
+    
+    setTransactions(prev => [...prev, transaction]);
+    
+    // Update stats
+    setStats(prev => ({
+      ...prev,
+      totalDomains: prev.totalDomains + 1,
+      totalCost: prev.totalCost + newDomain.purchase_cost,
+      totalProfit: prev.totalProfit - newDomain.purchase_cost,
+      roi: prev.totalCost > 0 ? ((prev.totalRevenue - prev.totalCost) / prev.totalCost) * 100 : 0
+    }));
+
+    // Reset form
+    setNewDomain({
+      domain_name: '',
+      registrar: '',
+      purchase_cost: 0,
+      renewal_cost: 0,
+      estimated_value: 0,
+      tags: []
+    });
+    
+    setShowAddDomainModal(false);
+  };
+
+  const handleAddTransaction = () => {
+    if (!newTransaction.domain_id || !newTransaction.amount) {
+      alert('Please fill in required fields');
+      return;
+    }
+
+    const transaction: DomainTransaction = {
+      id: Date.now().toString(),
+      domain_id: newTransaction.domain_id,
+      type: newTransaction.type,
+      amount: newTransaction.amount,
+      currency: newTransaction.currency,
+      date: new Date().toISOString().split('T')[0],
+      notes: newTransaction.notes
+    };
+
+    setTransactions(prev => [...prev, transaction]);
+
+    // Update domain and stats based on transaction type
+    if (newTransaction.type === 'sell') {
+      setDomains(prev => prev.map(domain => 
+        domain.id === newTransaction.domain_id 
+          ? { ...domain, status: 'sold' as const }
+          : domain
+      ));
+      
+      setStats(prev => ({
+        ...prev,
+        totalRevenue: prev.totalRevenue + newTransaction.amount,
+        totalProfit: prev.totalProfit + newTransaction.amount,
+        roi: prev.totalCost > 0 ? ((prev.totalRevenue + newTransaction.amount - prev.totalCost) / prev.totalCost) * 100 : 0
+      }));
+    } else if (newTransaction.type === 'renew') {
+      setDomains(prev => prev.map(domain => 
+        domain.id === newTransaction.domain_id 
+          ? { 
+              ...domain, 
+              total_renewal_paid: domain.total_renewal_paid + newTransaction.amount,
+              next_renewal_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+            }
+          : domain
+      ));
+      
+      setStats(prev => ({
+        ...prev,
+        totalCost: prev.totalCost + newTransaction.amount,
+        totalProfit: prev.totalProfit - newTransaction.amount,
+        roi: prev.totalCost > 0 ? ((prev.totalRevenue - (prev.totalCost + newTransaction.amount)) / (prev.totalCost + newTransaction.amount)) * 100 : 0
+      }));
+    }
+
+    // Reset form
+    setNewTransaction({
+      domain_id: '',
+      type: 'buy',
+      amount: 0,
+      currency: 'USD',
+      notes: ''
+    });
+    
+    setShowAddTransactionModal(false);
   };
 
   const renderOverview = () => (
@@ -595,7 +732,7 @@ export default function DomainTrackerPage() {
   }
 
   // Show login prompt if user is not authenticated
-  if (!user) {
+  if (!user.isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-md w-full bg-white rounded-lg shadow-md p-8 text-center">
@@ -690,27 +827,55 @@ export default function DomainTrackerPage() {
             <h3 className="text-lg font-semibold mb-4">Add New Domain</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Domain Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Domain Name *</label>
                 <input 
                   type="text" 
                   placeholder="example.com"
+                  value={newDomain.domain_name}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, domain_name: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Registrar</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Registrar *</label>
                 <input 
                   type="text" 
                   placeholder="Cloudflare, GoDaddy, etc."
+                  value={newDomain.registrar}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, registrar: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Cost</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Purchase Cost ($)</label>
                 <input 
                   type="number" 
                   step="0.01"
                   placeholder="12.99"
+                  value={newDomain.purchase_cost || ''}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, purchase_cost: parseFloat(e.target.value) || 0 }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Renewal Cost ($)</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  placeholder="12.99"
+                  value={newDomain.renewal_cost || ''}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_cost: parseFloat(e.target.value) || 0 }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Estimated Value ($)</label>
+                <input 
+                  type="number" 
+                  step="0.01"
+                  placeholder="500"
+                  value={newDomain.estimated_value || ''}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, estimated_value: parseFloat(e.target.value) || 0 }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
@@ -723,10 +888,7 @@ export default function DomainTrackerPage() {
                 Cancel
               </button>
               <button 
-                onClick={() => {
-                  console.log('Add domain functionality coming soon');
-                  setShowAddDomainModal(false);
-                }}
+                onClick={handleAddDomain}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Add Domain
@@ -743,8 +905,12 @@ export default function DomainTrackerPage() {
             <h3 className="text-lg font-semibold mb-4">Add New Transaction</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Domain</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <label className="block text-sm font-medium text-gray-700 mb-1">Domain *</label>
+                <select 
+                  value={newTransaction.domain_id}
+                  onChange={(e) => setNewTransaction(prev => ({ ...prev, domain_id: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
                   <option value="">Select domain...</option>
                   {domains.map(domain => (
                     <option key={domain.id} value={domain.id}>{domain.domain_name}</option>
@@ -753,7 +919,11 @@ export default function DomainTrackerPage() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Type</label>
-                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                <select 
+                  value={newTransaction.type}
+                  onChange={(e) => setNewTransaction(prev => ({ ...prev, type: e.target.value as any }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
                   <option value="buy">Buy</option>
                   <option value="renew">Renew</option>
                   <option value="sell">Sell</option>
@@ -762,12 +932,24 @@ export default function DomainTrackerPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Amount</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Amount ($) *</label>
                 <input 
                   type="number" 
                   step="0.01"
                   placeholder="12.99"
+                  value={newTransaction.amount || ''}
+                  onChange={(e) => setNewTransaction(prev => ({ ...prev, amount: parseFloat(e.target.value) || 0 }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <textarea 
+                  placeholder="Optional notes..."
+                  value={newTransaction.notes}
+                  onChange={(e) => setNewTransaction(prev => ({ ...prev, notes: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={3}
                 />
               </div>
             </div>
@@ -779,10 +961,7 @@ export default function DomainTrackerPage() {
                 Cancel
               </button>
               <button 
-                onClick={() => {
-                  console.log('Add transaction functionality coming soon');
-                  setShowAddTransactionModal(false);
-                }}
+                onClick={handleAddTransaction}
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
                 Add Transaction
