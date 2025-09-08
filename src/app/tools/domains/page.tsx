@@ -159,6 +159,64 @@ export default function DomainTrackerPage() {
     return diffDays;
   };
 
+  // 计算年度续费成本
+  const calculateAnnualRenewalCost = () => {
+    return domains.reduce((total, domain) => {
+      return total + domain.renewal_cost;
+    }, 0);
+  };
+
+  // 计算即将到期的域名数量（30天内）
+  const calculateExpiringSoon = () => {
+    return domains.filter(domain => {
+      const days = calculateDaysUntilExpiry(domain.next_renewal_date);
+      return days <= 30 && days > 0;
+    }).length;
+  };
+
+  // 计算平均ROI
+  const calculateAverageROI = () => {
+    if (domains.length === 0) return 0;
+    const totalROI = domains.reduce((sum, domain) => {
+      const totalCost = domain.purchase_cost + domain.total_renewal_paid;
+      const profit = domain.estimated_value - totalCost;
+      return sum + (totalCost > 0 ? (profit / totalCost) * 100 : 0);
+    }, 0);
+    return totalROI / domains.length;
+  };
+
+  // 计算活跃vs已售比例
+  const calculateActiveVsSoldRatio = () => {
+    const active = domains.filter(d => d.status === 'active' || d.status === 'for_sale').length;
+    const sold = domains.filter(d => d.status === 'sold').length;
+    const total = active + sold;
+    return total > 0 ? { active: (active / total) * 100, sold: (sold / total) * 100 } : { active: 0, sold: 0 };
+  };
+
+  // 获取Top 5 ROI域名
+  const getTopROIDomains = () => {
+    return domains
+      .map(domain => {
+        const totalCost = domain.purchase_cost + domain.total_renewal_paid;
+        const profit = domain.estimated_value - totalCost;
+        const roi = totalCost > 0 ? (profit / totalCost) * 100 : 0;
+        return { ...domain, roi };
+      })
+      .sort((a, b) => b.roi - a.roi)
+      .slice(0, 5);
+  };
+
+  // 获取注册商分布
+  const getRegistrarDistribution = () => {
+    const distribution: { [key: string]: number } = {};
+    domains.forEach(domain => {
+      distribution[domain.registrar] = (distribution[domain.registrar] || 0) + 1;
+    });
+    return Object.entries(distribution)
+      .map(([registrar, count]) => ({ registrar, count, percentage: (count / domains.length) * 100 }))
+      .sort((a, b) => b.count - a.count);
+  };
+
   const handleAddDomain = () => {
     if (!newDomain.domain_name || !newDomain.registrar) {
       alert('Please fill in required fields');
@@ -353,7 +411,7 @@ export default function DomainTrackerPage() {
 
   const renderOverview = () => (
     <div className="space-y-6">
-      {/* Key Metrics Cards */}
+      {/* Key Metrics Cards - Row 1 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between">
@@ -394,6 +452,137 @@ export default function DomainTrackerPage() {
               </p>
             </div>
             <BarChart3 className="h-8 w-8 text-purple-600" />
+          </div>
+        </div>
+      </div>
+
+      {/* Key Metrics Cards - Row 2 */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Annual Renewal Cost</p>
+              <p className="text-3xl font-bold text-orange-600">${calculateAnnualRenewalCost().toFixed(2)}</p>
+            </div>
+            <Calendar className="h-8 w-8 text-orange-600" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Expiring Soon</p>
+              <p className="text-3xl font-bold text-yellow-600">{calculateExpiringSoon()}</p>
+              <p className="text-xs text-gray-500">Next 30 days</p>
+            </div>
+            <AlertTriangle className="h-8 w-8 text-yellow-600" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Average ROI</p>
+              <p className={`text-3xl font-bold ${calculateAverageROI() >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {calculateAverageROI().toFixed(1)}%
+              </p>
+            </div>
+            <TrendingUp className="h-8 w-8 text-indigo-600" />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-gray-600">Active vs Sold</p>
+              <div className="flex items-center space-x-2">
+                <div className="text-lg font-bold text-blue-600">{calculateActiveVsSoldRatio().active.toFixed(0)}%</div>
+                <div className="text-sm text-gray-500">/</div>
+                <div className="text-lg font-bold text-gray-600">{calculateActiveVsSoldRatio().sold.toFixed(0)}%</div>
+              </div>
+              <p className="text-xs text-gray-500">Active / Sold</p>
+            </div>
+            <Users className="h-8 w-8 text-blue-600" />
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Top 5 ROI Domains */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <Star className="h-5 w-5 text-yellow-500 mr-2" />
+            Top 5 ROI Domains
+          </h3>
+          <div className="space-y-3">
+            {getTopROIDomains().length > 0 ? (
+              getTopROIDomains().map((domain, index) => (
+                <div key={domain.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      {index + 1}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">{domain.domain_name}</p>
+                      <p className="text-sm text-gray-600">{domain.registrar}</p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`text-lg font-bold ${domain.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      {domain.roi.toFixed(1)}%
+                    </p>
+                    <p className="text-sm text-gray-600">${domain.estimated_value.toFixed(0)}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Star className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                <p>No domains yet</p>
+                <p className="text-sm">Add domains to see ROI rankings</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Registrar Distribution */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+            <BarChart3 className="h-5 w-5 text-blue-500 mr-2" />
+            Registrar Distribution
+          </h3>
+          <div className="space-y-3">
+            {getRegistrarDistribution().length > 0 ? (
+              getRegistrarDistribution().map((item, index) => (
+                <div key={item.registrar} className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-3 h-3 rounded-full" style={{
+                      backgroundColor: `hsl(${index * 60}, 70%, 50%)`
+                    }}></div>
+                    <span className="text-sm font-medium text-gray-900">{item.registrar}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-20 bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="h-2 rounded-full" 
+                        style={{
+                          width: `${item.percentage}%`,
+                          backgroundColor: `hsl(${index * 60}, 70%, 50%)`
+                        }}
+                      ></div>
+                    </div>
+                    <span className="text-sm text-gray-600 w-12 text-right">{item.count}</span>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <BarChart3 className="h-12 w-12 mx-auto mb-2 text-gray-300" />
+                <p>No data available</p>
+                <p className="text-sm">Add domains to see distribution</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
