@@ -127,6 +127,16 @@ export default function DomainTrackerPage() {
     sortOrder: 'desc' as 'asc' | 'desc'
   });
 
+  // Analytics filtering and analysis
+  const [analyticsFilters, setAnalyticsFilters] = useState({
+    timeRange: '12months', // 3months, 6months, 12months, 24months, all
+    registrar: '',
+    tld: '',
+    status: '',
+    sortBy: 'roi', // roi, cost, revenue, age
+    sortOrder: 'desc' as 'asc' | 'desc'
+  });
+
   // Initialize data from localStorage
   useEffect(() => {
     try {
@@ -527,6 +537,159 @@ export default function DomainTrackerPage() {
       case 'fee': return 'bg-gray-100 text-gray-800';
       default: return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  // Analytics helper functions
+  const getROIAnalysis = () => {
+    const domainROIs = domains.map(domain => {
+      const domainTransactions = transactions.filter(t => t.domain_id === domain.id);
+      const totalCost = domain.purchase_cost + domain.total_renewal_paid;
+      const totalRevenue = domainTransactions
+        .filter(t => t.type === 'sell')
+        .reduce((sum, t) => sum + t.amount, 0);
+      const roi = totalCost > 0 ? ((totalRevenue - totalCost) / totalCost) * 100 : 0;
+      
+      return {
+        ...domain,
+        totalCost,
+        totalRevenue,
+        roi,
+        ageInMonths: Math.floor((Date.now() - new Date(domain.purchase_date).getTime()) / (1000 * 60 * 60 * 24 * 30))
+      };
+    });
+
+    return domainROIs.sort((a, b) => b.roi - a.roi);
+  };
+
+  const getRenewalTrendAnalysis = () => {
+    const monthlyRenewals: { [key: string]: number } = {};
+    const monthlyNewDomains: { [key: string]: number } = {};
+    
+    // 分析续费趋势
+    transactions.filter(t => t.type === 'renew').forEach(transaction => {
+      const date = new Date(transaction.date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      monthlyRenewals[monthKey] = (monthlyRenewals[monthKey] || 0) + transaction.amount;
+    });
+
+    // 分析新域名趋势
+    domains.forEach(domain => {
+      const date = new Date(domain.purchase_date);
+      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+      monthlyNewDomains[monthKey] = (monthlyNewDomains[monthKey] || 0) + 1;
+    });
+
+    return {
+      renewals: Object.entries(monthlyRenewals)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .slice(-12)
+        .map(([month, amount]) => ({ month, amount })),
+      newDomains: Object.entries(monthlyNewDomains)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .slice(-12)
+        .map(([month, count]) => ({ month, count }))
+    };
+  };
+
+  const getRegistrarTLDAnalysis = () => {
+    const registrarStats: { [key: string]: { count: number, totalCost: number, totalRevenue: number } } = {};
+    const tldStats: { [key: string]: { count: number, totalCost: number, totalRevenue: number } } = {};
+
+    domains.forEach(domain => {
+      const domainTransactions = transactions.filter(t => t.domain_id === domain.id);
+      const totalCost = domain.purchase_cost + domain.total_renewal_paid;
+      const totalRevenue = domainTransactions
+        .filter(t => t.type === 'sell')
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      // 注册商统计
+      if (!registrarStats[domain.registrar]) {
+        registrarStats[domain.registrar] = { count: 0, totalCost: 0, totalRevenue: 0 };
+      }
+      registrarStats[domain.registrar].count += 1;
+      registrarStats[domain.registrar].totalCost += totalCost;
+      registrarStats[domain.registrar].totalRevenue += totalRevenue;
+
+      // TLD统计
+      const tld = domain.domain_name.split('.').pop() || 'unknown';
+      if (!tldStats[tld]) {
+        tldStats[tld] = { count: 0, totalCost: 0, totalRevenue: 0 };
+      }
+      tldStats[tld].count += 1;
+      tldStats[tld].totalCost += totalCost;
+      tldStats[tld].totalRevenue += totalRevenue;
+    });
+
+    return {
+      registrars: Object.entries(registrarStats)
+        .map(([name, stats]) => ({
+          name,
+          ...stats,
+          roi: stats.totalCost > 0 ? ((stats.totalRevenue - stats.totalCost) / stats.totalCost) * 100 : 0
+        }))
+        .sort((a, b) => b.count - a.count),
+      tlds: Object.entries(tldStats)
+        .map(([name, stats]) => ({
+          name,
+          ...stats,
+          roi: stats.totalCost > 0 ? ((stats.totalRevenue - stats.totalCost) / stats.totalCost) * 100 : 0
+        }))
+        .sort((a, b) => b.count - a.count)
+    };
+  };
+
+  const getInvestmentStrategyInsights = () => {
+    const roiAnalysis = getROIAnalysis();
+    const registrarTLDAnalysis = getRegistrarTLDAnalysis();
+    
+    const insights = [];
+    
+    // ROI洞察
+    const topPerformers = roiAnalysis.slice(0, 3);
+    if (topPerformers.length > 0) {
+      insights.push({
+        type: 'success',
+        title: 'Top Performing Domains',
+        description: `Your best investments: ${topPerformers.map(d => d.domain_name).join(', ')} with average ROI of ${(topPerformers.reduce((sum, d) => sum + d.roi, 0) / topPerformers.length).toFixed(1)}%`
+      });
+    }
+
+    // 注册商洞察
+    const bestRegistrar = registrarTLDAnalysis.registrars[0];
+    if (bestRegistrar && bestRegistrar.count > 1) {
+      insights.push({
+        type: 'info',
+        title: 'Best Registrar Performance',
+        description: `${bestRegistrar.name} shows the best performance with ${bestRegistrar.count} domains and ${bestRegistrar.roi.toFixed(1)}% ROI`
+      });
+    }
+
+    // TLD洞察
+    const bestTLD = registrarTLDAnalysis.tlds[0];
+    if (bestTLD && bestTLD.count > 1) {
+      insights.push({
+        type: 'info',
+        title: 'Best TLD Performance',
+        description: `.${bestTLD.name} domains show strong performance with ${bestTLD.count} domains and ${bestTLD.roi.toFixed(1)}% ROI`
+      });
+    }
+
+    // 续费提醒
+    const expiringSoon = domains.filter(d => {
+      const expiryDate = new Date(d.next_renewal_date);
+      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+      return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
+    });
+
+    if (expiringSoon.length > 0) {
+      insights.push({
+        type: 'warning',
+        title: 'Renewal Reminder',
+        description: `${expiringSoon.length} domains are expiring within 30 days. Consider renewing to maintain your portfolio.`
+      });
+    }
+
+    return insights;
   };
 
   const handleAddDomain = () => {
@@ -1607,40 +1770,247 @@ export default function DomainTrackerPage() {
     );
   };
 
-  const renderAnalytics = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Analytics & Insights</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Registrar Distribution</h3>
-          <div className="space-y-2">
-            {['Namecheap', 'Cloudflare', 'GoDaddy'].map(registrar => (
-              <div key={registrar} className="flex justify-between items-center">
-                <span className="text-sm text-gray-600">{registrar}</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {domains.filter(d => d.registrar === registrar).length}
-                </span>
-              </div>
-            ))}
+  const renderAnalytics = () => {
+    const roiAnalysis = getROIAnalysis();
+    const renewalTrends = getRenewalTrendAnalysis();
+    const registrarTLDAnalysis = getRegistrarTLDAnalysis();
+    const insights = getInvestmentStrategyInsights();
+
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-900">Analytics & Insights</h2>
+          <div className="flex space-x-2">
+            <select
+              value={analyticsFilters.timeRange}
+              onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, timeRange: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="3months">Last 3 Months</option>
+              <option value="6months">Last 6 Months</option>
+              <option value="12months">Last 12 Months</option>
+              <option value="24months">Last 24 Months</option>
+              <option value="all">All Time</option>
+            </select>
+            <select
+              value={analyticsFilters.sortBy}
+              onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, sortBy: e.target.value }))}
+              className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="roi">Sort by ROI</option>
+              <option value="cost">Sort by Cost</option>
+              <option value="revenue">Sort by Revenue</option>
+              <option value="age">Sort by Age</option>
+            </select>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Status Distribution</h3>
-          <div className="space-y-2">
-            {['active', 'for_sale', 'sold', 'expired'].map(status => (
-              <div key={status} className="flex justify-between items-center">
-                <span className="text-sm text-gray-600 capitalize">{status.replace('_', ' ')}</span>
-                <span className="text-sm font-medium text-gray-900">
-                  {domains.filter(d => d.status === status).length}
-                </span>
+        {/* Investment Strategy Insights */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          {insights.map((insight, index) => (
+            <div key={index} className={`rounded-lg p-4 ${
+              insight.type === 'success' ? 'bg-green-50 border border-green-200' :
+              insight.type === 'warning' ? 'bg-yellow-50 border border-yellow-200' :
+              'bg-blue-50 border border-blue-200'
+            }`}>
+              <div className="flex items-start space-x-3">
+                <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                  insight.type === 'success' ? 'bg-green-100' :
+                  insight.type === 'warning' ? 'bg-yellow-100' :
+                  'bg-blue-100'
+                }`}>
+                  {insight.type === 'success' ? (
+                    <TrendingUp className="w-4 h-4 text-green-600" />
+                  ) : insight.type === 'warning' ? (
+                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
+                  ) : (
+                    <BarChart3 className="w-4 h-4 text-blue-600" />
+                  )}
+                </div>
+                <div className="flex-1">
+                  <h4 className={`text-sm font-semibold ${
+                    insight.type === 'success' ? 'text-green-800' :
+                    insight.type === 'warning' ? 'text-yellow-800' :
+                    'text-blue-800'
+                  }`}>
+                    {insight.title}
+                  </h4>
+                  <p className={`text-sm mt-1 ${
+                    insight.type === 'success' ? 'text-green-700' :
+                    insight.type === 'warning' ? 'text-yellow-700' :
+                    'text-blue-700'
+                  }`}>
+                    {insight.description}
+                  </p>
+                </div>
               </div>
-            ))}
+            </div>
+          ))}
+        </div>
+
+        {/* ROI Analysis & Rankings */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Top ROI Domains</h3>
+            <div className="space-y-3">
+              {roiAnalysis.slice(0, 5).map((domain, index) => (
+                <div key={domain.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                      index === 0 ? 'bg-yellow-100 text-yellow-800' :
+                      index === 1 ? 'bg-gray-100 text-gray-800' :
+                      index === 2 ? 'bg-orange-100 text-orange-800' :
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {index + 1}
+                    </div>
+                    <div>
+                      <div className="font-medium text-gray-900">{domain.domain_name}</div>
+                      <div className="text-sm text-gray-500">{domain.registrar}</div>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className={`font-semibold ${
+                      domain.roi > 0 ? 'text-green-600' : domain.roi < 0 ? 'text-red-600' : 'text-gray-600'
+                    }`}>
+                      {domain.roi > 0 ? '+' : ''}{domain.roi.toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-gray-500">${domain.totalRevenue.toFixed(0)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Renewal Trends</h3>
+            <div className="space-y-4">
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">Monthly Renewal Costs</h4>
+                <div className="space-y-2">
+                  {renewalTrends.renewals.slice(-6).map(({ month, amount }) => (
+                    <div key={month} className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">{month}</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-blue-600 h-2 rounded-full" 
+                            style={{ width: `${Math.min((amount / Math.max(...renewalTrends.renewals.map(r => r.amount))) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">${amount.toFixed(0)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">New Domain Acquisitions</h4>
+                <div className="space-y-2">
+                  {renewalTrends.newDomains.slice(-6).map(({ month, count }) => (
+                    <div key={month} className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">{month}</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-20 bg-gray-200 rounded-full h-2">
+                          <div 
+                            className="bg-green-600 h-2 rounded-full" 
+                            style={{ width: `${Math.min((count / Math.max(...renewalTrends.newDomains.map(d => d.count))) * 100, 100)}%` }}
+                          ></div>
+                        </div>
+                        <span className="text-sm font-medium text-gray-900">{count}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Registrar & TLD Analysis */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Registrar Performance</h3>
+            <div className="space-y-3">
+              {registrarTLDAnalysis.registrars.slice(0, 5).map((registrar) => (
+                <div key={registrar.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <div className="font-medium text-gray-900">{registrar.name}</div>
+                    <div className="text-sm text-gray-500">{registrar.count} domains</div>
+                  </div>
+                  <div className="text-right">
+                    <div className={`font-semibold ${
+                      registrar.roi > 0 ? 'text-green-600' : registrar.roi < 0 ? 'text-red-600' : 'text-gray-600'
+                    }`}>
+                      {registrar.roi > 0 ? '+' : ''}{registrar.roi.toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-gray-500">${registrar.totalCost.toFixed(0)} cost</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">TLD Performance</h3>
+            <div className="space-y-3">
+              {registrarTLDAnalysis.tlds.slice(0, 5).map((tld) => (
+                <div key={tld.name} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <div className="font-medium text-gray-900">.{tld.name}</div>
+                    <div className="text-sm text-gray-500">{tld.count} domains</div>
+                  </div>
+                  <div className="text-right">
+                    <div className={`font-semibold ${
+                      tld.roi > 0 ? 'text-green-600' : tld.roi < 0 ? 'text-red-600' : 'text-gray-600'
+                    }`}>
+                      {tld.roi > 0 ? '+' : ''}{tld.roi.toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-gray-500">${tld.totalCost.toFixed(0)} cost</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Portfolio Health Metrics */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Portfolio Health Metrics</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">
+                {roiAnalysis.filter(d => d.roi > 0).length}
+              </div>
+              <div className="text-sm text-gray-500">Profitable Domains</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">
+                {roiAnalysis.length > 0 ? (roiAnalysis.reduce((sum, d) => sum + d.roi, 0) / roiAnalysis.length).toFixed(1) : 0}%
+              </div>
+              <div className="text-sm text-gray-500">Average ROI</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-purple-600">
+                {domains.filter(d => {
+                  const expiryDate = new Date(d.next_renewal_date);
+                  const daysUntilExpiry = Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+                  return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
+                }).length}
+              </div>
+              <div className="text-sm text-gray-500">Expiring Soon</div>
+            </div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-orange-600">
+                {roiAnalysis.length > 0 ? (roiAnalysis.reduce((sum, d) => sum + d.ageInMonths, 0) / roiAnalysis.length).toFixed(0) : 0}
+              </div>
+              <div className="text-sm text-gray-500">Avg Age (months)</div>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderAlerts = () => (
     <div className="space-y-6">
