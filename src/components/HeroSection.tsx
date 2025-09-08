@@ -359,10 +359,19 @@ export default function HeroSection() {
                   
                   {/* Action Buttons */}
                   <div className="flex gap-2">
-                    <button className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors">
+                    <button 
+                      onClick={() => window.open('/nomadcities/bangkok', '_blank')}
+                      className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg transition-colors"
+                    >
                       ⭐ {t('home.hero.liveInfo.rateCity')}
                     </button>
-                    <button className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors">
+                    <button 
+                      onClick={() => {
+                        // Add to favorites functionality
+                        console.log('Added Bangkok to favorites')
+                      }}
+                      className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors"
+                    >
                       ❤️ {t('home.hero.liveInfo.addToFavorites')}
                     </button>
                   </div>
@@ -409,10 +418,19 @@ export default function HeroSection() {
                   
                   {/* Action Buttons */}
                   <div className="flex gap-2">
-                    <button className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors">
+                    <button 
+                      onClick={() => window.open('/nomadcities/bali', '_blank')}
+                      className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-lg transition-colors"
+                    >
                       ⭐ {t('home.hero.liveInfo.rateCity')}
                     </button>
-                    <button className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors">
+                    <button 
+                      onClick={() => {
+                        // Add to favorites functionality
+                        console.log('Added Bali to favorites')
+                      }}
+                      className="px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors"
+                    >
                       ❤️ {t('home.hero.liveInfo.addToFavorites')}
                     </button>
                   </div>
@@ -428,15 +446,24 @@ export default function HeroSection() {
                   {t('home.hero.liveInfo.myFavorites')}
                 </h3>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-gradient-to-r from-white to-pink-50 rounded-lg p-3 border border-gray-200 hover:border-pink-300 hover:shadow-md transition-all cursor-pointer group hover:scale-105 text-center">
+                  <div 
+                    onClick={() => window.open('/nomadcities/chiang-mai', '_blank')}
+                    className="bg-gradient-to-r from-white to-pink-50 rounded-lg p-3 border border-gray-200 hover:border-pink-300 hover:shadow-md transition-all cursor-pointer group hover:scale-105 text-center"
+                  >
                     <div className="text-2xl mb-2">☕</div>
                     <p className="text-xs text-gray-700 font-medium">Chiang Mai</p>
                   </div>
-                  <div className="bg-gradient-to-r from-white to-blue-50 rounded-lg p-3 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group hover:scale-105 text-center">
+                  <div 
+                    onClick={() => window.open('/nomadcities/barcelona', '_blank')}
+                    className="bg-gradient-to-r from-white to-blue-50 rounded-lg p-3 border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group hover:scale-105 text-center"
+                  >
                     <div className="text-2xl mb-2">🌴</div>
                     <p className="text-xs text-gray-700 font-medium">Barcelona</p>
                   </div>
-                  <div className="bg-gradient-to-r from-white to-purple-50 rounded-lg p-3 border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer group hover:scale-105 text-center">
+                  <div 
+                    onClick={() => window.open('/nomadcities/porto', '_blank')}
+                    className="bg-gradient-to-r from-white to-purple-50 rounded-lg p-3 border border-gray-200 hover:border-purple-300 hover:shadow-md transition-all cursor-pointer group hover:scale-105 text-center"
+                  >
                     <div className="text-2xl mb-2">🍷</div>
                     <p className="text-xs text-gray-700 font-medium">Porto</p>
                   </div>
@@ -451,11 +478,17 @@ export default function HeroSection() {
                 {t('home.hero.liveInfo.quickActions')}
               </h3>
               <div className="grid grid-cols-2 gap-3">
-                <button className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer group hover:scale-105">
+                <button 
+                  onClick={() => window.open('/local-nomads', '_blank')}
+                  className="flex items-center space-x-3 p-3 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer group hover:scale-105"
+                >
                   <span className="text-xl">📅</span>
                   <span className="text-sm font-medium text-gray-700">{t('home.hero.liveInfo.weeklyActivities')}</span>
                 </button>
-                <button className="flex items-center space-x-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 hover:border-green-400 hover:shadow-md transition-all cursor-pointer group hover:scale-105">
+                <button 
+                  onClick={() => window.open('/nomadcities', '_blank')}
+                  className="flex items-center space-x-3 p-3 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200 hover:border-green-400 hover:shadow-md transition-all cursor-pointer group hover:scale-105"
+                >
                   <span className="text-xl">🏆</span>
                   <span className="text-sm font-medium text-gray-700">{t('home.hero.liveInfo.cityRankings')}</span>
                 </button>
