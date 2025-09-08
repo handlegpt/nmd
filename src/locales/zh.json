@@ -585,7 +585,45 @@
     "rateCity": "评价城市",
     "addToFavorites": "添加到收藏",
     "viewDetails": "查看详情",
-    "viewAllCities": "查看所有城市"
+    "viewAllCities": "查看所有城市",
+    "addCitySuccess": "成功添加城市 {cityName}",
+    "addCityError": "添加城市失败",
+    "totalCities": "总城市数",
+    "totalDays": "总天数",
+    "currentCity": "当前城市",
+    "noTrajectory": "无轨迹记录",
+    "consecutiveDays": "连续天数",
+    "myTravelTrajectory": "我的旅行轨迹",
+    "import": "导入",
+    "export": "导出",
+    "addTrajectory": "添加轨迹",
+    "noTrajectoryRecord": "暂无轨迹记录",
+    "cityName": "城市名称",
+    "country": "国家",
+    "startDate": "开始日期",
+    "endDate": "结束日期",
+    "daysStayed": "停留天数",
+    "type": "类型",
+    "residence": "居住",
+    "visit": "访问",
+    "work": "工作",
+    "notes": "备注",
+    "cancel": "取消",
+    "update": "更新",
+    "add": "添加",
+    "importTrajectoryData": "导入轨迹数据",
+    "importTrajectoryDescription": "支持导入CSV格式的旅行轨迹数据",
+    "failedToLoadCities": "加载城市失败",
+    "tryAgain": "重试",
+    "cityList": "城市列表",
+    "travelTrajectory": "旅行轨迹",
+    "noResults": {
+      "title": "未找到结果",
+      "description": "请尝试调整搜索条件或添加新城市"
+    },
+    "loginRequired": "需要登录",
+    "loginRequiredDescription": "请先登录以使用此功能",
+    "goToLogin": "去登录"
   },
   "common": {
     "viewDetails": "查看详情",
@@ -1592,8 +1630,8 @@
   },
   "visaGuide": {
     "noResults": {
-      "description": "Try adjusting your search criteria or filters",
-      "title": "No matching visa guides found"
+      "description": "请尝试调整搜索条件",
+      "title": "未找到匹配的签证信息"
     },
     "difficulty": {
       "hard": "Hard",
@@ -1616,15 +1654,15 @@
         "all": "All Durations"
       },
       "difficulty": {
-        "hard": "Hard",
-        "medium": "Medium",
-        "easy": "Easy",
-        "all": "All Difficulties"
+        "hard": "困难",
+        "medium": "中等",
+        "easy": "简单",
+        "all": "所有难度"
       }
     },
-    "searchPlaceholder": "Search countries or visa types...",
-    "subtitle": "Detailed visa application information for digital nomads, helping you easily obtain visas from various countries",
-    "title": "Visa Application Guide"
+    "searchPlaceholder": "搜索国家或签证类型...",
+    "subtitle": "为数字游民提供全面的签证信息和申请指导",
+    "title": "数字游民签证指南"
   },
   "loginRequired": {
     "favoriteMessage": "Login required to favorite cities, save your preferences",
@@ -2549,6 +2587,52 @@
     "title": "Reviews"
   },
   "tax": {
+    "categories": {
+      "highTax": "High Tax",
+      "moderate": "Moderate Tax",
+      "taxHaven": "Tax Haven"
+    },
+    "tabs": {
+      "countries": "Country Comparison",
+      "strategies": "Strategy Guide",
+      "calculator": "Tax Calculator",
+      "assessment": "Needs Assessment",
+      "deadlines": "Deadline Reminder"
+    },
+    "currentStep": "Current Step:",
+    "step1": "1️⃣ Needs Assessment",
+    "step2": "2️⃣ Tax Calculator",
+    "step3": "3️⃣ Strategy Guide",
+    "step4": "4️⃣ Country Comparison",
+    "step5": "5️⃣ Deadline Reminder",
+    "searchPlaceholder": "Search countries or tax types...",
+    "countryDetails": {
+      "nomadFriendlyRating": "Nomad-Friendly Rating",
+      "potentialRisks": "Potential Risks",
+      "requirements": "Requirements",
+      "mainBenefits": "Main Benefits",
+      "localIncomeTax": "Local Income Tax",
+      "foreignIncomeTax": "Foreign Income Tax",
+      "taxRateInfo": "Tax Rate Information",
+      "no": "No",
+      "yes": "Yes",
+      "globalTaxation": "Global Taxation",
+      "residencyDays": "Residency Days",
+      "residencyRequirements": "Tax Residency Requirements"
+    },
+    "importantNotice": {
+      "description": "This information is for educational purposes only and should not be considered as tax advice. Tax laws vary by country and change frequently. Please consult a qualified tax professional or accountant specializing in international tax law before making any tax decisions.",
+      "title": "Important Notice"
+    },
+    "optimizationTips": {
+      "keepGoodRecordsDesc": "Maintain all tax-related documents including income certificates, residency certificates, etc.",
+      "keepGoodRecords": "Keep Good Records",
+      "understandTaxTreatiesDesc": "Research tax treaties between relevant countries to avoid double taxation",
+      "understandTaxTreaties": "Understand Tax Treaties",
+      "trackResidencyDaysDesc": "Use digital tools to accurately track your residency days in each country to avoid exceeding tax residency thresholds",
+      "trackResidencyDays": "Track Residency Days",
+      "title": "Tax Optimization Tips"
+    },
     "calculator": {
       "disclaimer": {
         "title": "Important Disclaimer",
@@ -2842,41 +2926,9 @@
         "high": "High"
       }
     },
-    "optimizationTips": {
-      "keepGoodRecordsDesc": "Maintain all tax-related documents including income certificates, residency certificates, etc.",
-      "keepGoodRecords": "Keep Good Records",
-      "understandTaxTreatiesDesc": "Research tax treaties between relevant countries to avoid double taxation",
-      "understandTaxTreaties": "Understand Tax Treaties",
-      "trackResidencyDaysDesc": "Use digital tools to accurately track your residency days in each country to avoid exceeding tax residency thresholds",
-      "trackResidencyDays": "Track Residency Days",
-      "title": "Tax Optimization Tips"
-    },
-    "importantNotice": {
-      "description": "This information is for educational purposes only and should not be considered as tax advice. Tax laws vary by country and change frequently. Please consult a qualified tax professional or accountant specializing in international tax law before making any tax decisions.",
-      "title": "Important Notice"
-    },
     "disclaimer": {
       "title": "Important Notice",
       "description": "This calculator provides estimates for reference only. Actual tax situations depend on individual circumstances, latest tax law changes, and country regulations. Please consult professional tax advisors before making any tax decisions."
-    },
-    "countryDetails": {
-      "nomadFriendlyRating": "Nomad-Friendly Rating",
-      "potentialRisks": "Potential Risks",
-      "requirements": "Requirements",
-      "mainBenefits": "Main Benefits",
-      "localIncomeTax": "Local Income Tax",
-      "foreignIncomeTax": "Foreign Income Tax",
-      "taxRateInfo": "Tax Rate Information",
-      "no": "No",
-      "yes": "Yes",
-      "globalTaxation": "Global Taxation",
-      "residencyDays": "Residency Days",
-      "residencyRequirements": "Tax Residency Requirements"
-    },
-    "categories": {
-      "highTax": "High Tax",
-      "moderate": "Moderate Tax",
-      "taxHaven": "Tax Haven"
     },
     "visaDifficulty": {
       "easy": "Easy Visa",
@@ -2889,22 +2941,8 @@
       "high": "High Cost"
     },
     "digitalNomadFriendly": "Digital Nomad Friendly",
-    "searchPlaceholder": "Search countries or tax types...",
-    "tabs": {
-      "countries": "Country Comparison",
-      "strategies": "Strategy Guide",
-      "calculator": "Tax Calculator",
-      "assessment": "Needs Assessment",
-      "deadlines": "Deadline Reminder"
-    },
-    "currentStep": "Current Step:",
-    "step1": "1️⃣ Needs Assessment",
-    "step2": "2️⃣ Tax Calculator",
-    "step3": "3️⃣ Strategy Guide",
-    "step4": "4️⃣ Country Comparison",
-    "step5": "5️⃣ Deadline Reminder",
-    "pageDescription": "Understand tax regulations in different countries and optimize your tax strategy",
-    "pageTitle": "Digital Nomad Tax Guide",
+    "pageDescription": "为数字游民提供全面的税务规划、计算和策略指导",
+    "pageTitle": "数字游民税务指南",
     "description": "Understand tax regulations in different countries and optimize your tax strategy",
     "title": "Digital Nomad Tax Guide"
   },
