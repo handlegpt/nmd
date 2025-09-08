@@ -90,6 +90,7 @@ export default function DomainTrackerPage() {
   const [newDomain, setNewDomain] = useState({
     domain_name: '',
     registrar: '',
+    purchase_date: '',
     purchase_cost: 0,
     renewal_cost: 0,
     estimated_value: 0,
@@ -534,14 +535,14 @@ export default function DomainTrackerPage() {
       return;
     }
 
-    // 使用用户提供的到期日期，如果没有提供则默认为购买日期+1年
-    const purchaseDate = new Date();
+    // 使用用户提供的购入日期，如果没有提供则默认为今天
+    const purchaseDate = newDomain.purchase_date ? new Date(newDomain.purchase_date) : new Date();
     let expiryDate: Date;
     
     if (newDomain.expiry_date) {
       expiryDate = new Date(newDomain.expiry_date);
     } else {
-      // 默认1年期限
+      // 默认1年期限，从购入日期开始计算
       expiryDate = new Date(purchaseDate);
       expiryDate.setFullYear(expiryDate.getFullYear() + 1);
     }
@@ -590,6 +591,7 @@ export default function DomainTrackerPage() {
     setNewDomain({
       domain_name: '',
       registrar: '',
+      purchase_date: '',
       purchase_cost: 0,
       renewal_cost: 0,
       estimated_value: 0,
@@ -668,6 +670,7 @@ export default function DomainTrackerPage() {
     setNewDomain({
       domain_name: domain.domain_name,
       registrar: domain.registrar,
+      purchase_date: domain.purchase_date,
       purchase_cost: domain.purchase_cost,
       renewal_cost: domain.renewal_cost,
       estimated_value: domain.estimated_value,
@@ -687,9 +690,11 @@ export default function DomainTrackerPage() {
       ...editingDomain,
       domain_name: newDomain.domain_name,
       registrar: newDomain.registrar,
+      purchase_date: newDomain.purchase_date,
       purchase_cost: newDomain.purchase_cost,
       renewal_cost: newDomain.renewal_cost,
       estimated_value: newDomain.estimated_value,
+      next_renewal_date: newDomain.expiry_date,
       tags: newDomain.tags,
       updated_at: new Date().toISOString()
     };
@@ -702,6 +707,7 @@ export default function DomainTrackerPage() {
     setNewDomain({
       domain_name: '',
       registrar: '',
+      purchase_date: '',
       purchase_cost: 0,
       renewal_cost: 0,
       estimated_value: 0,
@@ -1919,6 +1925,7 @@ export default function DomainTrackerPage() {
                   setNewDomain({
                     domain_name: '',
                     registrar: '',
+                    purchase_date: '',
                     purchase_cost: 0,
                     renewal_cost: 0,
                     estimated_value: 0,
