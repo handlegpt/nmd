@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   Globe, 
   Plus, 
@@ -235,6 +235,43 @@ export default function DomainTrackerPage() {
     }, 4000);
   };
 
+  // Calculate total cost including purchase cost and all renewal costs
+  const calculateTotalCost = () => {
+    return domains.reduce((total, domain) => {
+      const purchaseCost = domain.purchase_cost || 0;
+      const renewalCost = domain.total_renewal_paid || 0;
+      return total + purchaseCost + renewalCost;
+    }, 0);
+  };
+
+  // Calculate total revenue from sell transactions
+  const calculateTotalRevenue = () => {
+    return transactions
+      .filter(t => t.type === 'sell')
+      .reduce((total, t) => total + t.amount, 0);
+  };
+
+  // Update stats based on current data
+  const updateStats = useCallback(() => {
+    const totalCost = calculateTotalCost();
+    const totalRevenue = calculateTotalRevenue();
+    const totalProfit = totalRevenue - totalCost;
+    const roi = totalCost > 0 ? (totalProfit / totalCost) * 100 : 0;
+    
+    setStats({
+      totalDomains: domains.length,
+      totalCost,
+      totalRevenue,
+      totalProfit,
+      roi,
+      expiringSoon: domains.filter(d => {
+        const daysUntilExpiry = Math.ceil((new Date(d.next_renewal_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
+        return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
+      }).length,
+      forSale: domains.filter(d => d.status === 'for_sale').length
+    });
+  }, [domains, transactions]);
+
   // Initialize data from localStorage
   useEffect(() => {
     try {
@@ -288,6 +325,13 @@ export default function DomainTrackerPage() {
       }
     }
   }, [domains, transactions, stats, loading]);
+
+  // Update stats whenever domains or transactions change
+  useEffect(() => {
+    if (!loading) {
+      updateStats();
+    }
+  }, [domains, transactions, loading, updateStats]);
 
   const tabs = [
     { key: 'overview', label: t('domainTracker.tabs.overview'), icon: BarChart3 },
@@ -491,29 +535,7 @@ export default function DomainTrackerPage() {
           setTransactions(prev => prev.filter(t => !selectedDomains.includes(t.domain_id)));
           setSelectedDomains([]);
           setShowBulkActions(false);
-          // 重新计算统计
-          const deletedDomains = domains.filter(d => selectedDomains.includes(d.id));
-          const deletedCost = deletedDomains.reduce((sum, d) => sum + d.purchase_cost + d.total_renewal_paid, 0);
-          const deletedRevenue = transactions.filter(t => selectedDomains.includes(t.domain_id) && t.type === 'sell')
-            .reduce((sum, t) => sum + t.amount, 0);
-          
-          setStats(prev => {
-            const newTotalDomains = prev.totalDomains - selectedDomains.length;
-            const newTotalCost = prev.totalCost - deletedCost;
-            const newTotalRevenue = prev.totalRevenue - deletedRevenue;
-            const newTotalProfit = newTotalRevenue - newTotalCost;
-            const newROI = newTotalCost > 0 ? (newTotalProfit / newTotalCost) * 100 : 0;
-            
-            return {
-              totalDomains: newTotalDomains,
-              totalCost: newTotalCost,
-              totalRevenue: newTotalRevenue,
-              totalProfit: newTotalProfit,
-              roi: newROI,
-              expiringSoon: prev.expiringSoon,
-              forSale: prev.forSale
-            };
-          });
+          // Stats will be automatically updated by useEffect
         }
         break;
       case 'mark_for_sale':
@@ -902,14 +924,7 @@ export default function DomainTrackerPage() {
     
     setTransactions(prev => [...prev, transaction]);
     
-    // Update stats
-    setStats(prev => ({
-      ...prev,
-      totalDomains: prev.totalDomains + 1,
-      totalCost: prev.totalCost + newDomain.purchase_cost,
-      totalProfit: prev.totalProfit - newDomain.purchase_cost,
-      roi: prev.totalCost > 0 ? ((prev.totalRevenue - prev.totalCost) / prev.totalCost) * 100 : 0
-    }));
+    // Stats will be automatically updated by useEffect
 
     // Reset form
     setNewDomain({
@@ -963,20 +978,13 @@ export default function DomainTrackerPage() {
 
     setTransactions(prev => [...prev, transaction]);
 
-    // Update domain and stats based on transaction type
+    // Update domain based on transaction type
     if (newTransaction.type === 'sell') {
       setDomains(prev => prev.map(domain => 
         domain.id === newTransaction.domain_id 
           ? { ...domain, status: 'sold' as const }
           : domain
       ));
-      
-      setStats(prev => ({
-        ...prev,
-        totalRevenue: prev.totalRevenue + newTransaction.amount,
-        totalProfit: prev.totalProfit + newTransaction.amount,
-        roi: prev.totalCost > 0 ? ((prev.totalRevenue + newTransaction.amount - prev.totalCost) / prev.totalCost) * 100 : 0
-      }));
     } else if (newTransaction.type === 'renew') {
       setDomains(prev => prev.map(domain => 
         domain.id === newTransaction.domain_id 
@@ -987,14 +995,9 @@ export default function DomainTrackerPage() {
             }
           : domain
       ));
-      
-      setStats(prev => ({
-        ...prev,
-        totalCost: prev.totalCost + newTransaction.amount,
-        totalProfit: prev.totalProfit - newTransaction.amount,
-        roi: prev.totalCost > 0 ? ((prev.totalRevenue - (prev.totalCost + newTransaction.amount)) / (prev.totalCost + newTransaction.amount)) * 100 : 0
-      }));
     }
+    
+    // Stats will be automatically updated by useEffect
 
     // Reset form
     setNewTransaction({
@@ -1088,18 +1091,7 @@ export default function DomainTrackerPage() {
       // Remove related transactions
       setTransactions(prev => prev.filter(transaction => transaction.domain_id !== domainId));
       
-      // Update stats
-      const domainToDelete = domains.find(d => d.id === domainId);
-      if (domainToDelete) {
-        const totalCost = domainToDelete.purchase_cost + domainToDelete.total_renewal_paid;
-        setStats(prev => ({
-          ...prev,
-          totalDomains: prev.totalDomains - 1,
-          totalCost: prev.totalCost - totalCost,
-          totalProfit: prev.totalProfit + totalCost,
-          roi: prev.totalCost > totalCost ? ((prev.totalRevenue - (prev.totalCost - totalCost)) / (prev.totalCost - totalCost)) * 100 : 0
-        }));
-      }
+      // Stats will be automatically updated by useEffect
     }
   };
 
