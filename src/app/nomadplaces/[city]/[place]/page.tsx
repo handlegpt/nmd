@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useTranslation } from '@/hooks/useTranslation'
 import { getPlaces } from '@/lib/api'
+import { PlaceDataService } from '@/lib/placeDataService'
 import { Place } from '@/lib/supabase'
 import { parsePlaceUrl } from '@/lib/urlUtils'
 import PageLayout from '@/components/PageLayout'
@@ -35,11 +36,18 @@ export default function PlaceDetailPage() {
       
       logInfo('Fetching place data', { citySlug, placeSlug }, 'PlaceDetailPage')
       
-      // 获取所有地点数据
-      const places = await getPlaces()
+      // 获取所有地点数据：先检查本地存储，再检查Supabase
+      const localPlaces = PlaceDataService.getLocalPlaces()
+      const supabasePlaces = await getPlaces()
+      
+      // 合并本地和Supabase数据，去重
+      const allPlaces = [...localPlaces, ...supabasePlaces]
+      const uniquePlaces = allPlaces.filter((place, index, self) => 
+        index === self.findIndex(p => p.id === place.id)
+      )
       
       // 根据城市和地点名称查找匹配的地点
-      const matchedPlace = places.find(p => {
+      const matchedPlace = uniquePlaces.find(p => {
         const placeCitySlug = p.city_id.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
         const placeNameSlug = p.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
         
@@ -48,7 +56,7 @@ export default function PlaceDetailPage() {
       
       if (matchedPlace) {
         setPlaceData(matchedPlace)
-        logInfo('Place found', { place: matchedPlace.name }, 'PlaceDetailPage')
+        logInfo('Place found', { place: matchedPlace.name, source: matchedPlace.id.startsWith('local-') ? 'local' : 'supabase' }, 'PlaceDetailPage')
       } else {
         setError('Place not found')
         // 改为info级别，因为这是正常的业务逻辑，不是错误
