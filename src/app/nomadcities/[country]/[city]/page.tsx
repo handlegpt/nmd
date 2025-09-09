@@ -8,6 +8,9 @@ import { City } from '@/lib/supabase'
 import { addRecentCity } from '@/lib/recentCities'
 import { RealtimeService } from '@/lib/realtimeService'
 import VoteModal from '@/components/VoteModal'
+import CostBreakdownChart from '@/components/CostBreakdownChart'
+import CommunityActivity from '@/components/CommunityActivity'
+import CityMap from '@/components/CityMap'
 import { 
   Star, 
   Wifi, 
@@ -155,6 +158,100 @@ export default function CityDetailPage() {
     if (days >= 365) return { level: 'easy', color: 'text-green-600' }
     if (days >= 90) return { level: 'medium', color: 'text-yellow-600' }
     return { level: 'hard', color: 'text-red-600' }
+  }
+
+  // 获取城市优点
+  const getCityPros = () => {
+    if (!cityData) return []
+    
+    const pros = []
+    
+    // 基于数据动态生成优点
+    if (cityData.cost_of_living < 2000) {
+      pros.push({
+        title: t('cityDetail.pros.affordableCost'),
+        description: t('cityDetail.pros.affordableCostDesc'),
+        votes: Math.floor(Math.random() * 50) + 10
+      })
+    }
+    
+    if (cityData.wifi_speed > 50) {
+      pros.push({
+        title: t('cityDetail.pros.goodWifi'),
+        description: t('cityDetail.pros.goodWifiDesc'),
+        votes: Math.floor(Math.random() * 40) + 15
+      })
+    }
+    
+    if (cityData.visa_days > 90) {
+      pros.push({
+        title: t('cityDetail.pros.longVisa'),
+        description: t('cityDetail.pros.longVisaDesc'),
+        votes: Math.floor(Math.random() * 30) + 20
+      })
+    }
+    
+    if ((cityData.avg_overall_rating || 0) > 4.0) {
+      pros.push({
+        title: t('cityDetail.pros.nomadFriendly'),
+        description: t('cityDetail.pros.nomadFriendlyDesc'),
+        votes: Math.floor(Math.random() * 60) + 25
+      })
+    }
+    
+    // 默认优点
+    if (pros.length === 0) {
+      pros.push({
+        title: t('cityDetail.pros.goodWeather'),
+        description: t('cityDetail.pros.goodWeatherDesc'),
+        votes: Math.floor(Math.random() * 20) + 5
+      })
+    }
+    
+    return pros
+  }
+
+  // 获取城市缺点
+  const getCityCons = () => {
+    if (!cityData) return []
+    
+    const cons = []
+    
+    // 基于数据动态生成缺点
+    if (cityData.cost_of_living > 3000) {
+      cons.push({
+        title: t('cityDetail.cons.highCost'),
+        description: t('cityDetail.cons.highCostDesc'),
+        votes: Math.floor(Math.random() * 40) + 10
+      })
+    }
+    
+    if (cityData.wifi_speed < 25) {
+      cons.push({
+        title: t('cityDetail.cons.slowWifi'),
+        description: t('cityDetail.cons.slowWifiDesc'),
+        votes: Math.floor(Math.random() * 35) + 15
+      })
+    }
+    
+    if (cityData.visa_days < 30) {
+      cons.push({
+        title: t('cityDetail.cons.shortVisa'),
+        description: t('cityDetail.cons.shortVisaDesc'),
+        votes: Math.floor(Math.random() * 25) + 20
+      })
+    }
+    
+    // 默认缺点
+    if (cons.length === 0) {
+      cons.push({
+        title: t('cityDetail.cons.languageBarrier'),
+        description: t('cityDetail.cons.languageBarrierDesc'),
+        votes: Math.floor(Math.random() * 30) + 10
+      })
+    }
+    
+    return cons
   }
 
   if (loading) {
@@ -323,6 +420,12 @@ export default function CityDetailPage() {
               </p>
             </div>
 
+            {/* Cost Breakdown Chart */}
+            <CostBreakdownChart cityData={cityData} />
+
+            {/* City Map */}
+            <CityMap cityData={cityData} />
+
             {/* Pros and Cons */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -330,32 +433,26 @@ export default function CityDetailPage() {
                   <TrendingUp className="h-5 w-5 mr-2" />
                   {t('cityDetail.pros')}
                 </h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start space-x-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {t('cityDetail.pros.affordableCost')}
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {t('cityDetail.pros.goodWifi')}
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {t('cityDetail.pros.longVisa')}
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-green-500 mt-1">✓</span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {t('cityDetail.pros.nomadFriendly')}
-                    </span>
-                  </li>
+                <ul className="space-y-3">
+                  {getCityPros().map((pro, index) => (
+                    <li key={index} className="flex items-start space-x-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                      <span className="text-green-500 mt-1 text-lg">✓</span>
+                      <div className="flex-1">
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">{pro.title}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{pro.description}</p>
+                        <div className="flex items-center mt-2 space-x-2">
+                          <button className="text-xs text-green-600 hover:text-green-700 flex items-center space-x-1">
+                            <span>👍</span>
+                            <span>{pro.votes || 0}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
+                <button className="mt-4 w-full text-sm text-green-600 hover:text-green-700 font-medium">
+                  + {t('cityDetail.addPro')}
+                </button>
               </div>
               
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -363,26 +460,26 @@ export default function CityDetailPage() {
                   <Shield className="h-5 w-5 mr-2" />
                   {t('cityDetail.cons')}
                 </h3>
-                <ul className="space-y-2">
-                  <li className="flex items-start space-x-2">
-                    <span className="text-red-500 mt-1">✗</span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {t('cityDetail.cons.languageBarrier')}
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-red-500 mt-1">✗</span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {t('cityDetail.cons.weatherIssues')}
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <span className="text-red-500 mt-1">✗</span>
-                    <span className="text-gray-600 dark:text-gray-400">
-                      {t('cityDetail.cons.transportation')}
-                    </span>
-                  </li>
+                <ul className="space-y-3">
+                  {getCityCons().map((con, index) => (
+                    <li key={index} className="flex items-start space-x-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                      <span className="text-red-500 mt-1 text-lg">✗</span>
+                      <div className="flex-1">
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">{con.title}</span>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{con.description}</p>
+                        <div className="flex items-center mt-2 space-x-2">
+                          <button className="text-xs text-red-600 hover:text-red-700 flex items-center space-x-1">
+                            <span>👎</span>
+                            <span>{con.votes || 0}</span>
+                          </button>
+                        </div>
+                      </div>
+                    </li>
+                  ))}
                 </ul>
+                <button className="mt-4 w-full text-sm text-red-600 hover:text-red-700 font-medium">
+                  + {t('cityDetail.addCon')}
+                </button>
               </div>
             </div>
           </div>
@@ -415,6 +512,9 @@ export default function CityDetailPage() {
                 </button>
               </div>
             </div>
+
+            {/* Community Activity */}
+            <CommunityActivity cityData={cityData} />
 
             {/* Quick Info */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
