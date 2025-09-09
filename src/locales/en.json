@@ -251,6 +251,19 @@
       "accommodation": "Accommodation",
       "transport": "Transport"
     },
+    "gallery": {
+      "title": "City Photos",
+      "userUploaded": "User Upload",
+      "likes": "likes",
+      "views": "views",
+      "uploadPhoto": "Upload Photo"
+    },
+    "relatedCities": {
+      "title": "Related Cities",
+      "basedOnSimilarity": "Based on similarity",
+      "exploreAllCities": "Explore all cities"
+    },
+    "nomadCities": "Nomad Cities",
     "vote": "Vote",
     "error": "Error",
     "loading": "Loading...",

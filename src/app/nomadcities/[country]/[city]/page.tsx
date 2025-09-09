@@ -11,6 +11,9 @@ import VoteModal from '@/components/VoteModal'
 import CostBreakdownChart from '@/components/CostBreakdownChart'
 import CommunityActivity from '@/components/CommunityActivity'
 import CityMap from '@/components/CityMap'
+import Breadcrumb from '@/components/Breadcrumb'
+import CityImageGallery from '@/components/CityImageGallery'
+import RelatedCities from '@/components/RelatedCities'
 import { 
   Star, 
   Wifi, 
@@ -293,6 +296,26 @@ export default function CityDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Breadcrumb Navigation */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <Breadcrumb
+          items={[
+            {
+              label: t('cityDetail.nomadCities'),
+              href: '/nomadcities',
+              icon: <MapPin className="h-4 w-4" />
+            },
+            {
+              label: cityData.country,
+              href: `/nomadcities?country=${cityData.country.toLowerCase().replace(/\s+/g, '-')}`
+            },
+            {
+              label: cityData.name
+            }
+          ]}
+        />
+      </div>
+
       {/* Hero Section */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -403,6 +426,9 @@ export default function CityDetailPage() {
                 </div>
               </div>
             </div>
+
+            {/* City Image Gallery */}
+            <CityImageGallery cityData={cityData} />
 
             {/* City Description */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
@@ -515,6 +541,9 @@ export default function CityDetailPage() {
 
             {/* Community Activity */}
             <CommunityActivity cityData={cityData} />
+
+            {/* Related Cities */}
+            <RelatedCities currentCity={cityData} />
 
             {/* Quick Info */}
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
