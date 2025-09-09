@@ -33,7 +33,9 @@ import {
   ClockIcon,
   UsersIcon,
   UploadIcon,
-  CheckIcon
+  CheckIcon,
+  PhoneIcon,
+  GlobeIcon
 } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
@@ -62,6 +64,16 @@ interface FormData {
   tags: string[]
   images: File[]
   recommendation_reason: string
+  // Extended fields for Nomad-friendly POI
+  opening_hours: string
+  phone: string
+  website: string
+  google_maps_url: string
+  socket_count: number
+  wifi_stability: string
+  average_spend: string
+  payment_methods: string[]
+  suitable_for: string[]
 }
 
 export default function PlaceRecommendationForm({ 
@@ -89,7 +101,17 @@ export default function PlaceRecommendationForm({
     long_stay_ok: false,
     tags: [],
     images: [],
-    recommendation_reason: ''
+    recommendation_reason: '',
+    // Extended fields
+    opening_hours: '',
+    phone: '',
+    website: '',
+    google_maps_url: '',
+    socket_count: 0,
+    wifi_stability: 'good',
+    average_spend: '',
+    payment_methods: [],
+    suitable_for: []
   })
 
   const [duplicateCheck, setDuplicateCheck] = useState<{
@@ -264,7 +286,17 @@ export default function PlaceRecommendationForm({
         long_stay_ok: false,
         tags: [],
         images: [],
-        recommendation_reason: ''
+        recommendation_reason: '',
+        // Extended fields
+        opening_hours: '',
+        phone: '',
+        website: '',
+        google_maps_url: '',
+        socket_count: 0,
+        wifi_stability: 'good',
+        average_spend: '',
+        payment_methods: [],
+        suitable_for: []
       })
       setCurrentStep(1)
       setDuplicateCheck({ checking: false, found: false, similarPlaces: [] })
@@ -666,8 +698,173 @@ export default function PlaceRecommendationForm({
             </div>
           )}
 
-          {/* Step 5: Images */}
+          {/* Step 5: Extended Details */}
           {currentStep === 5 && (
+            <div className="space-y-6">
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">
+                  📋 Extended Details (Optional)
+                </h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <ClockIcon className="h-4 w-4 inline mr-1" />
+                      Opening Hours
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.opening_hours}
+                      onChange={(e) => handleInputChange('opening_hours', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., 09:00 - 20:00"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <PhoneIcon className="h-4 w-4 inline mr-1" />
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="+1 (555) 123-4567"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <GlobeIcon className="h-4 w-4 inline mr-1" />
+                      Website
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.website}
+                      onChange={(e) => handleInputChange('website', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://example.com"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <MapPinIcon className="h-4 w-4 inline mr-1" />
+                      Google Maps URL
+                    </label>
+                    <input
+                      type="url"
+                      value={formData.google_maps_url}
+                      onChange={(e) => handleInputChange('google_maps_url', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="https://maps.google.com/..."
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <ZapIcon className="h-4 w-4 inline mr-1" />
+                      Socket Count
+                    </label>
+                    <input
+                      type="number"
+                      value={formData.socket_count}
+                      onChange={(e) => handleInputChange('socket_count', parseInt(e.target.value) || 0)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="Number of power outlets"
+                      min="0"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <WifiIcon className="h-4 w-4 inline mr-1" />
+                      WiFi Stability
+                    </label>
+                    <select
+                      value={formData.wifi_stability}
+                      onChange={(e) => handleInputChange('wifi_stability', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="poor">Poor</option>
+                      <option value="fair">Fair</option>
+                      <option value="good">Good</option>
+                      <option value="excellent">Excellent</option>
+                    </select>
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      <DollarSignIcon className="h-4 w-4 inline mr-1" />
+                      Average Spend
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.average_spend}
+                      onChange={(e) => handleInputChange('average_spend', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      placeholder="e.g., ¥500~¥800"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Payment Methods
+                    </label>
+                    <div className="space-y-2">
+                      {['cash', 'card', 'mobile_pay', 'crypto'].map(method => (
+                        <label key={method} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            checked={formData.payment_methods.includes(method)}
+                            onChange={(e) => {
+                              const methods = e.target.checked
+                                ? [...formData.payment_methods, method]
+                                : formData.payment_methods.filter(m => m !== method)
+                              handleInputChange('payment_methods', methods)
+                            }}
+                            className="mr-3 border-gray-300 text-blue-600 focus:ring-blue-500"
+                          />
+                          <span className="text-sm text-gray-700 capitalize">{method.replace('_', ' ')}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Suitable For
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {['work', 'social', 'reading', 'relax', 'meeting', 'study'].map(activity => (
+                      <button
+                        key={activity}
+                        onClick={() => {
+                          const activities = formData.suitable_for.includes(activity)
+                            ? formData.suitable_for.filter(a => a !== activity)
+                            : [...formData.suitable_for, activity]
+                          handleInputChange('suitable_for', activities)
+                        }}
+                        className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                          formData.suitable_for.includes(activity)
+                            ? 'bg-green-100 text-green-800 border border-green-200'
+                            : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
+                        }`}
+                      >
+                        {activity}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 6: Images */}
+          {currentStep === 6 && (
             <div className="space-y-6">
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">
@@ -751,7 +948,7 @@ export default function PlaceRecommendationForm({
               {t('places.form.cancel')}
             </button>
             
-            {currentStep < 5 ? (
+            {currentStep < 6 ? (
               <button
                 onClick={() => setCurrentStep(currentStep + 1)}
                 disabled={!canProceedToNext()}
