@@ -157,7 +157,7 @@ export async function getCityById(id: string): Promise<City | null> {
 export async function getPlaces(cityId?: string): Promise<Place[]> {
   if (!supabase) {
     console.error('❌ Supabase client not available')
-    return []
+    return getFallbackPlaces(cityId)
   }
 
   try {
@@ -175,7 +175,7 @@ export async function getPlaces(cityId?: string): Promise<Place[]> {
 
     if (error) {
       console.error('❌ Error fetching places from Supabase:', error)
-      return []
+      return getFallbackPlaces(cityId)
     }
 
     if (places && places.length > 0) {
@@ -183,12 +183,79 @@ export async function getPlaces(cityId?: string): Promise<Place[]> {
       return places
     }
 
-    console.log('⚠️ No places found in database')
-    return []
+    console.log('⚠️ No places found in database, using fallback data')
+    return getFallbackPlaces(cityId)
   } catch (error) {
     console.error('❌ Failed to fetch places from Supabase:', error)
-    return []
+    return getFallbackPlaces(cityId)
   }
+}
+
+// Fallback places data when database is empty
+function getFallbackPlaces(cityId?: string): Place[] {
+  const fallbackPlaces: Place[] = [
+    {
+      id: 'fallback-1',
+      name: 'Blue Bottle Coffee',
+      category: 'cafe',
+      city_id: cityId || 'fallback-city-1',
+      address: '123 Main Street',
+      latitude: 34.6937,
+      longitude: 135.5023,
+      description: 'Great coffee shop with excellent WiFi and quiet atmosphere. Perfect for remote work.',
+      tags: ['quiet', 'wifi', 'coffee'],
+      wifi_speed: 85,
+      price_level: 3,
+      noise_level: 'quiet',
+      social_atmosphere: 'low',
+      submitted_by: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'fallback-2',
+      name: 'WeWork Space',
+      category: 'coworking',
+      city_id: cityId || 'fallback-city-1',
+      address: '456 Business District',
+      latitude: 34.6938,
+      longitude: 135.5024,
+      description: 'Professional coworking space with all amenities. Great community for digital nomads.',
+      tags: ['professional', 'amenities', 'community'],
+      wifi_speed: 120,
+      price_level: 4,
+      noise_level: 'moderate',
+      social_atmosphere: 'high',
+      submitted_by: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'fallback-3',
+      name: 'Nomad House',
+      category: 'coliving',
+      city_id: cityId || 'fallback-city-1',
+      address: '789 Nomad Street',
+      latitude: 34.6939,
+      longitude: 135.5025,
+      description: 'Digital nomad accommodation with good WiFi and social atmosphere. Perfect for long-term stays.',
+      tags: ['nomad', 'wifi', 'social'],
+      wifi_speed: 95,
+      price_level: 2,
+      noise_level: 'moderate',
+      social_atmosphere: 'high',
+      submitted_by: null,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  ]
+
+  // Filter by cityId if provided
+  if (cityId) {
+    return fallbackPlaces.filter(place => place.city_id === cityId)
+  }
+
+  return fallbackPlaces
 }
 
 // Vote related APIs

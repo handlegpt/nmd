@@ -78,7 +78,7 @@ export interface Place {
   social_atmosphere: 'low' | 'medium' | 'high'
   outlets?: boolean
   long_stay_ok?: boolean
-  submitted_by: string
+  submitted_by: string | null
   created_at: string
   updated_at: string
   // Computed fields from views

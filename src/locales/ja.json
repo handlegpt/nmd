@@ -1,4 +1,4 @@
-{
+   {
   "title": "ノマド情報",
   "subtitle": "デジタルノマドの包括的ガイド",
   "description": "ビザ、税金、住宅、保険などのデジタルノマド情報",
@@ -2313,7 +2313,8 @@
     "costLevel": {
       "low": "低",
       "moderate": "中程度",
-      "high": "高"
+      "high": "高",
+      "affordable": "手頃"
     },
     "wifiSpeed": "WiFi速度",
     "wifiLevel": {

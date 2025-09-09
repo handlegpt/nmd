@@ -3656,6 +3656,25 @@
       "signupButton": "Sign Up"
     }
   },
+  "cityDetail": {
+    "costLevel": {
+      "affordable": "实惠"
+    },
+    "communityActivity": {
+      "low": "低"
+    },
+    "pros": {
+      "affordableCost": "生活成本实惠",
+      "goodWifi": "WiFi基础设施良好",
+      "longVisa": "长期签证选择",
+      "nomadFriendly": "游民友好环境"
+    },
+    "cons": {
+      "languageBarrier": "语言障碍",
+      "weatherIssues": "天气问题",
+      "transportation": "交通挑战"
+    }
+  },
   "search": {
     "findNomads": "Find Nomads",
     "browseCities": "Browse Cities",

@@ -99,8 +99,8 @@ class FreeApiService {
     }
   }
 
-  // RapidAPI Cities Cost of Living API (primary API)
-  private async fetchFromCitiesAPI(cityName: string, country: string): Promise<ApiResponse> {
+  // TravelTables Cost of Living API (primary API)
+  private async fetchFromTravelTablesAPI(cityName: string, country: string): Promise<ApiResponse> {
     try {
       const response = await fetch(`https://cost-of-living-and-prices.p.rapidapi.com/prices?city_name=${encodeURIComponent(cityName)}&country_name=${encodeURIComponent(country)}`, {
         headers: {
@@ -111,7 +111,7 @@ class FreeApiService {
       });
 
       if (!response.ok) {
-        throw new Error(`Cities API error: ${response.status}`);
+        throw new Error(`TravelTables API error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -135,13 +135,13 @@ class FreeApiService {
             monthly: avgCost,
             currency: 'USD',
             lastUpdated: new Date().toISOString(),
-            source: 'RapidAPI Cities'
+            source: 'TravelTables API'
           },
           wifiSpeed: {
             average: 0, // This API doesn't provide WiFi speed
             unit: 'Mbps',
             lastUpdated: new Date().toISOString(),
-            source: 'RapidAPI Cities'
+            source: 'TravelTables API'
           },
           coordinates: {
             lat: data.latitude || 0,
@@ -149,14 +149,14 @@ class FreeApiService {
           },
           timezone: data.timezone || ''
         },
-        source: 'RapidAPI Cities'
+        source: 'TravelTables API'
       };
     } catch (error) {
-      console.error('Cities API error:', error);
+      console.error('TravelTables API error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        source: 'RapidAPI Cities'
+        source: 'TravelTables API'
       };
     }
   }
@@ -344,8 +344,8 @@ class FreeApiService {
       };
     }
 
-    // Try Cities API first (primary)
-    let response = await this.fetchFromCitiesAPI(cityName, country);
+    // Try TravelTables API first (primary)
+    let response = await this.fetchFromTravelTablesAPI(cityName, country);
     if (response.success) {
       this.cache.set(cacheKey, { data: response.data!, timestamp: Date.now() });
       return response;

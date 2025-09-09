@@ -18,9 +18,9 @@ The data management system consists of four main components:
 Integrates with free APIs to get city data including cost of living and WiFi speed.
 
 **Features:**
-- RapidAPI Cities Cost of Living API integration (primary)
+- TravelTables Cost of Living API integration (primary)
 - Numbeo API integration (fallback, 1000 free requests/month)
-- Ookla Speedtest API for WiFi speed data
+- Ookla Open Data for WiFi speed data
 - Manual data fallback
 - Smart caching system (30-90 days cache)
 - Popular cities 90-day cache, others 30-day cache
@@ -182,8 +182,8 @@ NUMBEO_API_KEY=your_numbeo_api_key_here
 
 ### 2. API Keys
 
-#### RapidAPI Cities Cost of Living API (Primary)
-1. Visit [RapidAPI Cities Cost of Living](https://rapidapi.com/traveltables/api/cost-of-living-and-prices/pricing)
+#### TravelTables Cost of Living API (Primary)
+1. Visit [TravelTables Cost of Living API](https://rapidapi.com/traveltables/api/cost-of-living-and-prices)
 2. Sign up for a free RapidAPI account
 3. Subscribe to the "Cost of Living and Prices" API
 4. Get your RapidAPI key from the dashboard
@@ -207,7 +207,7 @@ NUMBEO_API_KEY=your_numbeo_api_key_here
 
 The system is designed to work with your existing city data structure. It will:
 
-1. Try to fetch data from RapidAPI Cities Cost of Living API (primary)
+1. Try to fetch data from TravelTables Cost of Living API (primary)
 2. Fall back to Numbeo API if primary fails
 3. Enhance with WiFi speed data from Ookla Open Data (local database)
 4. Fall back to curated Ookla data if local database unavailable
@@ -217,7 +217,7 @@ The system is designed to work with your existing city data structure. It will:
 ## Data Flow
 
 ```
-User Request → Free API Service → RapidAPI Cities (Primary)
+User Request → Free API Service → TravelTables API (Primary)
                     ↓
               Numbeo API (Fallback)
                     ↓
