@@ -135,10 +135,11 @@ async function updatePlaceAverageRating(placeId: string) {
       const avgRating = reviews.reduce((sum: number, r: any) => sum + r.overall_rating, 0) / reviews.length
       const reviewCount = reviews.length
       
+      // 更新places表的评分和评论数
       await supabase
         .from('places')
         .update({
-          rating: Math.round(avgRating * 10) / 10,
+          rating: Math.round(avgRating * 100) / 100, // 保留两位小数
           review_count: reviewCount
         })
         .eq('id', placeId)
