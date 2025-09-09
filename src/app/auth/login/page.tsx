@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useTranslation } from '@/hooks/useTranslation'
 import { logInfo, logError } from '@/lib/logger'
 import { setSessionToken } from '@/lib/auth'
+import { userDataSync } from '@/lib/userDataSync'
 import { validateInput, verificationCodeSchema } from '@/lib/validation'
 import LoadingSpinner from '@/components/LoadingSpinner'
 import { Mail, ArrowLeft, RefreshCw, Globe, Shield, Clock } from 'lucide-react'
@@ -351,6 +352,15 @@ export default function LoginPage() {
           setUserProfile(userProfile)
           
           console.log('✅ User profile set to global state')
+          
+          // 同步用户数据
+          try {
+            console.log('🔄 Starting user data sync...')
+            await userDataSync.syncAllUserData(userProfile.id)
+            console.log('✅ User data sync completed')
+          } catch (syncError) {
+            console.warn('⚠️ User data sync failed:', syncError)
+          }
         } catch (error) {
           console.warn('Failed to set JWT or user profile:', error)
         }

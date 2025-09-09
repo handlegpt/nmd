@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
+import { userDataSync } from '@/lib/userDataSync'
 import MobileNavigation from '@/components/MobileNavigation'
 import ThemeToggle from '@/components/ThemeToggle'
 import { 
@@ -99,37 +100,81 @@ export default function ProfilePage() {
         throw new Error('No user profile found')
       }
 
-      // 从本地存储获取用户详细资料，如果没有则使用默认值
-      const storedProfile = localStorage.getItem('user_profile_details')
+      // 尝试从服务器加载用户资料，如果失败则使用本地缓存或默认值
       let profileData: ProfileData
-
-      if (storedProfile) {
-        profileData = JSON.parse(storedProfile)
-      } else {
-        // 创建默认资料
-        profileData = {
-          id: userProfile.id,
-          name: userProfile.name || userProfile.email?.split('@')[0] || 'Nomad',
-          email: userProfile.email || '',
-          avatar_url: userProfile.avatar_url || '',
-          bio: '',
-          current_city: '',
-          profession: '',
-          company: '',
-          skills: [],
-          interests: [],
-          social_links: {},
-          contact: {},
-          travel_preferences: {
-            budget_range: 'moderate',
-            preferred_climate: 'temperate',
-            travel_style: 'digital_nomad',
-            accommodation_type: 'apartment'
-          },
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+      
+      try {
+        // 1. 首先尝试从服务器加载
+        const serverProfile = await userDataSync.loadUserProfile(userProfile.id)
+        
+        if (serverProfile) {
+          profileData = serverProfile
+        } else {
+          // 2. 服务器没有数据，尝试从本地缓存加载
+          const localProfile = userDataSync.getLocalUserProfile()
+          
+          if (localProfile) {
+            profileData = localProfile
+            // 将本地数据同步到服务器
+            await userDataSync.saveUserProfile(userProfile.id, localProfile)
+          } else {
+            // 3. 都没有数据，创建默认资料
+            profileData = {
+              id: userProfile.id,
+              name: userProfile.name || userProfile.email?.split('@')[0] || 'Nomad',
+              email: userProfile.email || '',
+              avatar_url: userProfile.avatar_url || '',
+              bio: '',
+              current_city: '',
+              profession: '',
+              company: '',
+              skills: [],
+              interests: [],
+              social_links: {},
+              contact: {},
+              travel_preferences: {
+                budget_range: 'moderate',
+                preferred_climate: 'temperate',
+                travel_style: 'digital_nomad',
+                accommodation_type: 'apartment'
+              },
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
+            // 保存默认资料到服务器和本地
+            await userDataSync.saveUserProfile(userProfile.id, profileData)
+          }
         }
-        localStorage.setItem('user_profile_details', JSON.stringify(profileData))
+      } catch (error) {
+        console.error('Error loading user profile:', error)
+        // 出错时使用本地缓存或默认值
+        const localProfile = userDataSync.getLocalUserProfile()
+        if (localProfile) {
+          profileData = localProfile
+        } else {
+          profileData = {
+            id: userProfile.id,
+            name: userProfile.name || userProfile.email?.split('@')[0] || 'Nomad',
+            email: userProfile.email || '',
+            avatar_url: userProfile.avatar_url || '',
+            bio: '',
+            current_city: '',
+            profession: '',
+            company: '',
+            skills: [],
+            interests: [],
+            social_links: {},
+            contact: {},
+            travel_preferences: {
+              budget_range: 'moderate',
+              preferred_climate: 'temperate',
+              travel_style: 'digital_nomad',
+              accommodation_type: 'apartment'
+            },
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          }
+        }
       }
 
       setProfile(profileData)
@@ -141,21 +186,35 @@ export default function ProfilePage() {
   }
 
   const saveProfile = async () => {
-    if (!profile) return
+    if (!profile || !user?.profile?.id) return
 
     try {
       setSaving(true)
-      // 保存到本地存储
+      
+      // 更新更新时间
+      const updatedProfile = {
+        ...profile,
+        updated_at: new Date().toISOString()
+      }
+      
+      // 保存到服务器和本地
+      const success = await userDataSync.saveUserProfile(user.profile.id, updatedProfile)
+      
+      if (success) {
+        setProfile(updatedProfile)
+        setIsEditing(false)
+        setShowSuccessMessage(true)
+        setTimeout(() => setShowSuccessMessage(false), 3000)
+      } else {
+        throw new Error('Failed to save profile to server')
+      }
+    } catch (error) {
+      console.error('Error saving profile:', error)
+      // 即使服务器保存失败，也保存到本地
       localStorage.setItem('user_profile_details', JSON.stringify(profile))
-      
-      // 模拟API调用延迟
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
       setIsEditing(false)
       setShowSuccessMessage(true)
       setTimeout(() => setShowSuccessMessage(false), 3000)
-    } catch (error) {
-      console.error('Error saving profile:', error)
     } finally {
       setSaving(false)
     }

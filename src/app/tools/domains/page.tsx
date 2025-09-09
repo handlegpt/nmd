@@ -28,6 +28,7 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useUser } from '@/contexts/GlobalStateContext';
+import { userDataSync } from '@/lib/userDataSync';
 
 // Security utility functions
 const sanitizeInput = (input: string): string => {
@@ -328,59 +329,129 @@ export default function DomainTrackerPage() {
     });
   }, [domains, transactions]);
 
-  // Initialize data from localStorage
+  // Initialize data from server/localStorage
   useEffect(() => {
-    try {
-      // Load domains from localStorage (encrypted)
-      const savedDomains = localStorage.getItem('domainTracker_domains');
-      if (savedDomains) {
-        const decryptedDomains = decryptData(savedDomains);
-        if (decryptedDomains) {
-          setDomains(decryptedDomains);
-        }
+    const loadData = async () => {
+      if (!user?.profile?.id) {
+        setLoading(false);
+        return;
       }
 
-      // Load transactions from localStorage (encrypted)
-      const savedTransactions = localStorage.getItem('domainTracker_transactions');
-      if (savedTransactions) {
-        const decryptedTransactions = decryptData(savedTransactions);
-        if (decryptedTransactions) {
-          setTransactions(decryptedTransactions);
-        }
-      }
-
-      // Load stats from localStorage (encrypted)
-      const savedStats = localStorage.getItem('domainTracker_stats');
-      if (savedStats) {
-        const decryptedStats = decryptData(savedStats);
-        if (decryptedStats) {
-          setStats(decryptedStats);
-        }
-      }
-    } catch (error) {
-      console.error('Error loading data from localStorage:', error);
-    }
-    
-    setLoading(false);
-  }, []);
-
-  // Save data to localStorage whenever domains, transactions, or stats change
-  useEffect(() => {
-    if (!loading) {
       try {
-        // Encrypt data before saving to localStorage
-        const encryptedDomains = encryptData(domains);
-        const encryptedTransactions = encryptData(transactions);
-        const encryptedStats = encryptData(stats);
-        
-        localStorage.setItem('domainTracker_domains', encryptedDomains);
-        localStorage.setItem('domainTracker_transactions', encryptedTransactions);
-        localStorage.setItem('domainTracker_stats', encryptedStats);
+        // 1. 尝试从服务器加载数据
+        const serverDomains = await userDataSync.loadToolData('domain_tracker_domains', user.profile.id);
+        const serverTransactions = await userDataSync.loadToolData('domain_tracker_transactions', user.profile.id);
+        const serverStats = await userDataSync.loadToolData('domain_tracker_stats', user.profile.id);
+
+        if (serverDomains || serverTransactions || serverStats) {
+          // 使用服务器数据
+          if (serverDomains) setDomains(serverDomains);
+          if (serverTransactions) setTransactions(serverTransactions);
+          if (serverStats) setStats(serverStats);
+        } else {
+          // 2. 服务器没有数据，尝试从本地加载
+          const savedDomains = localStorage.getItem('domainTracker_domains');
+          if (savedDomains) {
+            const decryptedDomains = decryptData(savedDomains);
+            if (decryptedDomains) {
+              setDomains(decryptedDomains);
+              // 将本地数据同步到服务器
+              await userDataSync.saveToolData('domain_tracker_domains', user.profile.id, decryptedDomains);
+            }
+          }
+
+          const savedTransactions = localStorage.getItem('domainTracker_transactions');
+          if (savedTransactions) {
+            const decryptedTransactions = decryptData(savedTransactions);
+            if (decryptedTransactions) {
+              setTransactions(decryptedTransactions);
+              // 将本地数据同步到服务器
+              await userDataSync.saveToolData('domain_tracker_transactions', user.profile.id, decryptedTransactions);
+            }
+          }
+
+          const savedStats = localStorage.getItem('domainTracker_stats');
+          if (savedStats) {
+            const decryptedStats = decryptData(savedStats);
+            if (decryptedStats) {
+              setStats(decryptedStats);
+              // 将本地数据同步到服务器
+              await userDataSync.saveToolData('domain_tracker_stats', user.profile.id, decryptedStats);
+            }
+          }
+        }
       } catch (error) {
-        console.error('Error saving data to localStorage:', error);
+        console.error('Error loading data:', error);
+        // 出错时回退到本地存储
+        try {
+          const savedDomains = localStorage.getItem('domainTracker_domains');
+          if (savedDomains) {
+            const decryptedDomains = decryptData(savedDomains);
+            if (decryptedDomains) setDomains(decryptedDomains);
+          }
+
+          const savedTransactions = localStorage.getItem('domainTracker_transactions');
+          if (savedTransactions) {
+            const decryptedTransactions = decryptData(savedTransactions);
+            if (decryptedTransactions) setTransactions(decryptedTransactions);
+          }
+
+          const savedStats = localStorage.getItem('domainTracker_stats');
+          if (savedStats) {
+            const decryptedStats = decryptData(savedStats);
+            if (decryptedStats) setStats(decryptedStats);
+          }
+        } catch (localError) {
+          console.error('Error loading data from localStorage:', localError);
+        }
       }
+      
+      setLoading(false);
+    };
+
+    loadData();
+  }, [user?.profile?.id]);
+
+  // Save data to server and localStorage whenever domains, transactions, or stats change
+  useEffect(() => {
+    if (!loading && user?.profile?.id) {
+      const saveData = async () => {
+        try {
+          // 1. 保存到服务器
+          await Promise.all([
+            userDataSync.saveToolData('domain_tracker_domains', user.profile.id, domains),
+            userDataSync.saveToolData('domain_tracker_transactions', user.profile.id, transactions),
+            userDataSync.saveToolData('domain_tracker_stats', user.profile.id, stats)
+          ]);
+
+          // 2. 保存到本地作为缓存
+          const encryptedDomains = encryptData(domains);
+          const encryptedTransactions = encryptData(transactions);
+          const encryptedStats = encryptData(stats);
+          
+          localStorage.setItem('domainTracker_domains', encryptedDomains);
+          localStorage.setItem('domainTracker_transactions', encryptedTransactions);
+          localStorage.setItem('domainTracker_stats', encryptedStats);
+        } catch (error) {
+          console.error('Error saving data:', error);
+          // 即使服务器保存失败，也保存到本地
+          try {
+            const encryptedDomains = encryptData(domains);
+            const encryptedTransactions = encryptData(transactions);
+            const encryptedStats = encryptData(stats);
+            
+            localStorage.setItem('domainTracker_domains', encryptedDomains);
+            localStorage.setItem('domainTracker_transactions', encryptedTransactions);
+            localStorage.setItem('domainTracker_stats', encryptedStats);
+          } catch (localError) {
+            console.error('Error saving data to localStorage:', localError);
+          }
+        }
+      };
+
+      saveData();
     }
-  }, [domains, transactions, stats, loading]);
+  }, [domains, transactions, stats, loading, user?.profile?.id]);
 
   // Update stats whenever domains or transactions change
   useEffect(() => {
