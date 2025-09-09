@@ -1319,29 +1319,81 @@ export default function DomainTrackerPage() {
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total Cost</p>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-600">Total Investment Cost</p>
               <p className="text-3xl font-bold text-red-600">${calculateTotalCost().toFixed(2)}</p>
-              <div className="text-xs text-gray-500 mt-1">
-                <div>Purchase: ${domains.reduce((sum, d) => sum + (d.purchase_cost || 0), 0).toFixed(2)}</div>
-                <div>Renewals: ${domains.reduce((sum, d) => sum + (d.total_renewal_paid || 0), 0).toFixed(2)}</div>
+              
+              {/* 详细成本分解 */}
+              <div className="mt-3 bg-red-50 p-3 rounded-lg">
+                <div className="text-sm font-medium text-red-900 mb-2">💰 成本构成</div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-red-800">购买成本</span>
+                    <span className="text-sm font-medium text-red-900">
+                      ${domains.reduce((sum, d) => sum + (d.purchase_cost || 0), 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-red-800">已付续费</span>
+                    <span className="text-sm font-medium text-red-900">
+                      ${domains.reduce((sum, d) => sum + (d.total_renewal_paid || 0), 0).toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="border-t border-red-200 pt-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-red-900">总投资</span>
+                      <span className="text-sm font-bold text-red-900">
+                        ${calculateTotalCost().toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-red-700 mt-2">
+                  💡 包含所有购买费用和已支付的续费费用
+                </div>
               </div>
             </div>
-            <DollarSign className="h-8 w-8 text-red-600" />
+            <DollarSign className="h-8 w-8 text-red-600 ml-4" />
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Net Revenue</p>
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-600">Net Revenue (净收入)</p>
               <p className="text-3xl font-bold text-green-600">${calculateTotalRevenue().toFixed(2)}</p>
-              <div className="text-xs text-gray-500 mt-1">
-                <div>Gross Sales: ${calculateTotalGrossSales().toFixed(2)}</div>
-                <div>Platform Fees: ${calculateTotalPlatformFees().toFixed(2)}</div>
+              
+              {/* 收入详细分解 */}
+              <div className="mt-3 bg-green-50 p-3 rounded-lg">
+                <div className="text-sm font-medium text-green-900 mb-2">💵 收入构成</div>
+                <div className="space-y-2">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-green-800">总销售额</span>
+                    <span className="text-sm font-medium text-green-900">
+                      ${calculateTotalGrossSales().toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-green-800">平台手续费</span>
+                    <span className="text-sm font-medium text-red-600">
+                      -${calculateTotalPlatformFees().toFixed(2)}
+                    </span>
+                  </div>
+                  <div className="border-t border-green-200 pt-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-bold text-green-900">净收入</span>
+                      <span className="text-sm font-bold text-green-900">
+                        ${calculateTotalRevenue().toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-green-700 mt-2">
+                  💡 扣除平台手续费后的实际收入
+                </div>
               </div>
             </div>
-            <TrendingUp className="h-8 w-8 text-green-600" />
+            <TrendingUp className="h-8 w-8 text-green-600 ml-4" />
           </div>
         </div>
 
@@ -1362,19 +1414,72 @@ export default function DomainTrackerPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">
-                {costViewMode === 'annualized' ? 'Annualized Renewal Cost' : 'Current Year Renewal Cost'}
-              </p>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <p className="text-sm font-medium text-gray-600">Renewal Costs</p>
+                <button
+                  onClick={() => setCostViewMode(costViewMode === 'annualized' ? 'actual' : 'annualized')}
+                  className="text-xs bg-blue-100 hover:bg-blue-200 text-blue-700 px-2 py-1 rounded transition-colors"
+                  title="Click to switch view mode"
+                >
+                  {costViewMode === 'annualized' ? 'Show Actual' : 'Show Annualized'}
+                </button>
+              </div>
               <p className="text-3xl font-bold text-orange-600">${getTotalRenewalCostByViewMode().toFixed(2)}</p>
-              <p className="text-xs text-gray-500 mt-1">
-                {costViewMode === 'annualized' 
-                  ? 'Cost per year (renewal cost ÷ cycle years)' 
-                  : 'Actual cost for domains due this year'
-                }
-              </p>
+              
+              {/* 详细分解显示 */}
+              <div className="mt-3 space-y-2">
+                {costViewMode === 'annualized' ? (
+                  <div className="bg-blue-50 p-3 rounded-lg">
+                    <div className="text-sm font-medium text-blue-900 mb-2">📊 Annualized View (平均年成本)</div>
+                    <div className="text-xs text-blue-800 space-y-1">
+                      {domains.filter(d => d.status !== 'sold' && d.status !== 'expired').map(domain => {
+                        const annualizedCost = getAnnualizedCost(domain);
+                        return (
+                          <div key={domain.id} className="flex justify-between">
+                            <span>{domain.domain_name}</span>
+                            <span>${annualizedCost.toFixed(2)}/年</span>
+                          </div>
+                        );
+                      }).slice(0, 3)}
+                      {domains.filter(d => d.status !== 'sold' && d.status !== 'expired').length > 3 && (
+                        <div className="text-blue-600">+{domains.filter(d => d.status !== 'sold' && d.status !== 'expired').length - 3} more domains...</div>
+                      )}
+                    </div>
+                    <div className="text-xs text-blue-700 mt-2">
+                      💡 将多年度续费成本平均到每年，便于预算规划
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-green-50 p-3 rounded-lg">
+                    <div className="text-sm font-medium text-green-900 mb-2">📅 Actual View (今年实际成本)</div>
+                    <div className="text-xs text-green-800 space-y-1">
+                      {domains.filter(d => {
+                        if (d.status === 'sold' || d.status === 'expired') return false;
+                        const renewalYear = new Date(d.next_renewal_date).getFullYear();
+                        return renewalYear === new Date().getFullYear();
+                      }).map(domain => (
+                        <div key={domain.id} className="flex justify-between">
+                          <span>{domain.domain_name}</span>
+                          <span>${domain.renewal_cost.toFixed(2)}</span>
+                        </div>
+                      )).slice(0, 3)}
+                      {domains.filter(d => {
+                        if (d.status === 'sold' || d.status === 'expired') return false;
+                        const renewalYear = new Date(d.next_renewal_date).getFullYear();
+                        return renewalYear === new Date().getFullYear();
+                      }).length === 0 && (
+                        <div className="text-green-600">今年没有域名需要续费</div>
+                      )}
+                    </div>
+                    <div className="text-xs text-green-700 mt-2">
+                      💡 只显示今年实际需要续费的域名成本
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-            <Calendar className="h-8 w-8 text-orange-600" />
+            <Calendar className="h-8 w-8 text-orange-600 ml-4" />
           </div>
         </div>
 
