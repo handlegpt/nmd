@@ -1,7 +1,7 @@
--- 用户数据同步相关表结构
--- 用于存储用户资料和工具数据的跨浏览器同步
+-- User data sync related table structures
+-- For storing user profiles and tool data cross-browser synchronization
 
--- 用户详细资料表
+-- User profile details table
 CREATE TABLE IF NOT EXISTS user_profiles (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   UNIQUE(user_id)
 );
 
--- 用户工具数据表
+-- User tool data table
 CREATE TABLE IF NOT EXISTS user_tool_data (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -23,13 +23,13 @@ CREATE TABLE IF NOT EXISTS user_tool_data (
   UNIQUE(user_id, tool_name)
 );
 
--- 创建索引以提高查询性能
+-- Create indexes for better query performance
 CREATE INDEX IF NOT EXISTS idx_user_profiles_user_id ON user_profiles(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_tool_data_user_id ON user_tool_data(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_tool_data_tool_name ON user_tool_data(tool_name);
 CREATE INDEX IF NOT EXISTS idx_user_tool_data_user_tool ON user_tool_data(user_id, tool_name);
 
--- 创建更新时间触发器
+-- Create update time trigger function
 CREATE OR REPLACE FUNCTION update_updated_at_column()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -38,7 +38,7 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- 为表添加更新时间触发器
+-- Add update time triggers to tables
 DROP TRIGGER IF EXISTS update_user_profiles_updated_at ON user_profiles;
 CREATE TRIGGER update_user_profiles_updated_at
     BEFORE UPDATE ON user_profiles
