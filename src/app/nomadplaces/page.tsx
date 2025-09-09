@@ -41,7 +41,8 @@ import {
   VolumeIcon,
   ZapIcon,
   UsersIcon,
-  MapIcon
+  MapIcon,
+  RefreshCwIcon
 } from 'lucide-react'
 import { Place } from '@/lib/supabase'
 import { useTranslation } from '@/hooks/useTranslation'
@@ -54,6 +55,7 @@ import LoadingSpinner from '@/components/LoadingSpinner'
 import ErrorMessage from '@/components/ErrorMessage'
 import { logInfo, logError } from '@/lib/logger'
 import { PlaceDataService } from '@/lib/placeDataService'
+import { getPlaces } from '@/lib/api'
 import { PLACE_CATEGORIES, getCategoryIcon, getCategoryName, getCategoryColor } from '@/lib/placeCategories'
 import PlaceRecommendationForm from '@/components/PlaceRecommendationForm'
 
@@ -99,17 +101,42 @@ export default function PlacesPage() {
   const [showFilters, setShowFilters] = useState(false)
   const [showAddForm, setShowAddForm] = useState(false)
   const [favorites, setFavorites] = useState<Set<string>>(new Set())
+  
+  // 分页状态
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage] = useState(12)
 
   useEffect(() => {
     fetchPlaces()
+    
+    // 设置定时刷新（每5分钟）
+    const interval = setInterval(fetchPlaces, 5 * 60 * 1000)
+    
+    return () => clearInterval(interval)
   }, [])
 
-  const fetchPlaces = () => {
+  const fetchPlaces = async () => {
     setLoading(true)
     setError(null)
     try {
-      const data = PlaceDataService.getLocalPlaces()
-      setPlaces(data)
+      // 获取本地存储的地点
+      const localPlaces = PlaceDataService.getLocalPlaces()
+      
+      // 获取Supabase的地点数据
+      const supabasePlaces = await getPlaces()
+      
+      // 合并数据并去重
+      const allPlaces = [...localPlaces, ...supabasePlaces]
+      const uniquePlaces = allPlaces.filter((place, index, self) => 
+        index === self.findIndex(p => p.id === place.id)
+      )
+      
+      setPlaces(uniquePlaces)
+      logInfo('Successfully fetched places', { 
+        local: localPlaces.length, 
+        supabase: supabasePlaces.length, 
+        total: uniquePlaces.length 
+      }, 'PlacesPage')
     } catch (error) {
       logError('Error fetching places', error, 'PlacesPage')
       setError('Failed to load places. Please try again.')
@@ -124,7 +151,14 @@ export default function PlacesPage() {
     return Array.from(citySet).sort()
   }, [places])
 
-  // 推荐分算法
+  // 推荐分算法 - 使用useMemo缓存计算结果
+  const placesWithScores = useMemo(() => {
+    return places.map(place => ({
+      ...place,
+      score: calculateRecommendationScore(place)
+    }))
+  }, [places])
+
   const calculateRecommendationScore = (place: Place): PlaceScore => {
     // Wilson评分修正算法
     const rating = place.rating || 0
@@ -175,7 +209,7 @@ export default function PlacesPage() {
 
   // 高级筛选和搜索
   const filteredPlaces = useMemo(() => {
-    let filtered = places.filter(place => {
+    let filtered = placesWithScores.filter(place => {
       // 搜索过滤
       const matchesSearch = !searchTerm || 
         place.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -218,14 +252,8 @@ export default function PlacesPage() {
              matchesWifi && matchesNoise && matchesOutlet && matchesLongStay && matchesSocial
     })
 
-    // 计算推荐分并排序
-    const placesWithScores = filtered.map(place => ({
-      ...place,
-      score: calculateRecommendationScore(place)
-    }))
-
     // 排序
-    placesWithScores.sort((a, b) => {
+    filtered.sort((a, b) => {
       let aValue: any, bValue: any
       
       switch (sortBy) {
@@ -261,8 +289,24 @@ export default function PlacesPage() {
       }
     })
 
-    return placesWithScores
-  }, [places, searchTerm, categoryFilter, cityFilter, priceFilter, wifiFilter, 
+    return filtered
+  }, [placesWithScores, searchTerm, categoryFilter, cityFilter, priceFilter, wifiFilter, 
+      noiseFilter, outletFilter, longStayFilter, socialFilter, sortBy, sortOrder])
+
+  // 分页数据
+  const paginatedPlaces = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    return filteredPlaces.slice(startIndex, endIndex)
+  }, [filteredPlaces, currentPage, itemsPerPage])
+
+  // 总页数
+  const totalPages = Math.ceil(filteredPlaces.length / itemsPerPage)
+
+  // 重置分页当筛选条件改变时
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [searchTerm, categoryFilter, cityFilter, priceFilter, wifiFilter, 
       noiseFilter, outletFilter, longStayFilter, socialFilter, sortBy, sortOrder])
 
   // 清除所有筛选器
@@ -455,6 +499,16 @@ export default function PlacesPage() {
             </div>
 
             <div className="flex items-center gap-3">
+              {/* 刷新按钮 */}
+              <button
+                onClick={fetchPlaces}
+                disabled={loading}
+                className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50"
+                title="Refresh places"
+              >
+                <RefreshCwIcon className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              </button>
+              
               {/* 视图模式切换 */}
               <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
                 <button
@@ -745,7 +799,29 @@ export default function PlacesPage() {
         </div>
 
         {/* 地点列表 */}
-        {filteredPlaces.length === 0 ? (
+        {loading ? (
+          <div className={viewMode === 'grid' 
+            ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            : "space-y-4"
+          }>
+            {Array.from({ length: itemsPerPage }).map((_, index) => (
+              <div key={index} className="card card-md animate-pulse">
+                <div className="h-48 bg-gray-200 rounded-t-lg"></div>
+                <div className="p-4">
+                  <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded mb-4 w-2/3"></div>
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div className="h-8 bg-gray-200 rounded"></div>
+                    <div className="h-8 bg-gray-200 rounded"></div>
+                    <div className="h-8 bg-gray-200 rounded"></div>
+                  </div>
+                  <div className="h-3 bg-gray-200 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredPlaces.length === 0 ? (
           <div className="card card-lg text-center py-12">
             <div className="text-gray-500">
               <h3 className="text-lg font-medium mb-2">{t('places.noResults.title')}</h3>
@@ -766,7 +842,7 @@ export default function PlacesPage() {
             ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
             : "space-y-4"
           }>
-            {filteredPlaces.map((place) => {
+            {paginatedPlaces.map((place) => {
               const category = PLACE_CATEGORIES.find(cat => cat.id === place.category)
               
               if (viewMode === 'list') {
@@ -953,6 +1029,60 @@ export default function PlacesPage() {
                 </div>
               )
             })}
+          </div>
+        )}
+
+        {/* 分页控件 */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center mt-8">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum
+                if (totalPages <= 5) {
+                  pageNum = i + 1
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i
+                } else {
+                  pageNum = currentPage - 2 + i
+                }
+                
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className={`px-3 py-2 border rounded-lg text-sm font-medium ${
+                      currentPage === pageNum
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'border-gray-300 text-gray-700 bg-white hover:bg-gray-50'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                )
+              })}
+              
+              <button
+                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+            
+            <div className="ml-4 text-sm text-gray-500">
+              Page {currentPage} of {totalPages} ({filteredPlaces.length} places)
+            </div>
           </div>
         )}
 
