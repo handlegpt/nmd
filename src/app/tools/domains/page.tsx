@@ -227,6 +227,17 @@ export default function DomainTrackerPage() {
     sortOrder: 'desc' as 'asc' | 'desc'
   });
 
+  // Cost view mode for hybrid renewal cycle management
+  const [costViewMode, setCostViewMode] = useState<'annualized' | 'actual'>('annualized');
+
+  // Renewal reminder settings
+  const [reminderSettings, setReminderSettings] = useState({
+    enabled: true,
+    daysBefore: [60, 30, 7, 1], // Days before expiry to send reminders
+    emailNotifications: true,
+    inAppNotifications: true
+  });
+
   // Toast notification function
   const showToast = (message: string, type: 'success' | 'error' | 'warning' | 'info' = 'info') => {
     setToast({ show: true, message, type });
@@ -399,6 +410,102 @@ export default function DomainTrackerPage() {
     return domains.reduce((total, domain) => {
       return total + getActualCost(domain, year);
     }, 0);
+  };
+
+  // Get cost based on current view mode
+  const getCostByViewMode = (domain: Domain) => {
+    return costViewMode === 'annualized' ? getAnnualizedCost(domain) : domain.renewal_cost;
+  };
+
+  // Get total renewal cost based on current view mode
+  const getTotalRenewalCostByViewMode = () => {
+    if (costViewMode === 'annualized') {
+      return calculateAnnualizedRenewalCost();
+    } else {
+      // For actual mode, calculate current year's actual renewal cost
+      const currentYear = new Date().getFullYear();
+      return calculateActualRenewalCost(currentYear);
+    }
+  };
+
+  // Smart renewal reminder system based on renewal cycles
+  const getRenewalReminders = () => {
+    if (!reminderSettings.enabled) return [];
+
+    const reminders: Array<{
+      domain: string;
+      daysUntilExpiry: number;
+      renewalCost: number;
+      cycleInfo: string;
+      cycleType: string;
+      priority: 'high' | 'medium' | 'low';
+      expiryDate: string;
+      registrar: string;
+    }> = [];
+    const now = new Date();
+
+    domains.forEach(domain => {
+      const expiryDate = new Date(domain.next_renewal_date);
+      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+
+      // Check if domain needs reminder
+      reminderSettings.daysBefore.forEach(days => {
+        if (daysUntilExpiry <= days && daysUntilExpiry > 0) {
+          const renewalCost = domain.next_renewal_amount || domain.renewal_cost;
+          const cycleInfo = domain.renewal_cycle_type === 'annual' ? '1 year' :
+                           domain.renewal_cycle_type === 'biennial' ? '2 years' :
+                           domain.renewal_cycle_type === 'triennial' ? '3 years' :
+                           `${domain.renewal_cycle_years} years`;
+
+          reminders.push({
+            domain: domain.domain_name,
+            daysUntilExpiry,
+            renewalCost,
+            cycleInfo,
+            cycleType: domain.renewal_cycle_type,
+            priority: daysUntilExpiry <= 7 ? 'high' : daysUntilExpiry <= 30 ? 'medium' : 'low',
+            expiryDate: domain.next_renewal_date,
+            registrar: domain.registrar
+          });
+        }
+      });
+    });
+
+    return reminders.sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
+  };
+
+  // Calculate renewal cost forecast for next 12 months
+  const getRenewalForecast = () => {
+    const forecast = [];
+    const now = new Date();
+
+    for (let month = 0; month < 12; month++) {
+      const targetDate = new Date(now.getFullYear(), now.getMonth() + month, 1);
+      const targetYear = targetDate.getFullYear();
+      const targetMonth = targetDate.getMonth();
+
+      let monthlyCost = 0;
+      let domainCount = 0;
+
+      domains.forEach(domain => {
+        const expiryDate = new Date(domain.next_renewal_date);
+        
+        // Check if domain expires in this month
+        if (expiryDate.getFullYear() === targetYear && expiryDate.getMonth() === targetMonth) {
+          monthlyCost += domain.next_renewal_amount || domain.renewal_cost;
+          domainCount++;
+        }
+      });
+
+      forecast.push({
+        month: targetDate.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
+        cost: monthlyCost,
+        domainCount,
+        date: targetDate
+      });
+    }
+
+    return forecast;
   };
 
   // 计算即将到期的域名数量（30天内）
@@ -726,12 +833,22 @@ export default function DomainTrackerPage() {
     const monthlyRenewals: { [key: string]: number } = {};
     const monthlyNewDomains: { [key: string]: number } = {};
     
-    // 分析续费趋势
-    transactions.filter(t => t.type === 'renew').forEach(transaction => {
-      const date = new Date(transaction.date);
-      const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-      monthlyRenewals[monthKey] = (monthlyRenewals[monthKey] || 0) + transaction.amount;
-    });
+    if (costViewMode === 'annualized') {
+      // 年化模式：显示每个月的年化续费成本
+      domains.forEach(domain => {
+        const annualizedCost = getAnnualizedCost(domain);
+        const date = new Date(domain.purchase_date);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        monthlyRenewals[monthKey] = (monthlyRenewals[monthKey] || 0) + annualizedCost;
+      });
+    } else {
+      // 实际模式：显示实际续费交易
+      transactions.filter(t => t.type === 'renew').forEach(transaction => {
+        const date = new Date(transaction.date);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        monthlyRenewals[monthKey] = (monthlyRenewals[monthKey] || 0) + transaction.amount;
+      });
+    }
 
     // 分析新域名趋势
     domains.forEach(domain => {
@@ -758,7 +875,8 @@ export default function DomainTrackerPage() {
 
     domains.forEach(domain => {
       const domainTransactions = transactions.filter(t => t.domain_id === domain.id);
-      const totalCost = domain.purchase_cost + domain.total_renewal_paid;
+      // Use view mode appropriate cost calculation
+      const totalCost = domain.purchase_cost + (costViewMode === 'annualized' ? getAnnualizedCost(domain) : domain.total_renewal_paid);
       const totalRevenue = domainTransactions
         .filter(t => t.type === 'sell')
         .reduce((sum, t) => sum + t.amount, 0);
@@ -1147,8 +1265,16 @@ export default function DomainTrackerPage() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Annual Renewal Cost</p>
-              <p className="text-3xl font-bold text-orange-600">${calculateAnnualRenewalCost().toFixed(2)}</p>
+              <p className="text-sm font-medium text-gray-600">
+                {costViewMode === 'annualized' ? 'Annualized Renewal Cost' : 'Current Year Renewal Cost'}
+              </p>
+              <p className="text-3xl font-bold text-orange-600">${getTotalRenewalCostByViewMode().toFixed(2)}</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {costViewMode === 'annualized' 
+                  ? 'Cost per year (renewal cost ÷ cycle years)' 
+                  : 'Actual cost for domains due this year'
+                }
+              </p>
             </div>
             <Calendar className="h-8 w-8 text-orange-600" />
           </div>
@@ -1962,6 +2088,29 @@ export default function DomainTrackerPage() {
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold text-gray-900">Analytics & Insights</h2>
           <div className="flex space-x-2">
+            {/* Cost View Mode Toggle */}
+            <div className="flex bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setCostViewMode('annualized')}
+                className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                  costViewMode === 'annualized'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Annualized
+              </button>
+              <button
+                onClick={() => setCostViewMode('actual')}
+                className={`px-3 py-1 text-sm rounded-md transition-colors ${
+                  costViewMode === 'actual'
+                    ? 'bg-white text-blue-600 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                Actual
+              </button>
+            </div>
             <select
               value={analyticsFilters.timeRange}
               onChange={(e) => setAnalyticsFilters(prev => ({ ...prev, timeRange: e.target.value }))}
@@ -2067,7 +2216,15 @@ export default function DomainTrackerPage() {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">Renewal Trends</h3>
             <div className="space-y-4">
               <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Monthly Renewal Costs</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  {costViewMode === 'annualized' ? 'Annualized Renewal Costs' : 'Actual Renewal Costs'}
+                </h4>
+                <p className="text-xs text-gray-500 mb-3">
+                  {costViewMode === 'annualized' 
+                    ? 'Shows annualized cost (renewal cost ÷ cycle years) for consistent comparison'
+                    : 'Shows actual renewal cost when domains are due for renewal'
+                  }
+                </p>
                 <div className="space-y-2">
                   {renewalTrends.renewals.slice(-6).map(({ month, amount }) => (
                     <div key={month} className="flex justify-between items-center">
@@ -2193,14 +2350,144 @@ export default function DomainTrackerPage() {
     );
   };
 
-  const renderAlerts = () => (
-    <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900">Alerts & Reminders</h2>
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <p className="text-gray-600">Alert management system coming soon...</p>
+  const renderAlerts = () => {
+    const reminders = getRenewalReminders();
+    const forecast = getRenewalForecast();
+
+    return (
+      <div className="space-y-6">
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-900">Alerts & Reminders</h2>
+          <div className="flex items-center space-x-4">
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                checked={reminderSettings.enabled}
+                onChange={(e) => setReminderSettings(prev => ({ ...prev, enabled: e.target.checked }))}
+                className="mr-2"
+              />
+              <span className="text-sm text-gray-700">Enable Reminders</span>
+            </label>
+          </div>
+        </div>
+
+        {/* Active Reminders */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Active Renewal Reminders</h3>
+          {reminders.length === 0 ? (
+            <p className="text-gray-500 text-center py-8">No domains need renewal reminders at this time.</p>
+          ) : (
+            <div className="space-y-3">
+              {reminders.map((reminder, index) => (
+                <div
+                  key={index}
+                  className={`p-4 rounded-lg border-l-4 ${
+                    reminder.priority === 'high' ? 'border-red-500 bg-red-50' :
+                    reminder.priority === 'medium' ? 'border-yellow-500 bg-yellow-50' :
+                    'border-blue-500 bg-blue-50'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium text-gray-900">{reminder.domain}</h4>
+                      <p className="text-sm text-gray-600">
+                        Expires in {reminder.daysUntilExpiry} day{reminder.daysUntilExpiry !== 1 ? 's' : ''} 
+                        ({new Date(reminder.expiryDate).toLocaleDateString()})
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Renewal cost: ${reminder.renewalCost} for {reminder.cycleInfo}
+                      </p>
+                      <p className="text-xs text-gray-500">Registrar: {reminder.registrar}</p>
+                    </div>
+                    <div className="text-right">
+                      <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${
+                        reminder.priority === 'high' ? 'bg-red-100 text-red-800' :
+                        reminder.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-blue-100 text-blue-800'
+                      }`}>
+                        {reminder.priority.toUpperCase()} PRIORITY
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Renewal Forecast */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">12-Month Renewal Forecast</h3>
+          <div className="space-y-3">
+            {forecast.map((month, index) => (
+              <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <span className="font-medium text-gray-900">{month.month}</span>
+                <div className="text-right">
+                  <span className="text-lg font-semibold text-gray-900">${month.cost.toFixed(2)}</span>
+                  <p className="text-sm text-gray-600">{month.domainCount} domain{month.domainCount !== 1 ? 's' : ''}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Reminder Settings */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Reminder Settings</h3>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Reminder Days</label>
+              <div className="flex flex-wrap gap-2">
+                {[60, 30, 14, 7, 3, 1].map(days => (
+                  <label key={days} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={reminderSettings.daysBefore.includes(days)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setReminderSettings(prev => ({
+                            ...prev,
+                            daysBefore: [...prev.daysBefore, days].sort((a, b) => b - a)
+                          }));
+                        } else {
+                          setReminderSettings(prev => ({
+                            ...prev,
+                            daysBefore: prev.daysBefore.filter(d => d !== days)
+                          }));
+                        }
+                      }}
+                      className="mr-1"
+                    />
+                    <span className="text-sm text-gray-700">{days} days</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center space-x-6">
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={reminderSettings.emailNotifications}
+                  onChange={(e) => setReminderSettings(prev => ({ ...prev, emailNotifications: e.target.checked }))}
+                  className="mr-2"
+                />
+                <span className="text-sm text-gray-700">Email Notifications</span>
+              </label>
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={reminderSettings.inAppNotifications}
+                  onChange={(e) => setReminderSettings(prev => ({ ...prev, inAppNotifications: e.target.checked }))}
+                  className="mr-2"
+                />
+                <span className="text-sm text-gray-700">In-App Notifications</span>
+              </label>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderSettings = () => (
     <div className="space-y-6">
