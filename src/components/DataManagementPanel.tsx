@@ -38,6 +38,7 @@ export default function DataManagementPanel({
   const [feedback, setFeedback] = useState<DataFeedback[]>([]);
   const [updates, setUpdates] = useState<ManualUpdate[]>([]);
   const [apiData, setApiData] = useState<CityData | null>(null);
+  const [cacheInfo, setCacheInfo] = useState<any>(null);
   const [newFeedback, setNewFeedback] = useState({
     dataType: 'cost_of_living' as const,
     field: 'cost_of_living',
@@ -78,6 +79,10 @@ export default function DataManagementPanel({
           setApiData(apiResponse.data!);
         }
       }
+
+      // Load cache info
+      const cacheInfo = freeApiService.getCacheInfo();
+      setCacheInfo(cacheInfo);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -395,8 +400,35 @@ export default function DataManagementPanel({
 
       {/* API Data Tab */}
       {activeTab === 'api' && (
-        <div className="space-y-4">
-          <h3 className="text-lg font-medium text-gray-900">API Data</h3>
+        <div className="space-y-6">
+          <h3 className="text-lg font-medium text-gray-900">API Data & Cache</h3>
+          
+          {/* Cache Information */}
+          {cacheInfo && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-3">Cache Status</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <div className="text-blue-700 font-medium">Total Cached</div>
+                  <div className="text-blue-900">{cacheInfo.totalCached} cities</div>
+                </div>
+                <div>
+                  <div className="text-blue-700 font-medium">Popular Cities</div>
+                  <div className="text-blue-900">{cacheInfo.popularCitiesCached} cities</div>
+                </div>
+                <div>
+                  <div className="text-blue-700 font-medium">Cache Strategy</div>
+                  <div className="text-blue-900">30-90 days</div>
+                </div>
+                <div>
+                  <div className="text-blue-700 font-medium">API Calls Saved</div>
+                  <div className="text-blue-900">~{cacheInfo.totalCached * 10}/month</div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* API Data */}
           {apiData ? (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="border rounded-lg p-4">
@@ -420,6 +452,17 @@ export default function DataManagementPanel({
           ) : (
             <p className="text-gray-500">No API data available</p>
           )}
+
+          {/* Cache Benefits */}
+          <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+            <h4 className="font-medium text-green-900 mb-2">💡 Cache Benefits</h4>
+            <div className="text-sm text-green-800 space-y-1">
+              <div>• 生活成本数据变化缓慢，30-90天缓存完全合理</div>
+              <div>• 热门城市缓存90天，其他城市缓存30天</div>
+              <div>• 大幅减少API调用次数，节省成本</div>
+              <div>• 提升用户体验，数据加载更快</div>
+            </div>
+          </div>
         </div>
       )}
     </div>

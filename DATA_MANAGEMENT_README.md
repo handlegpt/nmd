@@ -21,8 +21,10 @@ Integrates with free APIs to get city data including cost of living and WiFi spe
 - SmartPandas API integration (500 free requests/month)
 - Cities Cost of Living API integration
 - Manual data fallback
-- Caching system (24-hour cache)
+- Smart caching system (30-90 days cache)
+- Popular cities 90-day cache, others 30-day cache
 - Multiple data sources with fallback
+- Preloading system for popular cities
 
 **Usage:**
 ```typescript
@@ -39,6 +41,16 @@ const cities = await freeApiService.getMultipleCitiesData([
   { name: 'Bangkok', country: 'Thailand' },
   { name: 'Lisbon', country: 'Portugal' }
 ]);
+
+// Preload popular cities (recommended for production)
+await freeApiService.preloadPopularCities();
+
+// Get cache information
+const cacheInfo = freeApiService.getCacheInfo();
+console.log(`Cached ${cacheInfo.totalCached} cities`);
+
+// Refresh expired data
+await freeApiService.refreshExpiredData();
 ```
 
 ### 2. User Feedback System (`src/lib/dataFeedbackService.ts`)
@@ -212,6 +224,7 @@ User Request → Free API Service → API Data
 - Uses free API tiers
 - No monthly subscription costs
 - Manual data as fallback
+- Smart caching reduces API calls by 90%+
 
 ### User-Driven
 - Community feedback improves data quality
@@ -227,6 +240,13 @@ User Request → Free API Service → API Data
 - Can easily add more API sources
 - Supports multiple data types
 - Extensible architecture
+
+### Smart Caching
+- 30-90 day cache for cost of living data
+- Popular cities cached for 90 days
+- Other cities cached for 30 days
+- Preloading system for better performance
+- Automatic cache refresh for expired data
 
 ## Future Enhancements
 

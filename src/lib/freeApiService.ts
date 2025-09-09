@@ -32,8 +32,16 @@ export interface ApiResponse {
 }
 
 class FreeApiService {
-  private readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+  // 生活成本数据变化很慢，可以长时间缓存
+  private readonly CACHE_DURATION = 30 * 24 * 60 * 60 * 1000; // 30 days
+  private readonly POPULAR_CITIES_CACHE_DURATION = 90 * 24 * 60 * 60 * 1000; // 90 days for popular cities
   private cache = new Map<string, { data: CityData; timestamp: number }>();
+  
+  // 热门城市列表，这些城市数据更稳定，可以缓存更久
+  private readonly POPULAR_CITIES = [
+    'Bangkok', 'Chiang Mai', 'Lisbon', 'Barcelona', 'Madrid',
+    'Medellin', 'Bali', 'Mexico City', 'Osaka', 'Porto'
+  ];
 
   // SmartPandas API (free tier: 500 requests/month)
   private async fetchFromSmartPandas(cityName: string, country: string): Promise<ApiResponse> {
@@ -249,12 +257,16 @@ class FreeApiService {
     const cacheKey = `${cityName}-${country}`;
     const cached = this.cache.get(cacheKey);
     
+    // 根据城市类型选择不同的缓存时间
+    const isPopularCity = this.POPULAR_CITIES.includes(cityName);
+    const cacheDuration = isPopularCity ? this.POPULAR_CITIES_CACHE_DURATION : this.CACHE_DURATION;
+    
     // Check cache first
-    if (cached && (Date.now() - cached.timestamp) < this.CACHE_DURATION) {
+    if (cached && (Date.now() - cached.timestamp) < cacheDuration) {
       return {
         success: true,
         data: cached.data,
-        source: 'Cache'
+        source: `Cache (${isPopularCity ? '90d' : '30d'})`
       };
     }
 
@@ -319,6 +331,117 @@ class FreeApiService {
       size: this.cache.size,
       keys: Array.from(this.cache.keys())
     };
+  }
+
+  // 预加载热门城市数据
+  async preloadPopularCities(): Promise<void> {
+    console.log('🚀 Preloading popular cities data...');
+    
+    const popularCitiesData = [
+      { name: 'Bangkok', country: 'Thailand' },
+      { name: 'Chiang Mai', country: 'Thailand' },
+      { name: 'Lisbon', country: 'Portugal' },
+      { name: 'Barcelona', country: 'Spain' },
+      { name: 'Madrid', country: 'Spain' },
+      { name: 'Medellin', country: 'Colombia' },
+      { name: 'Bali', country: 'Indonesia' },
+      { name: 'Mexico City', country: 'Mexico' },
+      { name: 'Osaka', country: 'Japan' },
+      { name: 'Porto', country: 'Portugal' }
+    ];
+
+    for (const city of popularCitiesData) {
+      try {
+        // 检查是否已有缓存数据
+        const cacheKey = `${city.name}-${city.country}`;
+        const cached = this.cache.get(cacheKey);
+        
+        if (!cached || (Date.now() - cached.timestamp) > this.POPULAR_CITIES_CACHE_DURATION) {
+          console.log(`📊 Loading data for ${city.name}, ${city.country}...`);
+          await this.getCityData(city.name, city.country);
+          
+          // 添加延迟避免API速率限制
+          await new Promise(resolve => setTimeout(resolve, 100));
+        } else {
+          console.log(`✅ ${city.name}, ${city.country} already cached`);
+        }
+      } catch (error) {
+        console.error(`❌ Error preloading ${city.name}, ${city.country}:`, error);
+      }
+    }
+    
+    console.log('✅ Popular cities preloading completed');
+  }
+
+  // 获取缓存状态信息
+  getCacheInfo(): { 
+    totalCached: number; 
+    popularCitiesCached: number; 
+    cacheAge: Record<string, number>;
+    nextRefresh: Record<string, string>;
+  } {
+    const now = Date.now();
+    const cacheInfo = {
+      totalCached: this.cache.size,
+      popularCitiesCached: 0,
+      cacheAge: {} as Record<string, number>,
+      nextRefresh: {} as Record<string, string>
+    };
+
+    this.cache.forEach((value, key) => {
+      const age = Math.floor((now - value.timestamp) / (1000 * 60 * 60 * 24)); // days
+      cacheInfo.cacheAge[key] = age;
+      
+      const isPopularCity = this.POPULAR_CITIES.some(city => key.includes(city));
+      if (isPopularCity) {
+        cacheInfo.popularCitiesCached++;
+      }
+      
+      const cacheDuration = isPopularCity ? this.POPULAR_CITIES_CACHE_DURATION : this.CACHE_DURATION;
+      const nextRefreshTime = new Date(value.timestamp + cacheDuration);
+      cacheInfo.nextRefresh[key] = nextRefreshTime.toLocaleDateString();
+    });
+
+    return cacheInfo;
+  }
+
+  // 手动刷新特定城市数据
+  async refreshCityData(cityName: string, country: string): Promise<ApiResponse> {
+    const cacheKey = `${cityName}-${country}`;
+    
+    // 清除缓存
+    this.cache.delete(cacheKey);
+    
+    // 重新获取数据
+    return await this.getCityData(cityName, country);
+  }
+
+  // 批量刷新过期数据
+  async refreshExpiredData(): Promise<void> {
+    console.log('🔄 Refreshing expired cache data...');
+    
+    const now = Date.now();
+    const expiredKeys: string[] = [];
+    
+    this.cache.forEach((value, key) => {
+      const isPopularCity = this.POPULAR_CITIES.some(city => key.includes(city));
+      const cacheDuration = isPopularCity ? this.POPULAR_CITIES_CACHE_DURATION : this.CACHE_DURATION;
+      
+      if ((now - value.timestamp) > cacheDuration) {
+        expiredKeys.push(key);
+      }
+    });
+    
+    for (const key of expiredKeys) {
+      const [cityName, country] = key.split('-');
+      console.log(`🔄 Refreshing expired data for ${cityName}, ${country}`);
+      await this.refreshCityData(cityName, country);
+      
+      // 添加延迟避免API速率限制
+      await new Promise(resolve => setTimeout(resolve, 200));
+    }
+    
+    console.log(`✅ Refreshed ${expiredKeys.length} expired cache entries`);
   }
 }
 
