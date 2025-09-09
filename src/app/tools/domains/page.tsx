@@ -312,6 +312,8 @@ export default function DomainTrackerPage() {
       totalProfit,
       roi,
       expiringSoon: domains.filter(d => {
+        // Skip sold or expired domains
+        if (d.status === 'sold' || d.status === 'expired') return false;
         const daysUntilExpiry = Math.ceil((new Date(d.next_renewal_date).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
         return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
       }).length,
@@ -481,6 +483,11 @@ export default function DomainTrackerPage() {
     const now = new Date();
 
     domains.forEach(domain => {
+      // Skip domains that are sold or expired
+      if (domain.status === 'sold' || domain.status === 'expired') {
+        return;
+      }
+
       const expiryDate = new Date(domain.next_renewal_date);
       const daysUntilExpiry = Math.ceil((expiryDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 
@@ -524,6 +531,11 @@ export default function DomainTrackerPage() {
       let domainCount = 0;
 
       domains.forEach(domain => {
+        // Skip domains that are sold or expired
+        if (domain.status === 'sold' || domain.status === 'expired') {
+          return;
+        }
+
         const expiryDate = new Date(domain.next_renewal_date);
         
         // Check if domain expires in this month
@@ -547,6 +559,8 @@ export default function DomainTrackerPage() {
   // 计算即将到期的域名数量（30天内）
   const calculateExpiringSoon = () => {
     return domains.filter(domain => {
+      // Skip sold or expired domains
+      if (domain.status === 'sold' || domain.status === 'expired') return false;
       const days = calculateDaysUntilExpiry(domain.next_renewal_date);
       return days <= 30 && days > 0;
     }).length;
@@ -991,6 +1005,8 @@ export default function DomainTrackerPage() {
 
     // 续费提醒
     const expiringSoon = domains.filter(d => {
+      // Skip sold or expired domains
+      if (d.status === 'sold' || d.status === 'expired') return false;
       const expiryDate = new Date(d.next_renewal_date);
       const daysUntilExpiry = Math.ceil((expiryDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
       return daysUntilExpiry <= 30 && daysUntilExpiry > 0;
