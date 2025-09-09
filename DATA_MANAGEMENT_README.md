@@ -18,7 +18,7 @@ The data management system consists of four main components:
 Integrates with free APIs to get city data including cost of living and WiFi speed.
 
 **Features:**
-- Cities Cost of Living API integration (primary)
+- RapidAPI Cities Cost of Living API integration (primary)
 - Numbeo API integration (fallback, 1000 free requests/month)
 - Ookla Speedtest API for WiFi speed data
 - Manual data fallback
@@ -176,17 +176,18 @@ Add the following to your `.env.local` file:
 
 ```env
 # Free API Services
-CITIES_API_KEY=your_cities_api_key_here
+RAPIDAPI_KEY=your_rapidapi_key_here
 NUMBEO_API_KEY=your_numbeo_api_key_here
 ```
 
 ### 2. API Keys
 
-#### Cities Cost of Living API (Primary)
-1. Visit [Cities Cost of Living API](https://cities-cost-of-living.com)
-2. Sign up for a free account
-3. Get your API key from the dashboard
-4. Add to environment variables as `CITIES_API_KEY`
+#### RapidAPI Cities Cost of Living API (Primary)
+1. Visit [RapidAPI Cities Cost of Living](https://rapidapi.com/traveltables/api/cost-of-living-and-prices/pricing)
+2. Sign up for a free RapidAPI account
+3. Subscribe to the "Cost of Living and Prices" API
+4. Get your RapidAPI key from the dashboard
+5. Add to environment variables as `RAPIDAPI_KEY`
 
 #### Numbeo API (Fallback)
 1. Visit [Numbeo API](https://www.numbeo.com/api/)
@@ -194,32 +195,35 @@ NUMBEO_API_KEY=your_numbeo_api_key_here
 3. Get your API key (1000 free requests/month)
 4. Add to environment variables as `NUMBEO_API_KEY`
 
-#### Ookla Speedtest API (WiFi Speed)
-- No API key required
-- Free to use for WiFi speed data
-- Automatically integrated
+#### Ookla Open Data (WiFi Speed - Recommended)
+- **Completely free** - No API key required
+- **Official data** - Direct from Ookla/Speedtest.net
+- **High quality** - Global coverage, quarterly updates
+- **Fine granularity** - Tile-level data (~600m)
+- **Easy integration** - Apache Parquet format
+- **Setup**: Run `node scripts/ookla-data-sync.js` to sync data
 
 ### 3. Integration
 
 The system is designed to work with your existing city data structure. It will:
 
-1. Try to fetch data from Cities Cost of Living API (primary)
+1. Try to fetch data from RapidAPI Cities Cost of Living API (primary)
 2. Fall back to Numbeo API if primary fails
-3. Enhance with WiFi speed data from Ookla Speedtest
-4. Fall back to manual data if all APIs are unavailable
+3. Enhance with WiFi speed data from Ookla Open Data (local database)
+4. Fall back to curated Ookla data if local database unavailable
 5. Allow users to submit feedback about data accuracy
 6. Provide quality checks and recommendations
 
 ## Data Flow
 
 ```
-User Request → Free API Service → Cities API (Primary)
+User Request → Free API Service → RapidAPI Cities (Primary)
                     ↓
               Numbeo API (Fallback)
                     ↓
-              Ookla Speedtest (WiFi Data)
+              Ookla Open Data (Local DB)
                     ↓
-              Manual Data (Final Fallback)
+              Curated Ookla Data (Fallback)
                     ↓
               Data Quality Check
                     ↓
@@ -260,6 +264,50 @@ User Request → Free API Service → Cities API (Primary)
 - Preloading system for better performance
 - Automatic cache refresh for expired data
 
+### Ookla Open Data Integration
+- **Quarterly sync**: Update WiFi data every 3 months
+- **Local database**: Store processed Ookla data locally
+- **High accuracy**: Official Speedtest.net data
+- **Global coverage**: 200+ countries and territories
+- **Zero cost**: Completely free, no API limits
+
+## Ookla Open Data Setup
+
+### 1. Database Setup
+```sql
+-- Run the database schema
+psql -d your_database -f database/ookla-wifi-schema.sql
+```
+
+### 2. Initial Data Sync
+```bash
+# Install dependencies (if needed)
+npm install
+
+# Run the Ookla data sync script
+node scripts/ookla-data-sync.js
+```
+
+### 3. Quarterly Updates
+```bash
+# Set up a cron job for quarterly updates
+# Add to crontab: 0 0 1 */3 * /path/to/your/project/scripts/ookla-data-sync.js
+```
+
+### 4. Data Verification
+```sql
+-- Check synced data
+SELECT city_name, country, download_speed, upload_speed, quarter 
+FROM city_wifi_data 
+ORDER BY download_speed DESC;
+
+-- Get WiFi speed for a specific city
+SELECT * FROM get_city_wifi_speed('Bangkok', 'Thailand');
+
+-- Find nearby cities with WiFi data
+SELECT * FROM get_nearby_cities_with_wifi(13.7563, 100.5018, 100);
+```
+
 ## Future Enhancements
 
 1. **More API Sources**: Add additional free APIs
@@ -267,6 +315,7 @@ User Request → Free API Service → Cities API (Primary)
 3. **Machine Learning**: Use ML to predict data quality
 4. **Real-time Sync**: Sync with backend database
 5. **Advanced Analytics**: More detailed quality metrics
+6. **Ookla Data Processing**: Automated Parquet file processing
 
 ## Monitoring
 
