@@ -120,12 +120,16 @@ interface DomainTransaction {
   id: string;
   domain_id: string;
   type: 'buy' | 'renew' | 'sell' | 'transfer' | 'fee';
-  amount: number;
+  amount: number; // 实际收到的金额（扣除手续费后）
   currency: string;
   date: string;
   notes: string;
   platform?: string; // 交易平台 (如: GoDaddy, Namecheap, Afternic, Sedo等)
   transaction_time?: string; // 具体交易时间 (可选，如果不填则使用date)
+  // 新增手续费相关字段
+  gross_amount?: number; // 总销售额（手续费前）
+  fee_percentage?: number; // 手续费百分比
+  fee_amount?: number; // 手续费金额
 }
 
 interface DomainStats {
@@ -181,7 +185,11 @@ export default function DomainTrackerPage() {
     currency: 'USD',
     notes: '',
     platform: '',
-    transaction_time: ''
+    transaction_time: '',
+    // 手续费相关字段
+    gross_amount: 0,
+    fee_percentage: 0,
+    fee_amount: 0
   });
 
   // Portfolio filtering and batch operations
@@ -230,6 +238,20 @@ export default function DomainTrackerPage() {
   // Cost view mode for hybrid renewal cycle management
   const [costViewMode, setCostViewMode] = useState<'annualized' | 'actual'>('annualized');
 
+  // Platform fee presets
+  const platformFeePresets = {
+    'Afternic': 15,
+    'Sedo': 10,
+    'GoDaddy': 20,
+    'Namecheap': 15,
+    'Flippa': 10,
+    'Dan.com': 9,
+    'Epik': 10,
+    'Uniregistry': 10,
+    'Name.com': 15,
+    'Other': 0
+  };
+
   // Renewal reminder settings
   const [reminderSettings, setReminderSettings] = useState({
     enabled: true,
@@ -260,6 +282,20 @@ export default function DomainTrackerPage() {
     return transactions
       .filter(t => t.type === 'sell')
       .reduce((total, t) => total + t.amount, 0);
+  };
+
+  // Calculate total gross sales (before fees)
+  const calculateTotalGrossSales = () => {
+    return transactions
+      .filter(t => t.type === 'sell')
+      .reduce((total, t) => total + (t.gross_amount || t.amount), 0);
+  };
+
+  // Calculate total platform fees paid
+  const calculateTotalPlatformFees = () => {
+    return transactions
+      .filter(t => t.type === 'sell')
+      .reduce((total, t) => total + (t.fee_amount || 0), 0);
   };
 
   // Update stats based on current data
@@ -1082,6 +1118,21 @@ export default function DomainTrackerPage() {
       return;
     }
 
+    // Calculate fee for sell transactions
+    let grossAmount = validatedAmount;
+    let feeAmount = 0;
+    let feePercentage = 0;
+
+    if (newTransaction.type === 'sell' && newTransaction.gross_amount > 0) {
+      grossAmount = newTransaction.gross_amount;
+      feeAmount = grossAmount - validatedAmount;
+      feePercentage = grossAmount > 0 ? (feeAmount / grossAmount) * 100 : 0;
+    } else if (newTransaction.type === 'sell' && newTransaction.fee_percentage > 0) {
+      feePercentage = newTransaction.fee_percentage;
+      feeAmount = (validatedAmount * feePercentage) / (100 - feePercentage);
+      grossAmount = validatedAmount + feeAmount;
+    }
+
     const transaction: DomainTransaction = {
       id: crypto.randomUUID(),
       domain_id: newTransaction.domain_id,
@@ -1091,7 +1142,11 @@ export default function DomainTrackerPage() {
       date: new Date().toISOString().split('T')[0],
       notes: sanitizedNotes,
       platform: sanitizedPlatform || undefined,
-      transaction_time: newTransaction.transaction_time || undefined
+      transaction_time: newTransaction.transaction_time || undefined,
+      // 手续费相关字段
+      gross_amount: newTransaction.type === 'sell' ? grossAmount : undefined,
+      fee_percentage: newTransaction.type === 'sell' ? feePercentage : undefined,
+      fee_amount: newTransaction.type === 'sell' ? feeAmount : undefined
     };
 
     setTransactions(prev => [...prev, transaction]);
@@ -1125,7 +1180,11 @@ export default function DomainTrackerPage() {
       currency: 'USD',
       notes: '',
       platform: '',
-      transaction_time: ''
+      transaction_time: '',
+      // 手续费相关字段
+      gross_amount: 0,
+      fee_percentage: 0,
+      fee_amount: 0
     });
     
     setShowAddTransactionModal(false);
@@ -1240,8 +1299,12 @@ export default function DomainTrackerPage() {
         <div className="bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600">Total Revenue</p>
+              <p className="text-sm font-medium text-gray-600">Net Revenue</p>
               <p className="text-3xl font-bold text-green-600">${stats.totalRevenue.toFixed(2)}</p>
+              <div className="text-xs text-gray-500 mt-1">
+                <div>Gross Sales: ${calculateTotalGrossSales().toFixed(2)}</div>
+                <div>Platform Fees: ${calculateTotalPlatformFees().toFixed(2)}</div>
+              </div>
             </div>
             <TrendingUp className="h-8 w-8 text-green-600" />
           </div>
@@ -2060,7 +2123,17 @@ export default function DomainTrackerPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${transaction.amount.toFixed(2)} {transaction.currency}
+                      <div>
+                        <div className="font-medium">${transaction.amount.toFixed(2)} {transaction.currency}</div>
+                        {transaction.type === 'sell' && transaction.gross_amount && transaction.gross_amount > transaction.amount && (
+                          <div className="text-xs text-gray-500">
+                            Gross: ${transaction.gross_amount.toFixed(2)}
+                            {transaction.fee_amount && transaction.fee_amount > 0 && (
+                              <span> • Fee: ${transaction.fee_amount.toFixed(2)}</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       {transaction.notes}
@@ -2911,27 +2984,104 @@ export default function DomainTrackerPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Amount ($) *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {newTransaction.type === 'sell' ? 'Net Amount Received ($) *' : 'Amount ($) *'}
+                </label>
                 <input 
                   type="number" 
                   step="0.01"
-                  placeholder="12.99"
+                  placeholder={newTransaction.type === 'sell' ? '850.00 (after fees)' : '12.99'}
                   value={newTransaction.amount || ''}
                   onChange={(e) => setNewTransaction(prev => ({ ...prev, amount: validateNumericInput(e.target.value, 0, 1000000) }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
+                {newTransaction.type === 'sell' && (
+                  <p className="text-xs text-gray-500 mt-1">Amount you actually received after platform fees</p>
+                )}
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Platform</label>
-                <input 
-                  type="text" 
-                  placeholder="GoDaddy, Namecheap, Afternic, Sedo, etc."
-                  value={newTransaction.platform}
-                  onChange={(e) => setNewTransaction(prev => ({ ...prev, platform: sanitizeInput(e.target.value) }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <p className="text-xs text-gray-500 mt-1">Optional: Where the transaction took place</p>
-              </div>
+
+              {/* 手续费相关字段 - 仅在出售交易时显示 */}
+              {newTransaction.type === 'sell' && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+                    <select 
+                      value={newTransaction.platform}
+                      onChange={(e) => {
+                        const platform = e.target.value;
+                        const feePercentage = platformFeePresets[platform as keyof typeof platformFeePresets] || 0;
+                        setNewTransaction(prev => ({ 
+                          ...prev, 
+                          platform: platform,
+                          fee_percentage: feePercentage
+                        }));
+                      }}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">Select platform...</option>
+                      {Object.keys(platformFeePresets).map(platform => (
+                        <option key={platform} value={platform}>
+                          {platform} {platformFeePresets[platform as keyof typeof platformFeePresets] > 0 ? `(${platformFeePresets[platform as keyof typeof platformFeePresets]}%)` : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Gross Sale Price ($)</label>
+                    <input 
+                      type="number" 
+                      step="0.01"
+                      placeholder="1000.00"
+                      value={newTransaction.gross_amount || ''}
+                      onChange={(e) => setNewTransaction(prev => ({ ...prev, gross_amount: validateNumericInput(e.target.value, 0, 1000000) }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Total sale price before platform fees</p>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Fee Percentage (%)</label>
+                    <input 
+                      type="number" 
+                      step="0.1"
+                      placeholder="15.0"
+                      value={newTransaction.fee_percentage || ''}
+                      onChange={(e) => setNewTransaction(prev => ({ ...prev, fee_percentage: validateNumericInput(e.target.value, 0, 100) }))}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Platform fee percentage (e.g., 15 for 15%)</p>
+                  </div>
+
+                  {/* 自动计算显示 */}
+                  {newTransaction.gross_amount > 0 && newTransaction.amount > 0 && (
+                    <div className="bg-blue-50 p-3 rounded-lg">
+                      <h4 className="text-sm font-medium text-blue-900 mb-2">Fee Calculation</h4>
+                      <div className="text-sm text-blue-800 space-y-1">
+                        <div>Gross Sale: ${newTransaction.gross_amount.toFixed(2)}</div>
+                        <div>Platform Fee: ${(newTransaction.gross_amount - newTransaction.amount).toFixed(2)}</div>
+                        <div>Net Received: ${newTransaction.amount.toFixed(2)}</div>
+                        <div>Effective Fee Rate: {((newTransaction.gross_amount - newTransaction.amount) / newTransaction.gross_amount * 100).toFixed(1)}%</div>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* 非出售交易的Platform字段 */}
+              {newTransaction.type !== 'sell' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Platform</label>
+                  <input 
+                    type="text" 
+                    placeholder="GoDaddy, Namecheap, Afternic, Sedo, etc."
+                    value={newTransaction.platform}
+                    onChange={(e) => setNewTransaction(prev => ({ ...prev, platform: sanitizeInput(e.target.value) }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">Optional: Where the transaction took place</p>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Time</label>
                 <input 

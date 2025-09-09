@@ -8,14 +8,12 @@ import { Translations } from '@/types/translations'
 // 静态导入翻译文件
 import zhTranslations from '@/locales/zh.json'
 import enTranslations from '@/locales/en.json'
-import esTranslations from '@/locales/es.json'
 import jaTranslations from '@/locales/ja.json'
 
 // 翻译文件映射
 const TRANSLATIONS_MAP: Record<Locale, Translations> = {
   zh: zhTranslations,
   en: enTranslations,
-  es: esTranslations,
   ja: jaTranslations,
 }
 
@@ -47,7 +45,7 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         const urlParams = new URLSearchParams(window.location.search)
         const urlLocale = urlParams.get('lang') as Locale
         
-        if (urlLocale && ['zh', 'es', 'ja', 'en'].includes(urlLocale)) {
+        if (urlLocale && ['zh', 'ja', 'en'].includes(urlLocale)) {
           setCurrentLocale(urlLocale)
           return
         }
@@ -56,8 +54,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         const pathname = window.location.pathname
         if (pathname.startsWith('/zh')) {
           setCurrentLocale('zh')
-        } else if (pathname.startsWith('/es')) {
-          setCurrentLocale('es')
         } else if (pathname.startsWith('/ja')) {
           setCurrentLocale('ja')
         } else {

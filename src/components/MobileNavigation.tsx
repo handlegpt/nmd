@@ -200,7 +200,6 @@ export default function MobileNavigation() {
               <select className="text-sm bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-1">
                 <option value="en">English</option>
                 <option value="zh">中文</option>
-                <option value="es">Español</option>
                 <option value="ja">日本語</option>
               </select>
             </div>

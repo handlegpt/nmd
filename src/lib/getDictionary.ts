@@ -1,14 +1,12 @@
 // 静态导入翻译文件，避免动态导入错误
 import zhTranslations from '../locales/zh.json'
 import enTranslations from '../locales/en.json'
-import esTranslations from '../locales/es.json'
 import jaTranslations from '../locales/ja.json'
 
 // 翻译文件映射
 const TRANSLATIONS_MAP = {
   zh: zhTranslations,
   en: enTranslations,
-  es: esTranslations,
   ja: jaTranslations,
 } as const
 
@@ -18,8 +16,6 @@ export const getDictionary = async (locale: string) => {
     switch (locale) {
       case 'zh':
         return TRANSLATIONS_MAP.zh
-      case 'es':
-        return TRANSLATIONS_MAP.es
       case 'ja':
         return TRANSLATIONS_MAP.ja
       case 'en':

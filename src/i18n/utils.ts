@@ -11,13 +11,13 @@ export function getCurrentLocale(): Locale {
   const urlParams = new URLSearchParams(window.location.search)
   const urlLocale = urlParams.get('lang') as Locale
   
-  if (urlLocale && ['en', 'zh', 'es', 'ja'].includes(urlLocale)) {
+  if (urlLocale && ['en', 'zh', 'ja'].includes(urlLocale)) {
     return urlLocale
   }
 
   // Then try to get from localStorage
   const storedLocale = localStorage.getItem(LOCALE_KEY) as Locale
-  if (storedLocale && ['en', 'zh', 'es', 'ja'].includes(storedLocale)) {
+  if (storedLocale && ['en', 'zh', 'ja'].includes(storedLocale)) {
     return storedLocale
   }
 
