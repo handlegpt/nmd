@@ -57,11 +57,23 @@ export async function getWorldTime(timezone: string) {
 
 
 
+// Simple cache for cities and places data
+let citiesCache: { data: City[] | null; timestamp: number } = { data: null, timestamp: 0 }
+let placesCache: { data: Place[] | null; timestamp: number } = { data: null, timestamp: 0 }
+const CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+
 // City related APIs
 export async function getCities(): Promise<City[]> {
   if (!supabase) {
     console.error('❌ Supabase client not available')
     return []
+  }
+
+  // Check cache first
+  const now = Date.now()
+  if (citiesCache.data && (now - citiesCache.timestamp) < CACHE_DURATION) {
+    console.log('📦 Using cached cities data')
+    return citiesCache.data
   }
 
   try {
@@ -78,6 +90,8 @@ export async function getCities(): Promise<City[]> {
 
     if (cities && cities.length > 0) {
       console.log(`✅ Successfully fetched ${cities.length} cities from Supabase`)
+      // Update cache
+      citiesCache = { data: cities, timestamp: now }
       return cities
     }
 
@@ -160,6 +174,15 @@ export async function getPlaces(cityId?: string): Promise<Place[]> {
     return getFallbackPlaces(cityId)
   }
 
+  // Check cache first (only for general places, not city-specific)
+  if (!cityId) {
+    const now = Date.now()
+    if (placesCache.data && (now - placesCache.timestamp) < CACHE_DURATION) {
+      console.log('📦 Using cached places data')
+      return placesCache.data
+    }
+  }
+
   try {
     console.log('🔍 Fetching places from Supabase...')
     let query = supabase
@@ -180,10 +203,15 @@ export async function getPlaces(cityId?: string): Promise<Place[]> {
 
     if (places && places.length > 0) {
       console.log(`✅ Successfully fetched ${places.length} places from Supabase`)
+      // Update cache for general places
+      if (!cityId) {
+        placesCache = { data: places, timestamp: Date.now() }
+      }
       return places
     }
 
-    console.log('⚠️ No places found in database, using fallback data')
+    // 减少警告日志，改为信息日志
+    console.log('ℹ️ No places found in database, using fallback data')
     return getFallbackPlaces(cityId)
   } catch (error) {
     console.error('❌ Failed to fetch places from Supabase:', error)

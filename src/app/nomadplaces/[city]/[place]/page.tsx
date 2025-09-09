@@ -51,7 +51,8 @@ export default function PlaceDetailPage() {
         logInfo('Place found', { place: matchedPlace.name }, 'PlaceDetailPage')
       } else {
         setError('Place not found')
-        logError('Place not found', { citySlug, placeSlug }, 'PlaceDetailPage')
+        // 改为info级别，因为这是正常的业务逻辑，不是错误
+        logInfo('Place not found', { citySlug, placeSlug }, 'PlaceDetailPage')
       }
     } catch (error) {
       logError('Error fetching place data', error, 'PlaceDetailPage')

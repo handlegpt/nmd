@@ -175,22 +175,30 @@ export default function HeroSection() {
             setIsLoading(false)
           },
           async (error) => {
-            console.log('Geolocation failed:', error)
+            // 减少控制台错误日志，改为更友好的提示
+            const errorMessages: Record<number, string> = {
+              [error.PERMISSION_DENIED]: 'Location permission denied',
+              [error.POSITION_UNAVAILABLE]: 'Location information unavailable',
+              [error.TIMEOUT]: 'Location request timed out'
+            }
+            
+            const errorMessage = errorMessages[error.code] || 'Unknown geolocation error'
+            console.log(`Geolocation failed: ${errorMessage}`)
             
             // Handle specific error cases
             switch (error.code) {
               case error.PERMISSION_DENIED:
                 setLocationPermission('denied')
-                console.log('User denied geolocation permission')
                 break
               case error.POSITION_UNAVAILABLE:
-                console.log('Location information unavailable')
+                // 位置信息不可用，这是常见情况，不需要特殊处理
                 break
               case error.TIMEOUT:
-                console.log('Location request timed out')
+                // 超时，尝试IP定位
                 break
               default:
-                console.log('Unknown geolocation error')
+                // 其他错误
+                break
             }
             
             // Fallback to IP-based location
