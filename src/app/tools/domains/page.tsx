@@ -298,6 +298,13 @@ export default function DomainTrackerPage() {
       .reduce((total, t) => total + (t.fee_amount || 0), 0);
   };
 
+  // Calculate overall ROI
+  const calculateOverallROI = () => {
+    const totalCost = calculateTotalCost();
+    const totalRevenue = calculateTotalRevenue();
+    return totalCost > 0 ? ((totalRevenue - totalCost) / totalCost) * 100 : 0;
+  };
+
   // Update stats based on current data
   const updateStats = useCallback(() => {
     const totalCost = calculateTotalCost();
@@ -1304,7 +1311,7 @@ export default function DomainTrackerPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Domains</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.totalDomains}</p>
+              <p className="text-3xl font-bold text-gray-900">{domains.length}</p>
             </div>
             <Globe className="h-8 w-8 text-blue-600" />
           </div>
@@ -1314,7 +1321,7 @@ export default function DomainTrackerPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Total Cost</p>
-              <p className="text-3xl font-bold text-red-600">${stats.totalCost.toFixed(2)}</p>
+              <p className="text-3xl font-bold text-red-600">${calculateTotalCost().toFixed(2)}</p>
               <div className="text-xs text-gray-500 mt-1">
                 <div>Purchase: ${domains.reduce((sum, d) => sum + (d.purchase_cost || 0), 0).toFixed(2)}</div>
                 <div>Renewals: ${domains.reduce((sum, d) => sum + (d.total_renewal_paid || 0), 0).toFixed(2)}</div>
@@ -1328,7 +1335,7 @@ export default function DomainTrackerPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">Net Revenue</p>
-              <p className="text-3xl font-bold text-green-600">${stats.totalRevenue.toFixed(2)}</p>
+              <p className="text-3xl font-bold text-green-600">${calculateTotalRevenue().toFixed(2)}</p>
               <div className="text-xs text-gray-500 mt-1">
                 <div>Gross Sales: ${calculateTotalGrossSales().toFixed(2)}</div>
                 <div>Platform Fees: ${calculateTotalPlatformFees().toFixed(2)}</div>
@@ -1342,8 +1349,8 @@ export default function DomainTrackerPage() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-medium text-gray-600">ROI</p>
-              <p className={`text-3xl font-bold ${stats.roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {stats.roi.toFixed(1)}%
+              <p className={`text-3xl font-bold ${calculateOverallROI() >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {calculateOverallROI().toFixed(1)}%
               </p>
             </div>
             <BarChart3 className="h-8 w-8 text-purple-600" />
