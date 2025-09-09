@@ -921,7 +921,7 @@ export default function PlacesPage() {
                     {/* 操作按钮 */}
                     <div className="flex gap-2">
                       <FixedLink
-                        href={`/places/${place.id}`}
+                        href={generatePlaceUrl(place)}
                         className="flex-1 btn btn-sm btn-outline"
                       >
                         {t('places.viewDetails')}
