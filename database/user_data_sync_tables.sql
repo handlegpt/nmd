@@ -51,10 +51,10 @@ CREATE TRIGGER update_user_tool_data_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
--- 添加注释
-COMMENT ON TABLE user_profiles IS '用户详细资料表，存储用户的个人资料信息';
-COMMENT ON TABLE user_tool_data IS '用户工具数据表，存储各种工具的用户数据';
-COMMENT ON COLUMN user_profiles.profile_data IS '用户资料数据，包含姓名、头像、偏好等信息';
-COMMENT ON COLUMN user_tool_data.tool_name IS '工具名称，如domain_tracker、city_preferences等';
-COMMENT ON COLUMN user_tool_data.data IS '工具数据，JSON格式存储';
-COMMENT ON COLUMN user_tool_data.version IS '数据版本号，用于冲突检测';
+-- Add comments
+COMMENT ON TABLE user_profiles IS 'User profile details table, stores user personal information';
+COMMENT ON TABLE user_tool_data IS 'User tool data table, stores user data for various tools';
+COMMENT ON COLUMN user_profiles.profile_data IS 'User profile data, including name, avatar, preferences, etc.';
+COMMENT ON COLUMN user_tool_data.tool_name IS 'Tool name, such as domain_tracker, city_preferences, etc.';
+COMMENT ON COLUMN user_tool_data.data IS 'Tool data, stored in JSON format';
+COMMENT ON COLUMN user_tool_data.version IS 'Data version number for conflict detection';
