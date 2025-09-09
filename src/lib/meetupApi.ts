@@ -157,68 +157,9 @@ function formatLastSeen(lastSeen: string): string {
 
 // 获取模拟用户数据
 function getMockUsers(city: string): MeetupUser[] {
-  return [
-    {
-      id: '1',
-      name: 'Sarah Chen',
-      avatar: 'SC',
-      location: `${city}, Japan`,
-      status: 'online',
-      lastSeen: '2分钟前',
-      interests: ['咖啡', '摄影', '技术'],
-      isAvailable: true,
-      timezone: 'Asia/Tokyo',
-      currentCity: city,
-      distance: 2.5,
-      mutualInterests: ['咖啡', '摄影'],
-      meetupCompatibility: 85
-    },
-    {
-      id: '2',
-      name: 'Alex Rodriguez',
-      avatar: 'AR',
-      location: `${city}, Japan`,
-      status: 'online',
-      lastSeen: '5分钟前',
-      interests: ['创业', '旅行', '美食'],
-      isAvailable: true,
-      timezone: 'Asia/Tokyo',
-      currentCity: city,
-      distance: 1.8,
-      mutualInterests: ['旅行', '美食'],
-      meetupCompatibility: 75
-    },
-    {
-      id: '3',
-      name: 'Yuki Tanaka',
-      avatar: 'YT',
-      location: `${city}, Japan`,
-      status: 'offline',
-      lastSeen: '1小时前',
-      interests: ['设计', '音乐', '文化'],
-      isAvailable: false,
-      timezone: 'Asia/Tokyo',
-      currentCity: city,
-      distance: 3.2,
-      mutualInterests: ['文化'],
-      meetupCompatibility: 45
-    },
-    {
-      id: '4',
-      name: 'Emma Wilson',
-      avatar: 'EW',
-      location: `${city}, Japan`,
-      status: 'online',
-      lastSeen: '刚刚',
-      interests: ['写作', '瑜伽', '环保'],
-      isAvailable: true,
-      timezone: 'Asia/Tokyo',
-      currentCity: city,
-      distance: 0.8,
-      mutualInterests: ['写作'],
-      meetupCompatibility: 65
-    }
-  ]
+  // 生产环境：返回空数组，避免显示虚假数据
+  // TODO: 实现真实的用户在线状态API
+  return []
 }
 
 // 获取meetup统计信息

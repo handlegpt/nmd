@@ -175,6 +175,10 @@
       "lowCost": "Relatively low cost of living"
     },
     "costLevel": {
+      "low": "Low",
+      "moderate": "Moderate", 
+      "high": "High",
+      "expensive": "Expensive",
       "affordable": "Affordable"
     },
     "communityActivity": {
@@ -281,11 +285,6 @@
     "userReviews": "User Reviews",
     "other": "Other",
     "quickStats": "Quick Stats",
-    "costLevel": {
-      "low": "Low",
-      "moderate": "Moderate",
-      "high": "High"
-    },
     "wifiSpeed": "WiFi Speed",
     "wifiLevel": {
       "poor": "Poor",
@@ -315,7 +314,6 @@
     "transportation": "Transportation",
     "food": "Food",
     "accommodation": "Accommodation",
-    "costBreakdown": "Monthly Cost Breakdown",
     "stayDays": "Stay Days",
     "convenienceScore": "Convenience Score",
     "overallScore": "Overall Score",

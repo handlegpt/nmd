@@ -37,23 +37,11 @@ export default function PlaceDetailPage() {
       
       // 获取所有地点数据
       const places = await getPlaces()
-      logInfo('Places data loaded', { count: places.length, places: places.map(p => ({ name: p.name, city_id: p.city_id })) }, 'PlaceDetailPage')
       
       // 根据城市和地点名称查找匹配的地点
       const matchedPlace = places.find(p => {
         const placeCitySlug = p.city_id.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
         const placeNameSlug = p.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
-        
-        logInfo('Matching place', { 
-          placeName: p.name, 
-          placeCityId: p.city_id,
-          placeCitySlug, 
-          placeNameSlug,
-          targetCitySlug: citySlug,
-          targetPlaceSlug: placeSlug,
-          cityMatch: placeCitySlug === citySlug,
-          nameMatch: placeNameSlug === placeSlug
-        }, 'PlaceDetailPage')
         
         return placeCitySlug === citySlug && placeNameSlug === placeSlug
       })

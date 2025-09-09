@@ -7,6 +7,7 @@ import { useNotifications, useUser } from '@/contexts/GlobalStateContext'
 import { logInfo } from '@/lib/logger'
 import VoteModal from './VoteModal'
 import { City } from '@/lib/supabase'
+import { getCities } from '@/lib/api'
 
 export default function CityRanking({ limit = 10 }: { limit?: number }) {
   const { t } = useTranslation()
@@ -16,106 +17,27 @@ export default function CityRanking({ limit = 10 }: { limit?: number }) {
   const [showVoteModal, setShowVoteModal] = useState(false)
   const [selectedCity, setSelectedCity] = useState<City | null>(null)
 
-  // 条件性显示mock数据：只在未登录时显示
+  // 统一使用Supabase中的真实城市数据
   useEffect(() => {
-    if (user.isAuthenticated) {
-      // 用户已登录，不显示mock数据
-      setCities([])
-      setLoading(false)
-      return
+    const fetchCities = async () => {
+      try {
+        setLoading(true)
+        const allCities = await getCities()
+        // 按评分排序并限制数量
+        const sortedCities = allCities
+          .sort((a, b) => (b.avg_overall_rating || 0) - (a.avg_overall_rating || 0))
+          .slice(0, limit)
+        setCities(sortedCities)
+      } catch (error) {
+        console.error('Error fetching cities:', error)
+        setCities([])
+      } finally {
+        setLoading(false)
+      }
     }
 
-    // 未登录用户显示示例数据
-    const mockCities: City[] = [
-      {
-        id: '1',
-        name: 'Lisbon',
-        country: 'Portugal',
-        country_code: 'PT',
-        timezone: 'Europe/Lisbon',
-        latitude: 38.7223,
-        longitude: -9.1393,
-        visa_days: 365,
-        visa_type: 'Digital Nomad Visa',
-        cost_of_living: 2000,
-        wifi_speed: 100,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-        avg_overall_rating: 4.8,
-        vote_count: 230
-      },
-      {
-        id: '2',
-        name: 'Chiang Mai',
-        country: 'Thailand',
-        country_code: 'TH',
-        timezone: 'Asia/Bangkok',
-        latitude: 18.7883,
-        longitude: 98.9853,
-        visa_days: 60,
-        visa_type: 'Tourist Visa',
-        cost_of_living: 1200,
-        wifi_speed: 50,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-        avg_overall_rating: 4.6,
-        vote_count: 190
-      },
-      {
-        id: '3',
-        name: 'Tbilisi',
-        country: 'Georgia',
-        country_code: 'GE',
-        timezone: 'Asia/Tbilisi',
-        latitude: 41.7151,
-        longitude: 44.8271,
-        visa_days: 365,
-        visa_type: 'Visa Free',
-        cost_of_living: 1200,
-        wifi_speed: 30,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-        avg_overall_rating: 4.4,
-        vote_count: 160
-      },
-      {
-        id: '4',
-        name: 'Bali',
-        country: 'Indonesia',
-        country_code: 'ID',
-        timezone: 'Asia/Jakarta',
-        latitude: -8.3405,
-        longitude: 115.0920,
-        visa_days: 30,
-        visa_type: 'Visa on Arrival',
-        cost_of_living: 1500,
-        wifi_speed: 25,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-        avg_overall_rating: 4.3,
-        vote_count: 150
-      },
-      {
-        id: '5',
-        name: 'Medellin',
-        country: 'Colombia',
-        country_code: 'CO',
-        timezone: 'America/Bogota',
-        latitude: 6.2442,
-        longitude: -75.5812,
-        visa_days: 180,
-        visa_type: 'Tourist Visa',
-        cost_of_living: 1400,
-        wifi_speed: 40,
-        created_at: '2024-01-01T00:00:00Z',
-        updated_at: '2024-01-01T00:00:00Z',
-        avg_overall_rating: 4.2,
-        vote_count: 140
-      }
-    ]
-    setCities(mockCities)
-    setLoading(false)
-  }, [user.isAuthenticated])
+    fetchCities()
+  }, [limit])
 
   const getCountryFlag = (countryCode: string) => {
     const codePoints = countryCode
