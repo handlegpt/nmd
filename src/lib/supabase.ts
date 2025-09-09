@@ -88,6 +88,20 @@ export interface Place {
   review_count?: number
   // Google Places integration
   isFromGoogle?: boolean
+  
+  // Extended fields for Nomad-friendly POI
+  opening_hours?: string // e.g., "09:00 - 20:00"
+  phone?: string
+  website?: string
+  google_maps_url?: string
+  socket_count?: number // Number of power outlets
+  wifi_stability?: 'poor' | 'fair' | 'good' | 'excellent'
+  average_spend?: string // e.g., "¥500~¥800"
+  payment_methods?: string[] // e.g., ["cash", "card", "mobile_pay"]
+  suitable_for?: string[] // e.g., ["work", "social", "reading", "relax"]
+  check_in_count?: number // Number of nomads who checked in
+  photos?: string[] // Array of photo URLs
+  cover_photo?: string // Main cover photo URL
 }
 
 export interface PlaceVote {
@@ -103,10 +117,17 @@ export interface PlaceReview {
   id: string
   place_id: string
   user_id: string
-  rating: number
-  review: string
-  pros: string[]
-  cons: string[]
-  visit_date: string
+  user_name: string
+  user_avatar?: string
+  rating_wifi: number // 1-5
+  rating_environment: number // 1-5
+  rating_social: number // 1-5
+  rating_value: number // 1-5
+  overall_rating: number // 1-5
+  comment: string
+  photos?: string[] // Array of photo URLs
+  check_in_date?: string
   created_at: string
+  updated_at: string
 }
+
