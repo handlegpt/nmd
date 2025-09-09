@@ -18,8 +18,9 @@ The data management system consists of four main components:
 Integrates with free APIs to get city data including cost of living and WiFi speed.
 
 **Features:**
-- SmartPandas API integration (500 free requests/month)
-- Cities Cost of Living API integration
+- Cities Cost of Living API integration (primary)
+- Numbeo API integration (fallback, 1000 free requests/month)
+- Ookla Speedtest API for WiFi speed data
 - Manual data fallback
 - Smart caching system (30-90 days cache)
 - Popular cities 90-day cache, others 30-day cache
@@ -175,39 +176,50 @@ Add the following to your `.env.local` file:
 
 ```env
 # Free API Services
-SMARTPANDAS_API_KEY=your_smartpandas_api_key_here
 CITIES_API_KEY=your_cities_api_key_here
+NUMBEO_API_KEY=your_numbeo_api_key_here
 ```
 
 ### 2. API Keys
 
-#### SmartPandas API
-1. Visit [SmartPandas](https://smartpandas.com)
+#### Cities Cost of Living API (Primary)
+1. Visit [Cities Cost of Living API](https://cities-cost-of-living.com)
 2. Sign up for a free account
 3. Get your API key from the dashboard
-4. Add to environment variables
+4. Add to environment variables as `CITIES_API_KEY`
 
-#### Cities Cost of Living API
-1. Visit [Cities API](https://cities-cost-of-living.com)
+#### Numbeo API (Fallback)
+1. Visit [Numbeo API](https://www.numbeo.com/api/)
 2. Sign up for a free account
-3. Get your API key
-4. Add to environment variables
+3. Get your API key (1000 free requests/month)
+4. Add to environment variables as `NUMBEO_API_KEY`
+
+#### Ookla Speedtest API (WiFi Speed)
+- No API key required
+- Free to use for WiFi speed data
+- Automatically integrated
 
 ### 3. Integration
 
 The system is designed to work with your existing city data structure. It will:
 
-1. Try to fetch data from free APIs
-2. Fall back to manual data if APIs are unavailable
-3. Allow users to submit feedback about data accuracy
-4. Provide quality checks and recommendations
+1. Try to fetch data from Cities Cost of Living API (primary)
+2. Fall back to Numbeo API if primary fails
+3. Enhance with WiFi speed data from Ookla Speedtest
+4. Fall back to manual data if all APIs are unavailable
+5. Allow users to submit feedback about data accuracy
+6. Provide quality checks and recommendations
 
 ## Data Flow
 
 ```
-User Request → Free API Service → API Data
+User Request → Free API Service → Cities API (Primary)
                     ↓
-              Manual Data (Fallback)
+              Numbeo API (Fallback)
+                    ↓
+              Ookla Speedtest (WiFi Data)
+                    ↓
+              Manual Data (Final Fallback)
                     ↓
               Data Quality Check
                     ↓

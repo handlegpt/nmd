@@ -43,40 +43,43 @@ class FreeApiService {
     'Medellin', 'Bali', 'Mexico City', 'Osaka', 'Porto'
   ];
 
-  // SmartPandas API (free tier: 500 requests/month)
-  private async fetchFromSmartPandas(cityName: string, country: string): Promise<ApiResponse> {
+  // Numbeo API (free tier: 1000 requests/month)
+  private async fetchFromNumbeo(cityName: string, country: string): Promise<ApiResponse> {
     try {
-      // Note: This is a placeholder URL - you'll need to get the actual API endpoint
-      const response = await fetch(`https://api.smartpandas.com/cost-of-living?city=${encodeURIComponent(cityName)}&country=${encodeURIComponent(country)}`, {
+      // Numbeo free API endpoint
+      const response = await fetch(`https://www.numbeo.com/api/city_prices?api_key=${process.env.NUMBEO_API_KEY || ''}&query=${encodeURIComponent(cityName)}`, {
         headers: {
-          'Authorization': `Bearer ${process.env.SMARTPANDAS_API_KEY || ''}`,
           'Content-Type': 'application/json'
         }
       });
 
       if (!response.ok) {
-        throw new Error(`SmartPandas API error: ${response.status}`);
+        throw new Error(`Numbeo API error: ${response.status}`);
       }
 
       const data = await response.json();
       
+      // Calculate average cost of living from Numbeo data
+      const avgCost = data.prices ? 
+        Math.round(data.prices.reduce((sum: number, item: any) => sum + (item.average_price || 0), 0) / data.prices.length) : 0;
+      
       return {
         success: true,
         data: {
-          name: data.city || cityName,
+          name: data.name || cityName,
           country: data.country || country,
           countryCode: data.country_code || '',
           costOfLiving: {
-            monthly: data.cost_of_living || 0,
+            monthly: avgCost,
             currency: data.currency || 'USD',
             lastUpdated: new Date().toISOString(),
-            source: 'SmartPandas'
+            source: 'Numbeo'
           },
           wifiSpeed: {
-            average: data.wifi_speed || 0,
+            average: 0, // Numbeo doesn't provide WiFi speed
             unit: 'Mbps',
             lastUpdated: new Date().toISOString(),
-            source: 'SmartPandas'
+            source: 'Numbeo'
           },
           coordinates: {
             lat: data.latitude || 0,
@@ -84,19 +87,19 @@ class FreeApiService {
           },
           timezone: data.timezone || ''
         },
-        source: 'SmartPandas'
+        source: 'Numbeo'
       };
     } catch (error) {
-      console.error('SmartPandas API error:', error);
+      console.error('Numbeo API error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
-        source: 'SmartPandas'
+        source: 'Numbeo'
       };
     }
   }
 
-  // Alternative free API - Cities Cost of Living API
+  // Cities Cost of Living API (primary API)
   private async fetchFromCitiesAPI(cityName: string, country: string): Promise<ApiResponse> {
     try {
       const response = await fetch(`https://api.cities-cost-of-living.com/v1/city?name=${encodeURIComponent(cityName)}&country=${encodeURIComponent(country)}`, {
@@ -146,6 +149,55 @@ class FreeApiService {
         source: 'Cities API'
       };
     }
+  }
+
+  // Free WiFi speed data from Speedtest.net API
+  private async fetchWiFiSpeed(cityName: string, country: string): Promise<{ average: number; source: string }> {
+    try {
+      // Use Ookla's free API for WiFi speed data
+      const response = await fetch(`https://api.ookla.com/v1/speedtest/cities?search=${encodeURIComponent(cityName)}`, {
+        headers: {
+          'User-Agent': 'NomadNow/1.0'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data.cities && data.cities.length > 0) {
+          const city = data.cities.find((c: any) => c.name.toLowerCase().includes(cityName.toLowerCase()));
+          if (city && city.speed) {
+            return {
+              average: Math.round(city.speed.download || 0),
+              source: 'Ookla Speedtest'
+            };
+          }
+        }
+      }
+    } catch (error) {
+      console.error('WiFi speed API error:', error);
+    }
+
+    // Fallback to manual WiFi speed data
+    const manualWiFiData: Record<string, number> = {
+      'bangkok': 70,
+      'chiang mai': 50,
+      'lisbon': 90,
+      'barcelona': 95,
+      'madrid': 85,
+      'medellin': 60,
+      'bali': 40,
+      'mexico city': 55,
+      'osaka': 120,
+      'porto': 80
+    };
+
+    const key = cityName.toLowerCase();
+    const speed = manualWiFiData[key] || 50; // Default 50 Mbps
+
+    return {
+      average: speed,
+      source: 'Manual Data'
+    };
   }
 
   // Fallback to manual data
@@ -270,16 +322,25 @@ class FreeApiService {
       };
     }
 
-    // Try SmartPandas first
-    let response = await this.fetchFromSmartPandas(cityName, country);
+    // Try Cities API first (primary)
+    let response = await this.fetchFromCitiesAPI(cityName, country);
     if (response.success) {
       this.cache.set(cacheKey, { data: response.data!, timestamp: Date.now() });
       return response;
     }
 
-    // Try Cities API as fallback
-    response = await this.fetchFromCitiesAPI(cityName, country);
+    // Try Numbeo API as fallback
+    response = await this.fetchFromNumbeo(cityName, country);
     if (response.success) {
+      // Enhance with WiFi speed data
+      const wifiData = await this.fetchWiFiSpeed(cityName, country);
+      response.data!.wifiSpeed = {
+        average: wifiData.average,
+        unit: 'Mbps',
+        lastUpdated: new Date().toISOString(),
+        source: wifiData.source
+      };
+      
       this.cache.set(cacheKey, { data: response.data!, timestamp: Date.now() });
       return response;
     }
