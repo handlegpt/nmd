@@ -1348,8 +1348,13 @@ export default function DomainTrackerPage() {
                     </div>
                   </div>
                 </div>
-                <div className="text-xs text-red-700 mt-2">
-                  💡 包含所有购买费用和已支付的续费费用
+                <div className="text-xs text-red-700 mt-2 space-y-1">
+                  <div>💡 包含所有购买费用和已支付的续费费用</div>
+                  {domains.filter(d => d.total_renewal_paid > 0).length > 0 ? (
+                    <div>✅ 已记录 {domains.filter(d => d.total_renewal_paid > 0).length} 个域名的续费交易</div>
+                  ) : (
+                    <div>⚠️ 尚未记录任何续费交易，请添加续费交易以更新总成本</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -3136,7 +3141,10 @@ export default function DomainTrackerPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 {newTransaction.type === 'sell' && (
-                  <p className="text-xs text-gray-500 mt-1">Amount you actually received after platform fees</p>
+                  <div className="text-xs text-gray-500 mt-1 space-y-1">
+                    <div>💰 <strong>净收益:</strong> 扣除平台手续费后实际收到的金额</div>
+                    <div>💡 例如: 总售价$1000，手续费15%，净收益$850</div>
+                  </div>
                 )}
               </div>
 
@@ -3168,7 +3176,7 @@ export default function DomainTrackerPage() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Gross Sale Price ($)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Gross Sale Price ($) *</label>
                     <input 
                       type="number" 
                       step="0.01"
@@ -3177,7 +3185,10 @@ export default function DomainTrackerPage() {
                       onChange={(e) => setNewTransaction(prev => ({ ...prev, gross_amount: validateNumericInput(e.target.value, 0, 1000000) }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Total sale price before platform fees</p>
+                    <div className="text-xs text-gray-500 mt-1 space-y-1">
+                      <div>💵 <strong>出售总额:</strong> 域名出售的总价格（扣除手续费前）</div>
+                      <div>💡 例如: 域名以$1000出售，这就是$1000</div>
+                    </div>
                   </div>
 
                   <div>
@@ -3190,18 +3201,34 @@ export default function DomainTrackerPage() {
                       onChange={(e) => setNewTransaction(prev => ({ ...prev, fee_percentage: validateNumericInput(e.target.value, 0, 100) }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
-                    <p className="text-xs text-gray-500 mt-1">Platform fee percentage (e.g., 15 for 15%)</p>
+                    <div className="text-xs text-gray-500 mt-1 space-y-1">
+                      <div>💸 <strong>平台手续费:</strong> 交易平台收取的费用百分比</div>
+                      <div>💡 例如: Afternic 15%，Sedo 10%，GoDaddy 20%</div>
+                    </div>
                   </div>
 
                   {/* 自动计算显示 */}
                   {newTransaction.gross_amount > 0 && newTransaction.amount > 0 && (
                     <div className="bg-blue-50 p-3 rounded-lg">
-                      <h4 className="text-sm font-medium text-blue-900 mb-2">Fee Calculation</h4>
+                      <h4 className="text-sm font-medium text-blue-900 mb-2">💰 费用计算预览</h4>
                       <div className="text-sm text-blue-800 space-y-1">
-                        <div>Gross Sale: ${newTransaction.gross_amount.toFixed(2)}</div>
-                        <div>Platform Fee: ${(newTransaction.gross_amount - newTransaction.amount).toFixed(2)}</div>
-                        <div>Net Received: ${newTransaction.amount.toFixed(2)}</div>
-                        <div>Effective Fee Rate: {((newTransaction.gross_amount - newTransaction.amount) / newTransaction.gross_amount * 100).toFixed(1)}%</div>
+                        <div className="flex justify-between">
+                          <span>出售总额:</span>
+                          <span className="font-medium">${newTransaction.gross_amount.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>平台手续费:</span>
+                          <span className="font-medium text-red-600">-${(newTransaction.gross_amount - newTransaction.amount).toFixed(2)}</span>
+                        </div>
+                        <div className="border-t border-blue-200 pt-1">
+                          <div className="flex justify-between">
+                            <span className="font-bold">净收益:</span>
+                            <span className="font-bold text-green-600">${newTransaction.amount.toFixed(2)}</span>
+                          </div>
+                        </div>
+                        <div className="text-xs text-blue-600 mt-2">
+                          实际手续费率: {((newTransaction.gross_amount - newTransaction.amount) / newTransaction.gross_amount * 100).toFixed(1)}%
+                        </div>
                       </div>
                     </div>
                   )}
