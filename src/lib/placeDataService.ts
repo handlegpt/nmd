@@ -156,28 +156,20 @@ export class PlaceDataService {
       const stored = localStorage.getItem(LOCAL_PLACES_KEY)
       const localPlaces = stored ? JSON.parse(stored) : []
       
-      // 检查用户是否已登录
-      const isAuthenticated = localStorage.getItem('user_authenticated') === 'true'
+      // 总是返回用户添加的地点 + 示例数据
+      // 这样确保所有用户都能看到示例地点
+      const allPlaces = [...localPlaces, ...SAMPLE_PLACES]
       
-      if (isAuthenticated) {
-        // 用户已登录，只返回用户添加的地点，不显示示例数据
-        return localPlaces
-      } else {
-        // 用户未登录，显示示例数据
-        const allPlaces = [...localPlaces, ...SAMPLE_PLACES]
-        
-        // 去重（基于ID）
-        const uniquePlaces = allPlaces.filter((place, index, self) => 
-          index === self.findIndex(p => p.id === place.id)
-        )
-        
-        return uniquePlaces
-      }
+      // 去重（基于ID）
+      const uniquePlaces = allPlaces.filter((place, index, self) => 
+        index === self.findIndex(p => p.id === place.id)
+      )
+      
+      return uniquePlaces
     } catch (error) {
       logError('Error loading local places', error, 'PlaceDataService')
-      // 如果出错，检查用户状态决定是否返回示例数据
-      const isAuthenticated = localStorage.getItem('user_authenticated') === 'true'
-      return isAuthenticated ? [] : SAMPLE_PLACES
+      // 如果出错，返回示例数据
+      return SAMPLE_PLACES
     }
   }
 
