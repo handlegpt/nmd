@@ -1,6 +1,25 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+
+// 标签映射函数：将带空格的标签名映射到翻译键
+const getTagTranslationKey = (tag: string): string => {
+  const tagMap: Record<string, string> = {
+    'Good Coffee': 'goodCoffee',
+    'Convenient Location': 'convenientLocation', 
+    'Good Community': 'goodCommunity',
+    'Fast WiFi': 'fastWifi',
+    'Quiet': 'quiet',
+    'Reasonable Price': 'reasonablePrice',
+    'Well Equipped': 'wellEquipped',
+    'Beautiful View': 'beautifulView',
+    'Good Food': 'goodFood',
+    'Good Service': 'goodService',
+    '24 Hours': 'open24Hours',
+    'Pet Friendly': 'petFriendly'
+  }
+  return tagMap[tag] || tag
+}
 import { 
   XIcon, 
   MapPinIcon, 
@@ -637,7 +656,7 @@ export default function PlaceRecommendationForm({
                               : 'bg-gray-100 text-gray-700 border border-gray-200 hover:bg-gray-200'
                           }`}
                         >
-                          {t(`recommendationForm.place.suggestedTags.${tag}`) || tag}
+                          {t(`recommendationForm.place.suggestedTags.${getTagTranslationKey(tag)}`) || tag}
                         </button>
                       ))}
                     </div>
