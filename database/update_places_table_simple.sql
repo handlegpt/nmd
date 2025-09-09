@@ -1,5 +1,5 @@
--- Update places table to add missing columns for ratings and reviews
--- This script adds the necessary columns to support the new place features
+-- Simple update script for places table
+-- This version avoids complex constraint checks that might cause syntax errors
 
 -- Add rating and review_count columns to places table
 ALTER TABLE places 
@@ -20,51 +20,7 @@ ADD COLUMN IF NOT EXISTS suitable_for TEXT[] DEFAULT '{}',
 ADD COLUMN IF NOT EXISTS photos TEXT[] DEFAULT '{}',
 ADD COLUMN IF NOT EXISTS cover_photo TEXT;
 
--- Add constraints for new columns (using DO blocks to handle IF NOT EXISTS)
-DO $$ 
-BEGIN
-    -- Add rating constraint
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint 
-        WHERE conname = 'places_rating_check'
-    ) THEN
-        ALTER TABLE places ADD CONSTRAINT places_rating_check CHECK (rating >= 0 AND rating <= 5);
-    END IF;
-    
-    -- Add review_count constraint
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint 
-        WHERE conname = 'places_review_count_check'
-    ) THEN
-        ALTER TABLE places ADD CONSTRAINT places_review_count_check CHECK (review_count >= 0);
-    END IF;
-    
-    -- Add check_in_count constraint
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint 
-        WHERE conname = 'places_check_in_count_check'
-    ) THEN
-        ALTER TABLE places ADD CONSTRAINT places_check_in_count_check CHECK (check_in_count >= 0);
-    END IF;
-    
-    -- Add socket_count constraint
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint 
-        WHERE conname = 'places_socket_count_check'
-    ) THEN
-        ALTER TABLE places ADD CONSTRAINT places_socket_count_check CHECK (socket_count >= 0);
-    END IF;
-    
-    -- Add wifi_stability constraint
-    IF NOT EXISTS (
-        SELECT 1 FROM pg_constraint 
-        WHERE conname = 'places_wifi_stability_check'
-    ) THEN
-        ALTER TABLE places ADD CONSTRAINT places_wifi_stability_check CHECK (wifi_stability IN ('poor', 'fair', 'good', 'excellent'));
-    END IF;
-END $$;
-
--- Create indexes for better performance
+-- Create indexes for better performance (these are safe to run multiple times)
 CREATE INDEX IF NOT EXISTS idx_places_rating ON places(rating);
 CREATE INDEX IF NOT EXISTS idx_places_review_count ON places(review_count);
 CREATE INDEX IF NOT EXISTS idx_places_check_in_count ON places(check_in_count);
