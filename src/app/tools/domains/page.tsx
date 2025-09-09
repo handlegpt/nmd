@@ -1159,15 +1159,23 @@ export default function DomainTrackerPage() {
           : domain
       ));
     } else if (newTransaction.type === 'renew') {
-      setDomains(prev => prev.map(domain => 
-        domain.id === newTransaction.domain_id 
-          ? { 
-              ...domain, 
-              total_renewal_paid: domain.total_renewal_paid + newTransaction.amount,
-              next_renewal_date: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
-            }
-          : domain
-      ));
+      setDomains(prev => prev.map(domain => {
+        if (domain.id === newTransaction.domain_id) {
+          // Calculate new expiry date based on renewal cycle
+          const currentExpiry = new Date(domain.next_renewal_date);
+          const renewalYears = domain.renewal_cycle_years || 1;
+          const newExpiry = new Date(currentExpiry.getTime() + (renewalYears * 365 * 24 * 60 * 60 * 1000));
+          
+          return {
+            ...domain, 
+            total_renewal_paid: domain.total_renewal_paid + newTransaction.amount,
+            next_renewal_date: newExpiry.toISOString().split('T')[0],
+            last_renewal_amount: newTransaction.amount,
+            last_renewal_date: new Date().toISOString().split('T')[0]
+          };
+        }
+        return domain;
+      }));
     }
     
     // Stats will be automatically updated by useEffect
@@ -1291,6 +1299,10 @@ export default function DomainTrackerPage() {
             <div>
               <p className="text-sm font-medium text-gray-600">Total Cost</p>
               <p className="text-3xl font-bold text-red-600">${stats.totalCost.toFixed(2)}</p>
+              <div className="text-xs text-gray-500 mt-1">
+                <div>Purchase: ${domains.reduce((sum, d) => sum + (d.purchase_cost || 0), 0).toFixed(2)}</div>
+                <div>Renewals: ${domains.reduce((sum, d) => sum + (d.total_renewal_paid || 0), 0).toFixed(2)}</div>
+              </div>
             </div>
             <DollarSign className="h-8 w-8 text-red-600" />
           </div>
