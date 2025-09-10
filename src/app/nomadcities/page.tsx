@@ -14,7 +14,9 @@ import {
   Globe,
   Clock,
   TrendingUp,
-  FileText
+  FileText,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser, useNotifications } from '@/contexts/GlobalStateContext'
@@ -92,6 +94,10 @@ function CitiesPageContent() {
     field: 'rating',
     direction: 'desc'
   })
+  
+  // 新增：分页状态
+  const [currentPage, setCurrentPage] = useState(1)
+  const [itemsPerPage, setItemsPerPage] = useState(12)
 
   useEffect(() => {
     fetchCities()
@@ -307,6 +313,24 @@ function CitiesPageContent() {
       }
     })
 
+  // 新增：分页计算
+  const totalPages = Math.ceil(filteredCities.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const paginatedCities = filteredCities.slice(startIndex, endIndex)
+
+  // 新增：分页处理函数
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page)
+    // 滚动到页面顶部
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleItemsPerPageChange = (newItemsPerPage: number) => {
+    setItemsPerPage(newItemsPerPage)
+    setCurrentPage(1) // 重置到第一页
+  }
+
   const getCountryFlag = (countryCode: string) => {
     const codePoints = countryCode
       .toUpperCase()
@@ -398,16 +422,19 @@ function CitiesPageContent() {
   
   const handleSearch = (query: string) => {
     setSearchTerm(query)
+    setCurrentPage(1) // 重置到第一页
     // 这里可以添加搜索逻辑
   }
   
   const handleFilter = (filters: any) => {
     // 这里可以添加筛选逻辑
     console.log('Filters applied:', filters)
+    setCurrentPage(1) // 重置到第一页
   }
   
   const handleSort = (sort: any) => {
     setSortBy(sort)
+    setCurrentPage(1) // 重置到第一页
     // 这里可以添加排序逻辑
   }
   
@@ -742,6 +769,110 @@ function CitiesPageContent() {
                 </div>
   )
 
+  // 新增：分页组件
+  const renderPagination = () => {
+    if (totalPages <= 1) return null
+
+    const getPageNumbers = () => {
+      const pages = []
+      const maxVisiblePages = 5
+      
+      if (totalPages <= maxVisiblePages) {
+        for (let i = 1; i <= totalPages; i++) {
+          pages.push(i)
+        }
+      } else {
+        const startPage = Math.max(1, currentPage - 2)
+        const endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
+        
+        if (startPage > 1) {
+          pages.push(1)
+          if (startPage > 2) {
+            pages.push('...')
+          }
+        }
+        
+        for (let i = startPage; i <= endPage; i++) {
+          pages.push(i)
+        }
+        
+        if (endPage < totalPages) {
+          if (endPage < totalPages - 1) {
+            pages.push('...')
+          }
+          pages.push(totalPages)
+        }
+      }
+      
+      return pages
+    }
+
+    return (
+      <div className="flex items-center justify-between bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
+        {/* 每页显示数量选择器 */}
+        <div className="flex items-center space-x-2">
+          <span className="text-sm text-gray-600 dark:text-gray-400">每页显示:</span>
+          <select
+            value={itemsPerPage}
+            onChange={(e) => handleItemsPerPageChange(Number(e.target.value))}
+            className="px-3 py-1 border border-gray-300 rounded-md text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+          >
+            <option value={6}>6</option>
+            <option value={12}>12</option>
+            <option value={24}>24</option>
+            <option value={48}>48</option>
+          </select>
+          <span className="text-sm text-gray-600 dark:text-gray-400">
+            共 {filteredCities.length} 个城市
+          </span>
+        </div>
+
+        {/* 分页导航 */}
+        <div className="flex items-center space-x-2">
+          {/* 上一页按钮 */}
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
+          >
+            <ChevronLeft className="w-4 h-4 mr-1" />
+            上一页
+          </button>
+
+          {/* 页码按钮 */}
+          <div className="flex items-center space-x-1">
+            {getPageNumbers().map((page, index) => (
+              <button
+                key={index}
+                onClick={() => typeof page === 'number' && handlePageChange(page)}
+                disabled={page === '...'}
+                className={`px-3 py-2 text-sm font-medium rounded-md ${
+                  page === currentPage
+                    ? 'text-white bg-blue-500 border border-blue-500'
+                    : page === '...'
+                    ? 'text-gray-400 cursor-default'
+                    : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
+          {/* 下一页按钮 */}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-600"
+          >
+            下一页
+            <ChevronRight className="w-4 h-4 ml-1" />
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   if (loading) {
     return (
               <PageLayout>
@@ -851,8 +982,9 @@ function CitiesPageContent() {
                         </div>
                       </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredCities.map((city) => {
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {paginatedCities.map((city) => {
                 // 转换城市数据为增强卡片需要的格式
                 const enhancedCityData = {
                   id: city.id,
@@ -903,8 +1035,12 @@ function CitiesPageContent() {
                   />
                 )
               })}
-                </div>
-              )}
+              </div>
+              
+              {/* 分页组件 */}
+              {renderPagination()}
+            </>
+          )}
           
           {/* 城市对比工具栏 */}
           <CityComparisonToolbar
