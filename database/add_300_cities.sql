@@ -4,7 +4,7 @@
 
 INSERT INTO cities (id, name, country, country_code, timezone, latitude, longitude, visa_days, visa_type, cost_of_living, wifi_speed) VALUES
 -- ASIA - Southeast Asia
-('a001-0000-0000-0000-000000000001', 'Kuala Lumpur', 'Malaysia', 'MY', 'Asia/Kuala_Lumpur', 3.1390, 101.6869, 90, 'Tourist Visa', 800, 85),
+('a0010000-0000-0000-0000-000000000001', 'Kuala Lumpur', 'Malaysia', 'MY', 'Asia/Kuala_Lumpur', 3.1390, 101.6869, 90, 'Tourist Visa', 800, 85),
 ('a001-0000-0000-0000-000000000002', 'Penang', 'Malaysia', 'MY', 'Asia/Kuala_Lumpur', 5.4164, 100.3327, 90, 'Tourist Visa', 700, 80),
 ('a001-0000-0000-0000-000000000003', 'Langkawi', 'Malaysia', 'MY', 'Asia/Kuala_Lumpur', 6.3500, 99.8000, 90, 'Tourist Visa', 600, 75),
 ('a001-0000-0000-0000-000000000004', 'Kota Kinabalu', 'Malaysia', 'MY', 'Asia/Kuching', 5.9804, 116.0735, 90, 'Tourist Visa', 650, 70),
