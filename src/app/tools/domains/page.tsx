@@ -276,8 +276,25 @@ export default function DomainTrackerPage() {
     return domains.reduce((total, domain) => {
       const purchaseCost = domain.purchase_cost || 0;
       const renewalCost = domain.total_renewal_paid || 0;
-      // 如果total_renewal_paid为0，使用renewal_count * renewal_cost计算
-      const calculatedRenewalCost = renewalCost > 0 ? renewalCost : (domain.renewal_count || 0) * (domain.renewal_cost || 0);
+      
+      // 如果total_renewal_paid为0，计算预期的续费费用
+      let calculatedRenewalCost = 0;
+      if (renewalCost > 0) {
+        // 使用实际已支付的续费费用
+        calculatedRenewalCost = renewalCost;
+      } else if (domain.renewal_count && domain.renewal_count > 0) {
+        // 使用手动填写的续费次数
+        calculatedRenewalCost = domain.renewal_count * (domain.renewal_cost || 0);
+      } else {
+        // 根据域名年龄和续费周期计算预期的续费费用
+        const purchaseDate = new Date(domain.purchase_date);
+        const now = new Date();
+        const ageInYears = (now.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
+        const renewalCycleYears = domain.renewal_cycle_years || 1;
+        const expectedRenewals = Math.floor(ageInYears / renewalCycleYears);
+        calculatedRenewalCost = expectedRenewals * (domain.renewal_cost || 0);
+      }
+      
       return total + purchaseCost + calculatedRenewalCost;
     }, 0);
   };
@@ -1134,9 +1151,15 @@ export default function DomainTrackerPage() {
       return;
     }
 
-    if (!newDomain.expiry_date || !validateDateInput(newDomain.expiry_date)) {
-      showToast('Please set a valid domain expiry date. This should be the actual domain registration expiry date, not based on purchase date.', 'error');
-      return;
+    // Expiry date is optional - if not provided, calculate based on purchase date and renewal cycle
+    let expiryDate: Date;
+    if (newDomain.expiry_date && validateDateInput(newDomain.expiry_date)) {
+      expiryDate = new Date(newDomain.expiry_date);
+    } else {
+      // Calculate expiry date based on purchase date and renewal cycle
+      const purchaseDate = newDomain.purchase_date ? new Date(newDomain.purchase_date) : new Date();
+      const renewalYears = newDomain.renewal_cycle_years || 1;
+      expiryDate = new Date(purchaseDate.getTime() + (renewalYears * 365 * 24 * 60 * 60 * 1000));
     }
 
     // Validate numeric inputs
@@ -1145,7 +1168,6 @@ export default function DomainTrackerPage() {
 
     // 使用用户提供的购入日期，如果没有提供则默认为今天
     const purchaseDate = newDomain.purchase_date ? new Date(newDomain.purchase_date) : new Date();
-    const expiryDate = new Date(newDomain.expiry_date);
 
     const domain: Domain = {
       id: crypto.randomUUID(),
@@ -2298,7 +2320,7 @@ export default function DomainTrackerPage() {
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
+                  Date/Time
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Domain
@@ -2345,7 +2367,10 @@ export default function DomainTrackerPage() {
                 return (
                   <tr key={transaction.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(transaction.date).toLocaleDateString()}
+                      {transaction.transaction_time 
+                        ? new Date(transaction.transaction_time).toLocaleString()
+                        : new Date(transaction.date).toLocaleDateString()
+                      }
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {domain?.domain_name || 'Unknown'}
@@ -3021,14 +3046,14 @@ export default function DomainTrackerPage() {
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date (Optional)</label>
                 <input 
                   type="date" 
                   value={newDomain.expiry_date}
                   onChange={(e) => setNewDomain(prev => ({ ...prev, expiry_date: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <p className="text-xs text-gray-500 mt-1">Enter the actual domain registration expiry date (not based on purchase date)</p>
+                <p className="text-xs text-gray-500 mt-1">Leave empty to auto-calculate based on purchase date and renewal cycle</p>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
@@ -3137,14 +3162,14 @@ export default function DomainTrackerPage() {
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date *</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date (Optional)</label>
                 <input 
                   type="date" 
                   value={newDomain.expiry_date}
                   onChange={(e) => setNewDomain(prev => ({ ...prev, expiry_date: e.target.value }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
-                <p className="text-xs text-gray-500 mt-1">Enter the actual domain registration expiry date (not based on purchase date)</p>
+                <p className="text-xs text-gray-500 mt-1">Leave empty to auto-calculate based on purchase date and renewal cycle</p>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
@@ -3332,13 +3357,15 @@ export default function DomainTrackerPage() {
               )}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Time</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Transaction Time (Optional)</label>
                   <input 
                     type="datetime-local" 
                     value={newTransaction.transaction_time}
                     onChange={(e) => setNewTransaction(prev => ({ ...prev, transaction_time: e.target.value }))}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                    placeholder="Select date and time"
                   />
+                  <p className="text-xs text-gray-500 mt-1">Leave empty to use current date</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Currency</label>
