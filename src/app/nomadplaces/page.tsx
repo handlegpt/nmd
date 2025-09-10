@@ -151,14 +151,7 @@ export default function PlacesPage() {
     return Array.from(citySet).sort()
   }, [places])
 
-  // 推荐分算法 - 使用useMemo缓存计算结果
-  const placesWithScores = useMemo(() => {
-    return places.map(place => ({
-      ...place,
-      score: calculateRecommendationScore(place)
-    }))
-  }, [places])
-
+  // 推荐分算法函数定义
   const calculateRecommendationScore = (place: Place): PlaceScore => {
     // Wilson评分修正算法
     const rating = place.rating || 0
@@ -206,6 +199,14 @@ export default function PlacesPage() {
       antiInfluencerPenalty
     }
   }
+
+  // 推荐分算法 - 使用useMemo缓存计算结果
+  const placesWithScores = useMemo(() => {
+    return places.map(place => ({
+      ...place,
+      score: calculateRecommendationScore(place)
+    }))
+  }, [places])
 
   // 高级筛选和搜索
   const filteredPlaces = useMemo(() => {
