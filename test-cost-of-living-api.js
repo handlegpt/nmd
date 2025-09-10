@@ -9,7 +9,10 @@
  * 
  * Requirements:
  *   - Must be run on server with environment variables
- *   - Set environment variables before running:
+ *   - Option 1: Create .env file with:
+ *     NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+ *     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+ *   - Option 2: Set environment variables:
  *     export NEXT_PUBLIC_SUPABASE_URL="your_supabase_url"
  *     export NEXT_PUBLIC_SUPABASE_ANON_KEY="your_supabase_key"
  *   - Optional: NUMBEO_API_KEY and RAPIDAPI_KEY for API testing
@@ -21,10 +24,39 @@
  *   4. Provides recommendations for improvement
  */
 
-// Load environment variables (no external dependencies)
-// Make sure to set environment variables before running:
-// export NEXT_PUBLIC_SUPABASE_URL="your_url"
-// export NEXT_PUBLIC_SUPABASE_ANON_KEY="your_key"
+// Load environment variables from .env file (no external dependencies)
+const fs = require('fs');
+const path = require('path');
+
+// Simple .env file parser
+function loadEnvFile() {
+  try {
+    const envPath = path.join(__dirname, '.env');
+    if (fs.existsSync(envPath)) {
+      const envContent = fs.readFileSync(envPath, 'utf8');
+      const lines = envContent.split('\n');
+      
+      lines.forEach(line => {
+        const trimmedLine = line.trim();
+        if (trimmedLine && !trimmedLine.startsWith('#')) {
+          const [key, ...valueParts] = trimmedLine.split('=');
+          if (key && valueParts.length > 0) {
+            const value = valueParts.join('=').replace(/^["']|["']$/g, ''); // Remove quotes
+            process.env[key.trim()] = value.trim();
+          }
+        }
+      });
+      console.log('✅ Loaded environment variables from .env file');
+    } else {
+      console.log('⚠️ No .env file found, using system environment variables');
+    }
+  } catch (error) {
+    console.log('⚠️ Could not load .env file:', error.message);
+  }
+}
+
+// Load environment variables
+loadEnvFile();
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
