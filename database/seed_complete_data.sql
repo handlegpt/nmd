@@ -125,8 +125,8 @@ INSERT INTO places (id, name, category, city_id, address, latitude, longitude, d
 ('660e8400-e29b-41d4-a716-446655440131', 'Osaka Innovation Hub', 'coworking', '550e8400-e29b-41d4-a716-446655440008', '2-2-8 Nakanoshima, Kita-ku, Osaka', 34.6900, 135.5000, 'Innovation-focused coworking space'),
 
 -- Taipei Places
-('660e8400-e29b-41d4-a716-446655440132', 'Simple Kaffa', 'cafe', '550e8400-e29b-41d4-a716-446655440017', 'No. 1, Lane 177, Section 1, Dunhua S Rd, Da'an District, Taipei', 25.0330, 121.5654, 'World-class coffee shop with award-winning baristas'),
-('660e8400-e29b-41d4-a716-446655440133', 'CLBC', 'coworking', '550e8400-e29b-41d4-a716-446655440017', 'No. 2, Lane 177, Section 1, Dunhua S Rd, Da'an District, Taipei', 25.0340, 121.5660, 'Premium coworking space with great community'),
+('660e8400-e29b-41d4-a716-446655440132', 'Simple Kaffa', 'cafe', '550e8400-e29b-41d4-a716-446655440017', 'No. 1, Lane 177, Section 1, Dunhua S Rd, Da''an District, Taipei', 25.0330, 121.5654, 'World-class coffee shop with award-winning baristas'),
+('660e8400-e29b-41d4-a716-446655440133', 'CLBC', 'coworking', '550e8400-e29b-41d4-a716-446655440017', 'No. 2, Lane 177, Section 1, Dunhua S Rd, Da''an District, Taipei', 25.0340, 121.5660, 'Premium coworking space with great community'),
 
 -- Kuala Lumpur Places
 ('660e8400-e29b-41d4-a716-446655440134', 'VCR', 'cafe', '550e8400-e29b-41d4-a716-446655440018', '2, Jalan Galloway, Bukit Bintang, 50150 Kuala Lumpur', 3.1390, 101.6869, 'Specialty coffee shop with excellent coffee and atmosphere'),
