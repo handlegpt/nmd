@@ -161,21 +161,33 @@ class CostOfLivingAPI {
   }
 
   async getCityData(cityName, country) {
-    // Try TravelTables API first
-    let response = await this.fetchFromTravelTablesAPI(cityName, country);
-    if (response.success) {
-      return response;
+    // Check if we have any API keys configured
+    if (!this.rapidApiKey && !this.numbeoKey) {
+      return {
+        success: false,
+        error: 'No API keys configured. Please set RAPIDAPI_KEY or NUMBEO_API_KEY in .env file'
+      };
     }
 
-    // Try Numbeo API as fallback
-    response = await this.fetchFromNumbeo(cityName, country);
-    if (response.success) {
-      return response;
+    // Try TravelTables API first (if key is available)
+    if (this.rapidApiKey) {
+      let response = await this.fetchFromTravelTablesAPI(cityName, country);
+      if (response.success) {
+        return response;
+      }
+    }
+
+    // Try Numbeo API as fallback (if key is available)
+    if (this.numbeoKey) {
+      let response = await this.fetchFromNumbeo(cityName, country);
+      if (response.success) {
+        return response;
+      }
     }
 
     return {
       success: false,
-      error: 'No data available from any API source'
+      error: 'No data available from any API source. Check API keys and city names.'
     };
   }
 }
@@ -191,7 +203,24 @@ async function updateCityData(cityName, country) {
     
     // Update database
     try {
-      const updateResult = await supabaseRequest('cities', {
+      // First, find the city by name and country
+      const cities = await supabaseRequest('cities', {
+        select: 'id,name,country',
+        method: 'GET'
+      });
+      
+      const city = cities.find(c => 
+        c.name.toLowerCase() === cityName.toLowerCase() && 
+        c.country.toLowerCase() === country.toLowerCase()
+      );
+      
+      if (!city) {
+        console.log(`⚠️ City not found in database: ${cityName}, ${country}`);
+        return false;
+      }
+      
+      // Update the specific city
+      const updateResult = await supabaseRequest(`cities?id=eq.${city.id}`, {
         method: 'PATCH',
         body: {
           cost_of_living: response.data.cost_of_living,
@@ -211,12 +240,44 @@ async function updateCityData(cityName, country) {
   }
 }
 
+async function testAPIKeys() {
+  console.log('🔍 Testing API keys...');
+  
+  const api = new CostOfLivingAPI();
+  
+  if (api.rapidApiKey) {
+    console.log(`✅ RAPIDAPI_KEY configured (${api.rapidApiKey.substring(0, 10)}...)`);
+  } else {
+    console.log('❌ RAPIDAPI_KEY not configured');
+  }
+  
+  if (api.numbeoKey) {
+    console.log(`✅ NUMBEO_API_KEY configured (${api.numbeoKey.substring(0, 10)}...)`);
+  } else {
+    console.log('❌ NUMBEO_API_KEY not configured');
+  }
+  
+  if (!api.rapidApiKey && !api.numbeoKey) {
+    console.log('\n⚠️ No API keys configured! Please add RAPIDAPI_KEY or NUMBEO_API_KEY to .env file');
+    return false;
+  }
+  
+  console.log('');
+  return true;
+}
+
 async function main() {
   const args = process.argv.slice(2);
   const targetCity = args[0];
   const targetCountry = args[1];
 
   console.log('🚀 Starting manual city data update...\n');
+  
+  // Test API keys first
+  const keysValid = await testAPIKeys();
+  if (!keysValid) {
+    process.exit(1);
+  }
 
   try {
     if (targetCity && targetCountry) {
