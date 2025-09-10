@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
 import { useTranslation } from '@/hooks/useTranslation'
-import { getPlaces } from '@/lib/api'
+import { getPlaces, getCities } from '@/lib/api'
 import { PlaceDataService } from '@/lib/placeDataService'
 import { Place, PlaceReview } from '@/lib/supabase'
 import { parsePlaceUrl } from '@/lib/urlUtils'
@@ -139,6 +139,7 @@ export default function PlaceDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [showAddReview, setShowAddReview] = useState(false)
   const [showPhotoUpload, setShowPhotoUpload] = useState(false)
+  const [cities, setCities] = useState<any[]>([])
 
   useEffect(() => {
     fetchPlaceData()
@@ -155,6 +156,10 @@ export default function PlaceDetailPage() {
       
       logInfo('Fetching place data', { citySlug, placeSlug }, 'PlaceDetailPage')
       
+      // 获取城市数据用于UUID到城市名称的映射
+      const citiesData = await getCities()
+      setCities(citiesData)
+      
       // 获取所有地点数据：先检查本地存储，再检查Supabase
       const localPlaces = PlaceDataService.getLocalPlaces()
       const supabasePlaces = await getPlaces()
@@ -167,7 +172,22 @@ export default function PlaceDetailPage() {
       
       // 根据城市和地点名称查找匹配的地点
       const matchedPlace = uniquePlaces.find(p => {
-        const placeCitySlug = p.city_id.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+        let placeCitySlug = ''
+        
+        if (p.city_id && typeof p.city_id === 'string') {
+          // 如果是UUID格式的city_id，需要查找对应的城市名称
+          if (p.city_id.includes('-') && p.city_id.length > 20) {
+            // 这是UUID格式，从cities数据中查找对应的城市名称
+            const city = citiesData.find(c => c.id === p.city_id)
+            if (city) {
+              placeCitySlug = city.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+            }
+          } else {
+            // 这是城市名称格式
+            placeCitySlug = p.city_id.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+          }
+        }
+        
         const placeNameSlug = p.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
         
         return placeCitySlug === citySlug && placeNameSlug === placeSlug
@@ -179,7 +199,7 @@ export default function PlaceDetailPage() {
         logInfo('Place found', { place: matchedPlace.name, source: matchedPlace.id.startsWith('local-') ? 'local' : 'supabase' }, 'PlaceDetailPage')
       } else {
         setError('Place not found')
-        logInfo('Place not found', { citySlug, placeSlug }, 'PlaceDetailPage')
+        logInfo('Place not found', { citySlug, placeSlug, totalPlaces: uniquePlaces.length }, 'PlaceDetailPage')
       }
     } catch (error) {
       logError('Error fetching place data', error, 'PlaceDetailPage')
