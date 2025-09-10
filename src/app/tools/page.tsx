@@ -71,7 +71,7 @@ export default function ToolsPage() {
       icon: Calculator,
       emoji: '📊',
       category: 'calculators',
-      status: 'coming-soon',
+      status: 'live',
       tags: ['tax', 'calculation', 'compliance', 'multi-country'],
       features: ['Multi-country support', 'Tax treaties', 'Residency rules', 'Reporting'],
       popularity: 76,
@@ -282,6 +282,10 @@ export default function ToolsPage() {
         case 'city-comparison':
           // Show city comparison component inline
           window.location.href = '/tools/city-comparison';
+          break;
+        case 'tax-calculator':
+          // Route to tax calculator
+          window.location.href = '/nomadtax';
           break;
         case 'cost-calculator':
           // Route to cost calculator when implemented
