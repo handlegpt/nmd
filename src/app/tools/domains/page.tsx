@@ -132,6 +132,16 @@ interface DomainTransaction {
   gross_amount?: number; // 总销售额（手续费前）
   fee_percentage?: number; // 手续费百分比
   fee_amount?: number; // 手续费金额
+  // 分期付款相关字段
+  payment_plan?: 'lump_sum' | 'installment'; // 付款方式：一次性付款 / 分期付款
+  installment_period?: number; // 分期期数（月）
+  installment_fee_percentage?: number; // 分期手续费百分比
+  installment_fee_amount?: number; // 分期手续费金额
+  monthly_payment?: number; // 每月应付款
+  total_installment_amount?: number; // 分期总金额（包含手续费）
+  payment_status?: 'completed' | 'in_progress' | 'overdue'; // 付款状态
+  paid_installments?: number; // 已付期数
+  remaining_installments?: number; // 剩余期数
 }
 
 interface DomainStats {
@@ -192,7 +202,17 @@ export default function DomainTrackerPage() {
     // 手续费相关字段
     gross_amount: 0,
     fee_percentage: 0,
-    fee_amount: 0
+    fee_amount: 0,
+    // 分期付款相关字段
+    payment_plan: 'lump_sum' as 'lump_sum' | 'installment',
+    installment_period: 0,
+    installment_fee_percentage: 0,
+    installment_fee_amount: 0,
+    monthly_payment: 0,
+    total_installment_amount: 0,
+    payment_status: 'completed' as 'completed' | 'in_progress' | 'overdue',
+    paid_installments: 0,
+    remaining_installments: 0
   });
 
   // Portfolio filtering and batch operations
@@ -255,6 +275,55 @@ export default function DomainTrackerPage() {
     'Other': 0
   };
 
+  // Installment payment plans for different platforms
+  const installmentPlans = {
+    'Atom': {
+      6: { fee: 0, description: '6个月免手续费' },
+      12: { fee: 2.5, description: '12个月2.5%手续费' },
+      24: { fee: 5.0, description: '24个月5%手续费' }
+    },
+    'Afternic': {
+      6: { fee: 0, description: '6个月免手续费' },
+      12: { fee: 3.0, description: '12个月3%手续费' },
+      24: { fee: 6.0, description: '24个月6%手续费' }
+    },
+    'Dan.com': {
+      6: { fee: 0, description: '6个月免手续费' },
+      12: { fee: 3.0, description: '12个月3%手续费' },
+      24: { fee: 6.0, description: '24个月6%手续费' }
+    },
+    'Sedo': {
+      6: { fee: 0, description: '6个月免手续费' },
+      12: { fee: 2.0, description: '12个月2%手续费' },
+      24: { fee: 4.0, description: '24个月4%手续费' }
+    },
+    'Other': {
+      6: { fee: 0, description: '6个月免手续费' },
+      12: { fee: 3.0, description: '12个月3%手续费' },
+      24: { fee: 6.0, description: '24个月6%手续费' }
+    }
+  };
+
+  // Installment calculation functions
+  const calculateInstallmentDetails = (grossAmount: number, platform: string, period: number) => {
+    const platformPlans = installmentPlans[platform as keyof typeof installmentPlans] || installmentPlans.Other;
+    const plan = platformPlans[period as keyof typeof platformPlans];
+    
+    if (!plan) return null;
+    
+    const installmentFeeAmount = grossAmount * (plan.fee / 100);
+    const totalInstallmentAmount = grossAmount + installmentFeeAmount;
+    const monthlyPayment = totalInstallmentAmount / period;
+    
+    return {
+      installmentFeePercentage: plan.fee,
+      installmentFeeAmount,
+      totalInstallmentAmount,
+      monthlyPayment,
+      description: plan.description
+    };
+  };
+
   // Renewal reminder settings
   const [reminderSettings, setReminderSettings] = useState({
     enabled: true,
@@ -303,21 +372,42 @@ export default function DomainTrackerPage() {
   const calculateTotalRevenue = () => {
     return transactions
       .filter(t => t.type === 'sell')
-      .reduce((total, t) => total + t.amount, 0);
+      .reduce((total, t) => {
+        // 对于分期付款，使用总分期金额（包含分期手续费）
+        if (t.payment_plan === 'installment' && t.total_installment_amount) {
+          return total + t.total_installment_amount;
+        }
+        // 对于一次性付款，使用实际收到的金额
+        return total + t.amount;
+      }, 0);
   };
 
   // Calculate total gross sales (before fees)
   const calculateTotalGrossSales = () => {
     return transactions
       .filter(t => t.type === 'sell')
-      .reduce((total, t) => total + (t.gross_amount || t.amount), 0);
+      .reduce((total, t) => {
+        // 对于分期付款，使用总分期金额（包含分期手续费）
+        if (t.payment_plan === 'installment' && t.total_installment_amount) {
+          return total + t.total_installment_amount;
+        }
+        // 对于一次性付款，使用总销售额
+        return total + (t.gross_amount || t.amount);
+      }, 0);
   };
 
   // Calculate total platform fees paid
   const calculateTotalPlatformFees = () => {
     return transactions
       .filter(t => t.type === 'sell')
-      .reduce((total, t) => total + (t.fee_amount || 0), 0);
+      .reduce((total, t) => {
+        // 对于分期付款，使用分期手续费
+        if (t.payment_plan === 'installment' && t.installment_fee_amount) {
+          return total + t.installment_fee_amount;
+        }
+        // 对于一次性付款，使用平台手续费
+        return total + (t.fee_amount || 0);
+      }, 0);
   };
 
   // Calculate overall ROI
@@ -1356,7 +1446,17 @@ export default function DomainTrackerPage() {
       // 手续费相关字段
       gross_amount: 0,
       fee_percentage: 0,
-      fee_amount: 0
+      fee_amount: 0,
+      // 分期付款相关字段
+      payment_plan: 'lump_sum',
+      installment_period: 0,
+      installment_fee_percentage: 0,
+      installment_fee_amount: 0,
+      monthly_payment: 0,
+      total_installment_amount: 0,
+      payment_status: 'completed',
+      paid_installments: 0,
+      remaining_installments: 0
     });
     
     setShowAddTransactionModal(false);
@@ -2436,6 +2536,29 @@ export default function DomainTrackerPage() {
                             )}
                           </div>
                         )}
+                        {transaction.type === 'sell' && transaction.payment_plan === 'installment' && (
+                          <div className="text-xs text-green-600 mt-1">
+                            <div className="flex items-center space-x-2">
+                              <span className="font-medium">分期付款</span>
+                              <span className={`px-1 py-0.5 text-xs rounded ${
+                                transaction.payment_status === 'completed' ? 'bg-green-100 text-green-800' :
+                                transaction.payment_status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {transaction.payment_status === 'completed' ? '已完成' :
+                                 transaction.payment_status === 'in_progress' ? '进行中' : '逾期'}
+                              </span>
+                            </div>
+                            {transaction.installment_period && (
+                              <div className="text-xs text-gray-500">
+                                {transaction.paid_installments || 0}/{transaction.installment_period} 期
+                                {transaction.monthly_payment && (
+                                  <span> • ${transaction.monthly_payment.toFixed(2)}/月</span>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
@@ -3365,6 +3488,107 @@ export default function DomainTrackerPage() {
                     </div>
                   </div>
 
+                  {/* 分期付款选项 */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Payment Plan</label>
+                      <select 
+                        value={newTransaction.payment_plan || 'lump_sum'}
+                        onChange={(e) => {
+                          const paymentPlan = e.target.value as 'lump_sum' | 'installment';
+                          setNewTransaction(prev => ({ 
+                            ...prev, 
+                            payment_plan: paymentPlan,
+                            // 如果选择一次性付款，清除分期相关字段
+                            ...(paymentPlan === 'lump_sum' ? {
+                              installment_period: undefined,
+                              installment_fee_percentage: undefined,
+                              installment_fee_amount: undefined,
+                              monthly_payment: undefined,
+                              total_installment_amount: undefined,
+                              payment_status: 'completed',
+                              paid_installments: undefined,
+                              remaining_installments: undefined
+                            } : {})
+                          }));
+                        }}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                      >
+                        <option value="lump_sum">一次性付款</option>
+                        <option value="installment">分期付款</option>
+                      </select>
+                    </div>
+                    {newTransaction.payment_plan === 'installment' && (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Installment Period</label>
+                        <select 
+                          value={newTransaction.installment_period || ''}
+                          onChange={(e) => {
+                            const period = parseInt(e.target.value);
+                            const installmentDetails = newTransaction.gross_amount && newTransaction.platform 
+                              ? calculateInstallmentDetails(newTransaction.gross_amount, newTransaction.platform, period)
+                              : null;
+                            
+                            setNewTransaction(prev => ({ 
+                              ...prev, 
+                              installment_period: period,
+                              installment_fee_percentage: installmentDetails?.installmentFeePercentage || 0,
+                              installment_fee_amount: installmentDetails?.installmentFeeAmount || 0,
+                              monthly_payment: installmentDetails?.monthlyPayment || 0,
+                              total_installment_amount: installmentDetails?.totalInstallmentAmount || 0,
+                              payment_status: 'in_progress',
+                              paid_installments: 0,
+                              remaining_installments: period
+                            }));
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        >
+                          <option value="">Select period...</option>
+                          {newTransaction.platform && installmentPlans[newTransaction.platform as keyof typeof installmentPlans] ? 
+                            Object.keys(installmentPlans[newTransaction.platform as keyof typeof installmentPlans]).map(period => {
+                              const periodNum = parseInt(period);
+                              const plan = installmentPlans[newTransaction.platform as keyof typeof installmentPlans];
+                              const planDetails = plan[periodNum as keyof typeof plan];
+                              return (
+                                <option key={period} value={period}>
+                                  {period} months - {planDetails?.description || ''}
+                                </option>
+                              );
+                            }) : 
+                            [6, 12, 24].map(period => (
+                              <option key={period} value={period}>{period} months</option>
+                            ))
+                          }
+                        </select>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* 分期付款计算显示 */}
+                  {newTransaction.payment_plan === 'installment' && newTransaction.installment_period && newTransaction.gross_amount && (
+                    <div className="bg-green-50 p-3 rounded-lg">
+                      <div className="text-sm text-green-800 space-y-1">
+                        <div className="flex justify-between">
+                          <span>Gross Amount:</span>
+                          <span className="font-medium">${newTransaction.gross_amount.toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Installment Fee ({newTransaction.installment_fee_percentage}%):</span>
+                          <span className="font-medium text-orange-600">+${(newTransaction.installment_fee_amount || 0).toFixed(2)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Total Installment Amount:</span>
+                          <span className="font-medium">${(newTransaction.total_installment_amount || 0).toFixed(2)}</span>
+                        </div>
+                        <div className="border-t border-green-200 pt-1">
+                          <div className="flex justify-between">
+                            <span className="font-bold">Monthly Payment:</span>
+                            <span className="font-bold text-green-600">${(newTransaction.monthly_payment || 0).toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* 简化的费用计算显示 */}
                   {newTransaction.gross_amount > 0 && newTransaction.amount > 0 && (
