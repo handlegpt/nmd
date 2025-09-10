@@ -32,7 +32,7 @@ import {
   FilterIcon
 } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
-import { getPlacesByCity, getCities } from '@/lib/api'
+import { getPlacesByCity, getCities, getPlaces } from '@/lib/api'
 import { Place, City } from '@/lib/supabase'
 import { generatePlaceUrl } from '@/lib/urlUtils'
 import FixedLink from '@/components/FixedLink'
@@ -66,17 +66,29 @@ export default function HomePlaceRecommendations() {
       // 获取本地存储的地点
       const localPlaces = PlaceDataService.getLocalPlaces()
       
+      // 获取Supabase的地点数据
+      const supabasePlaces = await getPlaces()
+      
+      // 合并数据并去重
+      const allPlaces = [...localPlaces, ...supabasePlaces]
+      const uniquePlaces = allPlaces.filter((place, index, self) => 
+        index === self.findIndex(p => p.id === place.id)
+      )
+      
       // 如果有用户位置，优先显示该城市的地点
       if (userLocation) {
-        const cityPlaces = PlaceDataService.getPlacesByCity(userLocation.city)
-        const allPlaces = [...cityPlaces, ...localPlaces]
-        const topPlaces = allPlaces
+        const cityPlaces = uniquePlaces.filter(place => 
+          place.city_id.toLowerCase().includes(userLocation.city.toLowerCase())
+        )
+        const topPlaces = cityPlaces
           .sort((a, b) => (b.rating || 0) - (a.rating || 0))
           .slice(0, 6)
         setPlaces(topPlaces)
       } else {
         // 否则显示所有热门地点
-        const topPlaces = PlaceDataService.getTopPlaces(6)
+        const topPlaces = uniquePlaces
+          .sort((a, b) => (b.rating || 0) - (a.rating || 0))
+          .slice(0, 6)
         setPlaces(topPlaces)
       }
     } catch (error) {

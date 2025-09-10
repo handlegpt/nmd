@@ -1,4 +1,5 @@
 import { Place, City } from './supabase'
+import { getCityById } from './api'
 
 /**
  * 生成友好的地点URL
@@ -6,7 +7,7 @@ import { Place, City } from './supabase'
  * @param city 城市对象（可选，如果未提供会尝试从place.city_id获取）
  * @returns 友好的URL路径
  */
-export function generatePlaceUrl(place: Place, city?: City): string {
+export async function generatePlaceUrl(place: Place, city?: City): Promise<string> {
   // 如果提供了城市信息，使用城市信息
   if (city) {
     const citySlug = city.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
@@ -14,9 +15,32 @@ export function generatePlaceUrl(place: Place, city?: City): string {
     return `/nomadplaces/${citySlug}/${placeSlug}`
   }
   
-  // 如果没有城市信息，尝试从place.city_id推断
-  // 这里需要根据实际的数据结构调整
+  // 如果没有城市信息，尝试从place.city_id获取城市信息
+  try {
+    const cityData = await getCityById(place.city_id)
+    if (cityData) {
+      const citySlug = cityData.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+      const placeSlug = place.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+      return `/nomadplaces/${citySlug}/${placeSlug}`
+    }
+  } catch (error) {
+    console.error('Error fetching city data for URL generation:', error)
+  }
+  
+  // 如果无法获取城市信息，使用city_id作为fallback
   const citySlug = place.city_id.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+  const placeSlug = place.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
+  return `/nomadplaces/${citySlug}/${placeSlug}`
+}
+
+/**
+ * 生成友好的地点URL（同步版本，需要提供城市信息）
+ * @param place 地点对象
+ * @param city 城市对象
+ * @returns 友好的URL路径
+ */
+export function generatePlaceUrlSync(place: Place, city: City): string {
+  const citySlug = city.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
   const placeSlug = place.name.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
   return `/nomadplaces/${citySlug}/${placeSlug}`
 }
