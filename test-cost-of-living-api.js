@@ -19,10 +19,10 @@
  *   4. Provides recommendations for improvement
  */
 
-const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config(); // Load environment variables from .env
+// Load environment variables from .env
+require('dotenv').config();
 
-// Initialize Supabase client
+// Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
@@ -32,7 +32,28 @@ if (!supabaseUrl || !supabaseKey) {
   process.exit(1);
 }
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+// Simple Supabase client using fetch (no external dependencies)
+async function supabaseRequest(table, options = {}) {
+  const { select = '*', limit, order } = options;
+  let url = `${supabaseUrl}/rest/v1/${table}?select=${select}`;
+  
+  if (limit) url += `&limit=${limit}`;
+  if (order) url += `&order=${order}`;
+  
+  const response = await fetch(url, {
+    headers: {
+      'apikey': supabaseKey,
+      'Authorization': `Bearer ${supabaseKey}`,
+      'Content-Type': 'application/json'
+    }
+  });
+  
+  if (!response.ok) {
+    throw new Error(`Supabase request failed: ${response.status} ${response.statusText}`);
+  }
+  
+  return response.json();
+}
 
 async function testCostOfLivingAPI() {
   console.log('🔍 Testing Cost of Living API Usage...\n');
@@ -40,15 +61,11 @@ async function testCostOfLivingAPI() {
   try {
     // 1. Check current city data in database
     console.log('1. 📊 Checking current city data in database...');
-    const { data: cities, error } = await supabase
-      .from('cities')
-      .select('id, name, country, cost_of_living, wifi_speed, updated_at')
-      .limit(10);
-
-    if (error) {
-      console.error('❌ Error fetching cities:', error);
-      return;
-    }
+    const cities = await supabaseRequest('cities', {
+      select: 'id,name,country,cost_of_living,wifi_speed,updated_at',
+      limit: 10,
+      order: 'name'
+    });
 
     console.log(`✅ Found ${cities.length} cities in database:`);
     cities.forEach(city => {
@@ -85,16 +102,20 @@ async function testCostOfLivingAPI() {
     // 4. Check for automatic update mechanisms
     console.log('\n4. 🔄 Checking for automatic update mechanisms...');
     
-    // Look for scheduled jobs or update triggers
-    const { data: triggers, error: triggerError } = await supabase
-      .from('information_schema.triggers')
-      .select('*')
-      .eq('event_object_table', 'cities');
-
-    if (triggerError) {
-      console.log('   - No database triggers found for automatic updates');
-    } else {
-      console.log(`   - Found ${triggers.length} triggers on cities table`);
+    try {
+      // Look for scheduled jobs or update triggers
+      const triggers = await supabaseRequest('information_schema.triggers', {
+        select: '*'
+      });
+      
+      const cityTriggers = triggers.filter(t => t.event_object_table === 'cities');
+      if (cityTriggers.length > 0) {
+        console.log(`   - Found ${cityTriggers.length} triggers on cities table`);
+      } else {
+        console.log('   - No database triggers found for automatic updates');
+      }
+    } catch (error) {
+      console.log('   - Could not check for triggers (permission issue)');
     }
 
     // 5. Check cache status
