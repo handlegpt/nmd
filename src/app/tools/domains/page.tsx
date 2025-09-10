@@ -3485,8 +3485,8 @@ export default function DomainTrackerPage() {
                 />
                 {newTransaction.type === 'sell' && (
                   <div className="text-xs text-gray-500 mt-1 space-y-1">
-                    <div>💰 <strong>净收益:</strong> 扣除平台手续费后实际收到的金额</div>
-                    <div>💡 例如: 总售价$1000，手续费15%，净收益$850</div>
+                    <div>💰 <strong>Net Revenue:</strong> Actual amount received after platform fees</div>
+                    <div>💡 Example: Gross sale $1000, 15% fee, net revenue $850</div>
                   </div>
                 )}
               </div>
@@ -3557,8 +3557,8 @@ export default function DomainTrackerPage() {
                         }}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                       >
-                        <option value="lump_sum">一次性付款</option>
-                        <option value="installment">分期付款</option>
+                        <option value="lump_sum">Lump Sum</option>
+                        <option value="installment">Installment</option>
                       </select>
                     </div>
                     {newTransaction.payment_plan === 'installment' && (
@@ -3598,7 +3598,7 @@ export default function DomainTrackerPage() {
                                 </option>
                               );
                             }) : 
-                            [6, 12, 24].map(period => (
+                            [6, 12, 24, 36, 48, 60].map(period => (
                               <option key={period} value={period}>{period} months</option>
                             ))
                           }
