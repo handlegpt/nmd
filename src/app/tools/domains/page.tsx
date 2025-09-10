@@ -1297,14 +1297,22 @@ export default function DomainTrackerPage() {
     
     setTransactions(prev => [...prev, transaction]);
     
-    // 根据域名年龄和续费周期自动创建续费交易
-    const ageInYears = (new Date().getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
+    // 根据用户填写的续费次数或域名年龄自动创建续费交易
     const renewalCycleYears = newDomain.renewal_cycle_years || 1;
-    const expectedRenewals = Math.floor(ageInYears / renewalCycleYears);
+    let actualRenewalCount = 0;
     
-    if (expectedRenewals > 0) {
-      // 为每次预期的续费创建交易记录
-      for (let i = 1; i <= expectedRenewals; i++) {
+    // 优先使用用户手动填写的续费次数
+    if (newDomain.renewal_count && newDomain.renewal_count > 0) {
+      actualRenewalCount = newDomain.renewal_count;
+    } else {
+      // 如果没有手动填写，则根据域名年龄和续费周期计算
+      const ageInYears = (new Date().getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
+      actualRenewalCount = Math.floor(ageInYears / renewalCycleYears);
+    }
+    
+    if (actualRenewalCount > 0) {
+      // 为每次续费创建交易记录
+      for (let i = 1; i <= actualRenewalCount; i++) {
         const renewalDate = new Date(purchaseDate.getTime() + (i * renewalCycleYears * 365 * 24 * 60 * 60 * 1000));
         const renewalTransaction: DomainTransaction = {
           id: crypto.randomUUID(),
@@ -1323,9 +1331,9 @@ export default function DomainTrackerPage() {
         d.id === domain.id 
           ? { 
               ...d, 
-              total_renewal_paid: expectedRenewals * (validatedRenewalCost || validatedPurchaseCost),
-              renewal_count: expectedRenewals,
-              last_renewal_date: new Date(purchaseDate.getTime() + (expectedRenewals * renewalCycleYears * 365 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
+              total_renewal_paid: actualRenewalCount * (validatedRenewalCost || validatedPurchaseCost),
+              renewal_count: actualRenewalCount,
+              last_renewal_date: new Date(purchaseDate.getTime() + (actualRenewalCount * renewalCycleYears * 365 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
             }
           : d
       ));
@@ -3214,6 +3222,21 @@ export default function DomainTrackerPage() {
                 </p>
               </div>
               <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">已续费次数 (Optional)</label>
+                <input 
+                  type="number" 
+                  min="0"
+                  max="20"
+                  placeholder="0"
+                  value={newDomain.renewal_count || ''}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_count: Math.max(0, Math.min(20, parseInt(e.target.value) || 0)) }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 填写域名已经续费了多少次。例如：we.ai在2019年3月注册，2020年5月购买，如果填写到期时间2021年3月，说明已经续费1次（2021年3月到期），所以这里填1
+                </p>
+              </div>
+              <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Expiry Date (Optional)</label>
                 <input 
                   type="date" 
@@ -3222,6 +3245,21 @@ export default function DomainTrackerPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500 mt-1">Leave empty to auto-calculate based on purchase date and renewal cycle</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">已续费次数 (Optional)</label>
+                <input 
+                  type="number" 
+                  min="0"
+                  max="20"
+                  placeholder="0"
+                  value={newDomain.renewal_count || ''}
+                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_count: Math.max(0, Math.min(20, parseInt(e.target.value) || 0)) }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  💡 填写域名已经续费了多少次。例如：we.ai在2019年3月注册，2020年5月购买，如果填写到期时间2021年3月，说明已经续费1次（2021年3月到期），所以这里填1
+                </p>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
