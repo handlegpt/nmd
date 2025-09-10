@@ -115,6 +115,7 @@ interface Domain {
   last_renewal_amount: number; // 上次续费金额
   last_renewal_date: string; // 上次续费日期
   next_renewal_amount: number; // 下次续费金额（可能因价格变动而不同）
+  renewal_count: number; // 已续费次数（手动填写）
 }
 
 interface DomainTransaction {
@@ -177,7 +178,8 @@ export default function DomainTrackerPage() {
     renewal_cycle_type: 'annual' as 'annual' | 'biennial' | 'triennial' | 'custom',
     last_renewal_amount: 0,
     last_renewal_date: '',
-    next_renewal_amount: 0
+    next_renewal_amount: 0,
+    renewal_count: 0 // 已续费次数
   });
   const [newTransaction, setNewTransaction] = useState({
     domain_id: '',
@@ -274,7 +276,9 @@ export default function DomainTrackerPage() {
     return domains.reduce((total, domain) => {
       const purchaseCost = domain.purchase_cost || 0;
       const renewalCost = domain.total_renewal_paid || 0;
-      return total + purchaseCost + renewalCost;
+      // 如果total_renewal_paid为0，使用renewal_count * renewal_cost计算
+      const calculatedRenewalCost = renewalCost > 0 ? renewalCost : (domain.renewal_count || 0) * (domain.renewal_cost || 0);
+      return total + purchaseCost + calculatedRenewalCost;
     }, 0);
   };
 
@@ -414,9 +418,11 @@ export default function DomainTrackerPage() {
 
   // Save data to server and localStorage whenever domains, transactions, or stats change
   useEffect(() => {
-    if (!loading && user?.profile?.id) {
+    if (!loading && user?.profile?.id && (domains.length > 0 || transactions.length > 0)) {
       const saveData = async () => {
         try {
+          console.log('Saving domain data:', { domains: domains.length, transactions: transactions.length });
+          
           // 1. 保存到服务器
           await Promise.all([
             userDataSync.saveToolData('domain_tracker_domains', user.profile.id, domains),
@@ -432,6 +438,8 @@ export default function DomainTrackerPage() {
           localStorage.setItem('domainTracker_domains', encryptedDomains);
           localStorage.setItem('domainTracker_transactions', encryptedTransactions);
           localStorage.setItem('domainTracker_stats', encryptedStats);
+          
+          console.log('Data saved successfully');
         } catch (error) {
           console.error('Error saving data:', error);
           // 即使服务器保存失败，也保存到本地
@@ -443,15 +451,19 @@ export default function DomainTrackerPage() {
             localStorage.setItem('domainTracker_domains', encryptedDomains);
             localStorage.setItem('domainTracker_transactions', encryptedTransactions);
             localStorage.setItem('domainTracker_stats', encryptedStats);
+            
+            console.log('Data saved to localStorage as fallback');
           } catch (localError) {
             console.error('Error saving data to localStorage:', localError);
           }
         }
       };
 
-      saveData();
+      // 使用防抖来避免频繁保存
+      const timeoutId = setTimeout(saveData, 1000);
+      return () => clearTimeout(timeoutId);
     }
-  }, [domains, transactions, stats, loading, user?.profile?.id]);
+  }, [domains, transactions, loading, user?.profile?.id]);
 
   // Update stats whenever domains or transactions change
   useEffect(() => {
@@ -1154,7 +1166,8 @@ export default function DomainTrackerPage() {
       renewal_cycle_type: newDomain.renewal_cycle_type,
       last_renewal_amount: newDomain.last_renewal_amount,
       last_renewal_date: newDomain.last_renewal_date,
-      next_renewal_amount: newDomain.next_renewal_amount || newDomain.renewal_cost
+      next_renewal_amount: newDomain.next_renewal_amount || newDomain.renewal_cost,
+      renewal_count: newDomain.renewal_count || 0
     };
 
     setDomains(prev => [...prev, domain]);
@@ -1188,7 +1201,8 @@ export default function DomainTrackerPage() {
       renewal_cycle_type: 'annual' as 'annual' | 'biennial' | 'triennial' | 'custom',
       last_renewal_amount: 0,
       last_renewal_date: '',
-      next_renewal_amount: 0
+      next_renewal_amount: 0,
+      renewal_count: 0
     });
     
     setShowAddDomainModal(false);
