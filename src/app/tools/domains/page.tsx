@@ -3227,7 +3227,7 @@ export default function DomainTrackerPage() {
                 </p>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">已续费次数 (Optional)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Renewal Count (Optional)</label>
                 <input 
                   type="number" 
                   min="0"
@@ -3238,7 +3238,7 @@ export default function DomainTrackerPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500 mt-1">
-                  💡 填写域名已经续费了多少次。例如：we.ai在2019年3月注册，2020年5月购买，如果填写到期时间2021年3月，说明已经续费1次（2021年3月到期），所以这里填1
+                  Number of times the domain has been renewed
                 </p>
               </div>
               <div>
@@ -3250,21 +3250,6 @@ export default function DomainTrackerPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
                 <p className="text-xs text-gray-500 mt-1">Leave empty to auto-calculate based on purchase date and renewal cycle</p>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">已续费次数 (Optional)</label>
-                <input 
-                  type="number" 
-                  min="0"
-                  max="20"
-                  placeholder="0"
-                  value={newDomain.renewal_count || ''}
-                  onChange={(e) => setNewDomain(prev => ({ ...prev, renewal_count: Math.max(0, Math.min(20, parseInt(e.target.value) || 0)) }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <p className="text-xs text-gray-500 mt-1">
-                  💡 填写域名已经续费了多少次。例如：we.ai在2019年3月注册，2020年5月购买，如果填写到期时间2021年3月，说明已经续费1次（2021年3月到期），所以这里填1
-                </p>
               </div>
             </div>
             <div className="flex justify-end space-x-3 mt-6">
