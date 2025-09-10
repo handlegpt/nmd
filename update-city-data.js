@@ -111,6 +111,10 @@ class CostOfLivingAPI {
       for (const endpoint of endpoints) {
         try {
           console.log(`  Trying endpoint: ${endpoint}`);
+          
+          // Add delay between API calls to avoid rate limiting
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
           const response = await fetch(endpoint, {
             headers: {
               'X-RapidAPI-Key': this.rapidApiKey,
@@ -136,6 +140,9 @@ class CostOfLivingAPI {
                 }
               };
             }
+          } else if (response.status === 429) {
+            console.log(`  ⏳ Rate limited (429), waiting 10 seconds before next attempt...`);
+            await new Promise(resolve => setTimeout(resolve, 10000));
           } else {
             console.log(`  ❌ Failed with status ${response.status}: ${response.statusText}`);
           }
@@ -327,8 +334,8 @@ async function main() {
           failCount++;
         }
         
-        // Add delay to avoid rate limiting
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        // Add delay to avoid rate limiting (increased to 5 seconds)
+        await new Promise(resolve => setTimeout(resolve, 5000));
       }
 
       console.log(`\n📊 Update Summary:`);
