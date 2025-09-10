@@ -43,7 +43,7 @@ import { PlaceDataService, UserLocation } from '@/lib/placeDataService'
 import { PLACE_CATEGORIES, getCategoryIcon, getCategoryName, getCategoryColor } from '@/lib/placeCategories'
 import GeolocationPermissionGuide from '@/components/GeolocationPermissionGuide'
 
-export default function HomePlaceRecommendations() {
+export default function NomadPlaceRecommendations() {
   const { t } = useTranslation()
   const { addNotification } = useNotifications()
   const [places, setPlaces] = useState<Place[]>([])
@@ -92,7 +92,7 @@ export default function HomePlaceRecommendations() {
         setPlaces(topPlaces)
       }
     } catch (error) {
-      logError('Error loading places', error, 'HomePlaceRecommendations')
+      logError('Error loading places', error, 'NomadPlaceRecommendations')
       // 如果出错，至少显示本地数据
       const localPlaces = PlaceDataService.getLocalPlaces()
       setPlaces(localPlaces.slice(0, 6))
@@ -138,7 +138,7 @@ export default function HomePlaceRecommendations() {
               message: `Location detected: ${location.city}, ${location.country}`
             })
           } catch (error) {
-            logError('Error detecting location', error, 'HomePlaceRecommendations')
+            logError('Error detecting location', error, 'NomadPlaceRecommendations')
             setShowLocationDetection(false)
             addNotification({
               type: 'error',
@@ -148,7 +148,7 @@ export default function HomePlaceRecommendations() {
         },
         (error) => {
           setShowLocationDetection(false)
-          logError('Geolocation error', error, 'HomePlaceRecommendations')
+          logError('Geolocation error', error, 'NomadPlaceRecommendations')
           
           let errorMessage = 'Location access denied'
           if (error.code === error.PERMISSION_DENIED) {

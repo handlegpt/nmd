@@ -11,7 +11,7 @@ import HeroSection from '@/components/HeroSection'
 import UnifiedLiveInfoCard from '@/components/UnifiedLiveInfoCard'
 import EnhancedCityRanking from '@/components/EnhancedCityRanking'
 import HomeLocalNomads from '@/components/HomeLocalNomads'
-import HomePlaceRecommendations from '@/components/HomePlaceRecommendations'
+import NomadPlaceRecommendations from '@/components/NomadPlaceRecommendations'
 
 import WifiSpeedTest from '@/components/WifiSpeedTest'
 import AddCityForm from '@/components/AddCityForm'
@@ -71,7 +71,7 @@ export default function HomePage() {
 
         {/* Place Recommendations */}
         <section className="animate-fade-in">
-          <HomePlaceRecommendations />
+          <NomadPlaceRecommendations />
         </section>
 
 
