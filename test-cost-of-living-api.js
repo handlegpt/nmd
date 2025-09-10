@@ -9,7 +9,9 @@
  * 
  * Requirements:
  *   - Must be run on server with environment variables
- *   - Requires .env file with Supabase credentials
+ *   - Set environment variables before running:
+ *     export NEXT_PUBLIC_SUPABASE_URL="your_supabase_url"
+ *     export NEXT_PUBLIC_SUPABASE_ANON_KEY="your_supabase_key"
  *   - Optional: NUMBEO_API_KEY and RAPIDAPI_KEY for API testing
  * 
  * What it checks:
@@ -19,8 +21,10 @@
  *   4. Provides recommendations for improvement
  */
 
-// Load environment variables from .env
-require('dotenv').config();
+// Load environment variables (no external dependencies)
+// Make sure to set environment variables before running:
+// export NEXT_PUBLIC_SUPABASE_URL="your_url"
+// export NEXT_PUBLIC_SUPABASE_ANON_KEY="your_key"
 
 // Supabase configuration
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
