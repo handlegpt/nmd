@@ -1322,7 +1322,8 @@ export default function DomainTrackerPage() {
       renewal_cycle_type: domain.renewal_cycle_type || 'annual',
       last_renewal_amount: domain.last_renewal_amount || 0,
       last_renewal_date: domain.last_renewal_date || '',
-      next_renewal_amount: domain.next_renewal_amount || domain.renewal_cost
+      next_renewal_amount: domain.next_renewal_amount || domain.renewal_cost,
+      renewal_count: domain.renewal_count || 0
     });
     setShowEditDomainModal(true);
   };
@@ -1349,7 +1350,8 @@ export default function DomainTrackerPage() {
       renewal_cycle_type: newDomain.renewal_cycle_type,
       last_renewal_amount: newDomain.last_renewal_amount,
       last_renewal_date: newDomain.last_renewal_date,
-      next_renewal_amount: newDomain.next_renewal_amount
+      next_renewal_amount: newDomain.next_renewal_amount,
+      renewal_count: newDomain.renewal_count
     };
 
     setDomains(prev => prev.map(domain => 
@@ -1370,7 +1372,8 @@ export default function DomainTrackerPage() {
       renewal_cycle_type: 'annual' as 'annual' | 'biennial' | 'triennial' | 'custom',
       last_renewal_amount: 0,
       last_renewal_date: '',
-      next_renewal_amount: 0
+      next_renewal_amount: 0,
+      renewal_count: 0
     });
     setEditingDomain(null);
     setShowEditDomainModal(false);
@@ -3162,7 +3165,8 @@ export default function DomainTrackerPage() {
                     renewal_cycle_type: 'annual' as 'annual' | 'biennial' | 'triennial' | 'custom',
                     last_renewal_amount: 0,
                     last_renewal_date: '',
-                    next_renewal_amount: 0
+                    next_renewal_amount: 0,
+                    renewal_count: 0
                   });
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
