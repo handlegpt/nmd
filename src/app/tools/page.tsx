@@ -33,10 +33,25 @@ export default function ToolsPage() {
   const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [pinnedTools, setPinnedTools] = useState<string[]>(['cost-calculator', 'visa-counter', 'wifi-tracker', 'time-zones']);
+  const [pinnedTools, setPinnedTools] = useState<string[]>(['domain-tracker', 'ai-recommendations', 'city-comparison', 'tax-calculator']);
 
   // 工具元数据配置 - 便于快速增减工具
   const toolsData = [
+    // Trackers - Domain Tracker (First Priority)
+    {
+      id: 'domain-tracker',
+      title: t('tools.tools.domainTracker.title'),
+      description: t('tools.tools.domainTracker.description'),
+      icon: Globe,
+      emoji: '🌐',
+      category: 'trackers',
+      status: 'live',
+      tags: ['domains', 'investment', 'tracking', 'analytics'],
+      features: ['Portfolio management', 'Cost tracking', 'ROI calculations', 'Renewal reminders'],
+      popularity: 95,
+      lastUpdated: '2024-01-24'
+    },
+    
     // Calculators
     {
       id: 'cost-calculator',
@@ -45,7 +60,7 @@ export default function ToolsPage() {
       icon: DollarSign,
       emoji: '🧮',
       category: 'calculators',
-      status: 'live',
+      status: 'coming-soon',
       tags: ['budget', 'cost', 'comparison', 'planning'],
       features: ['Monthly expenses', 'City comparisons', 'Currency conversion', 'Budget planning'],
       popularity: 95,
@@ -58,7 +73,7 @@ export default function ToolsPage() {
       icon: Calendar,
       emoji: '📅',
       category: 'calculators',
-      status: 'live',
+      status: 'coming-soon',
       tags: ['visa', 'tracking', 'compliance', 'days'],
       features: ['Day counting', 'Extension planning', 'Multiple visas', 'Alerts'],
       popularity: 88,
@@ -86,7 +101,7 @@ export default function ToolsPage() {
       icon: MapPin,
       emoji: '📍',
       category: 'trackers',
-      status: 'live',
+      status: 'coming-soon',
       tags: ['travel', 'tracking', 'location', 'history'],
       features: ['Location logging', 'Duration tracking', 'Visa compliance', 'History export'],
       popularity: 82,
@@ -158,21 +173,6 @@ export default function ToolsPage() {
       features: ['Time zone coordination', 'Meeting scheduling', 'Availability tracking', 'Calendar sync'],
       popularity: 65,
       lastUpdated: '2024-01-21'
-    },
-    
-    // Trackers - Domain Tracker
-    {
-      id: 'domain-tracker',
-      title: t('tools.tools.domainTracker.title'),
-      description: t('tools.tools.domainTracker.description'),
-      icon: Globe,
-      emoji: '🌐',
-      category: 'trackers',
-      status: 'live',
-      tags: ['domains', 'investment', 'tracking', 'analytics'],
-      features: ['Portfolio management', 'Cost tracking', 'ROI calculations', 'Renewal reminders'],
-      popularity: 78,
-      lastUpdated: '2024-01-23'
     },
     
     // AI Tools
