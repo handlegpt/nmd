@@ -178,7 +178,7 @@ export default function ToolsPage() {
     // AI Tools
     {
       id: 'ai-recommendations',
-      title: 'AI Personalized Recommendations',
+      title: 'AI Recommendations',
       description: 'Get personalized city and place recommendations based on your preferences and lifestyle',
       icon: Brain,
       emoji: '🧠',

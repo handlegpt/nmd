@@ -27,7 +27,7 @@ export default function AIRecommendationsPage() {
           <div className="flex items-center justify-center space-x-3 mb-4">
             <Brain className="h-8 w-8 text-purple-600" />
             <h1 className="text-4xl font-bold text-gray-900">
-              AI Personalized Recommendations
+              AI Recommendations
             </h1>
           </div>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
