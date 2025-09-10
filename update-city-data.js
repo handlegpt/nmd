@@ -100,30 +100,51 @@ class CostOfLivingAPI {
     }
 
     try {
-      const response = await fetch(`https://traveltables.p.rapidapi.com/cost-of-living/${cityName}`, {
-        headers: {
-          'X-RapidAPI-Key': this.rapidApiKey,
-          'X-RapidAPI-Host': 'traveltables.p.rapidapi.com'
-        }
-      });
+      // Try different possible endpoints
+      const endpoints = [
+        `https://traveltables.p.rapidapi.com/cities/${cityName}`,
+        `https://traveltables.p.rapidapi.com/cost-of-living/${cityName}`,
+        `https://traveltables.p.rapidapi.com/cities?name=${encodeURIComponent(cityName)}`,
+        `https://traveltables.p.rapidapi.com/cost-of-living?city=${encodeURIComponent(cityName)}`
+      ];
 
-      if (!response.ok) {
-        throw new Error(`TravelTables API error: ${response.status}`);
+      for (const endpoint of endpoints) {
+        try {
+          console.log(`  Trying endpoint: ${endpoint}`);
+          const response = await fetch(endpoint, {
+            headers: {
+              'X-RapidAPI-Key': this.rapidApiKey,
+              'X-RapidAPI-Host': 'traveltables.p.rapidapi.com'
+            }
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log(`  ✅ Success with endpoint: ${endpoint}`);
+            console.log(`  Response data:`, JSON.stringify(data).substring(0, 200));
+            
+            // Extract cost of living data
+            const costOfLiving = data.cost_of_living || data.average_cost || data.cost || 0;
+            
+            if (costOfLiving > 0) {
+              return {
+                success: true,
+                data: {
+                  cost_of_living: Math.round(costOfLiving),
+                  source: 'TravelTables API',
+                  lastUpdated: new Date().toISOString()
+                }
+              };
+            }
+          } else {
+            console.log(`  ❌ Failed with status ${response.status}: ${response.statusText}`);
+          }
+        } catch (endpointError) {
+          console.log(`  ❌ Error with endpoint ${endpoint}: ${endpointError.message}`);
+        }
       }
 
-      const data = await response.json();
-      
-      // Extract cost of living data
-      const costOfLiving = data.cost_of_living || data.average_cost || 0;
-      
-      return {
-        success: true,
-        data: {
-          cost_of_living: Math.round(costOfLiving),
-          source: 'TravelTables API',
-          lastUpdated: new Date().toISOString()
-        }
-      };
+      return { success: false, error: 'All TravelTables API endpoints failed' };
     } catch (error) {
       return { success: false, error: error.message };
     }
