@@ -272,6 +272,11 @@ export default function DomainTrackerPage() {
     'Epik': 10,
     'Uniregistry': 10,
     'Name.com': 15,
+    'Spaceship.com': 0,
+    'Atom.com': 0,
+    '4.cn': 0,
+    'Aliyun.com': 0,
+    'Escrow.com': 0,
     'Other': 0
   };
 
@@ -3508,7 +3513,7 @@ export default function DomainTrackerPage() {
                         <option value="">Select...</option>
                         {Object.keys(platformFeePresets).map(platform => (
                           <option key={platform} value={platform}>
-                            {platform} {platformFeePresets[platform as keyof typeof platformFeePresets] > 0 ? `(${platformFeePresets[platform as keyof typeof platformFeePresets]}%)` : ''}
+                            {platform}
                           </option>
                         ))}
                       </select>
