@@ -3287,6 +3287,24 @@ export default function DomainTrackerPage() {
                   <option value="fee">Fee</option>
                 </select>
               </div>
+              {/* 出售交易的特殊字段 - Gross Sale Price */}
+              {newTransaction.type === 'sell' && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Gross Sale Price ($) *</label>
+                  <input 
+                    type="number" 
+                    step="0.01"
+                    placeholder="1000.00"
+                    value={newTransaction.gross_amount || ''}
+                    onChange={(e) => setNewTransaction(prev => ({ ...prev, gross_amount: validateNumericInput(e.target.value, 0, 1000000) }))}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <div className="text-xs text-gray-500 mt-1">
+                    💵 Total sale price before platform fees
+                  </div>
+                </div>
+              )}
+
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   {newTransaction.type === 'sell' ? 'Net Amount Received ($) *' : 'Amount ($) *'}
@@ -3347,20 +3365,6 @@ export default function DomainTrackerPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Gross Sale Price ($) *</label>
-                    <input 
-                      type="number" 
-                      step="0.01"
-                      placeholder="1000.00"
-                      value={newTransaction.gross_amount || ''}
-                      onChange={(e) => setNewTransaction(prev => ({ ...prev, gross_amount: validateNumericInput(e.target.value, 0, 1000000) }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    />
-                    <div className="text-xs text-gray-500 mt-1">
-                      💵 Total sale price before platform fees
-                    </div>
-                  </div>
 
                   {/* 简化的费用计算显示 */}
                   {newTransaction.gross_amount > 0 && newTransaction.amount > 0 && (
