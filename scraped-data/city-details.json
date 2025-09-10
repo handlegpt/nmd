@@ -1,0 +1,116 @@
+[
+  {
+    "name": "Barcelona",
+    "slug": "barcelona-spain",
+    "url": "https://nomads.com/barcelona-spain",
+    "image": "https://nomads.com/assets/img/places/barcelona-spain.jpg",
+    "costOfLiving": {
+      "cost_for_nomad": "",
+      "cost_for_local": "",
+      "cost_for_expat": "",
+      "rent_price": "",
+      "apartment_cost": "",
+      "hotel_price": "",
+      "airbnb_price": "",
+      "dollar_amounts": [
+        "$4891",
+        "$2,225",
+        "$26,695",
+        "$50,000",
+        "$11,365",
+        "$100,000",
+        "$33,727",
+        "$250,000",
+        "$110,442",
+        "$100"
+      ]
+    },
+    "metrics": {
+      "internet_speed": "",
+      "weather": "",
+      "temperature": "",
+      "humidity": "",
+      "air_quality": "",
+      "safety": "",
+      "nightlife": "",
+      "coworking": ""
+    },
+    "scrapedAt": "2025-09-10T13:40:37.579Z"
+  },
+  {
+    "name": "Canggu",
+    "slug": "canggu-bali-indonesia",
+    "url": "https://nomads.com/canggu-bali-indonesia",
+    "image": "https://nomads.com/assets/img/places/canggu-bali-indonesia.jpg",
+    "costOfLiving": {
+      "cost_for_nomad": "",
+      "cost_for_local": "",
+      "cost_for_expat": "",
+      "rent_price": "&#36;7,052",
+      "apartment_cost": "",
+      "hotel_price": "&#36;7,052",
+      "airbnb_price": "&#36;7,052",
+      "dollar_amounts": [
+        "$1927",
+        "$298",
+        "$3,570",
+        "$2",
+        "$500",
+        "$5,000",
+        "$3",
+        "$17",
+        "$7",
+        "$3,000"
+      ]
+    },
+    "metrics": {
+      "internet_speed": "",
+      "weather": "",
+      "temperature": "",
+      "humidity": "",
+      "air_quality": "",
+      "safety": "",
+      "nightlife": "",
+      "coworking": ""
+    },
+    "scrapedAt": "2025-09-10T13:40:44.486Z"
+  },
+  {
+    "name": "Berlin",
+    "slug": "berlin-germany",
+    "url": "https://nomads.com/berlin-germany",
+    "image": "https://nomads.com/assets/img/places/berlin-germany.jpg",
+    "costOfLiving": {
+      "cost_for_nomad": "",
+      "cost_for_local": "",
+      "cost_for_expat": "",
+      "rent_price": "",
+      "apartment_cost": "",
+      "hotel_price": "",
+      "airbnb_price": "",
+      "dollar_amounts": [
+        "$4417",
+        "$3,538",
+        "$42,456",
+        "$50,000",
+        "$11,133",
+        "$100,000",
+        "$34,508",
+        "$250,000",
+        "$100,974",
+        "$39"
+      ]
+    },
+    "metrics": {
+      "internet_speed": "",
+      "weather": "",
+      "temperature": "",
+      "humidity": "",
+      "air_quality": "",
+      "safety": "",
+      "nightlife": "",
+      "coworking": ""
+    },
+    "scrapedAt": "2025-09-10T13:40:48.335Z"
+  }
+]

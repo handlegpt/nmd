@@ -23,7 +23,9 @@ import {
   Briefcase,
   Heart,
   Eye,
-  ChevronRight
+  ChevronRight,
+  Brain,
+  BarChart3
 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 
@@ -171,6 +173,34 @@ export default function ToolsPage() {
       features: ['Portfolio management', 'Cost tracking', 'ROI calculations', 'Renewal reminders'],
       popularity: 78,
       lastUpdated: '2024-01-23'
+    },
+    
+    // AI Tools
+    {
+      id: 'ai-recommendations',
+      title: 'AI Personalized Recommendations',
+      description: 'Get personalized city and place recommendations based on your preferences and lifestyle',
+      icon: Brain,
+      emoji: '🧠',
+      category: 'planners',
+      status: 'live',
+      tags: ['ai', 'recommendations', 'personalized', 'lifestyle'],
+      features: ['Smart matching', 'Preference analysis', 'Lifestyle insights', 'Personalized suggestions'],
+      popularity: 92,
+      lastUpdated: '2024-01-24'
+    },
+    {
+      id: 'city-comparison',
+      title: 'City Comparison Tool',
+      description: 'Compare multiple cities side-by-side to find the best fit for your digital nomad journey',
+      icon: BarChart3,
+      emoji: '📊',
+      category: 'planners',
+      status: 'live',
+      tags: ['comparison', 'cities', 'analysis', 'decision-making'],
+      features: ['Side-by-side comparison', 'Cost analysis', 'Quality of life metrics', 'Decision support'],
+      popularity: 89,
+      lastUpdated: '2024-01-24'
     }
   ];
 
@@ -244,6 +274,14 @@ export default function ToolsPage() {
       switch (tool.id) {
         case 'domain-tracker':
           window.location.href = '/tools/domains';
+          break;
+        case 'ai-recommendations':
+          // Show AI recommendations component inline
+          window.location.href = '/tools/ai-recommendations';
+          break;
+        case 'city-comparison':
+          // Show city comparison component inline
+          window.location.href = '/tools/city-comparison';
           break;
         case 'cost-calculator':
           // Route to cost calculator when implemented

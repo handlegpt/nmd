@@ -10,9 +10,6 @@ import HeroSection from '@/components/HeroSection'
 // Temporarily disabled components for debugging React errors
 import UnifiedLiveInfoCard from '@/components/UnifiedLiveInfoCard'
 import EnhancedCityRanking from '@/components/EnhancedCityRanking'
-import PersonalizedRecommendations from '@/components/PersonalizedRecommendations'
-
-import CityComparison from '@/components/CityComparison'
 import HomeLocalNomads from '@/components/HomeLocalNomads'
 import HomePlaceRecommendations from '@/components/HomePlaceRecommendations'
 
@@ -77,15 +74,6 @@ export default function HomePage() {
           <HomePlaceRecommendations />
         </section>
 
-        {/* Personalized Recommendations */}
-        <section className="animate-fade-in">
-          <PersonalizedRecommendations />
-        </section>
-
-        {/* City Comparison Tool */}
-        <section className="animate-fade-in">
-          <CityComparison />
-        </section>
 
         {/* Local Nomads */}
         <section className="animate-fade-in">

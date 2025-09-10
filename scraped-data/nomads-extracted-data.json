@@ -1,0 +1,126 @@
+{
+  "cities": [
+    {
+      "name": "Barcelona",
+      "image": "https://nomads.com/assets/img/places/barcelona-spain.jpg",
+      "slug": "barcelona-spain"
+    },
+    {
+      "name": "Canggu",
+      "image": "https://nomads.com/assets/img/places/canggu-bali-indonesia.jpg",
+      "slug": "canggu-bali-indonesia"
+    },
+    {
+      "name": "Berlin",
+      "image": "https://nomads.com/assets/img/places/berlin-germany.jpg",
+      "slug": "berlin-germany"
+    },
+    {
+      "name": "Tbilisi",
+      "image": "https://nomads.com/assets/img/places/tbilisi-georgia.jpg",
+      "slug": "tbilisi-georgia"
+    },
+    {
+      "name": "Asuncion",
+      "image": "https://nomads.com/assets/img/places/asuncion-paraguay.jpg",
+      "slug": "asuncion-paraguay"
+    }
+  ],
+  "costFields": [
+    {
+      "field": "local_cost_in_usd",
+      "prefix": "$",
+      "postfix": "/mo",
+      "label": "Cost for local"
+    },
+    {
+      "field": "long_term_cost_in_usd",
+      "prefix": "$",
+      "postfix": "/mo",
+      "label": "Cost for expat"
+    },
+    {
+      "field": "apartment_cost_in_usd",
+      "prefix": "$",
+      "postfix": "/mo",
+      "label": "Rent price 1br"
+    }
+  ],
+  "cityLinks": [
+    {
+      "name": "Nomads.com",
+      "url": "https://nomads.com/?t=1757510669"
+    },
+    {
+      "name": "Barcelona",
+      "url": "https://nomads.com/meetups#f28d1a3a08b1d4a1e04bcfea043bd969"
+    },
+    {
+      "name": "Canggu",
+      "url": "https://nomads.com/meetups#3ddfe4e883e278129a669ac85d5b7534"
+    },
+    {
+      "name": "Berlin",
+      "url": "https://nomads.com/meetups#633b2d10f6003350ed99406b9ec41e12"
+    },
+    {
+      "name": "Tbilisi",
+      "url": "https://nomads.com/meetups#6ef81bbec96696eb39b0b49418d2ffa7"
+    },
+    {
+      "name": "Asuncion",
+      "url": "https://nomads.com/meetups#06c7c32f5fc497ade929246f26528514"
+    },
+    {
+      "name": "Ampcontrol",
+      "url": "https://remoteok.com/remote-jobs/remote-python-developer-ampcontrol-1096950?ref=nomadlist"
+    },
+    {
+      "name": "Datacurve",
+      "url": "https://remoteok.com/remote-jobs/remote-freelance-python-contributor-project-aurora-datacurve-1096434?ref=nomadlist"
+    },
+    {
+      "name": "Baymard Institute",
+      "url": "https://remoteok.com/remote-jobs/remote-ux-engineer-baymard-institute-1095352?ref=nomadlist"
+    },
+    {
+      "name": "Escorial Future",
+      "url": "https://remoteok.com/remote-jobs/remote-crypto-trader-escorial-future-1093995?ref=nomadlist"
+    },
+    {
+      "name": "Washing State Pharmacy Association",
+      "url": "https://remoteok.com/remote-jobs/remote-work-from-home-customer-service-assistant-washing-state-pharmacy-association-1093884?ref=nomadlist"
+    },
+    {
+      "name": "Livepeer",
+      "url": "https://remoteok.com/remote-jobs/remote-lead-site-reliability-engineer-livepeer-1093843?ref=nomadlist"
+    }
+  ],
+  "cityMentions": [
+    {
+      "name": "Bangkok",
+      "mentions": 1
+    },
+    {
+      "name": "Bali",
+      "mentions": 25
+    },
+    {
+      "name": "Canggu",
+      "mentions": 6
+    },
+    {
+      "name": "Lisbon",
+      "mentions": 2
+    },
+    {
+      "name": "Hong Kong",
+      "mentions": 12
+    },
+    {
+      "name": "Tokyo",
+      "mentions": 1
+    }
+  ],
+  "extractedAt": "2025-09-10T13:35:56.683Z"
+}
