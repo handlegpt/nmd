@@ -43,36 +43,58 @@ async function testSingleCity() {
   
   console.log('🔍 Testing TravelTables API with Amsterdam...');
   
-  // Test the most likely working endpoint
-  const endpoint = 'https://traveltables.p.rapidapi.com/cost-of-living/Amsterdam';
+  // Test different possible endpoints
+  const endpoints = [
+    'http://api.traveltables.com/cities?apikey=' + rapidApiKey,
+    'http://api.traveltables.com/cost-of-living?apikey=' + rapidApiKey,
+    'http://api.traveltables.com/cities/Amsterdam?apikey=' + rapidApiKey,
+    'http://api.traveltables.com/cost-of-living/Amsterdam?apikey=' + rapidApiKey,
+    'https://traveltables.p.rapidapi.com/cost-of-living/Amsterdam'
+  ];
   
-  try {
-    console.log(`📡 Calling: ${endpoint}`);
-    
-    const response = await fetch(endpoint, {
-      headers: {
-        'X-RapidAPI-Key': rapidApiKey,
-        'X-RapidAPI-Host': 'traveltables.p.rapidapi.com'
+  for (const endpoint of endpoints) {
+    try {
+      console.log(`\n📡 Testing: ${endpoint}`);
+      
+      let response;
+      if (endpoint.includes('rapidapi.com')) {
+        // Use RapidAPI headers
+        response = await fetch(endpoint, {
+          headers: {
+            'X-RapidAPI-Key': rapidApiKey,
+            'X-RapidAPI-Host': 'traveltables.p.rapidapi.com'
+          }
+        });
+      } else {
+        // Use direct API call
+        response = await fetch(endpoint);
       }
-    });
     
-    console.log(`📊 Response Status: ${response.status} ${response.statusText}`);
-    console.log(`📋 Response Headers:`, Object.fromEntries(response.headers.entries()));
-    
-    const data = await response.text();
-    console.log(`📄 Response Data:`, data);
-    
-    if (response.ok) {
-      try {
-        const jsonData = JSON.parse(data);
-        console.log(`✅ Parsed JSON:`, JSON.stringify(jsonData, null, 2));
-      } catch (parseError) {
-        console.log(`⚠️ Could not parse as JSON:`, parseError.message);
+      console.log(`📊 Response Status: ${response.status} ${response.statusText}`);
+      console.log(`📋 Response Headers:`, Object.fromEntries(response.headers.entries()));
+      
+      const data = await response.text();
+      console.log(`📄 Response Data:`, data.substring(0, 500));
+      
+      if (response.ok) {
+        try {
+          const jsonData = JSON.parse(data);
+          console.log(`✅ Parsed JSON:`, JSON.stringify(jsonData, null, 2));
+          console.log(`🎉 SUCCESS! This endpoint works!`);
+          break; // Stop testing if we find a working endpoint
+        } catch (parseError) {
+          console.log(`⚠️ Could not parse as JSON:`, parseError.message);
+        }
+      } else {
+        console.log(`❌ Endpoint failed with status ${response.status}`);
       }
+      
+    } catch (error) {
+      console.error(`❌ Error with ${endpoint}:`, error.message);
     }
     
-  } catch (error) {
-    console.error('❌ Error:', error.message);
+    // Add delay between tests
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
 }
 
