@@ -1207,6 +1207,40 @@ export default function DomainTrackerPage() {
     
     setTransactions(prev => [...prev, transaction]);
     
+    // 根据域名年龄和续费周期自动创建续费交易
+    const ageInYears = (new Date().getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365);
+    const renewalCycleYears = newDomain.renewal_cycle_years || 1;
+    const expectedRenewals = Math.floor(ageInYears / renewalCycleYears);
+    
+    if (expectedRenewals > 0) {
+      // 为每次预期的续费创建交易记录
+      for (let i = 1; i <= expectedRenewals; i++) {
+        const renewalDate = new Date(purchaseDate.getTime() + (i * renewalCycleYears * 365 * 24 * 60 * 60 * 1000));
+        const renewalTransaction: DomainTransaction = {
+          id: crypto.randomUUID(),
+          domain_id: domain.id,
+          type: 'renew',
+          amount: validatedRenewalCost || validatedPurchaseCost,
+          currency: 'USD',
+          date: renewalDate.toISOString().split('T')[0],
+          notes: `Auto-calculated renewal #${i} (${renewalCycleYears} year cycle)`
+        };
+        setTransactions(prev => [...prev, renewalTransaction]);
+      }
+      
+      // 更新域名的续费信息
+      setDomains(prev => prev.map(d => 
+        d.id === domain.id 
+          ? { 
+              ...d, 
+              total_renewal_paid: expectedRenewals * (validatedRenewalCost || validatedPurchaseCost),
+              renewal_count: expectedRenewals,
+              last_renewal_date: new Date(purchaseDate.getTime() + (expectedRenewals * renewalCycleYears * 365 * 24 * 60 * 60 * 1000)).toISOString().split('T')[0]
+            }
+          : d
+      ));
+    }
+    
     // Stats will be automatically updated by useEffect
 
     // Reset form
@@ -1951,7 +1985,7 @@ export default function DomainTrackerPage() {
                   Total Cost
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  ROI
+                  ROI / Net Revenue
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Next Renewal
@@ -2022,9 +2056,20 @@ export default function DomainTrackerPage() {
                       ${totalCost.toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className={`font-medium ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {roi.toFixed(1)}%
-                      </span>
+                      {domain.status === 'sold' ? (
+                        <div>
+                          <div className={`font-medium ${totalRevenue - totalCost >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            ${(totalRevenue - totalCost).toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            ROI: {roi.toFixed(1)}%
+                          </div>
+                        </div>
+                      ) : (
+                        <span className={`font-medium ${roi >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                          {roi.toFixed(1)}%
+                        </span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       <div>
