@@ -281,10 +281,13 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
   const getAllRegisteredUsers = useCallback((): NomadUser[] => {
     try {
       const users: NomadUser[] = []
+      const processedUserIds = new Set<string>() // 防止重复用户
       
       // 获取所有用户的独立profile存储
       const keys = Object.keys(localStorage)
       const profileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
+      
+      logInfo('Found profile keys', { profileKeys, totalKeys: keys.length }, 'useNomadUsers')
       
       // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
       if (profileKeys.length === 0) {
@@ -294,6 +297,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
             const profile = JSON.parse(generalProfile)
             if (profile.id && profile.name) {
               profileKeys.push('user_profile_details')
+              logInfo('Using general profile as fallback', { userId: profile.id }, 'useNomadUsers')
             }
           } catch (error) {
             logError('Error parsing general profile', error, 'useNomadUsers')
@@ -306,7 +310,9 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
           const profileData = localStorage.getItem(key)
           if (profileData) {
             const profile = JSON.parse(profileData)
-            if (profile.id && profile.name) {
+            if (profile.id && profile.name && !processedUserIds.has(profile.id)) {
+              processedUserIds.add(profile.id)
+              
               // 获取用户评分摘要
               const ratingSummary = ratingSystem.getUserRatingSummary(profile.id)
               
@@ -333,6 +339,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
               }
               
               users.push(nomadUser)
+              logInfo('Added user to list', { userId: profile.id, name: profile.name, location: profile.current_city }, 'useNomadUsers')
             }
           }
         } catch (error) {
@@ -340,6 +347,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         }
       })
       
+      logInfo('Total users loaded', { count: users.length, userIds: users.map(u => u.id) }, 'useNomadUsers')
       return users
     } catch (error) {
       logError('Error getting registered users', error, 'useNomadUsers')
@@ -389,14 +397,28 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       setLoading(true)
       clearError()
       
+      logInfo('Starting to load users', { 
+        hiddenUsersCount: hiddenUsers.length,
+        hiddenUserIds: hiddenUsers,
+        currentLocation: location 
+      }, 'useNomadUsers')
+      
       // 初始化评分系统
       ratingSystem.initializeRealData()
       
       // 获取所有用户
       const allRegisteredUsers = getAllRegisteredUsers()
+      logInfo('All registered users loaded', { 
+        count: allRegisteredUsers.length,
+        userNames: allRegisteredUsers.map(u => u.name)
+      }, 'useNomadUsers')
       
       // 过滤隐藏用户
       const visibleUsers = allRegisteredUsers.filter(user => !hiddenUsers.includes(user.id))
+      logInfo('After filtering hidden users', { 
+        visibleCount: visibleUsers.length,
+        hiddenCount: allRegisteredUsers.length - visibleUsers.length
+      }, 'useNomadUsers')
       
       // 计算距离
       const usersWithDistance = visibleUsers.map(user => ({
@@ -428,7 +450,9 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       logInfo('Users loaded successfully', { 
         total: sortedUsers.length, 
         filtered: filtered.length,
-        available: availableUsers 
+        available: availableUsers,
+        online: onlineUsers,
+        finalUserNames: sortedUsers.map(u => u.name)
       }, 'useNomadUsers')
       
     } catch (error) {
