@@ -1,6 +1,8 @@
 'use client'
 
 import React, { Component, ErrorInfo, ReactNode } from 'react'
+import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react'
+import { logError } from '@/lib/logger'
 
 interface Props {
   children: ReactNode
@@ -17,143 +19,126 @@ interface State {
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props)
-    this.state = {
-      hasError: false,
-      error: null,
-      errorInfo: null
-    }
+    this.state = { hasError: false, error: null, errorInfo: null }
   }
 
   static getDerivedStateFromError(error: Error): State {
-    return {
-      hasError: true,
-      error,
-      errorInfo: null
-    }
+    return { hasError: true, error, errorInfo: null }
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    console.error('🚨 ErrorBoundary caught an error:', error)
-    console.error('🚨 Error info:', errorInfo)
+    this.setState({ error, errorInfo })
     
-    // 记录错误到状态
-    this.setState({
-      error,
-      errorInfo
-    })
-
+    // 记录错误
+    logError('ErrorBoundary caught an error', error, 'ErrorBoundary')
+    
     // 调用自定义错误处理
     if (this.props.onError) {
       this.props.onError(error, errorInfo)
     }
-
-    // 发送错误到监控服务（如果有的话）
-    this.logErrorToService(error, errorInfo)
   }
 
-  private logErrorToService(error: Error, errorInfo: ErrorInfo) {
-    try {
-      // 记录到 localStorage 用于调试
-      const errorLog = {
+  handleRetry = () => {
+    this.setState({ hasError: false, error: null, errorInfo: null })
+  }
+
+  handleGoHome = () => {
+    window.location.href = '/'
+  }
+
+  handleReportBug = () => {
+    const { error, errorInfo } = this.state
+    if (error && errorInfo) {
+      const bugReport = {
+        error: error.message,
+        stack: error.stack,
+        componentStack: errorInfo.componentStack,
         timestamp: new Date().toISOString(),
-        error: {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        },
-        errorInfo: {
-          componentStack: errorInfo.componentStack
-        },
         userAgent: navigator.userAgent,
         url: window.location.href
       }
-
-      const existingLogs = JSON.parse(localStorage.getItem('react_errors') || '[]')
-      existingLogs.push(errorLog)
       
-      // 只保留最近 10 个错误
-      if (existingLogs.length > 10) {
-        existingLogs.splice(0, existingLogs.length - 10)
-      }
+      // 这里可以发送到错误报告服务
+      console.log('Bug Report:', bugReport)
       
-      localStorage.setItem('react_errors', JSON.stringify(existingLogs))
-    } catch (e) {
-      console.error('Failed to log error to localStorage:', e)
-    }
-  }
-
-  private handleRetry = () => {
-    this.setState({
-      hasError: false,
-      error: null,
-      errorInfo: null
-    })
-  }
-
-  private handleReportError = () => {
-    if (this.state.error && this.state.errorInfo) {
-      // 这里可以发送错误报告到服务器
-      console.log('Reporting error:', {
-        error: this.state.error,
-        errorInfo: this.state.errorInfo
-      })
+      // 复制到剪贴板
+      navigator.clipboard.writeText(JSON.stringify(bugReport, null, 2))
+        .then(() => alert('Error details copied to clipboard'))
+        .catch(() => alert('Failed to copy error details'))
     }
   }
 
   render() {
     if (this.state.hasError) {
-      // 自定义错误 UI
+      // 如果有自定义fallback，使用它
       if (this.props.fallback) {
         return this.props.fallback
       }
 
-      // 默认错误 UI
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="max-w-md w-full bg-white shadow-lg rounded-lg p-6">
-            <div className="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full">
-              <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
-              </svg>
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-4">
+          <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-12 h-12 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-6 h-6 text-red-600 dark:text-red-400" />
+              </div>
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  Something went wrong
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  We encountered an unexpected error
+                </p>
+              </div>
             </div>
-            
-            <div className="mt-4 text-center">
-              <h3 className="text-lg font-medium text-gray-900">
-                应用遇到错误
-              </h3>
-              <p className="mt-2 text-sm text-gray-500">
-                很抱歉，应用遇到了一个意外错误。我们的团队已经收到通知。
-              </p>
-              
-              {process.env.NODE_ENV === 'development' && this.state.error && (
-                <details className="mt-4 text-left">
-                  <summary className="cursor-pointer text-sm text-red-600 font-medium">
-                    错误详情 (开发模式)
-                  </summary>
-                  <div className="mt-2 p-3 bg-red-50 rounded text-xs text-red-800 font-mono">
-                    <div><strong>错误:</strong> {this.state.error.message}</div>
-                    <div><strong>组件栈:</strong></div>
-                    <pre className="whitespace-pre-wrap mt-1">
-                      {this.state.errorInfo?.componentStack}
+
+            {process.env.NODE_ENV === 'development' && this.state.error && (
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-800">
+                <p className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">
+                  Error Details:
+                </p>
+                <p className="text-xs text-red-700 dark:text-red-300 font-mono">
+                  {this.state.error.message}
+                </p>
+                {this.state.error.stack && (
+                  <details className="mt-2">
+                    <summary className="text-xs text-red-600 dark:text-red-400 cursor-pointer">
+                      Stack Trace
+                    </summary>
+                    <pre className="text-xs text-red-700 dark:text-red-300 mt-1 overflow-auto max-h-32">
+                      {this.state.error.stack}
                     </pre>
-                  </div>
-                </details>
-              )}
-            </div>
-            
-            <div className="mt-6 flex space-x-3">
+                  </details>
+                )}
+              </div>
+            )}
+
+            <div className="space-y-3">
               <button
                 onClick={this.handleRetry}
-                className="flex-1 bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
               >
-                重试
+                <RefreshCw className="w-4 h-4" />
+                <span>Try Again</span>
               </button>
+              
               <button
-                onClick={this.handleReportError}
-                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                onClick={this.handleGoHome}
+                className="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
-                报告错误
+                <Home className="w-4 h-4" />
+                <span>Go Home</span>
               </button>
+              
+              {process.env.NODE_ENV === 'development' && (
+                <button
+                  onClick={this.handleReportBug}
+                  className="w-full flex items-center justify-center space-x-2 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  <Bug className="w-4 h-4" />
+                  <span>Report Bug</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -164,29 +149,20 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// 函数式错误边界 Hook
-export function useErrorBoundary() {
-  const [error, setError] = React.useState<Error | null>(null)
-
-  React.useEffect(() => {
-    const handleError = (event: ErrorEvent) => {
-      console.error('🚨 Global error caught:', event.error)
-      setError(event.error)
-    }
-
-    const handleUnhandledRejection = (event: PromiseRejectionEvent) => {
-      console.error('🚨 Unhandled promise rejection:', event.reason)
-      setError(new Error(`Unhandled promise rejection: ${event.reason}`))
-    }
-
-    window.addEventListener('error', handleError)
-    window.addEventListener('unhandledrejection', handleUnhandledRejection)
-
-    return () => {
-      window.removeEventListener('error', handleError)
-      window.removeEventListener('unhandledrejection', handleUnhandledRejection)
-    }
-  }, [])
-
-  return error
+// 高阶组件版本
+export function withErrorBoundary<P extends object>(
+  Component: React.ComponentType<P>,
+  errorBoundaryProps?: Omit<Props, 'children'>
+) {
+  const WrappedComponent = (props: P) => (
+    <ErrorBoundary {...errorBoundaryProps}>
+      <Component {...props} />
+    </ErrorBoundary>
+  )
+  
+  WrappedComponent.displayName = `withErrorBoundary(${Component.displayName || Component.name})`
+  
+  return WrappedComponent
 }
+
+export default ErrorBoundary

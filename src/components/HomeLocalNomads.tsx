@@ -28,39 +28,14 @@ import {
   CheckCircle,
   Circle
 } from 'lucide-react'
-import { ratingSystem, UserRatingSummary } from '@/lib/ratingSystem'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
 import { useLocation } from '@/hooks/useLocation'
+import { useNomadUsers, NomadUser } from '@/hooks/useNomadUsers'
 import { logInfo, logError } from '@/lib/logger'
+import ErrorAlert, { ErrorAlertSimple } from '@/components/ErrorAlert'
 
-interface NomadUser {
-  id: string
-  name: string
-  avatar: string
-  profession: string
-  company?: string
-  location: string
-  distance: number
-  interests: string[]
-  rating: number
-  reviewCount: number
-  isOnline: boolean
-  isAvailable: boolean
-  lastSeen: string
-  meetupCount: number
-  mutualInterests: string[]
-  compatibility: number
-  bio: string
-  // 新增字段
-  status?: 'available' | 'coffeeLater' | 'notAvailable' | 'invisible'
-  tags?: string[]
-  badges?: string[]
-  coordinates?: {
-    lat: number
-    lng: number
-  }
-}
+// NomadUser interface is now imported from useNomadUsers hook
 
 interface TagCategory {
   id: string
@@ -96,14 +71,35 @@ export default function HomeLocalNomads({
   const { user } = useUser()
   const { location, loading: locationLoading, error: locationError, requestLocation, hasPermission } = useLocation()
   
-  const [users, setUsers] = useState<NomadUser[]>([])
-  const [loading, setLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(1)
-  const [hasMore, setHasMore] = useState(true)
-  const [favorites, setFavorites] = useState<string[]>([])
+  // 使用统一的用户数据管理Hook
+  const {
+    users,
+    stats,
+    loading,
+    error,
+    hasMore,
+    currentPage,
+    totalPages,
+    filters,
+    setFilters,
+    refreshUsers,
+    loadMore,
+    addToFavorites,
+    removeFromFavorites,
+    hideUser,
+    sendCoffeeInvitation,
+    getFavorites,
+    getUserById
+  } = useNomadUsers({
+    enablePagination: showPagination,
+    pageSize: maxUsers,
+    enableInfiniteScroll: false,
+    enableRealTimeUpdates: true,
+    updateInterval: 30000
+  })
+  
   const [sendingInvitation, setSendingInvitation] = useState(false)
-  const [hiddenUsers, setHiddenUsers] = useState<string[]>([])
+  const [favorites, setFavorites] = useState<string[]>([])
   
   // 新增状态
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list')
@@ -113,300 +109,16 @@ export default function HomeLocalNomads({
   const [mapZoom, setMapZoom] = useState(12)
   const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 })
 
-  // 加载隐藏用户列表
+  // 同步收藏列表
   useEffect(() => {
-    const loadHiddenUsers = () => {
-      try {
-        const stored = localStorage.getItem('hidden_nomad_users')
-        if (stored) {
-          setHiddenUsers(JSON.parse(stored))
-        }
-      } catch (error) {
-        console.error('Error loading hidden users:', error)
-      }
-    }
-    loadHiddenUsers()
-  }, [])
+    setFavorites(getFavorites())
+  }, [getFavorites])
 
-  const usersPerPage = maxUsers
-  const [totalUsers, setTotalUsers] = useState(0)
+  // 用户数据现在由useNomadUsers Hook管理
 
-  // 移除新用户检测逻辑，现在使用nomad_users统一管理所有用户
+  // 用户数据获取现在由useNomadUsers Hook处理
 
-  // 获取用户职业信息
-  const getUserProfession = () => {
-    try {
-      const storedProfile = localStorage.getItem('user_profile_details')
-      if (storedProfile) {
-        const profileData = JSON.parse(storedProfile)
-        return profileData.profession || 'Digital Nomad'
-      }
-      return 'Digital Nomad'
-    } catch (error) {
-      return 'Digital Nomad'
-    }
-  }
-
-  // 获取用户公司信息
-  const getUserCompany = () => {
-    try {
-      const storedProfile = localStorage.getItem('user_profile_details')
-      if (storedProfile) {
-        const profileData = JSON.parse(storedProfile)
-        return profileData.company || 'Freelance'
-      }
-      return 'Freelance'
-    } catch (error) {
-      return 'Freelance'
-    }
-  }
-
-  // 获取用户兴趣爱好
-  const getUserInterests = () => {
-    try {
-      const storedProfile = localStorage.getItem('user_profile_details')
-      if (storedProfile) {
-        const profileData = JSON.parse(storedProfile)
-        return profileData.interests || ['Travel', 'Technology']
-      }
-      return ['Travel', 'Technology']
-    } catch (error) {
-      return ['Travel', 'Technology']
-    }
-  }
-
-  // 实时用户数据管理
-  useEffect(() => {
-    const loadUsers = async () => {
-      setLoading(true)
-      
-      try {
-        // 初始化评分系统（只处理真实用户数据）
-        ratingSystem.initializeRealData()
-        
-        // 从 localStorage 获取所有注册用户
-        const allRegisteredUsers = getAllRegisteredUsers()
-        
-        // 使用所有注册用户
-        const allUsers = allRegisteredUsers
-        
-        // 过滤掉隐藏的用户
-        const visibleUsers = allUsers.filter(user => !hiddenUsers.includes(user.id))
-        
-        // 计算距离（如果用户有位置信息）
-        const usersWithDistance = visibleUsers.map(user => ({
-          ...user,
-          distance: calculateDistance(user.location, location)
-        }))
-        
-        // 按距离排序
-        const sortedUsers = usersWithDistance.sort((a, b) => a.distance - b.distance)
-        
-        setUsers(sortedUsers)
-        setTotalUsers(sortedUsers.length)
-        setTotalPages(Math.ceil(sortedUsers.length / usersPerPage))
-        setLoading(false)
-      } catch (error) {
-        console.error('Error loading users:', error)
-        setLoading(false)
-      }
-    }
-
-    loadUsers()
-  }, [location]) // 移除 newUsers 和 hiddenUsers 依赖，避免无限循环
-
-  // 获取所有注册用户（只显示真实用户，移除测试用户）
-  const getAllRegisteredUsers = (): NomadUser[] => {
-    try {
-      const users: NomadUser[] = []
-      
-      // 获取所有用户的独立profile存储
-      const keys = Object.keys(localStorage)
-      const profileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
-      
-      // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
-      if (profileKeys.length === 0) {
-        const generalProfile = localStorage.getItem('user_profile_details')
-        if (generalProfile) {
-          try {
-            const profile = JSON.parse(generalProfile)
-            if (profile.id && profile.name) {
-              profileKeys.push('user_profile_details')
-            }
-          } catch (error) {
-            console.error('Error parsing general profile:', error)
-          }
-        }
-      }
-      
-      profileKeys.forEach(key => {
-        try {
-          const profileData = localStorage.getItem(key)
-          if (profileData) {
-            const profile = JSON.parse(profileData)
-            if (profile.id && profile.name) {
-              // 检查用户是否隐藏
-              const isHidden = localStorage.getItem(`hidden_nomad_users`)
-              if (isHidden) {
-                const hiddenUsers = JSON.parse(isHidden)
-                if (hiddenUsers.includes(profile.id)) {
-                  return // 跳过隐藏的用户
-                }
-              }
-              
-              // 获取用户评分摘要
-              const ratingSummary = ratingSystem.getUserRatingSummary(profile.id)
-              
-              const nomadUser: NomadUser = {
-                id: profile.id,
-                name: profile.name,
-                avatar: profile.avatar_url || (profile.name ? profile.name.substring(0, 2).toUpperCase() : 'NN'),
-                profession: profile.profession || 'Digital Nomad',
-                company: profile.company || 'Freelance',
-                location: profile.current_city || 'Unknown Location',
-                distance: 0, // 将在后面计算
-                interests: profile.interests || ['Travel', 'Technology'],
-                rating: ratingSummary?.averageRating || 0,
-                reviewCount: ratingSummary?.totalRatings || 0,
-                isOnline: calculateOnlineStatus(profile.updated_at),
-                isAvailable: calculateAvailabilityStatus(profile.updated_at),
-                lastSeen: calculateLastSeen(profile.updated_at),
-                meetupCount: 0,
-                mutualInterests: calculateMutualInterests(profile.interests || []),
-                compatibility: calculateCompatibility(profile.interests || []),
-                bio: profile.bio || 'Digital nomad exploring the world!'
-              }
-              
-              users.push(nomadUser)
-            }
-          }
-        } catch (error) {
-          console.error('Error parsing profile:', error)
-        }
-      })
-      
-      return users
-    } catch (error) {
-      console.error('Error getting registered users:', error)
-      return []
-    }
-  }
-
-  // 计算距离
-  const calculateDistance = (userLocation: string, currentLocation: any): number => {
-    if (!currentLocation || !userLocation || userLocation === 'Unknown Location') {
-      return 999 // 未知距离
-    }
-    
-    // 如果用户资料中有坐标信息，使用真实距离计算
-    try {
-      const userProfile = JSON.parse(localStorage.getItem('user_profile_details') || '{}')
-      if (userProfile.coordinates && currentLocation.lat && currentLocation.lng) {
-        return calculateHaversineDistance(
-          currentLocation.lat, currentLocation.lng,
-          userProfile.coordinates.lat, userProfile.coordinates.lng
-        )
-      }
-    } catch (e) {
-      console.error('Error calculating distance:', e)
-    }
-    
-    // 如果没有坐标信息，返回随机距离作为fallback
-    return Math.random() * 10
-  }
-
-  // 使用Haversine公式计算两点间距离（公里）
-  const calculateHaversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
-    const R = 6371 // 地球半径（公里）
-    const dLat = (lat2 - lat1) * Math.PI / 180
-    const dLon = (lon2 - lon1) * Math.PI / 180
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2)
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
-    const distance = R * c
-    return Math.round(distance * 10) / 10 // 保留一位小数
-  }
-
-  // 计算在线状态（基于最后活动时间）
-  const calculateOnlineStatus = (lastUpdated: string): boolean => {
-    if (!lastUpdated) return false
-    const lastUpdate = new Date(lastUpdated)
-    const now = new Date()
-    const diffMinutes = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
-    return diffMinutes <= 30 // 30分钟内活跃视为在线
-  }
-
-  // 计算可用状态（基于最后活动时间）
-  const calculateAvailabilityStatus = (lastUpdated: string): boolean => {
-    if (!lastUpdated) return false
-    const lastUpdate = new Date(lastUpdated)
-    const now = new Date()
-    const diffMinutes = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
-    return diffMinutes <= 60 // 1小时内活跃视为可用
-  }
-
-  // 计算最后在线时间显示
-  const calculateLastSeen = (lastUpdated: string): string => {
-    if (!lastUpdated) return 'Unknown'
-    const lastUpdate = new Date(lastUpdated)
-    const now = new Date()
-    const diffMinutes = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
-    
-    if (diffMinutes < 1) return 'Just now'
-    if (diffMinutes < 60) return `${Math.floor(diffMinutes)}m ago`
-    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`
-    return `${Math.floor(diffMinutes / 1440)}d ago`
-  }
-
-  // 计算共同兴趣
-  const calculateMutualInterests = (userInterests: string[]): string[] => {
-    if (!user.isAuthenticated || !user.profile) return []
-    
-    try {
-      const currentUserProfile = localStorage.getItem('user_profile_details')
-      if (currentUserProfile) {
-        const currentProfile = JSON.parse(currentUserProfile)
-        const currentInterests = currentProfile.interests || []
-        
-        return userInterests.filter(interest => 
-          currentInterests.includes(interest)
-        )
-      }
-    } catch (error) {
-      console.error('Error calculating mutual interests:', error)
-    }
-    
-    return []
-  }
-
-  // 计算兼容性
-  const calculateCompatibility = (userInterests: string[]): number => {
-    if (!user.isAuthenticated || !user.profile) return 0
-    
-    try {
-      const currentUserProfile = localStorage.getItem('user_profile_details')
-      if (currentUserProfile) {
-        const currentProfile = JSON.parse(currentUserProfile)
-        const currentInterests = currentProfile.interests || []
-        
-        if (currentInterests.length === 0 || userInterests.length === 0) {
-          return 50 // 默认兼容性
-        }
-        
-        const commonInterests = userInterests.filter(interest => 
-          currentProfile.interests.includes(interest)
-        )
-        
-        return Math.round((commonInterests.length / Math.max(currentInterests.length, userInterests.length)) * 100)
-      }
-    } catch (error) {
-      console.error('Error calculating compatibility:', error)
-    }
-    
-    return 50
-  }
+  // 距离计算、在线状态等现在由useNomadUsers Hook处理
 
 
 
@@ -422,111 +134,11 @@ export default function HomeLocalNomads({
     }
   }, [])
 
-  // 实时更新用户数据
-  useEffect(() => {
-    const interval = setInterval(() => {
-      // 重新加载用户数据以获取最新状态
-      const allRegisteredUsers = getAllRegisteredUsers()
-      const allUsers = allRegisteredUsers
-      const visibleUsers = allUsers.filter(user => !hiddenUsers.includes(user.id))
-      
-      // 更新在线状态和最后在线时间
-      const updatedUsers = visibleUsers.map(user => ({
-        ...user,
-        isOnline: Math.random() > 0.3, // 70% 概率在线
-        lastSeen: getLastSeen(),
-        distance: calculateDistance(user.location, location)
-      }))
-      
-      // 按距离排序
-      const sortedUsers = updatedUsers.sort((a, b) => a.distance - b.distance)
-      
-      setUsers(sortedUsers)
-      setTotalUsers(sortedUsers.length)
-    }, 30000) // 每30秒更新一次
+  // 实时更新和localStorage监听现在由useNomadUsers Hook处理
 
-    return () => clearInterval(interval)
-  }, [location]) // 移除 newUsers 和 hiddenUsers 依赖，避免无限循环
-
-  // 监听 localStorage 变化
-  useEffect(() => {
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key && (e.key.startsWith('user_profile_details') || e.key === 'hidden_nomad_users')) {
-        // 用户资料或隐藏状态发生变化，重新加载数据
-        const allRegisteredUsers = getAllRegisteredUsers()
-        const allUsers = allRegisteredUsers
-        const visibleUsers = allUsers.filter(user => !hiddenUsers.includes(user.id))
-        
-        const usersWithDistance = visibleUsers.map(user => ({
-          ...user,
-          distance: calculateDistance(user.location, location)
-        }))
-        
-        const sortedUsers = usersWithDistance.sort((a, b) => a.distance - b.distance)
-        
-        setUsers(sortedUsers)
-        setTotalUsers(sortedUsers.length)
-        setTotalPages(Math.ceil(sortedUsers.length / usersPerPage))
-      }
-    }
-
-    // 监听其他标签页的 localStorage 变化
-    window.addEventListener('storage', handleStorageChange)
-    
-    // 监听当前页面的 localStorage 变化（通过自定义事件）
-    const handleCustomStorageChange = () => {
-      handleStorageChange({ key: 'user_profile_details', newValue: null, oldValue: null } as StorageEvent)
-    }
-    
-    window.addEventListener('localStorageChange', handleCustomStorageChange)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      window.removeEventListener('localStorageChange', handleCustomStorageChange)
-    }
-  }, [location, usersPerPage]) // 移除 newUsers 和 hiddenUsers 依赖，避免无限循环
-
-  // 获取最后在线时间
-  const getLastSeen = (): string => {
-    const minutes = Math.floor(Math.random() * 60)
-    if (minutes === 0) return 'Just now'
-    if (minutes < 60) return `${minutes} min ago`
-    const hours = Math.floor(minutes / 60)
-    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`
-    const days = Math.floor(hours / 24)
-    return `${days} day${days > 1 ? 's' : ''} ago`
-  }
-
-  // 触发自定义事件通知其他组件
-  const notifyStorageChange = () => {
-    window.dispatchEvent(new CustomEvent('localStorageChange'))
-  }
-
-  // 分页处理
+  // 分页处理现在由useNomadUsers Hook管理
   const handlePageChange = (page: number) => {
-    setCurrentPage(page)
-    
-    // 重新计算分页数据
-    const allRegisteredUsers = getAllRegisteredUsers()
-    const allUsers = allRegisteredUsers
-    const visibleUsers = allUsers.filter(user => !hiddenUsers.includes(user.id))
-    
-    const startIndex = (page - 1) * usersPerPage
-    const endIndex = startIndex + usersPerPage
-    const pageUsers = visibleUsers.slice(startIndex, endIndex)
-    
-    // 计算距离
-    const usersWithDistance = pageUsers.map(user => ({
-      ...user,
-      distance: calculateDistance(user.location, location)
-    }))
-    
-    // 按距离排序
-    const sortedUsers = usersWithDistance.sort((a, b) => a.distance - b.distance)
-    
-    setUsers(sortedUsers)
-    
-    // 滚动到顶部
+    // 分页逻辑现在由Hook处理，这里只需要处理UI更新
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -544,17 +156,13 @@ export default function HomeLocalNomads({
     setSendingInvitation(true)
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      const targetUser = users.find(u => u.id === userId)
-      alert(`Coffee meetup invitation sent to ${targetUser?.name}! They will respond within 24 hours.`)
-      
-      setUsers(prev => prev.map(u => 
-        u.id === userId 
-          ? { ...u, isAvailable: false, lastSeen: 'Just now' }
-          : u
-      ))
-      
+      const success = await sendCoffeeInvitation(userId)
+      if (success) {
+        const targetUser = getUserById(userId)
+        alert(`Coffee meetup invitation sent to ${targetUser?.name}! They will respond within 24 hours.`)
+      } else {
+        alert('Failed to send invitation. Please try again.')
+      }
     } catch (error) {
       logError('Failed to send coffee meetup invitation', error, 'HomeLocalNomads')
       alert('Failed to send invitation. Please try again.')
@@ -564,21 +172,15 @@ export default function HomeLocalNomads({
   }
 
   const handleAddToFavorites = (userId: string) => {
-    setFavorites(prev => 
-      prev.includes(userId) 
-        ? prev.filter(id => id !== userId)
-        : [...prev, userId]
-    )
+    if (favorites.includes(userId)) {
+      removeFromFavorites(userId)
+    } else {
+      addToFavorites(userId)
+    }
   }
 
   const handleHideUser = (userId: string) => {
-    setHiddenUsers(prev => {
-      const newHiddenUsers = [...prev, userId]
-      // 保存到本地存储
-      localStorage.setItem('hidden_nomad_users', JSON.stringify(newHiddenUsers))
-      return newHiddenUsers
-    })
-    logInfo('User hidden from Local Nomads', { userId })
+    hideUser(userId)
   }
 
   // 新增的辅助函数
@@ -593,14 +195,8 @@ export default function HomeLocalNomads({
     try {
       await new Promise(resolve => setTimeout(resolve, 1000))
       
-      const targetUser = users.find(u => u.id === userId)
+      const targetUser = getUserById(userId)
       alert(`Work together invitation sent to ${targetUser?.name}! They will respond within 24 hours.`)
-      
-      setUsers(prev => prev.map(u => 
-        u.id === userId 
-          ? { ...u, isAvailable: false, lastSeen: 'Just now' }
-          : u
-      ))
       
     } catch (error) {
       logError('Failed to send work together invitation', error, 'HomeLocalNomads')
@@ -772,41 +368,12 @@ export default function HomeLocalNomads({
     )
   }
 
-  // 获取状态图标
-  const getStatusIcon = (status: NomadUser['status']) => {
-    switch (status) {
-      case 'available':
-        return <CheckCircle className="w-4 h-4 text-green-500" />
-      case 'coffeeLater':
-        return <Clock className="w-4 h-4 text-yellow-500" />
-      case 'notAvailable':
-        return <X className="w-4 h-4 text-red-500" />
-      case 'invisible':
-        return <EyeOff className="w-4 h-4 text-gray-500" />
-      default:
-        return <Circle className="w-4 h-4 text-gray-400" />
-    }
-  }
-
-  // 获取状态颜色
-  const getStatusColor = (status: NomadUser['status']) => {
-    switch (status) {
-      case 'available':
-        return 'bg-green-100 text-green-800 border-green-200'
-      case 'coffeeLater':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200'
-      case 'notAvailable':
-        return 'bg-red-100 text-red-800 border-red-200'
-      case 'invisible':
-        return 'bg-gray-100 text-gray-800 border-gray-200'
-      default:
-        return 'bg-gray-100 text-gray-800 border-gray-200'
-    }
-  }
+  // 状态图标和颜色函数已移除，现在使用简单的在线/离线状态
 
 
 
-  const availableUsers = users.filter(user => user.isOnline && user.isAvailable).length
+  const availableUsers = stats?.availableUsers || 0
+  const totalUsers = stats?.totalUsers || 0
 
   if (loading) {
     return (
@@ -822,6 +389,14 @@ export default function HomeLocalNomads({
 
   return (
     <div className="space-y-6">
+      {/* 错误显示 */}
+      {error && (
+        <ErrorAlertSimple
+          message={error}
+          onRetry={refreshUsers}
+          onDismiss={() => {}} // Hook会自动清除错误
+        />
+      )}
       {/* 位置权限检测 - 双路径选择 */}
       {showLocationDetection && !location && !locationLoading && !locationError && (
         <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -1081,7 +656,7 @@ export default function HomeLocalNomads({
       {showPagination && totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-gray-600 dark:text-gray-400">
-            Showing {((currentPage - 1) * usersPerPage) + 1} to {Math.min(currentPage * usersPerPage, totalUsers)} of {totalUsers} nomads
+            Showing {((currentPage - 1) * maxUsers) + 1} to {Math.min(currentPage * maxUsers, totalUsers)} of {totalUsers} nomads
           </div>
           
           <div className="flex items-center space-x-2">
