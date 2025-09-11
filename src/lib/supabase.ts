@@ -10,7 +10,6 @@ let hasWarned = false
 if (supabaseUrl && supabaseAnonKey) {
   supabase = createClient(supabaseUrl, supabaseAnonKey)
   if (typeof window !== 'undefined') {
-    console.log('✅ Supabase client created successfully (client side)')
   }
 } else {
   if (typeof window !== 'undefined') {

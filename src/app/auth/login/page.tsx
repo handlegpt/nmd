@@ -322,14 +322,12 @@ export default function LoginPage() {
       })
 
       if (response.ok && data.success) {
-        console.log('✅ Login successful, processing...')
         
         // 设置JWT令牌和用户状态
         console.log('⏭️ Setting JWT token and user profile...')
         try {
           // 设置JWT令牌
           setSessionToken(data.data.sessionToken)
-          console.log('✅ JWT token set successfully')
           
           // 设置用户信息到全局状态
           const userProfile = {

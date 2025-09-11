@@ -220,11 +220,9 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
           // 获取用户信息
           const user = await getCurrentUser()
           if (user && isMounted) {
-            console.log('✅ User authenticated successfully:', { id: user.id, email: user.email })
             dispatch({ type: 'SET_USER_PROFILE', payload: user })
             logInfo('User authenticated on app start', { userId: user.id }, 'GlobalState')
           } else if (isMounted) {
-            console.log('❌ Invalid session token, clearing session')
             // 令牌无效，清除会话
             clearSession()
             logInfo('Invalid session token, cleared session', null, 'GlobalState')
