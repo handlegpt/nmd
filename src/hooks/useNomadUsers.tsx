@@ -376,6 +376,13 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
               }
               
               users.push(nomadUser)
+              console.log('🔍 getAllRegisteredUsers - added user to list', { 
+                userId: profile.id, 
+                name: profile.name, 
+                location: profile.current_city,
+                totalUsers: users.length,
+                processedUserIds: Array.from(processedUserIds)
+              })
               logInfo('Added user to list', { userId: profile.id, name: profile.name, location: profile.current_city }, 'useNomadUsers')
             }
           }
@@ -454,6 +461,11 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       
       // 获取所有用户
       const allRegisteredUsers = getAllRegisteredUsers()
+      console.log('🔍 loadUsers - all registered users loaded', { 
+        count: allRegisteredUsers.length,
+        userNames: allRegisteredUsers.map(u => u.name),
+        userIds: allRegisteredUsers.map(u => u.id)
+      })
       logInfo('All registered users loaded', { 
         count: allRegisteredUsers.length,
         userNames: allRegisteredUsers.map(u => u.name)
@@ -491,6 +503,15 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         onlineUsers,
         todayMeetups: 0, // TODO: 从真实数据获取
         successRate: 94 // TODO: 从真实数据获取
+      })
+      
+      console.log('🔍 loadUsers - final state update', { 
+        total: sortedUsers.length, 
+        filtered: filtered.length,
+        available: availableUsers,
+        online: onlineUsers,
+        finalUserNames: sortedUsers.map(u => u.name),
+        finalUserIds: sortedUsers.map(u => u.id)
       })
       
       logInfo('Users loaded successfully', { 
