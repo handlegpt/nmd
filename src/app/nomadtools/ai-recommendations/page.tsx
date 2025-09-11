@@ -19,7 +19,7 @@ export default function AIRecommendationsPage() {
             className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
-            <span>Back to Tools</span>
+            <span>Back to Nomad Tools</span>
           </button>
         </div>
         

@@ -31,7 +31,7 @@ export default function DesktopNavigation() {
     },
     {
       name: t('navigation.tools'),
-      href: '/tools',
+      href: '/nomadtools',
     }
   ]
 

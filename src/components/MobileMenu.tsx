@@ -51,7 +51,7 @@ export default function MobileMenu() {
       description: t('mobileMenu.taxDescription')
     },
     {
-      href: '/tools',
+      href: '/nomadtools',
       icon: Settings,
       label: t('navigation.tools'),
       description: t('mobileMenu.toolsDescription')

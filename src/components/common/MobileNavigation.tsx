@@ -90,9 +90,9 @@ export default function MobileNavigation({
     {
       id: 'tools',
       label: '工具',
-      href: '/tools',
+      href: '/nomadtools',
       icon: <Wrench className="h-5 w-5" />,
-      isActive: pathname.startsWith('/tools')
+      isActive: pathname.startsWith('/nomadtools')
     },
     {
       id: 'places',

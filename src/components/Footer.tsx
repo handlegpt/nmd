@@ -12,7 +12,7 @@ export default function Footer() {
     product: [
       { name: t('footer.cities'), href: '/nomadcities' },
       { name: t('footer.visaGuide'), href: '/nomadvisaguide' },
-      { name: t('footer.tools'), href: '/tools' }
+      { name: t('footer.tools'), href: '/nomadtools' }
     ],
     company: [
       { name: t('footer.about'), href: '/about' },

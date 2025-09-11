@@ -273,15 +273,15 @@ export default function ToolsPage() {
       // Route to specific tool pages
       switch (tool.id) {
         case 'domain-tracker':
-          window.location.href = '/tools/domains';
+          window.location.href = '/nomadtools/domains';
           break;
         case 'ai-recommendations':
           // Show AI recommendations component inline
-          window.location.href = '/tools/ai-recommendations';
+          window.location.href = '/nomadtools/ai-recommendations';
           break;
         case 'city-comparison':
           // Show city comparison component inline
-          window.location.href = '/tools/city-comparison';
+          window.location.href = '/nomadtools/city-comparison';
           break;
         case 'tax-calculator':
           // Route to tax calculator
