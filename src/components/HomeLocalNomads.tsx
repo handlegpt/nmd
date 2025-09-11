@@ -104,7 +104,6 @@ export default function HomeLocalNomads({
   const [hasMore, setHasMore] = useState(true)
   const [favorites, setFavorites] = useState<string[]>([])
   const [sendingInvitation, setSendingInvitation] = useState(false)
-  const [newUsers, setNewUsers] = useState<NomadUser[]>([])
   const [hiddenUsers, setHiddenUsers] = useState<string[]>([])
   
   // 新增状态
@@ -133,50 +132,7 @@ export default function HomeLocalNomads({
   const usersPerPage = maxUsers
   const [totalUsers, setTotalUsers] = useState(0)
 
-  // 检测新用户并添加到 Local Nomads
-  useEffect(() => {
-    const checkNewUsers = () => {
-      if (!user.isAuthenticated || !user.profile) return
-
-      // 检查是否是新用户（首次登录）
-      const isNewUser = localStorage.getItem(`new_user_${user.profile.id}`)
-      if (isNewUser === 'true') {
-        // 创建新用户数据
-        const newUser: NomadUser = {
-          id: user.profile.id,
-          name: user.profile.name || 'New Nomad',
-          avatar: user.profile.avatar_url || (user.profile.name ? user.profile.name.substring(0, 2).toUpperCase() : 'NN'),
-          profession: getUserProfession(),
-          company: getUserCompany(),
-          location: user.profile.current_city || 'Unknown Location',
-          distance: 0,
-          interests: getUserInterests(),
-          rating: 0,
-          reviewCount: 0,
-          isOnline: calculateOnlineStatus(user.profile.updated_at),
-          isAvailable: calculateAvailabilityStatus(user.profile.updated_at),
-          lastSeen: calculateLastSeen(user.profile.updated_at),
-          meetupCount: 0,
-          mutualInterests: [],
-          compatibility: 100,
-          bio: user.profile.bio || 'New digital nomad exploring the world!'
-        }
-
-        setNewUsers(prev => {
-          const exists = prev.find(u => u.id === newUser.id)
-          if (!exists) {
-            return [...prev, newUser]
-          }
-          return prev
-        })
-
-        // 标记用户已添加到 Local Nomads
-        localStorage.setItem(`new_user_${user.profile.id}`, 'false')
-      }
-    }
-
-    checkNewUsers()
-  }, [user.isAuthenticated, user.profile])
+  // 移除新用户检测逻辑，现在使用nomad_users统一管理所有用户
 
   // 获取用户职业信息
   const getUserProfession = () => {
@@ -235,8 +191,8 @@ export default function HomeLocalNomads({
         // 从 localStorage 获取所有注册用户
         const allRegisteredUsers = getAllRegisteredUsers()
         
-        // 合并新用户和注册用户
-        const allUsers = [...newUsers, ...allRegisteredUsers]
+        // 使用所有注册用户
+        const allUsers = allRegisteredUsers
         
         // 过滤掉隐藏的用户
         const visibleUsers = allUsers.filter(user => !hiddenUsers.includes(user.id))
@@ -505,7 +461,7 @@ export default function HomeLocalNomads({
     const interval = setInterval(() => {
       // 重新加载用户数据以获取最新状态
       const allRegisteredUsers = getAllRegisteredUsers()
-      const allUsers = [...newUsers, ...allRegisteredUsers]
+      const allUsers = allRegisteredUsers
       const visibleUsers = allUsers.filter(user => !hiddenUsers.includes(user.id))
       
       // 更新在线状态和最后在线时间
@@ -532,7 +488,7 @@ export default function HomeLocalNomads({
       if (e.key && (e.key.startsWith('user_profile_details') || e.key === 'hidden_nomad_users')) {
         // 用户资料或隐藏状态发生变化，重新加载数据
         const allRegisteredUsers = getAllRegisteredUsers()
-        const allUsers = [...newUsers, ...allRegisteredUsers]
+        const allUsers = allRegisteredUsers
         const visibleUsers = allUsers.filter(user => !hiddenUsers.includes(user.id))
         
         const usersWithDistance = visibleUsers.map(user => ({
@@ -586,7 +542,7 @@ export default function HomeLocalNomads({
     
     // 重新计算分页数据
     const allRegisteredUsers = getAllRegisteredUsers()
-    const allUsers = [...newUsers, ...allRegisteredUsers]
+    const allUsers = allRegisteredUsers
     const visibleUsers = allUsers.filter(user => !hiddenUsers.includes(user.id))
     
     const startIndex = (page - 1) * usersPerPage
@@ -1067,11 +1023,6 @@ export default function HomeLocalNomads({
                       }`}>
                         {nomadUser.isOnline && nomadUser.isAvailable ? 'Available' : 'Busy'}
                       </div>
-                      {newUsers.find(nu => nu.id === nomadUser.id) && (
-                        <div className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
-                          {t('profile.newUser')}
-                        </div>
-                      )}
                     </div>
                   </div>
                   
