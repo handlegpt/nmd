@@ -101,6 +101,7 @@ export default function HomeLocalNomads({
     setFilters,
     refreshUsers,
     loadMore,
+    goToPage,
     addToFavorites,
     removeFromFavorites,
     hideUser,
@@ -162,8 +163,8 @@ export default function HomeLocalNomads({
 
   // 分页处理现在由useNomadUsers Hook管理
   const handlePageChange = (page: number) => {
-    // 分页逻辑现在由Hook处理，这里只需要处理UI更新
-    // 移除自动滚动到顶部，让用户保持在当前位置
+    // 调用hook的分页功能
+    goToPage(page)
   }
 
   // 保存收藏列表

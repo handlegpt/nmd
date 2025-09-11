@@ -80,6 +80,7 @@ export interface UseNomadUsersReturn {
   // 操作
   refreshUsers: () => Promise<void>
   loadMore: () => void
+  goToPage: (page: number) => void
   resetFilters: () => void
   
   // 用户操作
@@ -658,6 +659,22 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
     setHasMore(endIndex < filteredUsers.length)
   }, [opts.enablePagination, opts.pageSize, hasMore, currentPage, filteredUsers])
 
+  // 跳转到指定页面
+  const goToPage = useCallback((page: number) => {
+    if (!opts.enablePagination || page < 1) return
+    
+    const totalPages = Math.ceil(filteredUsers.length / (opts.pageSize || 9))
+    if (page > totalPages) return
+    
+    const startIndex = (page - 1) * (opts.pageSize || 9)
+    const endIndex = startIndex + (opts.pageSize || 9)
+    const newDisplayedUsers = filteredUsers.slice(startIndex, endIndex)
+    
+    setDisplayedUsers(newDisplayedUsers)
+    setCurrentPage(page)
+    setHasMore(endIndex < filteredUsers.length)
+  }, [opts.enablePagination, opts.pageSize, filteredUsers])
+
   // 设置筛选器
   const setFilters = useCallback((newFilters: Partial<UserFilters>) => {
     setFiltersState(prev => ({ ...prev, ...newFilters }))
@@ -842,6 +859,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
     // 操作
     refreshUsers,
     loadMore,
+    goToPage,
     resetFilters,
     
     // 用户操作
