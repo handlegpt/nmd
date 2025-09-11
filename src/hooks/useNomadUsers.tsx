@@ -111,9 +111,18 @@ const DEFAULT_OPTIONS: UseNomadUsersOptions = {
 }
 
 export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsersReturn {
+  logInfo('useNomadUsers Hook initialized', { options }, 'useNomadUsers')
+  
   const opts = { ...DEFAULT_OPTIONS, ...options }
   const { location } = useLocation()
   const { user } = useUser()
+  
+  logInfo('useNomadUsers Hook - user and location loaded', { 
+    userId: user?.profile?.id, 
+    userName: user?.profile?.name,
+    isAuthenticated: user?.isAuthenticated,
+    location: location 
+  }, 'useNomadUsers')
   
   // 状态管理
   const [allUsers, setAllUsers] = useState<NomadUser[]>([])
