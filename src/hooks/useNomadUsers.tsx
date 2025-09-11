@@ -172,7 +172,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
   // 计算距离
   const calculateDistance = useCallback((userLocation: string, currentLocation: any): number => {
     if (!currentLocation || !userLocation || userLocation === 'Unknown Location') {
-      return 999 // 未知距离
+      return 0 // 当位置不可用时，设置为0，避免被距离过滤器排除
     }
     
     try {
