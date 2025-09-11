@@ -7,6 +7,7 @@ import { getCities, getCityById } from '@/lib/api'
 import { City } from '@/lib/supabase'
 import { addRecentCity } from '@/lib/recentCities'
 import { RealtimeService } from '@/lib/realtimeService'
+import { votingSystem, VoteItem } from '@/lib/votingSystem'
 import VoteModal from '@/components/VoteModal'
 import CostBreakdownChart from '@/components/CostBreakdownChart'
 import CommunityActivity from '@/components/CommunityActivity'
@@ -46,10 +47,27 @@ export default function CityDetailPage() {
   const [cityData, setCityData] = useState<City | null>(null)
   const [loading, setLoading] = useState(true)
   const [showVoteModal, setShowVoteModal] = useState(false)
+  const [cityVotes, setCityVotes] = useState<{ pros: VoteItem[], cons: VoteItem[] }>({ pros: [], cons: [] })
 
   useEffect(() => {
     fetchCityData()
   }, [country, city])
+
+  // 初始化投票数据
+  useEffect(() => {
+    if (cityData) {
+      const cityId = `${country}/${city}`
+      const pros = getCityPros()
+      const cons = getCityCons()
+      
+      // 初始化投票数据
+      votingSystem.initializeCityVotes(cityId, pros, cons)
+      
+      // 加载现有投票数据
+      const votes = votingSystem.getCityVotes(cityId)
+      setCityVotes({ pros: votes.pros, cons: votes.cons })
+    }
+  }, [cityData, country, city])
 
   const setupRealtimeSubscription = () => {
     if (cityData?.id) {
@@ -164,50 +182,65 @@ export default function CityDetailPage() {
   }
 
   // 获取城市优点
-  const getCityPros = () => {
+  const getCityPros = (): VoteItem[] => {
     if (!cityData) return []
     
-    const pros = []
+    const pros: VoteItem[] = []
     
     // 基于数据动态生成优点
     if (cityData.cost_of_living < 2000) {
       pros.push({
+        id: 'affordable_cost',
         title: t('cityDetail.pros.affordableCost'),
         description: t('cityDetail.pros.affordableCostDesc'),
-        votes: Math.floor(Math.random() * 50) + 10
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
     if (cityData.wifi_speed > 50) {
       pros.push({
+        id: 'good_wifi',
         title: t('cityDetail.pros.goodWifi'),
         description: t('cityDetail.pros.goodWifiDesc'),
-        votes: Math.floor(Math.random() * 40) + 15
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
     if (cityData.visa_days > 90) {
       pros.push({
+        id: 'long_visa',
         title: t('cityDetail.pros.longVisa'),
         description: t('cityDetail.pros.longVisaDesc'),
-        votes: Math.floor(Math.random() * 30) + 20
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
     if ((cityData.avg_overall_rating || 0) > 4.0) {
       pros.push({
+        id: 'nomad_friendly',
         title: t('cityDetail.pros.nomadFriendly'),
         description: t('cityDetail.pros.nomadFriendlyDesc'),
-        votes: Math.floor(Math.random() * 60) + 25
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
     // 默认优点
     if (pros.length === 0) {
       pros.push({
+        id: 'good_weather',
         title: t('cityDetail.pros.goodWeather'),
         description: t('cityDetail.pros.goodWeatherDesc'),
-        votes: Math.floor(Math.random() * 20) + 5
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
@@ -215,46 +248,74 @@ export default function CityDetailPage() {
   }
 
   // 获取城市缺点
-  const getCityCons = () => {
+  const getCityCons = (): VoteItem[] => {
     if (!cityData) return []
     
-    const cons = []
+    const cons: VoteItem[] = []
     
     // 基于数据动态生成缺点
     if (cityData.cost_of_living > 3000) {
       cons.push({
+        id: 'high_cost',
         title: t('cityDetail.cons.highCost'),
         description: t('cityDetail.cons.highCostDesc'),
-        votes: Math.floor(Math.random() * 40) + 10
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
     if (cityData.wifi_speed < 25) {
       cons.push({
+        id: 'slow_wifi',
         title: t('cityDetail.cons.slowWifi'),
         description: t('cityDetail.cons.slowWifiDesc'),
-        votes: Math.floor(Math.random() * 35) + 15
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
     if (cityData.visa_days < 30) {
       cons.push({
+        id: 'short_visa',
         title: t('cityDetail.cons.shortVisa'),
         description: t('cityDetail.cons.shortVisaDesc'),
-        votes: Math.floor(Math.random() * 25) + 20
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
     // 默认缺点
     if (cons.length === 0) {
       cons.push({
+        id: 'language_barrier',
         title: t('cityDetail.cons.languageBarrier'),
         description: t('cityDetail.cons.languageBarrierDesc'),
-        votes: Math.floor(Math.random() * 30) + 10
+        votes: 0,
+        upvotes: 0,
+        downvotes: 0
       })
     }
     
     return cons
+  }
+
+  // 处理投票
+  const handleVote = (itemType: 'pro' | 'con', itemId: string, voteType: 'upvote' | 'downvote') => {
+    if (!cityData) return
+    
+    const cityId = `${country}/${city}`
+    const userId = 'current_user' // 这里应该从用户上下文获取真实用户ID
+    
+    const success = votingSystem.vote(userId, cityId, itemType, itemId, voteType)
+    
+    if (success) {
+      // 更新本地状态
+      const votes = votingSystem.getCityVotes(cityId)
+      setCityVotes({ pros: votes.pros, cons: votes.cons })
+    }
   }
 
   if (loading) {
@@ -460,17 +521,38 @@ export default function CityDetailPage() {
                   {t('cityDetail.pros')}
                 </h3>
                 <ul className="space-y-3">
-                  {getCityPros().map((pro, index) => (
-                    <li key={index} className="flex items-start space-x-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  {cityVotes.pros.map((pro) => (
+                    <li key={pro.id} className="flex items-start space-x-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                       <span className="text-green-500 mt-1 text-lg">✓</span>
                       <div className="flex-1">
                         <span className="text-gray-700 dark:text-gray-300 font-medium">{pro.title}</span>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{pro.description}</p>
                         <div className="flex items-center mt-2 space-x-2">
-                          <button className="text-xs text-green-600 hover:text-green-700 flex items-center space-x-1">
+                          <button 
+                            onClick={() => handleVote('pro', pro.id, 'upvote')}
+                            className={`text-xs flex items-center space-x-1 px-2 py-1 rounded ${
+                              pro.userVote === 'upvote' 
+                                ? 'bg-green-600 text-white' 
+                                : 'text-green-600 hover:text-green-700 hover:bg-green-100'
+                            }`}
+                          >
                             <span>👍</span>
-                            <span>{pro.votes || 0}</span>
+                            <span>{pro.upvotes}</span>
                           </button>
+                          <button 
+                            onClick={() => handleVote('pro', pro.id, 'downvote')}
+                            className={`text-xs flex items-center space-x-1 px-2 py-1 rounded ${
+                              pro.userVote === 'downvote' 
+                                ? 'bg-red-600 text-white' 
+                                : 'text-red-600 hover:text-red-700 hover:bg-red-100'
+                            }`}
+                          >
+                            <span>👎</span>
+                            <span>{pro.downvotes}</span>
+                          </button>
+                          <span className="text-xs text-gray-500">
+                            净票数: {pro.votes}
+                          </span>
                         </div>
                       </div>
                     </li>
@@ -487,17 +569,38 @@ export default function CityDetailPage() {
                   {t('cityDetail.cons')}
                 </h3>
                 <ul className="space-y-3">
-                  {getCityCons().map((con, index) => (
-                    <li key={index} className="flex items-start space-x-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                  {cityVotes.cons.map((con) => (
+                    <li key={con.id} className="flex items-start space-x-3 p-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
                       <span className="text-red-500 mt-1 text-lg">✗</span>
                       <div className="flex-1">
                         <span className="text-gray-700 dark:text-gray-300 font-medium">{con.title}</span>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{con.description}</p>
                         <div className="flex items-center mt-2 space-x-2">
-                          <button className="text-xs text-red-600 hover:text-red-700 flex items-center space-x-1">
-                            <span>👎</span>
-                            <span>{con.votes || 0}</span>
+                          <button 
+                            onClick={() => handleVote('con', con.id, 'upvote')}
+                            className={`text-xs flex items-center space-x-1 px-2 py-1 rounded ${
+                              con.userVote === 'upvote' 
+                                ? 'bg-green-600 text-white' 
+                                : 'text-green-600 hover:text-green-700 hover:bg-green-100'
+                            }`}
+                          >
+                            <span>👍</span>
+                            <span>{con.upvotes}</span>
                           </button>
+                          <button 
+                            onClick={() => handleVote('con', con.id, 'downvote')}
+                            className={`text-xs flex items-center space-x-1 px-2 py-1 rounded ${
+                              con.userVote === 'downvote' 
+                                ? 'bg-red-600 text-white' 
+                                : 'text-red-600 hover:text-red-700 hover:bg-red-100'
+                            }`}
+                          >
+                            <span>👎</span>
+                            <span>{con.downvotes}</span>
+                          </button>
+                          <span className="text-xs text-gray-500">
+                            净票数: {con.votes}
+                          </span>
                         </div>
                       </div>
                     </li>
