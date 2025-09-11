@@ -282,9 +282,9 @@ export default function RealTimeData() {
             <div key={user.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium overflow-hidden">
-                  {user.avatar_url && user.avatar_url.startsWith('data:') ? (
+                  {user.avatar && user.avatar.startsWith('data:') ? (
                     <img 
-                      src={user.avatar_url} 
+                      src={user.avatar} 
                       alt={user.name}
                       className="w-8 h-8 rounded-full object-cover"
                     />
@@ -371,9 +371,9 @@ export default function RealTimeData() {
                   {index + 1}
                 </div>
                 <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium overflow-hidden">
-                  {entry.avatar_url && entry.avatar_url.startsWith('data:') ? (
+                  {entry.avatar && entry.avatar.startsWith('data:') ? (
                     <img 
-                      src={entry.avatar_url} 
+                      src={entry.avatar} 
                       alt={entry.name}
                       className="w-10 h-10 rounded-full object-cover"
                     />
