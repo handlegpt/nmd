@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   X, 
   MapPin, 
@@ -59,8 +59,19 @@ export default function UserDetailModal({
   if (!isOpen || !user) return null
 
   // 检查是否为收藏用户
-  const favorites = getFavorites()
-  const isFavorite = favorites.includes(user.id)
+  const [isFavorite, setIsFavorite] = useState(false)
+  
+  useEffect(() => {
+    const checkFavorite = async () => {
+      try {
+        const favorites = await getFavorites()
+        setIsFavorite(favorites.includes(user.id))
+      } catch (error) {
+        console.error('Failed to check favorite status:', error)
+      }
+    }
+    checkFavorite()
+  }, [getFavorites, user.id])
 
   const handleCoffeeMeetup = async () => {
     if (!currentUser.isAuthenticated) {

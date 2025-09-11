@@ -136,7 +136,15 @@ export default function HomeLocalNomads({
 
   // 同步收藏列表
   useEffect(() => {
-    setFavorites(getFavorites())
+    const syncFavorites = async () => {
+      try {
+        const favoritesList = await getFavorites()
+        setFavorites(favoritesList)
+      } catch (error) {
+        console.error('Failed to sync favorites:', error)
+      }
+    }
+    syncFavorites()
   }, [getFavorites])
 
   // 用户数据现在由useNomadUsers Hook管理

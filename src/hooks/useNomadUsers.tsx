@@ -5,6 +5,7 @@ import { useLocation } from '@/hooks/useLocation'
 import { useUser } from '@/contexts/GlobalStateContext'
 import { ratingSystem, UserRatingSummary } from '@/lib/ratingSystem'
 import { logInfo, logError } from '@/lib/logger'
+import { userPreferencesService } from '@/lib/userPreferencesService'
 
 export interface NomadUser {
   id: string
@@ -84,16 +85,16 @@ export interface UseNomadUsersReturn {
   resetFilters: () => void
   
   // 用户操作
-  addToFavorites: (userId: string) => void
-  removeFromFavorites: (userId: string) => void
-  hideUser: (userId: string) => void
-  showUser: (userId: string) => void
+  addToFavorites: (userId: string) => Promise<void>
+  removeFromFavorites: (userId: string) => Promise<void>
+  hideUser: (userId: string) => Promise<void>
+  showUser: (userId: string) => Promise<void>
   sendCoffeeInvitation: (userId: string) => Promise<boolean>
   
   // 工具函数
   getUserById: (userId: string) => NomadUser | null
-  getFavorites: () => string[]
-  getHiddenUsers: () => string[]
+  getFavorites: () => Promise<string[]>
+  getHiddenUsers: () => Promise<string[]>
 }
 
 const DEFAULT_FILTERS: UserFilters = {
@@ -688,39 +689,71 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
   }, [])
 
   // 用户操作
-  const addToFavorites = useCallback((userId: string) => {
-    setFavorites(prev => {
-      const newFavorites = prev.includes(userId) ? prev : [...prev, userId]
-      localStorage.setItem('nomadFavorites', JSON.stringify(newFavorites))
-      return newFavorites
-    })
-  }, [])
+  const addToFavorites = useCallback(async (userId: string) => {
+    if (!user?.profile?.id) return
+    
+    try {
+      const success = await userPreferencesService.addToFavorites(user.profile.id, userId)
+      if (success) {
+        setFavorites(prev => {
+          const newFavorites = prev.includes(userId) ? prev : [...prev, userId]
+          return newFavorites
+        })
+      }
+    } catch (error) {
+      logError('Failed to add user to favorites', error, 'useNomadUsers')
+    }
+  }, [user?.profile?.id])
 
-  const removeFromFavorites = useCallback((userId: string) => {
-    setFavorites(prev => {
-      const newFavorites = prev.filter(id => id !== userId)
-      localStorage.setItem('nomadFavorites', JSON.stringify(newFavorites))
-      return newFavorites
-    })
-  }, [])
+  const removeFromFavorites = useCallback(async (userId: string) => {
+    if (!user?.profile?.id) return
+    
+    try {
+      const success = await userPreferencesService.removeFromFavorites(user.profile.id, userId)
+      if (success) {
+        setFavorites(prev => {
+          const newFavorites = prev.filter(id => id !== userId)
+          return newFavorites
+        })
+      }
+    } catch (error) {
+      logError('Failed to remove user from favorites', error, 'useNomadUsers')
+    }
+  }, [user?.profile?.id])
 
-  const hideUser = useCallback((userId: string) => {
-    setHiddenUsers(prev => {
-      const newHiddenUsers = [...prev, userId]
-      localStorage.setItem('hidden_nomad_users', JSON.stringify(newHiddenUsers))
-      return newHiddenUsers
-    })
-    logInfo('User hidden', { userId }, 'useNomadUsers')
-  }, [])
+  const hideUser = useCallback(async (userId: string) => {
+    if (!user?.profile?.id) return
+    
+    try {
+      const success = await userPreferencesService.hideUser(user.profile.id, userId)
+      if (success) {
+        setHiddenUsers(prev => {
+          const newHiddenUsers = [...prev, userId]
+          return newHiddenUsers
+        })
+        logInfo('User hidden', { userId }, 'useNomadUsers')
+      }
+    } catch (error) {
+      logError('Failed to hide user', error, 'useNomadUsers')
+    }
+  }, [user?.profile?.id])
 
-  const showUser = useCallback((userId: string) => {
-    setHiddenUsers(prev => {
-      const newHiddenUsers = prev.filter(id => id !== userId)
-      localStorage.setItem('hidden_nomad_users', JSON.stringify(newHiddenUsers))
-      return newHiddenUsers
-    })
-    logInfo('User shown', { userId }, 'useNomadUsers')
-  }, [])
+  const showUser = useCallback(async (userId: string) => {
+    if (!user?.profile?.id) return
+    
+    try {
+      const success = await userPreferencesService.showUser(user.profile.id, userId)
+      if (success) {
+        setHiddenUsers(prev => {
+          const newHiddenUsers = prev.filter(id => id !== userId)
+          return newHiddenUsers
+        })
+        logInfo('User shown', { userId }, 'useNomadUsers')
+      }
+    } catch (error) {
+      logError('Failed to show user', error, 'useNomadUsers')
+    }
+  }, [user?.profile?.id])
 
   const sendCoffeeInvitation = useCallback(async (userId: string): Promise<boolean> => {
     try {
@@ -745,31 +778,85 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
     return allUsers.find(user => user.id === userId) || null
   }, [allUsers])
 
-  const getFavorites = useCallback((): string[] => {
-    return favorites
-  }, [favorites])
+  const getFavorites = useCallback(async (): Promise<string[]> => {
+    if (!user?.profile?.id) return favorites
+    
+    try {
+      const dbFavorites = await userPreferencesService.getFavorites(user.profile.id)
+      if (dbFavorites.length !== favorites.length) {
+        setFavorites(dbFavorites)
+      }
+      return dbFavorites
+    } catch (error) {
+      logError('Failed to get favorites from database', error, 'useNomadUsers')
+      return favorites
+    }
+  }, [favorites, user?.profile?.id])
 
-  const getHiddenUsers = useCallback((): string[] => {
-    return hiddenUsers
-  }, [hiddenUsers])
+  const getHiddenUsers = useCallback(async (): Promise<string[]> => {
+    if (!user?.profile?.id) return hiddenUsers
+    
+    try {
+      const dbHiddenUsers = await userPreferencesService.getHiddenUsers(user.profile.id)
+      if (dbHiddenUsers.length !== hiddenUsers.length) {
+        setHiddenUsers(dbHiddenUsers)
+      }
+      return dbHiddenUsers
+    } catch (error) {
+      logError('Failed to get hidden users from database', error, 'useNomadUsers')
+      return hiddenUsers
+    }
+  }, [hiddenUsers, user?.profile?.id])
 
   // 初始化
   useEffect(() => {
     // 加载收藏和隐藏用户列表
-    try {
-      const savedFavorites = localStorage.getItem('nomadFavorites')
-      if (savedFavorites) {
-        setFavorites(JSON.parse(savedFavorites))
+    const loadUserPreferences = async () => {
+      if (!user?.profile?.id) {
+        // 如果用户未登录，从localStorage加载
+        try {
+          const savedFavorites = localStorage.getItem('nomadFavorites')
+          if (savedFavorites) {
+            setFavorites(JSON.parse(savedFavorites))
+          }
+          
+          const savedHiddenUsers = localStorage.getItem('hidden_nomad_users')
+          if (savedHiddenUsers) {
+            setHiddenUsers(JSON.parse(savedHiddenUsers))
+          }
+        } catch (error) {
+          logError('Failed to load user preferences from localStorage', error, 'useNomadUsers')
+        }
+        return
       }
-      
-      const savedHiddenUsers = localStorage.getItem('hidden_nomad_users')
-      if (savedHiddenUsers) {
-        setHiddenUsers(JSON.parse(savedHiddenUsers))
+
+      // 如果用户已登录，从数据库加载
+      try {
+        const preferences = await userPreferencesService.getUserPreferences(user.profile.id)
+        setFavorites(preferences.favorites)
+        setHiddenUsers(preferences.hidden_users)
+      } catch (error) {
+        logError('Failed to load user preferences from database', error, 'useNomadUsers')
+        
+        // 如果数据库失败，回退到localStorage
+        try {
+          const savedFavorites = localStorage.getItem('nomadFavorites')
+          if (savedFavorites) {
+            setFavorites(JSON.parse(savedFavorites))
+          }
+          
+          const savedHiddenUsers = localStorage.getItem('hidden_nomad_users')
+          if (savedHiddenUsers) {
+            setHiddenUsers(JSON.parse(savedHiddenUsers))
+          }
+        } catch (localError) {
+          logError('Failed to load user preferences from localStorage fallback', localError, 'useNomadUsers')
+        }
       }
-    } catch (error) {
-      logError('Failed to load user preferences', error, 'useNomadUsers')
     }
-  }, [])
+
+    loadUserPreferences()
+  }, [user?.profile?.id])
 
   // 加载用户数据
   useEffect(() => {
