@@ -149,8 +149,16 @@ export default function UserDetailModal({
             
             {/* User Info */}
             <div className="flex items-start space-x-4 mb-6">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
-                {user.avatar}
+              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold overflow-hidden">
+                {user.avatar_url && user.avatar_url.startsWith('data:') ? (
+                  <img 
+                    src={user.avatar_url} 
+                    alt={user.name}
+                    className="w-20 h-20 rounded-full object-cover"
+                  />
+                ) : (
+                  user.avatar
+                )}
               </div>
               <div className="flex-1">
                 <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">

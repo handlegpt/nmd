@@ -566,8 +566,16 @@ export default function HomeLocalNomads({
               className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-all duration-200 transform hover:-translate-y-1"
             >
               <div className="flex items-start space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  {nomadUser.avatar}
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                  {nomadUser.avatar_url && nomadUser.avatar_url.startsWith('data:') ? (
+                    <img 
+                      src={nomadUser.avatar_url} 
+                      alt={nomadUser.name}
+                      className="w-12 h-12 rounded-full object-cover"
+                    />
+                  ) : (
+                    nomadUser.avatar
+                  )}
                 </div>
                 
                 <div className="flex-1 min-w-0">

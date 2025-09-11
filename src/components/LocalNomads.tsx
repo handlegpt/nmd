@@ -387,10 +387,18 @@ export default function LocalNomads() {
             >
               <div className="flex items-start space-x-4">
                 <div 
-                  className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:scale-105 transition-transform"
+                  className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-lg font-bold cursor-pointer hover:scale-105 transition-transform overflow-hidden"
                   onClick={() => handleUserClick(user)}
                 >
-                  {user.avatar}
+                  {user.avatar_url && user.avatar_url.startsWith('data:') ? (
+                    <img 
+                      src={user.avatar_url} 
+                      alt={user.name}
+                      className="w-16 h-16 rounded-full object-cover"
+                    />
+                  ) : (
+                    user.avatar
+                  )}
                 </div>
                 
                 <div className="flex-1">

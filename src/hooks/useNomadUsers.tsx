@@ -10,6 +10,7 @@ export interface NomadUser {
   id: string
   name: string
   avatar: string
+  avatar_url?: string // 添加avatar_url字段以保持兼容性
   profession: string
   company?: string
   location: string
@@ -331,6 +332,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
                   id: userData.id,
                   name: userData.name,
                   avatar: userData.avatar,
+                  avatar_url: userData.avatar, // 添加avatar_url字段以保持兼容性
                   profession: userData.profession,
                   company: userData.company,
                   location: userData.location,
