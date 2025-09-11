@@ -504,12 +504,12 @@ export default function HomeLocalNomads({
                       {t('localNomads.yourCity', { city: location.city || 'Unknown City' })}
                     </h3>
                     <p className="text-sm text-blue-700 dark:text-blue-300">
-                      {t('localNomads.nearbyOnline', { count: availableUsers.toString(), global: '128' })}
+                      {t('localNomads.nearbyOnline', { count: availableUsers.toString(), global: totalUsers.toString() })}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">128</div>
+                  <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{totalUsers}</div>
                   <div className="text-xs text-blue-600 dark:text-blue-400">{t('localNomads.globalNomads')}</div>
                 </div>
               </div>
