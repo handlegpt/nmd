@@ -643,6 +643,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
 
   // 刷新用户数据
   const refreshUsers = useCallback(async () => {
+    logInfo('Manual user data refresh triggered', null, 'useNomadUsers')
     await loadUsers()
   }, [loadUsers])
 
@@ -861,6 +862,35 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
   // 加载用户数据
   useEffect(() => {
     loadUsers()
+  }, [loadUsers])
+
+  // 定期刷新用户数据（每5分钟）
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (user?.isAuthenticated) {
+        logInfo('Periodic user data refresh', null, 'useNomadUsers')
+        loadUsers()
+      }
+    }, 5 * 60 * 1000) // 5分钟
+
+    return () => clearInterval(interval)
+  }, [loadUsers, user?.isAuthenticated])
+
+  // 监听用户资料更新事件
+  useEffect(() => {
+    const handleUserProfileUpdate = (event: CustomEvent) => {
+      logInfo('User profile update event received', { userId: event.detail?.userId }, 'useNomadUsers')
+      // 延迟刷新，确保数据库更新完成
+      setTimeout(() => {
+        loadUsers()
+      }, 1000)
+    }
+
+    window.addEventListener('userProfileUpdated', handleUserProfileUpdate as EventListener)
+    
+    return () => {
+      window.removeEventListener('userProfileUpdated', handleUserProfileUpdate as EventListener)
+    }
   }, [loadUsers])
 
   // 筛选器变化时重新筛选

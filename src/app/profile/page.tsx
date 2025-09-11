@@ -213,6 +213,11 @@ export default function ProfilePage() {
           avatar_url: updatedProfile.avatar_url,
           currentCity: updatedProfile.current_city
         })
+        
+        // 触发用户数据刷新，确保Local Nomads显示最新信息
+        window.dispatchEvent(new CustomEvent('userProfileUpdated', {
+          detail: { userId: user.profile.id, profile: updatedProfile }
+        }))
       } else {
         throw new Error('Failed to save profile to server')
       }
@@ -269,6 +274,11 @@ export default function ProfilePage() {
               ...user.profile,
               avatar_url: result
             })
+            
+            // 触发用户数据刷新，确保Local Nomads显示最新头像
+            window.dispatchEvent(new CustomEvent('userProfileUpdated', {
+              detail: { userId: profile.id, profile: updatedProfile }
+            }))
           } catch (error) {
             console.error('Failed to save avatar to server:', error)
             // 即使服务器保存失败，本地保存仍然有效

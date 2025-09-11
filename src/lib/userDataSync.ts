@@ -64,7 +64,7 @@ class UserDataSyncService {
     try {
       logInfo('Saving user profile to server', { userId }, 'UserDataSync')
 
-      // 1. 保存到服务器
+      // 1. 保存到user_profiles表
       const { data, error } = await supabase
         .from('user_profiles')
         .upsert({
@@ -80,7 +80,29 @@ class UserDataSyncService {
         return false
       }
 
-      // 2. 保存到本地作为缓存
+      // 2. 同步更新users表的基本信息
+      const { error: userUpdateError } = await supabase
+        .from('users')
+        .update({
+          name: profileData.name,
+          avatar_url: profileData.avatar_url,
+          current_city: profileData.current_city,
+          profession: profileData.profession,
+          company: profileData.company,
+          bio: profileData.bio,
+          interests: profileData.interests,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', userId)
+
+      if (userUpdateError) {
+        logError('Failed to sync user data to users table', userUpdateError, 'UserDataSync')
+        // 不返回false，因为user_profiles已经保存成功
+      } else {
+        logInfo('Successfully synced user data to users table', { userId }, 'UserDataSync')
+      }
+
+      // 3. 保存到本地作为缓存
       localStorage.setItem('user_profile_details', JSON.stringify(profileData))
       
       logInfo('User profile saved successfully', { userId }, 'UserDataSync')
