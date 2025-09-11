@@ -111,6 +111,7 @@ const DEFAULT_OPTIONS: UseNomadUsersOptions = {
 }
 
 export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsersReturn {
+  console.log('🔍 useNomadUsers Hook initialized', { options })
   logInfo('useNomadUsers Hook initialized', { options }, 'useNomadUsers')
   
   const opts = { ...DEFAULT_OPTIONS, ...options }

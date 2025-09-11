@@ -67,6 +67,7 @@ export default function HomeLocalNomads({
   showStats = true,
   showNewUsers = true
 }: HomeLocalNomadsProps) {
+  console.log('🔍 HomeLocalNomads component rendering', { maxUsers, showPagination, showLocationDetection, showStats, showNewUsers })
   logInfo('HomeLocalNomads component rendering', { maxUsers, showPagination, showLocationDetection, showStats, showNewUsers }, 'HomeLocalNomads')
   
   const { t } = useTranslation()
