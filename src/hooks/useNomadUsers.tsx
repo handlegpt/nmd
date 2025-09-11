@@ -125,6 +125,13 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
     location: location 
   }, 'useNomadUsers')
   
+  console.log('🔍 useNomadUsers - user and location loaded', { 
+    userId: user?.profile?.id, 
+    userName: user?.profile?.name,
+    isAuthenticated: user?.isAuthenticated,
+    location: location 
+  })
+  
   // 状态管理
   const [allUsers, setAllUsers] = useState<NomadUser[]>([])
   const [filteredUsers, setFilteredUsers] = useState<NomadUser[]>([])
@@ -140,6 +147,12 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
   
   const updateIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const lastUpdateRef = useRef<number>(0)
+  
+  console.log('🔍 useNomadUsers - state initialized', { 
+    allUsersCount: allUsers.length,
+    loading: loading,
+    error: error
+  })
 
   // 错误处理工具函数
   const handleError = useCallback((error: any, context: string) => {
@@ -289,6 +302,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
 
   // 获取所有注册用户
   const getAllRegisteredUsers = useCallback((): NomadUser[] => {
+    console.log('🔍 getAllRegisteredUsers - function called')
     try {
       const users: NomadUser[] = []
       const processedUserIds = new Set<string>() // 防止重复用户
@@ -297,6 +311,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       const keys = Object.keys(localStorage)
       const profileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
       
+      console.log('🔍 getAllRegisteredUsers - found profile keys', { profileKeys, totalKeys: keys.length })
       logInfo('Found profile keys', { profileKeys, totalKeys: keys.length }, 'useNomadUsers')
       
       // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
@@ -403,9 +418,16 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
 
   // 加载用户数据
   const loadUsers = useCallback(async () => {
+    console.log('🔍 loadUsers - function called')
     try {
       setLoading(true)
       clearError()
+      
+      console.log('🔍 loadUsers - starting to load users', { 
+        hiddenUsersCount: hiddenUsers.length,
+        hiddenUserIds: hiddenUsers,
+        currentLocation: location 
+      })
       
       logInfo('Starting to load users', { 
         hiddenUsersCount: hiddenUsers.length,
