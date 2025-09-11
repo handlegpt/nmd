@@ -45,12 +45,6 @@ export default function MobileMenu() {
       description: t('mobileMenu.visaGuideDescription')
     },
     {
-      href: '/nomadtax',
-      icon: DollarSign,
-      label: t('navigation.tax'),
-      description: t('mobileMenu.taxDescription')
-    },
-    {
       href: '/nomadtools',
       icon: Settings,
       label: t('navigation.tools'),

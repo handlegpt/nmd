@@ -26,10 +26,6 @@ export default function DesktopNavigation() {
       href: '/nomadvisaguide',
     },
     {
-      name: t('navigation.tax'),
-      href: '/nomadtax',
-    },
-    {
       name: t('navigation.tools'),
       href: '/nomadtools',
     }

@@ -8,7 +8,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticPages = [
     '',
     '/nomadcities',
-    '/nomadtax',
+    '/nomadtools/nomadtax',
     '/nomadvisaguide',
     '/nomadplaces',
     '/local-nomads',

@@ -940,7 +940,7 @@ export default function DashboardPage() {
                       onClick={() => {
                         if (rec.action === 'explore') router.push('/nomadcities')
                         else if (rec.action === 'visa') router.push('/nomadvisaguide')
-                        else if (rec.action === 'tax') router.push('/nomadtax')
+                        else if (rec.action === 'tax') router.push('/nomadtools/nomadtax')
                         else if (rec.action === 'profile') router.push('/profile')
                       }}
                       className="text-blue-600 hover:text-blue-700 text-sm font-medium mt-2"

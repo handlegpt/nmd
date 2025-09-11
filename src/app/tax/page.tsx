@@ -7,7 +7,7 @@ export default function TaxRedirect() {
   const router = useRouter()
 
   useEffect(() => {
-    router.replace('/nomadtax')
+    router.replace('/nomadtools/nomadtax')
   }, [router])
 
   return (

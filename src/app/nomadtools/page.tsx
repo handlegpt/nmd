@@ -285,7 +285,7 @@ export default function ToolsPage() {
           break;
         case 'tax-calculator':
           // Route to tax calculator
-          window.location.href = '/nomadtax';
+          window.location.href = '/nomadtools/nomadtax';
           break;
         case 'cost-calculator':
           // Route to cost calculator when implemented
