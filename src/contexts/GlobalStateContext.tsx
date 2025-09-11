@@ -261,9 +261,11 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'SET_USER_PROFILE', payload: profile })
       logInfo('User profile set', { userId: profile.id }, 'GlobalState')
       
-      // 自动创建 user_profile_details 用于 Local Nomads
+      // 为每个用户创建独立的profile存储，并添加到用户列表中
       try {
-        const existingProfile = localStorage.getItem('user_profile_details')
+        const userProfileKey = `user_profile_details_${profile.id}`
+        const existingProfile = localStorage.getItem(userProfileKey)
+        
         if (!existingProfile) {
           const defaultProfile = {
             id: profile.id,
@@ -287,9 +289,14 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
           }
-          localStorage.setItem('user_profile_details', JSON.stringify(defaultProfile))
-          logInfo('Created default user profile for Local Nomads', { userId: profile.id }, 'GlobalState')
+          localStorage.setItem(userProfileKey, JSON.stringify(defaultProfile))
+          logInfo('Created user profile for Local Nomads', { userId: profile.id }, 'GlobalState')
         }
+        
+        // 同时更新通用的user_profile_details键（向后兼容）
+        const currentProfile = JSON.parse(localStorage.getItem(userProfileKey) || '{}')
+        localStorage.setItem('user_profile_details', JSON.stringify(currentProfile))
+        
       } catch (error) {
         logError('Failed to create user profile details', error, 'GlobalState')
       }

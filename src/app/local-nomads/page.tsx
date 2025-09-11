@@ -41,11 +41,26 @@ export default function LocalNomadsPage() {
   useEffect(() => {
     const calculateStats = () => {
       try {
-        // 只从user_profile_details获取真实注册用户统计
+        // 获取所有用户的独立profile存储统计
         const keys = Object.keys(localStorage)
-        const profileKeys = keys.filter(key => key.startsWith('user_profile_details'))
+        const profileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
         const cities = new Set()
         let totalUsers = 0
+        
+        // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
+        if (profileKeys.length === 0) {
+          const generalProfile = localStorage.getItem('user_profile_details')
+          if (generalProfile) {
+            try {
+              const profile = JSON.parse(generalProfile)
+              if (profile.id && profile.name) {
+                profileKeys.push('user_profile_details')
+              }
+            } catch (error) {
+              console.error('Error parsing general profile for stats:', error)
+            }
+          }
+        }
         
         profileKeys.forEach(key => {
           try {
