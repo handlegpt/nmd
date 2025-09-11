@@ -488,11 +488,13 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         id: users[0].id,
         name: users[0].name,
         isOnline: users[0].isOnline,
-        isAvailable: users[0].isAvailable
+        isAvailable: users[0].isAvailable,
+        location: users[0].location,
+        distance: users[0].distance
       } : null
     })
     
-    const result = users.filter(user => {
+    const result = users.filter((user, index) => {
       // 搜索筛选
       if (filters.searchQuery) {
         const query = filters.searchQuery.toLowerCase()
@@ -502,26 +504,42 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
           user.location.toLowerCase().includes(query) ||
           user.interests.some(interest => interest.toLowerCase().includes(query))
         
-        if (!matchesSearch) return false
+        if (!matchesSearch) {
+          console.log(`🔍 applyFilters - user ${index} filtered by search`, { userId: user.id, name: user.name, query: filters.searchQuery })
+          return false
+        }
       }
       
       // 距离筛选
-      if (user.distance > filters.maxDistance) return false
+      if (filters.maxDistance && user.distance > filters.maxDistance) {
+        console.log(`🔍 applyFilters - user filtered by distance`, { userId: user.id, name: user.name, distance: user.distance, maxDistance: filters.maxDistance })
+        return false
+      }
       
       // 兴趣筛选
       if (filters.interests.length > 0) {
         const hasMatchingInterest = filters.interests.some(interest => 
           user.interests.includes(interest)
         )
-        if (!hasMatchingInterest) return false
+        if (!hasMatchingInterest) {
+          console.log(`🔍 applyFilters - user ${index} filtered by interests`, { userId: user.id, name: user.name, userInterests: user.interests, filterInterests: filters.interests })
+          return false
+        }
       }
       
       // 在线状态筛选 - 为缺失的属性提供默认值
-      if (filters.onlineOnly && !(user.isOnline ?? true)) return false
+      if (filters.onlineOnly && !(user.isOnline ?? true)) {
+        console.log(`🔍 applyFilters - user ${index} filtered by online status`, { userId: user.id, name: user.name, isOnline: user.isOnline })
+        return false
+      }
       
       // 可用状态筛选 - 为缺失的属性提供默认值
-      if (filters.availableOnly && !(user.isAvailable ?? true)) return false
+      if (filters.availableOnly && !(user.isAvailable ?? true)) {
+        console.log(`🔍 applyFilters - user ${index} filtered by available status`, { userId: user.id, name: user.name, isAvailable: user.isAvailable })
+        return false
+      }
       
+      console.log(`🔍 applyFilters - user ${index} passed all filters`, { userId: user.id, name: user.name })
       return true
     })
     
