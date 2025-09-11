@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import LocalNomads from '@/components/LocalNomads'
 import GlobalNomadsMap from '@/components/GlobalNomadsMap'
 import MeetupSystem from '@/components/MeetupSystem'
@@ -9,6 +9,7 @@ import MobileNavigation from '@/components/MobileNavigation'
 import ThemeToggle from '@/components/ThemeToggle'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
+import { useNomadUsers } from '@/hooks/useNomadUsers'
 import { 
   Users, 
   Coffee, 
@@ -24,73 +25,76 @@ import {
   Filter,
   SortAsc
 } from 'lucide-react'
+import ErrorAlert, { ErrorAlertSimple } from '@/components/ErrorAlert'
 
 export default function LocalNomadsPage() {
   const { t } = useTranslation()
   const { user } = useUser()
   const [activeTab, setActiveTab] = useState<'discover' | 'my-meetups' | 'realtime' | 'favorites'>('discover')
   
-  // 基于真实数据的社区统计
-  const [communityStats, setCommunityStats] = useState({
-    totalCities: 0,
-    totalNomads: 0,
-    totalMeetups: 0
+  // 使用统一的用户数据管理Hook获取统计数据
+  const {
+    stats,
+    error,
+    refreshUsers
+  } = useNomadUsers({
+    enablePagination: false,
+    enableInfiniteScroll: false,
+    enableRealTimeUpdates: true,
+    updateInterval: 60000 // 1分钟更新一次统计数据
   })
 
-  // 计算真实统计数据
-  useEffect(() => {
-    const calculateStats = () => {
-      try {
-        // 获取所有用户的独立profile存储统计
-        const keys = Object.keys(localStorage)
-        const profileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
-        const cities = new Set()
-        let totalUsers = 0
-        
-        // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
-        if (profileKeys.length === 0) {
-          const generalProfile = localStorage.getItem('user_profile_details')
-          if (generalProfile) {
-            try {
-              const profile = JSON.parse(generalProfile)
-              if (profile.id && profile.name) {
-                profileKeys.push('user_profile_details')
-              }
-            } catch (error) {
-              console.error('Error parsing general profile for stats:', error)
+  // 计算城市数量（基于用户位置）
+  const totalCities = React.useMemo(() => {
+    if (!stats?.totalUsers) return 0
+    
+    try {
+      const keys = Object.keys(localStorage)
+      const profileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
+      const cities = new Set()
+      
+      // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
+      if (profileKeys.length === 0) {
+        const generalProfile = localStorage.getItem('user_profile_details')
+        if (generalProfile) {
+          try {
+            const profile = JSON.parse(generalProfile)
+            if (profile.id && profile.name) {
+              profileKeys.push('user_profile_details')
             }
+          } catch (error) {
+            console.error('Error parsing general profile for cities:', error)
           }
         }
-        
-        profileKeys.forEach(key => {
-          try {
-            const profileData = localStorage.getItem(key)
-            if (profileData) {
-              const profile = JSON.parse(profileData)
-              if (profile?.id && profile?.name) {
-                totalUsers++
-                if (profile.current_city && profile.current_city !== 'Unknown Location') {
-                  cities.add(profile.current_city)
-                }
-              }
-            }
-          } catch (e) {
-            console.error('Failed to parse profile for stats:', e)
-          }
-        })
-        
-        setCommunityStats({
-          totalCities: cities.size,
-          totalNomads: totalUsers,
-          totalMeetups: 0 // 暂时为0，等实现真实聚会系统后更新
-        })
-      } catch (error) {
-        console.error('Failed to calculate community stats:', error)
       }
+      
+      profileKeys.forEach(key => {
+        try {
+          const profileData = localStorage.getItem(key)
+          if (profileData) {
+            const profile = JSON.parse(profileData)
+            if (profile?.current_city && profile.current_city !== 'Unknown Location') {
+              cities.add(profile.current_city)
+            }
+          }
+        } catch (e) {
+          console.error('Failed to parse profile for cities:', e)
+        }
+      })
+      
+      return cities.size
+    } catch (error) {
+      console.error('Failed to calculate cities:', error)
+      return 0
     }
-    
-    calculateStats()
-  }, [])
+  }, [stats?.totalUsers])
+
+  // 统一的社区统计数据
+  const communityStats = {
+    totalCities,
+    totalNomads: stats?.totalUsers || 0,
+    totalMeetups: stats?.todayMeetups || 0
+  }
 
   const tabs = [
     { id: 'discover', label: t('localNomads.discover'), icon: Users },
@@ -101,6 +105,17 @@ export default function LocalNomadsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* 错误显示 */}
+      {error && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+          <ErrorAlertSimple
+            message={error}
+            onRetry={refreshUsers}
+            onDismiss={() => {}} // Hook会自动清除错误
+          />
+        </div>
+      )}
+      
       {/* 优化后的Header - 简洁标题 + 概览数字 */}
       <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
