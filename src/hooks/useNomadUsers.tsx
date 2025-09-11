@@ -314,6 +314,19 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       console.log('🔍 getAllRegisteredUsers - found profile keys', { profileKeys, totalKeys: keys.length })
       logInfo('Found profile keys', { profileKeys, totalKeys: keys.length }, 'useNomadUsers')
       
+      // 处理每个profile key
+      for (const key of profileKeys) {
+        try {
+          const profileData = localStorage.getItem(key)
+          if (profileData) {
+            const profile = JSON.parse(profileData)
+            console.log('🔍 getAllRegisteredUsers - processing profile', { key, profileId: profile.id, profileName: profile.name })
+          }
+        } catch (e) {
+          console.error('🔍 getAllRegisteredUsers - error parsing profile', { key, error: e })
+        }
+      }
+      
       // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
       if (profileKeys.length === 0) {
         const generalProfile = localStorage.getItem('user_profile_details')
@@ -372,9 +385,11 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         }
       })
       
+      console.log('🔍 getAllRegisteredUsers - final result', { count: users.length, userIds: users.map(u => u.id), userNames: users.map(u => u.name) })
       logInfo('Total users loaded', { count: users.length, userIds: users.map(u => u.id) }, 'useNomadUsers')
       return users
     } catch (error) {
+      console.error('🔍 getAllRegisteredUsers - error', error)
       logError('Error getting registered users', error, 'useNomadUsers')
       return []
     }
