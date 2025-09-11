@@ -18,6 +18,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
 import { useLocation } from '@/hooks/useLocation'
 import { logInfo, logError } from '@/lib/logger'
+import { ratingSystem, UserRatingSummary } from '@/lib/ratingSystem'
 import UserDetailModal from './UserDetailModal'
 import UserCardSkeleton from './UserCardSkeleton'
 
@@ -39,6 +40,7 @@ interface NomadUser {
   mutualInterests: string[]
   compatibility: number
   bio: string
+  ratingSummary?: UserRatingSummary
 }
 
 interface MeetupStats {
@@ -100,6 +102,9 @@ export default function LocalNomads() {
     const loadUsers = async () => {
       setLoading(true)
       try {
+        // 初始化评分系统
+        ratingSystem.initializeRealData()
+        
         const allRegisteredUsers = getAllRegisteredUsers()
 
         // 过滤隐藏用户
@@ -183,25 +188,29 @@ export default function LocalNomads() {
           if (!raw) return
           const profile = JSON.parse(raw)
           if (!profile?.id || !profile?.name) return
-          const nomad: NomadUser = {
-            id: profile.id,
-            name: profile.name,
-            avatar: profile.avatar_url || (profile.name ? profile.name.substring(0, 2).toUpperCase() : 'NN'),
-            profession: profile.profession || 'Digital Nomad',
-            company: profile.company || 'Freelance',
-            location: profile.current_city || 'Unknown Location',
-            distance: 0,
-            interests: profile.interests || ['Travel', 'Technology'],
-            rating: 5.0,
-            reviewCount: 0,
-            isOnline: calculateOnlineStatus(profile.updated_at),
-            isAvailable: calculateAvailabilityStatus(profile.updated_at),
-            lastSeen: calculateLastSeen(profile.updated_at),
-            meetupCount: 0,
-            mutualInterests: calculateMutualInterests(profile.interests || []),
-            compatibility: calculateCompatibility(profile.interests || []) ,
-            bio: profile.bio || 'Digital nomad exploring the world!'
-          }
+        // 获取用户评分摘要
+        const ratingSummary = ratingSystem.getUserRatingSummary(profile.id)
+        
+        const nomad: NomadUser = {
+          id: profile.id,
+          name: profile.name,
+          avatar: profile.avatar_url || (profile.name ? profile.name.substring(0, 2).toUpperCase() : 'NN'),
+          profession: profile.profession || 'Digital Nomad',
+          company: profile.company || 'Freelance',
+          location: profile.current_city || 'Unknown Location',
+          distance: 0,
+          interests: profile.interests || ['Travel', 'Technology'],
+          rating: ratingSummary?.averageRating || 0,
+          reviewCount: ratingSummary?.totalRatings || 0,
+          isOnline: calculateOnlineStatus(profile.updated_at),
+          isAvailable: calculateAvailabilityStatus(profile.updated_at),
+          lastSeen: calculateLastSeen(profile.updated_at),
+          meetupCount: 0,
+          mutualInterests: calculateMutualInterests(profile.interests || []),
+          compatibility: calculateCompatibility(profile.interests || []) ,
+          bio: profile.bio || 'Digital nomad exploring the world!',
+          ratingSummary: ratingSummary || undefined
+        }
           results.push(nomad)
         } catch (e) {
           console.error('Failed to parse profile', e)

@@ -28,6 +28,7 @@ import {
   CheckCircle,
   Circle
 } from 'lucide-react'
+import { ratingSystem, UserRatingSummary } from '@/lib/ratingSystem'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
 import { useLocation } from '@/hooks/useLocation'
@@ -149,7 +150,7 @@ export default function HomeLocalNomads({
           location: user.profile.current_city || 'Unknown Location',
           distance: 0,
           interests: getUserInterests(),
-          rating: 5.0,
+          rating: 0,
           reviewCount: 0,
           isOnline: calculateOnlineStatus(user.profile.updated_at),
           isAvailable: calculateAvailabilityStatus(user.profile.updated_at),
@@ -224,6 +225,9 @@ export default function HomeLocalNomads({
       setLoading(true)
       
       try {
+        // 初始化评分系统
+        ratingSystem.initializeRealData()
+        
         // 从 localStorage 获取所有注册用户
         const allRegisteredUsers = getAllRegisteredUsers()
         
@@ -280,7 +284,10 @@ export default function HomeLocalNomads({
               }
               
               // 创建 NomadUser 对象
-              const nomadUser: NomadUser = {
+                // 获取用户评分摘要
+                const ratingSummary = ratingSystem.getUserRatingSummary(profile.id)
+                
+                const nomadUser: NomadUser = {
                 id: profile.id,
                 name: profile.name,
                 avatar: profile.avatar_url || (profile.name ? profile.name.substring(0, 2).toUpperCase() : 'NN'),
@@ -289,8 +296,8 @@ export default function HomeLocalNomads({
                 location: profile.current_city || 'Unknown Location',
                 distance: 0, // 将在后面计算
                 interests: profile.interests || ['Travel', 'Technology'],
-                rating: 5.0, // 新用户默认评分
-                reviewCount: 0,
+                rating: ratingSummary?.averageRating || 0,
+                reviewCount: ratingSummary?.totalRatings || 0,
                 isOnline: calculateOnlineStatus(profile.updated_at),
                 isAvailable: calculateAvailabilityStatus(profile.updated_at),
                 lastSeen: calculateLastSeen(profile.updated_at),
