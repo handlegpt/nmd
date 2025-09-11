@@ -186,7 +186,7 @@ export default function LocalNomads() {
           const nomad: NomadUser = {
             id: profile.id,
             name: profile.name,
-            avatar: profile.name ? profile.name.substring(0, 2).toUpperCase() : 'NN',
+            avatar: profile.avatar_url || (profile.name ? profile.name.substring(0, 2).toUpperCase() : 'NN'),
             profession: profile.profession || 'Digital Nomad',
             company: profile.company || 'Freelance',
             location: profile.current_city || 'Unknown Location',
@@ -194,9 +194,9 @@ export default function LocalNomads() {
             interests: profile.interests || ['Travel', 'Technology'],
             rating: 5.0,
             reviewCount: 0,
-            isOnline: Math.random() > 0.4, // 60% 概率在线
-            isAvailable: Math.random() > 0.3, // 70% 概率可用
-            lastSeen: 'Just now',
+            isOnline: calculateOnlineStatus(profile.updated_at),
+            isAvailable: calculateAvailabilityStatus(profile.updated_at),
+            lastSeen: calculateLastSeen(profile.updated_at),
             meetupCount: 0,
             mutualInterests: calculateMutualInterests(profile.interests || []),
             compatibility: calculateCompatibility(profile.interests || []) ,
@@ -216,7 +216,67 @@ export default function LocalNomads() {
 
   const calculateDistance = (userLocation: string, currentLocation: any): number => {
     if (!currentLocation || !userLocation || userLocation === 'Unknown Location') return 999
-    return Math.round((Math.random() * 100) + Number.EPSILON) / 10 // 0.1 精度随机距离
+    
+    // 如果用户资料中有坐标信息，使用真实距离计算
+    try {
+      const userProfile = JSON.parse(localStorage.getItem('user_profile_details') || '{}')
+      if (userProfile.coordinates && currentLocation.lat && currentLocation.lng) {
+        return calculateHaversineDistance(
+          currentLocation.lat, currentLocation.lng,
+          userProfile.coordinates.lat, userProfile.coordinates.lng
+        )
+      }
+    } catch (e) {
+      console.error('Error calculating distance:', e)
+    }
+    
+    // 如果没有坐标信息，返回随机距离作为fallback
+    return Math.round((Math.random() * 100) + Number.EPSILON) / 10
+  }
+
+  // 使用Haversine公式计算两点间距离（公里）
+  const calculateHaversineDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
+    const R = 6371 // 地球半径（公里）
+    const dLat = (lat2 - lat1) * Math.PI / 180
+    const dLon = (lon2 - lon1) * Math.PI / 180
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a))
+    const distance = R * c
+    return Math.round(distance * 10) / 10 // 保留一位小数
+  }
+
+  // 计算在线状态（基于最后活动时间）
+  const calculateOnlineStatus = (lastUpdated: string): boolean => {
+    if (!lastUpdated) return false
+    const lastUpdate = new Date(lastUpdated)
+    const now = new Date()
+    const diffMinutes = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
+    return diffMinutes <= 30 // 30分钟内活跃视为在线
+  }
+
+  // 计算可用状态（基于最后活动时间）
+  const calculateAvailabilityStatus = (lastUpdated: string): boolean => {
+    if (!lastUpdated) return false
+    const lastUpdate = new Date(lastUpdated)
+    const now = new Date()
+    const diffMinutes = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
+    return diffMinutes <= 60 // 1小时内活跃视为可用
+  }
+
+  // 计算最后在线时间显示
+  const calculateLastSeen = (lastUpdated: string): string => {
+    if (!lastUpdated) return 'Unknown'
+    const lastUpdate = new Date(lastUpdated)
+    const now = new Date()
+    const diffMinutes = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
+    
+    if (diffMinutes < 1) return 'Just now'
+    if (diffMinutes < 60) return `${Math.floor(diffMinutes)}m ago`
+    if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`
+    return `${Math.floor(diffMinutes / 1440)}d ago`
   }
 
   const calculateMutualInterests = (userInterests: string[]): string[] => {

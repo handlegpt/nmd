@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import LocalNomads from '@/components/LocalNomads'
 import GlobalNomadsMap from '@/components/GlobalNomadsMap'
 import MeetupSystem from '@/components/MeetupSystem'
@@ -30,10 +30,53 @@ export default function LocalNomadsPage() {
   const { user } = useUser()
   const [activeTab, setActiveTab] = useState<'discover' | 'my-meetups' | 'realtime' | 'favorites'>('discover')
   
-  // 模拟社区数据
-  const totalCities = 156
-  const totalNomads = 2847
-  const totalMeetups = 1234
+  // 基于真实数据的社区统计
+  const [communityStats, setCommunityStats] = useState({
+    totalCities: 0,
+    totalNomads: 0,
+    totalMeetups: 0
+  })
+
+  // 计算真实统计数据
+  useEffect(() => {
+    const calculateStats = () => {
+      try {
+        // 从localStorage获取所有用户资料
+        const keys = Object.keys(localStorage)
+        const profileKeys = keys.filter(key => key.startsWith('user_profile_details'))
+        
+        const cities = new Set()
+        let totalUsers = 0
+        
+        profileKeys.forEach(key => {
+          try {
+            const profileData = localStorage.getItem(key)
+            if (profileData) {
+              const profile = JSON.parse(profileData)
+              if (profile?.id && profile?.name) {
+                totalUsers++
+                if (profile.current_city && profile.current_city !== 'Unknown Location') {
+                  cities.add(profile.current_city)
+                }
+              }
+            }
+          } catch (e) {
+            console.error('Failed to parse profile for stats:', e)
+          }
+        })
+        
+        setCommunityStats({
+          totalCities: cities.size,
+          totalNomads: totalUsers,
+          totalMeetups: 0 // 暂时为0，等实现真实聚会系统后更新
+        })
+      } catch (error) {
+        console.error('Failed to calculate community stats:', error)
+      }
+    }
+    
+    calculateStats()
+  }, [])
 
   const tabs = [
     { id: 'discover', label: t('localNomads.discover'), icon: Users },
@@ -61,11 +104,11 @@ export default function LocalNomadsPage() {
               
               {/* 简洁概览 - 小字体副标题 */}
               <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
-                <span>{totalCities} {t('localNomads.stats.cities')}</span>
+                <span>{communityStats.totalCities} {t('localNomads.stats.cities')}</span>
                 <span>•</span>
-                <span>{totalNomads.toLocaleString()} {t('localNomads.stats.nomads')}</span>
+                <span>{communityStats.totalNomads.toLocaleString()} {t('localNomads.stats.nomads')}</span>
                 <span>•</span>
-                <span>{totalMeetups.toLocaleString()} {t('localNomads.stats.meetups')}</span>
+                <span>{communityStats.totalMeetups.toLocaleString()} {t('localNomads.stats.meetups')}</span>
               </div>
             </div>
             
@@ -88,7 +131,7 @@ export default function LocalNomadsPage() {
                   <Globe className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{totalCities}</div>
+                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">{communityStats.totalCities}</div>
                   <div className="text-gray-600 dark:text-gray-400">{t('localNomads.stats.activeCities')}</div>
                 </div>
               </div>
@@ -102,7 +145,7 @@ export default function LocalNomadsPage() {
                   <Users className="w-6 h-6 text-green-600 dark:text-green-400" />
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-green-600 dark:text-green-400">{totalNomads.toLocaleString()}</div>
+                  <div className="text-3xl font-bold text-green-600 dark:text-green-400">{communityStats.totalNomads.toLocaleString()}</div>
                   <div className="text-gray-600 dark:text-gray-400">{t('localNomads.stats.digitalNomads')}</div>
                 </div>
               </div>
@@ -116,7 +159,7 @@ export default function LocalNomadsPage() {
                   <Coffee className="w-6 h-6 text-orange-600 dark:text-orange-400" />
                 </div>
                 <div>
-                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">{totalMeetups.toLocaleString()}</div>
+                  <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">{communityStats.totalMeetups.toLocaleString()}</div>
                   <div className="text-gray-600 dark:text-gray-400">{t('localNomads.stats.meetupActivities')}</div>
                 </div>
               </div>
