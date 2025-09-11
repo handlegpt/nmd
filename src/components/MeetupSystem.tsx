@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
+import { meetupSystem, Meetup, MeetupReview, MeetupParticipant } from '@/lib/meetupSystem'
 import { 
   Calendar, 
   Clock, 
@@ -19,47 +20,7 @@ import {
 } from 'lucide-react'
 import { format, addDays, isAfter, isBefore } from 'date-fns'
 
-interface Meetup {
-  id: string
-  title: string
-  description: string
-  city: string
-  country: string
-  coordinates: {
-    lat: number
-    lng: number
-  }
-  date: Date
-  time: string
-  duration: number // in hours
-  maxParticipants: number
-  currentParticipants: number
-  category: 'coffee' | 'coworking' | 'social' | 'adventure' | 'learning'
-  tags: string[]
-  organizer: {
-    id: string
-    name: string
-    avatar: string
-    rating: number
-  }
-  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled'
-  price?: number
-  currency?: string
-  location: string
-  requirements?: string[]
-  reviews: MeetupReview[]
-  createdAt: Date
-}
-
-interface MeetupReview {
-  id: string
-  userId: string
-  userName: string
-  userAvatar: string
-  rating: number
-  comment: string
-  createdAt: Date
-}
+// 使用从meetupSystem导入的类型
 
 interface CreateMeetupForm {
   title: string
@@ -96,95 +57,14 @@ export default function MeetupSystem() {
     requirements: []
   })
 
-  // Mock data
+  // 初始化真实数据
   useEffect(() => {
-    const mockMeetups: Meetup[] = [
-      {
-        id: '1',
-        title: 'Lisbon Coffee Chat',
-        description: 'Weekly coffee meetup for digital nomads in Lisbon. Share experiences, network, and make new friends.',
-        city: 'Lisbon',
-        country: 'Portugal',
-        coordinates: { lat: 38.7223, lng: -9.1393 },
-        date: addDays(new Date(), 3),
-        time: '14:00',
-        duration: 2,
-        maxParticipants: 15,
-        currentParticipants: 8,
-        category: 'coffee',
-        tags: ['Networking', 'Coffee', 'Digital Nomads'],
-        organizer: {
-          id: 'user1',
-          name: 'Tom',
-          avatar: 'T',
-          rating: 4.8
-        },
-        status: 'upcoming',
-        price: 5,
-        currency: 'EUR',
-        location: 'Café da Garagem, Rua da Garagem 123',
-        requirements: ['Bring good vibes', 'Open to new connections'],
-        reviews: [],
-        createdAt: new Date()
-      },
-      {
-        id: '2',
-        title: 'Chiang Mai Dev Coworking',
-        description: 'Developer meetup and coworking session. Share projects, get feedback, and collaborate.',
-        city: 'Chiang Mai',
-        country: 'Thailand',
-        coordinates: { lat: 18.7883, lng: 98.9853 },
-        date: addDays(new Date(), 1),
-        time: '10:00',
-        duration: 4,
-        maxParticipants: 20,
-        currentParticipants: 12,
-        category: 'coworking',
-        tags: ['Development', 'Coworking', 'Tech'],
-        organizer: {
-          id: 'user2',
-          name: 'Anna',
-          avatar: 'A',
-          rating: 4.9
-        },
-        status: 'upcoming',
-        price: 0,
-        location: 'CAMP Coworking Space, Nimman Road',
-        requirements: ['Laptop', 'Developer mindset'],
-        reviews: [],
-        createdAt: new Date()
-      },
-      {
-        id: '3',
-        title: 'Bali Beach Coworking',
-        description: 'Work from the beach! Bring your laptop and enjoy the ocean view while getting work done.',
-        city: 'Bali',
-        country: 'Indonesia',
-        coordinates: { lat: -8.6500, lng: 115.2167 },
-        date: addDays(new Date(), 5),
-        time: '09:00',
-        duration: 6,
-        maxParticipants: 25,
-        currentParticipants: 15,
-        category: 'coworking',
-        tags: ['Beach', 'Coworking', 'Nature'],
-        organizer: {
-          id: 'user3',
-          name: 'May',
-          avatar: 'M',
-          rating: 4.7
-        },
-        status: 'upcoming',
-        price: 10,
-        currency: 'USD',
-        location: 'Canggu Beach, Bali',
-        requirements: ['Laptop', 'Beach towel', 'Sunscreen'],
-        reviews: [],
-        createdAt: new Date()
-      }
-    ]
-
-    setMeetups(mockMeetups)
+    // 初始化聚会系统数据
+    meetupSystem.initializeRealData()
+    
+    // 加载真实数据
+    const realMeetups = meetupSystem.getMeetups()
+    setMeetups(realMeetups)
   }, [])
 
   // Handle form changes
@@ -192,10 +72,50 @@ export default function MeetupSystem() {
     setCreateForm(prev => ({ ...prev, [field]: value }))
   }
 
-  // Create new meetup
+  // 加入聚会
+  const handleJoinMeetup = (meetupId: string) => {
+    const currentUser = JSON.parse(localStorage.getItem('user_profile_details') || '{}')
+    if (!currentUser.id) return
+
+    const success = meetupSystem.joinMeetup(
+      meetupId, 
+      currentUser.id, 
+      currentUser.name, 
+      currentUser.avatar_url || currentUser.name.substring(0, 2).toUpperCase()
+    )
+
+    if (success) {
+      // 更新本地状态
+      const updatedMeetups = meetupSystem.getMeetups()
+      setMeetups(updatedMeetups)
+    }
+  }
+
+  // 离开聚会
+  const handleLeaveMeetup = (meetupId: string) => {
+    const currentUser = JSON.parse(localStorage.getItem('user_profile_details') || '{}')
+    if (!currentUser.id) return
+
+    const success = meetupSystem.leaveMeetup(
+      meetupId, 
+      currentUser.id, 
+      currentUser.name, 
+      currentUser.avatar_url || currentUser.name.substring(0, 2).toUpperCase()
+    )
+
+    if (success) {
+      // 更新本地状态
+      const updatedMeetups = meetupSystem.getMeetups()
+      setMeetups(updatedMeetups)
+    }
+  }
+
+  // 创建聚会
   const handleCreateMeetup = () => {
-    const newMeetup: Meetup = {
-      id: Date.now().toString(),
+    const currentUser = JSON.parse(localStorage.getItem('user_profile_details') || '{}')
+    if (!currentUser.id) return
+
+    const newMeetup = meetupSystem.createMeetup({
       title: createForm.title,
       description: createForm.description,
       city: createForm.city,
@@ -205,26 +125,26 @@ export default function MeetupSystem() {
       time: createForm.time,
       duration: createForm.duration,
       maxParticipants: createForm.maxParticipants,
-      currentParticipants: 1,
       category: createForm.category,
       tags: createForm.tags,
       organizer: {
-        id: 'currentUser',
-        name: 'You',
-        avatar: 'Y',
-        rating: 5.0
+        id: currentUser.id,
+        name: currentUser.name,
+        avatar: currentUser.avatar_url || currentUser.name.substring(0, 2).toUpperCase(),
+        rating: 4.5
       },
       status: 'upcoming',
       price: createForm.price,
       currency: createForm.currency,
       location: createForm.location,
-      requirements: createForm.requirements,
-      reviews: [],
-      createdAt: new Date()
-    }
+      requirements: createForm.requirements
+    })
 
-    setMeetups(prev => [newMeetup, ...prev])
-    setShowCreateForm(false)
+    // 更新本地状态
+    const updatedMeetups = meetupSystem.getMeetups()
+    setMeetups(updatedMeetups)
+
+    // 重置表单
     setCreateForm({
       title: '',
       description: '',
@@ -238,26 +158,10 @@ export default function MeetupSystem() {
       location: '',
       requirements: []
     })
-    setActiveTab('my-meetups')
+    setShowCreateForm(false)
   }
 
-  // Join meetup
-  const handleJoinMeetup = (meetupId: string) => {
-    setMeetups(prev => prev.map(meetup => 
-      meetup.id === meetupId 
-        ? { ...meetup, currentParticipants: Math.min(meetup.currentParticipants + 1, meetup.maxParticipants) }
-        : meetup
-    ))
-  }
 
-  // Leave meetup
-  const handleLeaveMeetup = (meetupId: string) => {
-    setMeetups(prev => prev.map(meetup => 
-      meetup.id === meetupId 
-        ? { ...meetup, currentParticipants: Math.max(meetup.currentParticipants - 1, 0) }
-        : meetup
-    ))
-  }
 
   // Get category icon
   const getCategoryIcon = (category: string) => {
