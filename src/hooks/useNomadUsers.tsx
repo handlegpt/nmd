@@ -390,11 +390,20 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         profileKeys.push(generalProfileKey)
       }
       
+      // 检查是否有其他用户相关的localStorage数据
+      const allUserKeys = keys.filter(key => 
+        key.includes('user') || 
+        key.includes('profile') || 
+        key.includes('nomad') ||
+        key.includes('test')
+      )
+      
       console.log('🔍 getAllRegisteredUsers - found profile keys', { 
         independentProfileKeys, 
         hasGeneralProfile, 
         profileKeys, 
-        totalKeys: keys.length 
+        totalKeys: keys.length,
+        allUserKeys: allUserKeys.slice(0, 10) // 只显示前10个，避免日志过长
       })
       logInfo('Found profile keys', { profileKeys, totalKeys: keys.length }, 'useNomadUsers')
       
