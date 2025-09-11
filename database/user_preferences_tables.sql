@@ -1,24 +1,24 @@
--- 用户偏好和收藏数据表
--- 用于存储用户的收藏、隐藏用户、偏好设置等数据
+-- User preferences and favorites data tables
+-- For storing user favorites, hidden users, preference settings, etc.
 
--- 1. 用户偏好表
+-- 1. User preferences table
 CREATE TABLE IF NOT EXISTS user_preferences (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  favorites JSONB DEFAULT '[]', -- 收藏的用户ID列表
-  hidden_users JSONB DEFAULT '[]', -- 隐藏的用户ID列表
-  blocked_users JSONB DEFAULT '[]', -- 屏蔽的用户ID列表
-  preferences JSONB DEFAULT '{}', -- 其他偏好设置
+  favorites JSONB DEFAULT '[]', -- List of favorited user IDs
+  hidden_users JSONB DEFAULT '[]', -- List of hidden user IDs
+  blocked_users JSONB DEFAULT '[]', -- List of blocked user IDs
+  preferences JSONB DEFAULT '{}', -- Other preference settings
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   UNIQUE(user_id)
 );
 
--- 2. 用户评分表
+-- 2. User ratings table
 CREATE TABLE IF NOT EXISTS user_ratings (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- 被评分的用户
-  reviewer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- 评分者
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- User being rated
+  reviewer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- User giving the rating
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
   category VARCHAR(50) NOT NULL CHECK (category IN ('professional', 'social', 'reliability', 'communication', 'overall')),
   comment TEXT,
@@ -27,11 +27,11 @@ CREATE TABLE IF NOT EXISTS user_ratings (
   UNIQUE(user_id, reviewer_id, category)
 );
 
--- 3. 用户评价表
+-- 3. User reviews table
 CREATE TABLE IF NOT EXISTS user_reviews (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- 被评价的用户
-  reviewer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- 评价者
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- User being reviewed
+  reviewer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE, -- User writing the review
   title VARCHAR(255),
   content TEXT NOT NULL,
   rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS user_reviews (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 4. 聚会表
+-- 4. Meetups table
 CREATE TABLE IF NOT EXISTS meetups (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS meetups (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 5. 聚会参与者表
+-- 5. Meetup participants table
 CREATE TABLE IF NOT EXISTS meetup_participants (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   meetup_id UUID NOT NULL REFERENCES meetups(id) ON DELETE CASCADE,
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS meetup_participants (
   UNIQUE(meetup_id, user_id)
 );
 
--- 6. 聚会评价表
+-- 6. Meetup reviews table
 CREATE TABLE IF NOT EXISTS meetup_reviews (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   meetup_id UUID NOT NULL REFERENCES meetups(id) ON DELETE CASCADE,
@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS meetup_reviews (
   UNIQUE(meetup_id, user_id)
 );
 
--- 7. 创建索引
+-- 7. Create indexes
 CREATE INDEX IF NOT EXISTS idx_user_preferences_user_id ON user_preferences(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_ratings_user_id ON user_ratings(user_id);
 CREATE INDEX IF NOT EXISTS idx_user_ratings_reviewer_id ON user_ratings(reviewer_id);
@@ -93,7 +93,7 @@ CREATE INDEX IF NOT EXISTS idx_meetup_participants_user_id ON meetup_participant
 CREATE INDEX IF NOT EXISTS idx_meetup_reviews_meetup_id ON meetup_reviews(meetup_id);
 CREATE INDEX IF NOT EXISTS idx_meetup_reviews_user_id ON meetup_reviews(user_id);
 
--- 8. 添加更新时间触发器
+-- 8. Add update time triggers
 CREATE TRIGGER update_user_preferences_updated_at
     BEFORE UPDATE ON user_preferences
     FOR EACH ROW
@@ -119,7 +119,7 @@ CREATE TRIGGER update_meetup_reviews_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
--- 9. 启用行级安全策略
+-- 9. Enable Row Level Security
 ALTER TABLE user_preferences ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_ratings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_reviews ENABLE ROW LEVEL SECURITY;
@@ -127,7 +127,7 @@ ALTER TABLE meetups ENABLE ROW LEVEL SECURITY;
 ALTER TABLE meetup_participants ENABLE ROW LEVEL SECURITY;
 ALTER TABLE meetup_reviews ENABLE ROW LEVEL SECURITY;
 
--- 10. 创建基本策略
+-- 10. Create basic policies
 CREATE POLICY "Allow public read access to user_preferences" ON user_preferences FOR SELECT USING (true);
 CREATE POLICY "Allow public read access to user_ratings" ON user_ratings FOR SELECT USING (true);
 CREATE POLICY "Allow public read access to user_reviews" ON user_reviews FOR SELECT USING (true);
@@ -135,10 +135,10 @@ CREATE POLICY "Allow public read access to meetups" ON meetups FOR SELECT USING 
 CREATE POLICY "Allow public read access to meetup_participants" ON meetup_participants FOR SELECT USING (true);
 CREATE POLICY "Allow public read access to meetup_reviews" ON meetup_reviews FOR SELECT USING (true);
 
--- 11. 添加注释
-COMMENT ON TABLE user_preferences IS '用户偏好设置表，存储收藏、隐藏用户等偏好';
-COMMENT ON TABLE user_ratings IS '用户评分表，存储用户之间的评分数据';
-COMMENT ON TABLE user_reviews IS '用户评价表，存储用户之间的评价和评论';
-COMMENT ON TABLE meetups IS '聚会表，存储聚会活动信息';
-COMMENT ON TABLE meetup_participants IS '聚会参与者表，存储聚会参与记录';
-COMMENT ON TABLE meetup_reviews IS '聚会评价表，存储聚会的评价';
+-- 11. Add comments
+COMMENT ON TABLE user_preferences IS 'User preferences table, stores favorites, hidden users and other preferences';
+COMMENT ON TABLE user_ratings IS 'User ratings table, stores rating data between users';
+COMMENT ON TABLE user_reviews IS 'User reviews table, stores reviews and comments between users';
+COMMENT ON TABLE meetups IS 'Meetups table, stores meetup activity information';
+COMMENT ON TABLE meetup_participants IS 'Meetup participants table, stores meetup participation records';
+COMMENT ON TABLE meetup_reviews IS 'Meetup reviews table, stores meetup reviews';
