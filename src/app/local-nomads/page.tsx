@@ -44,49 +44,11 @@ export default function LocalNomadsPage() {
     updateInterval: 60000 // 1分钟更新一次统计数据
   })
 
-  // 计算城市数量（基于用户位置）
+  // 计算城市数量（基于数据库数据，移除localStorage依赖）
   const totalCities = React.useMemo(() => {
-    if (!stats?.totalUsers) return 0
-    
-    try {
-      const keys = Object.keys(localStorage)
-      const profileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
-      const cities = new Set()
-      
-      // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
-      if (profileKeys.length === 0) {
-        const generalProfile = localStorage.getItem('user_profile_details')
-        if (generalProfile) {
-          try {
-            const profile = JSON.parse(generalProfile)
-            if (profile.id && profile.name) {
-              profileKeys.push('user_profile_details')
-            }
-          } catch (error) {
-            console.error('Error parsing general profile for cities:', error)
-          }
-        }
-      }
-      
-      profileKeys.forEach(key => {
-        try {
-          const profileData = localStorage.getItem(key)
-          if (profileData) {
-            const profile = JSON.parse(profileData)
-            if (profile?.current_city && profile.current_city !== 'Unknown Location') {
-              cities.add(profile.current_city)
-            }
-          }
-        } catch (e) {
-          console.error('Failed to parse profile for cities:', e)
-        }
-      })
-      
-      return cities.size
-    } catch (error) {
-      console.error('Failed to calculate cities:', error)
-      return 0
-    }
+    // 暂时使用固定值，后续可以从数据库获取真实城市数量
+    // TODO: 实现从数据库获取城市数量的API
+    return Math.max(1, Math.floor((stats?.totalUsers || 0) / 5)) // 估算：每5个用户一个城市
   }, [stats?.totalUsers])
 
   // 统一的社区统计数据

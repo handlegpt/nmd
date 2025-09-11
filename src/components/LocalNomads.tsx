@@ -109,22 +109,9 @@ export default function LocalNomads() {
     }
   }
 
-  // 加载收藏列表
-  useEffect(() => {
-    const savedFavorites = localStorage.getItem('nomadFavorites')
-    if (savedFavorites) {
-      try {
-        setFavorites(JSON.parse(savedFavorites))
-      } catch (err) {
-        console.error('Failed to parse favorites:', err)
-      }
-    }
-  }, [])
+  // 收藏列表现在完全由useNomadUsers Hook管理，移除localStorage依赖
 
-  // 保存收藏列表
-  useEffect(() => {
-    localStorage.setItem('nomadFavorites', JSON.stringify(favorites))
-  }, [favorites])
+  // 收藏列表保存现在由useNomadUsers Hook管理，移除localStorage依赖
 
   const handleCoffeeMeetup = async (userId: string) => {
     if (!user.isAuthenticated) {
@@ -558,6 +545,10 @@ export default function LocalNomads() {
           setSelectedUser(null)
         }}
         onSendMessage={handleSendMessage}
+        addToFavorites={addToFavorites}
+        removeFromFavorites={removeFromFavorites}
+        sendCoffeeInvitation={sendCoffeeInvitation}
+        getFavorites={getFavorites}
       />
     </div>
   )

@@ -29,32 +29,31 @@ interface UserDetailModalProps {
   user: NomadUser | null
   isOpen: boolean
   onClose: () => void
-  // 用户操作现在由Hook管理，简化props
   onSendMessage?: (userId: string) => void
+  // 从父组件传入操作函数，避免重复Hook实例化
+  addToFavorites?: (userId: string) => Promise<void>
+  removeFromFavorites?: (userId: string) => Promise<void>
+  sendCoffeeInvitation?: (userId: string) => Promise<boolean>
+  getFavorites?: () => Promise<string[]>
 }
 
 export default function UserDetailModal({
   user,
   isOpen,
   onClose,
-  onSendMessage
+  onSendMessage,
+  addToFavorites,
+  removeFromFavorites,
+  sendCoffeeInvitation,
+  getFavorites
 }: UserDetailModalProps) {
   const { t } = useTranslation()
   const { user: currentUser } = useUser()
   const [sendingInvitation, setSendingInvitation] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // 使用统一的用户数据管理Hook
-  const {
-    addToFavorites,
-    removeFromFavorites,
-    sendCoffeeInvitation,
-    getFavorites
-  } = useNomadUsers({
-    enablePagination: false,
-    enableInfiniteScroll: false,
-    enableRealTimeUpdates: false
-  })
+  // 使用统一的用户数据管理Hook - 从父组件传入操作函数
+  // 避免重复实例化Hook，提高性能和数据一致性
 
   if (!isOpen || !user) return null
 
@@ -63,6 +62,7 @@ export default function UserDetailModal({
   
   useEffect(() => {
     const checkFavorite = async () => {
+      if (!getFavorites) return
       try {
         const favorites = await getFavorites()
         setIsFavorite(favorites.includes(user.id))
@@ -76,6 +76,11 @@ export default function UserDetailModal({
   const handleCoffeeMeetup = async () => {
     if (!currentUser.isAuthenticated) {
       alert('Please login to send coffee meetup invitations')
+      return
+    }
+
+    if (!sendCoffeeInvitation) {
+      setError('Coffee invitation feature not available')
       return
     }
 
@@ -98,14 +103,18 @@ export default function UserDetailModal({
     }
   }
 
-  const handleAddToFavorites = () => {
+  const handleAddToFavorites = async () => {
     try {
       if (isFavorite) {
-        removeFromFavorites(user.id)
-        logInfo('User removed from favorites', { userId: user.id }, 'UserDetailModal')
+        if (removeFromFavorites) {
+          await removeFromFavorites(user.id)
+          logInfo('User removed from favorites', { userId: user.id }, 'UserDetailModal')
+        }
       } else {
-        addToFavorites(user.id)
-        logInfo('User added to favorites', { userId: user.id }, 'UserDetailModal')
+        if (addToFavorites) {
+          await addToFavorites(user.id)
+          logInfo('User added to favorites', { userId: user.id }, 'UserDetailModal')
+        }
       }
     } catch (error) {
       logError('Failed to update favorites', error, 'UserDetailModal')
