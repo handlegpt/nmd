@@ -194,8 +194,8 @@ export default function LocalNomads() {
             interests: profile.interests || ['Travel', 'Technology'],
             rating: 5.0,
             reviewCount: 0,
-            isOnline: true,
-            isAvailable: true,
+            isOnline: Math.random() > 0.4, // 60% 概率在线
+            isAvailable: Math.random() > 0.3, // 70% 概率可用
             lastSeen: 'Just now',
             meetupCount: 0,
             mutualInterests: calculateMutualInterests(profile.interests || []),

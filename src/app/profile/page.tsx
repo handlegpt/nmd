@@ -241,7 +241,7 @@ export default function ProfilePage() {
       
       // 创建FileReader来读取文件
       const reader = new FileReader()
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         const result = e.target?.result as string
         if (result) {
           // 更新profile中的avatar_url
@@ -250,6 +250,15 @@ export default function ProfilePage() {
           
           // 保存到localStorage
           localStorage.setItem('user_profile_details', JSON.stringify(updatedProfile))
+          
+          // 保存到服务器
+          try {
+            await userDataSync.saveUserProfile(profile.id, updatedProfile)
+            console.log('Avatar saved to server successfully')
+          } catch (error) {
+            console.error('Failed to save avatar to server:', error)
+            // 即使服务器保存失败，本地保存仍然有效
+          }
           
           // 显示成功消息
           setShowSuccessMessage(true)
