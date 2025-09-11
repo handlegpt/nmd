@@ -112,26 +112,9 @@ const DEFAULT_OPTIONS: UseNomadUsersOptions = {
 }
 
 export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsersReturn {
-  console.log('🔍 useNomadUsers Hook initialized', { options })
-  logInfo('useNomadUsers Hook initialized', { options }, 'useNomadUsers')
-  
   const opts = { ...DEFAULT_OPTIONS, ...options }
   const { location } = useLocation()
   const { user } = useUser()
-  
-  logInfo('useNomadUsers Hook - user and location loaded', { 
-    userId: user?.profile?.id, 
-    userName: user?.profile?.name,
-    isAuthenticated: user?.isAuthenticated,
-    location: location 
-  }, 'useNomadUsers')
-  
-  console.log('🔍 useNomadUsers - user and location loaded', { 
-    userId: user?.profile?.id, 
-    userName: user?.profile?.name,
-    isAuthenticated: user?.isAuthenticated,
-    location: location 
-  })
   
   // 状态管理
   const [allUsers, setAllUsers] = useState<NomadUser[]>([])
@@ -149,11 +132,6 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
   const updateIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const lastUpdateRef = useRef<number>(0)
   
-  console.log('🔍 useNomadUsers - state initialized', { 
-    allUsersCount: allUsers.length,
-    loading: loading,
-    error: error
-  })
 
   // 错误处理工具函数
   const handleError = useCallback((error: any, context: string) => {
