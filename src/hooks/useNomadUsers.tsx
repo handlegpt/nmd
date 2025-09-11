@@ -301,11 +301,80 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
   }, [user.isAuthenticated, user.profile])
 
   // 获取所有注册用户
-  const getAllRegisteredUsers = useCallback((): NomadUser[] => {
+  const getAllRegisteredUsers = useCallback(async (): Promise<NomadUser[]> => {
     console.log('🔍 getAllRegisteredUsers - function called')
     try {
       const users: NomadUser[] = []
       const processedUserIds = new Set<string>() // 防止重复用户
+      
+      // 首先尝试从服务器获取所有用户
+      try {
+        console.log('🔍 getAllRegisteredUsers - fetching users from server')
+        const response = await fetch('/api/users?include_hidden=false')
+        if (response.ok) {
+          const data = await response.json()
+          if (data.success && data.users) {
+            console.log('🔍 getAllRegisteredUsers - server users loaded', { 
+              count: data.users.length,
+              userNames: data.users.map((u: any) => u.name)
+            })
+            
+            // 处理服务器用户数据
+            data.users.forEach((userData: any) => {
+              if (!processedUserIds.has(userData.id)) {
+                processedUserIds.add(userData.id)
+                
+                // 获取用户评分摘要
+                const ratingSummary = ratingSystem.getUserRatingSummary(userData.id)
+                
+                const nomadUser: NomadUser = {
+                  id: userData.id,
+                  name: userData.name,
+                  avatar: userData.avatar,
+                  profession: userData.profession,
+                  company: userData.company,
+                  location: userData.location,
+                  distance: 0, // 将在后面计算
+                  interests: userData.interests,
+                  rating: ratingSummary?.averageRating || 0,
+                  reviewCount: ratingSummary?.totalRatings || 0,
+                  isOnline: calculateOnlineStatus(userData.updatedAt),
+                  isAvailable: calculateAvailabilityStatus(userData.updatedAt),
+                  lastSeen: calculateLastSeen(userData.updatedAt),
+                  meetupCount: 0,
+                  mutualInterests: calculateMutualInterests(userData.interests || []),
+                  compatibility: calculateCompatibility(userData.interests || []),
+                  bio: userData.bio,
+                  ratingSummary: ratingSummary || undefined,
+                  coordinates: userData.coordinates
+                }
+                
+                users.push(nomadUser)
+                console.log('🔍 getAllRegisteredUsers - added server user to list', { 
+                  userId: userData.id, 
+                  name: userData.name, 
+                  location: userData.location,
+                  totalUsers: users.length,
+                  processedUserIds: Array.from(processedUserIds)
+                })
+              }
+            })
+            
+            console.log('🔍 getAllRegisteredUsers - server users processed', { 
+              count: users.length, 
+              userIds: users.map(u => u.id), 
+              userNames: users.map(u => u.name) 
+            })
+            return users
+          }
+        }
+      } catch (serverError) {
+        console.error('🔍 getAllRegisteredUsers - server fetch failed', serverError)
+        logError('Failed to fetch users from server', serverError, 'useNomadUsers')
+      }
+      
+      // 如果服务器获取失败，回退到localStorage
+      console.log('🔍 getAllRegisteredUsers - falling back to localStorage')
       
       // 获取所有用户的独立profile存储
       const keys = Object.keys(localStorage)
@@ -460,7 +529,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       ratingSystem.initializeRealData()
       
       // 获取所有用户
-      const allRegisteredUsers = getAllRegisteredUsers()
+      const allRegisteredUsers = await getAllRegisteredUsers()
       console.log('🔍 loadUsers - all registered users loaded', { 
         count: allRegisteredUsers.length,
         userNames: allRegisteredUsers.map(u => u.name),
