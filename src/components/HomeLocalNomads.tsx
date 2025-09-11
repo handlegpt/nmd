@@ -164,7 +164,7 @@ export default function HomeLocalNomads({
   // 分页处理现在由useNomadUsers Hook管理
   const handlePageChange = (page: number) => {
     // 分页逻辑现在由Hook处理，这里只需要处理UI更新
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    // 移除自动滚动到顶部，让用户保持在当前位置
   }
 
   // 保存收藏列表
