@@ -481,7 +481,18 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
 
   // 应用筛选器
   const applyFilters = useCallback((users: NomadUser[], filters: UserFilters): NomadUser[] => {
-    return users.filter(user => {
+    console.log('🔍 applyFilters - starting', { 
+      usersCount: users.length,
+      filters: filters,
+      firstUser: users[0] ? {
+        id: users[0].id,
+        name: users[0].name,
+        isOnline: users[0].isOnline,
+        isAvailable: users[0].isAvailable
+      } : null
+    })
+    
+    const result = users.filter(user => {
       // 搜索筛选
       if (filters.searchQuery) {
         const query = filters.searchQuery.toLowerCase()
@@ -513,6 +524,14 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       
       return true
     })
+    
+    console.log('🔍 applyFilters - result', { 
+      originalCount: users.length,
+      filteredCount: result.length,
+      filteredUsers: result.map(u => ({ id: u.id, name: u.name }))
+    })
+    
+    return result
   }, [])
 
   // 加载用户数据
@@ -568,7 +587,22 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       setAllUsers(sortedUsers)
       
       // 应用筛选器
+      console.log('🔍 loadUsers - applying filters', { 
+        sortedUsersCount: sortedUsers.length,
+        filters: filters,
+        firstUser: sortedUsers[0] ? {
+          id: sortedUsers[0].id,
+          name: sortedUsers[0].name,
+          isOnline: sortedUsers[0].isOnline,
+          isAvailable: sortedUsers[0].isAvailable
+        } : null
+      })
       const filtered = applyFilters(sortedUsers, filters)
+      console.log('🔍 loadUsers - filter result', { 
+        originalCount: sortedUsers.length,
+        filteredCount: filtered.length,
+        filteredUsers: filtered.map(u => ({ id: u.id, name: u.name }))
+      })
       setFilteredUsers(filtered)
       
       // 计算统计数据 - 为缺失的属性提供默认值
