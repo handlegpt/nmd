@@ -68,7 +68,7 @@ interface ProfileData {
 
 export default function ProfilePage() {
   const { t } = useTranslation()
-  const { user } = useUser()
+  const { user, setUserProfile } = useUser()
   const router = useRouter()
   const [profile, setProfile] = useState<ProfileData | null>(null)
   const [isEditing, setIsEditing] = useState(false)
@@ -205,6 +205,14 @@ export default function ProfilePage() {
         setIsEditing(false)
         setShowSuccessMessage(true)
         setTimeout(() => setShowSuccessMessage(false), 3000)
+        
+        // 更新全局状态中的用户信息
+        setUserProfile({
+          ...user.profile,
+          name: updatedProfile.name,
+          avatar_url: updatedProfile.avatar_url,
+          currentCity: updatedProfile.current_city
+        })
       } else {
         throw new Error('Failed to save profile to server')
       }
@@ -255,6 +263,12 @@ export default function ProfilePage() {
           try {
             await userDataSync.saveUserProfile(profile.id, updatedProfile)
             console.log('Avatar saved to server successfully')
+            
+            // 更新全局状态中的头像
+            setUserProfile({
+              ...user.profile,
+              avatar_url: result
+            })
           } catch (error) {
             console.error('Failed to save avatar to server:', error)
             // 即使服务器保存失败，本地保存仍然有效
