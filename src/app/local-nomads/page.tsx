@@ -9,7 +9,6 @@ import MobileNavigation from '@/components/MobileNavigation'
 import ThemeToggle from '@/components/ThemeToggle'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
-import { initializeTestUsers } from '@/lib/initTestUsers'
 import { 
   Users, 
   Coffee, 
@@ -42,48 +41,28 @@ export default function LocalNomadsPage() {
   useEffect(() => {
     const calculateStats = () => {
       try {
-        // 初始化测试用户数据
-        initializeTestUsers()
-        // 从nomad_users获取所有注册用户
-        const nomadUsersData = localStorage.getItem('nomad_users')
+        // 只从user_profile_details获取真实注册用户统计
+        const keys = Object.keys(localStorage)
+        const profileKeys = keys.filter(key => key.startsWith('user_profile_details'))
         const cities = new Set()
         let totalUsers = 0
         
-        if (nomadUsersData) {
-          const nomadUsers = JSON.parse(nomadUsersData)
-          nomadUsers.forEach((user: any) => {
-            if (user?.id && user?.name) {
-              totalUsers++
-              const location = user.currentLocation || user.location
-              if (location && location !== 'Unknown Location') {
-                cities.add(location)
-              }
-            }
-          })
-        }
-        
-        // 如果没有nomad_users数据，尝试从user_profile_details获取（向后兼容）
-        if (totalUsers === 0) {
-          const keys = Object.keys(localStorage)
-          const profileKeys = keys.filter(key => key.startsWith('user_profile_details'))
-          
-          profileKeys.forEach(key => {
-            try {
-              const profileData = localStorage.getItem(key)
-              if (profileData) {
-                const profile = JSON.parse(profileData)
-                if (profile?.id && profile?.name) {
-                  totalUsers++
-                  if (profile.current_city && profile.current_city !== 'Unknown Location') {
-                    cities.add(profile.current_city)
-                  }
+        profileKeys.forEach(key => {
+          try {
+            const profileData = localStorage.getItem(key)
+            if (profileData) {
+              const profile = JSON.parse(profileData)
+              if (profile?.id && profile?.name) {
+                totalUsers++
+                if (profile.current_city && profile.current_city !== 'Unknown Location') {
+                  cities.add(profile.current_city)
                 }
               }
-            } catch (e) {
-              console.error('Failed to parse profile for stats:', e)
             }
-          })
-        }
+          } catch (e) {
+            console.error('Failed to parse profile for stats:', e)
+          }
+        })
         
         setCommunityStats({
           totalCities: cities.size,

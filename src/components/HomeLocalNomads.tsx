@@ -29,7 +29,6 @@ import {
   Circle
 } from 'lucide-react'
 import { ratingSystem, UserRatingSummary } from '@/lib/ratingSystem'
-import { initializeTestUsers } from '@/lib/initTestUsers'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
 import { useLocation } from '@/hooks/useLocation'
@@ -182,10 +181,7 @@ export default function HomeLocalNomads({
       setLoading(true)
       
       try {
-        // 初始化测试用户数据
-        initializeTestUsers()
-        
-        // 初始化评分系统
+        // 初始化评分系统（只处理真实用户数据）
         ratingSystem.initializeRealData()
         
         // 从 localStorage 获取所有注册用户
@@ -219,105 +215,60 @@ export default function HomeLocalNomads({
     loadUsers()
   }, [location]) // 移除 newUsers 和 hiddenUsers 依赖，避免无限循环
 
-  // 获取所有注册用户
+  // 获取所有注册用户（只显示真实用户，移除测试用户）
   const getAllRegisteredUsers = (): NomadUser[] => {
     try {
       const users: NomadUser[] = []
       
-      // 从nomad_users获取所有注册用户
-      const nomadUsersData = localStorage.getItem('nomad_users')
-      if (nomadUsersData) {
-        const nomadUsers = JSON.parse(nomadUsersData)
-        nomadUsers.forEach((user: any) => {
-          if (!user?.id || !user?.name) return
-          
-          // 检查用户是否隐藏
-          const isHidden = localStorage.getItem(`hidden_nomad_users`)
-          if (isHidden) {
-            const hiddenUsers = JSON.parse(isHidden)
-            if (hiddenUsers.includes(user.id)) {
-              return // 跳过隐藏的用户
-            }
-          }
-          
-          // 获取用户评分摘要
-          const ratingSummary = ratingSystem.getUserRatingSummary(user.id)
-          
-          const nomadUser: NomadUser = {
-            id: user.id,
-            name: user.name,
-            avatar: user.avatar || (user.name ? user.name.substring(0, 2).toUpperCase() : 'NN'),
-            profession: user.profession || 'Digital Nomad',
-            company: user.company || 'Freelance',
-            location: user.currentLocation || user.location || 'Unknown Location',
-            distance: 0, // 将在后面计算
-            interests: user.interests || ['Travel', 'Technology'],
-            rating: ratingSummary?.averageRating || 0,
-            reviewCount: ratingSummary?.totalRatings || 0,
-            isOnline: user.onlineStatus?.isOnline || false,
-            isAvailable: user.onlineStatus?.isAvailable || false,
-            lastSeen: user.onlineStatus?.lastSeen || new Date().toISOString(),
-            meetupCount: 0,
-            mutualInterests: calculateMutualInterests(user.interests || []),
-            compatibility: calculateCompatibility(user.interests || []),
-            bio: user.bio || 'Digital nomad exploring the world!'
-          }
-          
-          users.push(nomadUser)
-        })
-      }
+      // 只从user_profile_details获取真实注册用户
+      const keys = Object.keys(localStorage)
+      const profileKeys = keys.filter(key => key.startsWith('user_profile_details'))
       
-      // 如果没有nomad_users数据，尝试从user_profile_details获取（向后兼容）
-      if (users.length === 0) {
-        const keys = Object.keys(localStorage)
-        const profileKeys = keys.filter(key => key.startsWith('user_profile_details'))
-        
-        profileKeys.forEach(key => {
-          try {
-            const profileData = localStorage.getItem(key)
-            if (profileData) {
-              const profile = JSON.parse(profileData)
-              if (profile.id && profile.name) {
-                // 检查用户是否隐藏
-                const isHidden = localStorage.getItem(`hidden_nomad_users`)
-                if (isHidden) {
-                  const hiddenUsers = JSON.parse(isHidden)
-                  if (hiddenUsers.includes(profile.id)) {
-                    return // 跳过隐藏的用户
-                  }
+      profileKeys.forEach(key => {
+        try {
+          const profileData = localStorage.getItem(key)
+          if (profileData) {
+            const profile = JSON.parse(profileData)
+            if (profile.id && profile.name) {
+              // 检查用户是否隐藏
+              const isHidden = localStorage.getItem(`hidden_nomad_users`)
+              if (isHidden) {
+                const hiddenUsers = JSON.parse(isHidden)
+                if (hiddenUsers.includes(profile.id)) {
+                  return // 跳过隐藏的用户
                 }
-                
-                // 获取用户评分摘要
-                const ratingSummary = ratingSystem.getUserRatingSummary(profile.id)
-                
-                const nomadUser: NomadUser = {
-                  id: profile.id,
-                  name: profile.name,
-                  avatar: profile.avatar_url || (profile.name ? profile.name.substring(0, 2).toUpperCase() : 'NN'),
-                  profession: profile.profession || 'Digital Nomad',
-                  company: profile.company || 'Freelance',
-                  location: profile.current_city || 'Unknown Location',
-                  distance: 0, // 将在后面计算
-                  interests: profile.interests || ['Travel', 'Technology'],
-                  rating: ratingSummary?.averageRating || 0,
-                  reviewCount: ratingSummary?.totalRatings || 0,
-                  isOnline: calculateOnlineStatus(profile.updated_at),
-                  isAvailable: calculateAvailabilityStatus(profile.updated_at),
-                  lastSeen: calculateLastSeen(profile.updated_at),
-                  meetupCount: 0,
-                  mutualInterests: calculateMutualInterests(profile.interests || []),
-                  compatibility: calculateCompatibility(profile.interests || []),
-                  bio: profile.bio || 'Digital nomad exploring the world!'
-                }
-                
-                users.push(nomadUser)
               }
+              
+              // 获取用户评分摘要
+              const ratingSummary = ratingSystem.getUserRatingSummary(profile.id)
+              
+              const nomadUser: NomadUser = {
+                id: profile.id,
+                name: profile.name,
+                avatar: profile.avatar_url || (profile.name ? profile.name.substring(0, 2).toUpperCase() : 'NN'),
+                profession: profile.profession || 'Digital Nomad',
+                company: profile.company || 'Freelance',
+                location: profile.current_city || 'Unknown Location',
+                distance: 0, // 将在后面计算
+                interests: profile.interests || ['Travel', 'Technology'],
+                rating: ratingSummary?.averageRating || 0,
+                reviewCount: ratingSummary?.totalRatings || 0,
+                isOnline: calculateOnlineStatus(profile.updated_at),
+                isAvailable: calculateAvailabilityStatus(profile.updated_at),
+                lastSeen: calculateLastSeen(profile.updated_at),
+                meetupCount: 0,
+                mutualInterests: calculateMutualInterests(profile.interests || []),
+                compatibility: calculateCompatibility(profile.interests || []),
+                bio: profile.bio || 'Digital nomad exploring the world!'
+              }
+              
+              users.push(nomadUser)
             }
-          } catch (error) {
-            console.error('Error parsing profile:', error)
           }
-        })
-      }
+        } catch (error) {
+          console.error('Error parsing profile:', error)
+        }
+      })
       
       return users
     } catch (error) {
