@@ -18,59 +18,95 @@ import {
   Award
 } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
+import { useNomadUsers, NomadUser } from '@/hooks/useNomadUsers'
+import { useUser } from '@/contexts/GlobalStateContext'
+import { logInfo, logError } from '@/lib/logger'
+import ErrorAlert, { ErrorAlertSimple } from '@/components/ErrorAlert'
 
-interface NomadUser {
-  id: string
-  name: string
-  avatar: string
-  profession: string
-  company?: string
-  location: string
-  distance: number
-  interests: string[]
-  rating: number
-  reviewCount: number
-  isOnline: boolean
-  isAvailable: boolean
-  lastSeen: string
-  meetupCount: number
-  mutualInterests: string[]
-  compatibility: number
-  bio: string
-}
+// NomadUser interface is now imported from useNomadUsers hook
 
 interface UserDetailModalProps {
   user: NomadUser | null
   isOpen: boolean
   onClose: () => void
-  onCoffeeMeetup: (userId: string) => void
-  onSendMessage: (userId: string) => void
-  onAddToFavorites: (userId: string) => void
-  isFavorite: boolean
-  isLoading?: boolean
+  // 用户操作现在由Hook管理，简化props
+  onSendMessage?: (userId: string) => void
 }
 
 export default function UserDetailModal({
   user,
   isOpen,
   onClose,
-  onCoffeeMeetup,
-  onSendMessage,
-  onAddToFavorites,
-  isFavorite,
-  isLoading = false
+  onSendMessage
 }: UserDetailModalProps) {
   const { t } = useTranslation()
+  const { user: currentUser } = useUser()
   const [sendingInvitation, setSendingInvitation] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // 使用统一的用户数据管理Hook
+  const {
+    addToFavorites,
+    removeFromFavorites,
+    sendCoffeeInvitation,
+    getFavorites
+  } = useNomadUsers({
+    enablePagination: false,
+    enableInfiniteScroll: false,
+    enableRealTimeUpdates: false
+  })
 
   if (!isOpen || !user) return null
 
+  // 检查是否为收藏用户
+  const favorites = getFavorites()
+  const isFavorite = favorites.includes(user.id)
+
   const handleCoffeeMeetup = async () => {
+    if (!currentUser.isAuthenticated) {
+      alert('Please login to send coffee meetup invitations')
+      return
+    }
+
     setSendingInvitation(true)
+    setError(null)
+    
     try {
-      await onCoffeeMeetup(user.id)
+      const success = await sendCoffeeInvitation(user.id)
+      if (success) {
+        logInfo('Coffee invitation sent successfully', { userId: user.id }, 'UserDetailModal')
+        alert(`Coffee meetup invitation sent to ${user.name}! They will respond within 24 hours.`)
+      } else {
+        setError('Failed to send invitation. Please try again.')
+      }
+    } catch (error) {
+      logError('Failed to send coffee meetup invitation', error, 'UserDetailModal')
+      setError('Failed to send invitation. Please try again.')
     } finally {
       setSendingInvitation(false)
+    }
+  }
+
+  const handleAddToFavorites = () => {
+    try {
+      if (isFavorite) {
+        removeFromFavorites(user.id)
+        logInfo('User removed from favorites', { userId: user.id }, 'UserDetailModal')
+      } else {
+        addToFavorites(user.id)
+        logInfo('User added to favorites', { userId: user.id }, 'UserDetailModal')
+      }
+    } catch (error) {
+      logError('Failed to update favorites', error, 'UserDetailModal')
+      setError('Failed to update favorites. Please try again.')
+    }
+  }
+
+  const handleSendMessage = () => {
+    if (onSendMessage) {
+      onSendMessage(user.id)
+    } else {
+      alert(`Message feature coming soon! You'll be able to chat with ${user.name}.`)
     }
   }
 
@@ -102,6 +138,15 @@ export default function UserDetailModal({
 
           {/* Content */}
           <div className="px-6 py-6">
+            {/* 错误显示 */}
+            {error && (
+              <ErrorAlertSimple
+                message={error}
+                onRetry={() => setError(null)}
+                onDismiss={() => setError(null)}
+              />
+            )}
+            
             {/* User Info */}
             <div className="flex items-start space-x-4 mb-6">
               <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
@@ -223,7 +268,7 @@ export default function UserDetailModal({
             <div className="flex space-x-3">
               <button
                 onClick={handleCoffeeMeetup}
-                disabled={sendingInvitation || isLoading || !user.isAvailable}
+                disabled={sendingInvitation || !user.isAvailable}
                 className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 <Coffee className="w-4 h-4" />
@@ -232,14 +277,14 @@ export default function UserDetailModal({
                 </span>
               </button>
               <button
-                onClick={() => onSendMessage(user.id)}
+                onClick={handleSendMessage}
                 className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-700"
               >
                 <MessageCircle className="w-4 h-4" />
                 <span>Message</span>
               </button>
               <button
-                onClick={() => onAddToFavorites(user.id)}
+                onClick={handleAddToFavorites}
                 className={`p-3 rounded-lg border transition-colors ${
                   isFavorite
                     ? 'bg-red-50 border-red-200 text-red-600 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400'

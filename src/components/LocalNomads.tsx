@@ -541,11 +541,7 @@ export default function LocalNomads() {
           setIsModalOpen(false)
           setSelectedUser(null)
         }}
-        onCoffeeMeetup={handleCoffeeMeetup}
         onSendMessage={handleSendMessage}
-        onAddToFavorites={handleAddToFavorites}
-        isFavorite={selectedUser ? favorites.includes(selectedUser.id) : false}
-        isLoading={sendingInvitation}
       />
     </div>
   )
