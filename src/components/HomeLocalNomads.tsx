@@ -33,6 +33,7 @@ import { useUser } from '@/contexts/GlobalStateContext'
 import { useLocation } from '@/hooks/useLocation'
 import { useNomadUsers, NomadUser } from '@/hooks/useNomadUsers'
 import { logInfo, logError } from '@/lib/logger'
+import UserDetailModal from './UserDetailModal'
 import ErrorAlert, { ErrorAlertSimple } from '@/components/ErrorAlert'
 
 // NomadUser interface is now imported from useNomadUsers hook
@@ -133,6 +134,10 @@ export default function HomeLocalNomads({
   const [showFilters, setShowFilters] = useState(false)
   const [mapZoom, setMapZoom] = useState(12)
   const [mapCenter, setMapCenter] = useState({ lat: 0, lng: 0 })
+  
+  // 用户详情模态框状态
+  const [selectedUser, setSelectedUser] = useState<NomadUser | null>(null)
+  const [isModalOpen, setIsModalOpen] = useState(false)
 
   // 同步收藏列表
   useEffect(() => {
@@ -173,6 +178,12 @@ export default function HomeLocalNomads({
   const handlePageChange = (page: number) => {
     // 调用hook的分页功能
     goToPage(page)
+  }
+
+  // 处理用户点击
+  const handleUserClick = (user: NomadUser) => {
+    setSelectedUser(user)
+    setIsModalOpen(true)
   }
 
   // 保存收藏列表
@@ -574,7 +585,10 @@ export default function HomeLocalNomads({
               className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 hover:shadow-md transition-all duration-200 transform hover:-translate-y-1"
             >
               <div className="flex items-start space-x-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                <div 
+                  className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden cursor-pointer hover:scale-105 transition-transform"
+                  onClick={() => handleUserClick(nomadUser)}
+                >
                   {nomadUser.avatar_url && nomadUser.avatar_url.startsWith('data:') ? (
                     <img 
                       src={nomadUser.avatar_url} 
@@ -589,7 +603,10 @@ export default function HomeLocalNomads({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-start justify-between">
                     <div className="min-w-0 flex-1">
-                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                      <h3 
+                        className="text-sm font-semibold text-gray-900 dark:text-white truncate cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        onClick={() => handleUserClick(nomadUser)}
+                      >
                         {nomadUser.name}
                       </h3>
                       <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
@@ -848,6 +865,20 @@ export default function HomeLocalNomads({
 
         </div>
       )}
+
+      {/* User Detail Modal */}
+      <UserDetailModal
+        user={selectedUser}
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false)
+          setSelectedUser(null)
+        }}
+        onSendMessage={(userId: string) => {
+          // 处理发送消息
+          console.log('Send message to:', userId)
+        }}
+      />
     </div>
   )
 }
