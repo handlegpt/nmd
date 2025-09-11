@@ -505,11 +505,11 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         if (!hasMatchingInterest) return false
       }
       
-      // 在线状态筛选
-      if (filters.onlineOnly && !user.isOnline) return false
+      // 在线状态筛选 - 为缺失的属性提供默认值
+      if (filters.onlineOnly && !(user.isOnline ?? true)) return false
       
-      // 可用状态筛选
-      if (filters.availableOnly && !user.isAvailable) return false
+      // 可用状态筛选 - 为缺失的属性提供默认值
+      if (filters.availableOnly && !(user.isAvailable ?? true)) return false
       
       return true
     })
@@ -571,9 +571,9 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       const filtered = applyFilters(sortedUsers, filters)
       setFilteredUsers(filtered)
       
-      // 计算统计数据
-      const availableUsers = sortedUsers.filter(u => u.isOnline && u.isAvailable).length
-      const onlineUsers = sortedUsers.filter(u => u.isOnline).length
+      // 计算统计数据 - 为缺失的属性提供默认值
+      const availableUsers = sortedUsers.filter(u => (u.isOnline ?? true) && (u.isAvailable ?? true)).length
+      const onlineUsers = sortedUsers.filter(u => u.isOnline ?? true).length
       
       setStats({
         totalUsers: sortedUsers.length,
