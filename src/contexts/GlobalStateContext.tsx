@@ -279,10 +279,10 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
             social_links: {},
             contact: {},
             travel_preferences: {
-              budget_range: 'moderate',
-              preferred_climate: 'temperate',
-              travel_style: 'digital_nomad',
-              accommodation_type: 'apartment'
+              budget_range: '',
+              preferred_climate: '',
+              travel_style: '',
+              accommodation_type: ''
             },
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()

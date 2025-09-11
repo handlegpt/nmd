@@ -29,10 +29,10 @@ export interface UserProfileData {
     whatsapp?: string
   }
   travel_preferences: {
-    budget_range: 'budget' | 'moderate' | 'luxury'
-    preferred_climate: 'tropical' | 'temperate' | 'cold'
-    travel_style: 'backpacker' | 'digital_nomad' | 'luxury_traveler'
-    accommodation_type: 'hostel' | 'hotel' | 'apartment' | 'any'
+    budget_range: 'budget' | 'moderate' | 'luxury' | ''
+    preferred_climate: 'tropical' | 'temperate' | 'cold' | ''
+    travel_style: 'backpacker' | 'digital_nomad' | 'luxury_traveler' | ''
+    accommodation_type: 'hostel' | 'hotel' | 'apartment' | 'any' | ''
   }
   created_at: string
   updated_at: string

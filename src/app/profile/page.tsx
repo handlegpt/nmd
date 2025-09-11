@@ -57,10 +57,10 @@ interface ProfileData {
     whatsapp?: string
   }
   travel_preferences: {
-    budget_range: 'budget' | 'moderate' | 'luxury'
-    preferred_climate: 'tropical' | 'temperate' | 'cold'
-    travel_style: 'backpacker' | 'digital_nomad' | 'luxury_traveler'
-    accommodation_type: 'hostel' | 'hotel' | 'apartment' | 'any'
+    budget_range: 'budget' | 'moderate' | 'luxury' | ''
+    preferred_climate: 'tropical' | 'temperate' | 'cold' | ''
+    travel_style: 'backpacker' | 'digital_nomad' | 'luxury_traveler' | ''
+    accommodation_type: 'hostel' | 'hotel' | 'apartment' | 'any' | ''
   }
   created_at: string
   updated_at: string
@@ -133,10 +133,10 @@ export default function ProfilePage() {
               social_links: {},
               contact: {},
               travel_preferences: {
-                budget_range: 'moderate',
-                preferred_climate: 'temperate',
-                travel_style: 'digital_nomad',
-                accommodation_type: 'apartment'
+                budget_range: '',
+                preferred_climate: '',
+                travel_style: '',
+                accommodation_type: ''
               },
               created_at: new Date().toISOString(),
               updated_at: new Date().toISOString()
@@ -166,10 +166,10 @@ export default function ProfilePage() {
             social_links: {},
             contact: {},
             travel_preferences: {
-              budget_range: 'moderate',
-              preferred_climate: 'temperate',
-              travel_style: 'digital_nomad',
-              accommodation_type: 'apartment'
+              budget_range: '',
+              preferred_climate: '',
+              travel_style: '',
+              accommodation_type: ''
             },
             created_at: new Date().toISOString(),
             updated_at: new Date().toISOString()
@@ -278,7 +278,12 @@ export default function ProfilePage() {
       { key: 'skills', value: profile.skills.length, label: t('profile.skills') },
       { key: 'interests', value: profile.interests.length, label: t('profile.interests') },
       { key: 'social_links', value: Object.values(profile.social_links).filter(Boolean).length, label: t('profile.socialLinks') },
-      { key: 'contact', value: Object.values(profile.contact).filter(Boolean).length, label: t('profile.contactInfo') }
+      { key: 'contact', value: Object.values(profile.contact).filter(Boolean).length, label: t('profile.contactInfo') },
+      { key: 'travel_preferences', value: profile.travel_preferences && 
+        (profile.travel_preferences.budget_range || 
+         profile.travel_preferences.preferred_climate || 
+         profile.travel_preferences.travel_style || 
+         profile.travel_preferences.accommodation_type) ? 1 : 0, label: t('profile.travelPreferences') }
     ]
     
     const completedFields = fields.filter(field => 
