@@ -309,9 +309,24 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       
       // 获取所有用户的独立profile存储
       const keys = Object.keys(localStorage)
-      const profileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
+      const independentProfileKeys = keys.filter(key => key.startsWith('user_profile_details_'))
       
-      console.log('🔍 getAllRegisteredUsers - found profile keys', { profileKeys, totalKeys: keys.length })
+      // 同时检查通用profile（向后兼容）
+      const generalProfileKey = 'user_profile_details'
+      const hasGeneralProfile = localStorage.getItem(generalProfileKey) !== null
+      
+      // 合并所有profile keys
+      const profileKeys = [...independentProfileKeys]
+      if (hasGeneralProfile) {
+        profileKeys.push(generalProfileKey)
+      }
+      
+      console.log('🔍 getAllRegisteredUsers - found profile keys', { 
+        independentProfileKeys, 
+        hasGeneralProfile, 
+        profileKeys, 
+        totalKeys: keys.length 
+      })
       logInfo('Found profile keys', { profileKeys, totalKeys: keys.length }, 'useNomadUsers')
       
       // 处理每个profile key
@@ -324,22 +339,6 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
           }
         } catch (e) {
           console.error('🔍 getAllRegisteredUsers - error parsing profile', { key, error: e })
-        }
-      }
-      
-      // 如果没有找到独立profile，尝试从通用profile获取（向后兼容）
-      if (profileKeys.length === 0) {
-        const generalProfile = localStorage.getItem('user_profile_details')
-        if (generalProfile) {
-          try {
-            const profile = JSON.parse(generalProfile)
-            if (profile.id && profile.name) {
-              profileKeys.push('user_profile_details')
-              logInfo('Using general profile as fallback', { userId: profile.id }, 'useNomadUsers')
-            }
-          } catch (error) {
-            logError('Error parsing general profile', error, 'useNomadUsers')
-          }
         }
       }
       
