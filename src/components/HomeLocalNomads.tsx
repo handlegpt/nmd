@@ -67,11 +67,28 @@ export default function HomeLocalNomads({
   showStats = true,
   showNewUsers = true
 }: HomeLocalNomadsProps) {
+  logInfo('HomeLocalNomads component rendering', { maxUsers, showPagination, showLocationDetection, showStats, showNewUsers }, 'HomeLocalNomads')
+  
   const { t } = useTranslation()
   const { user } = useUser()
   const { location, loading: locationLoading, error: locationError, requestLocation, hasPermission } = useLocation()
   
+  logInfo('HomeLocalNomads - hooks loaded', { 
+    userAuthenticated: user?.isAuthenticated, 
+    userId: user?.profile?.id,
+    location: location,
+    locationLoading: locationLoading
+  }, 'HomeLocalNomads')
+  
   // 使用统一的用户数据管理Hook
+  logInfo('HomeLocalNomads - about to call useNomadUsers', { 
+    enablePagination: showPagination,
+    pageSize: maxUsers,
+    enableInfiniteScroll: false,
+    enableRealTimeUpdates: true,
+    updateInterval: 30000
+  }, 'HomeLocalNomads')
+  
   const {
     users,
     stats,
@@ -97,6 +114,13 @@ export default function HomeLocalNomads({
     enableRealTimeUpdates: true,
     updateInterval: 30000
   })
+  
+  logInfo('HomeLocalNomads - useNomadUsers called successfully', { 
+    usersCount: users?.length || 0,
+    loading: loading,
+    error: error,
+    stats: stats
+  }, 'HomeLocalNomads')
   
   const [sendingInvitation, setSendingInvitation] = useState(false)
   const [favorites, setFavorites] = useState<string[]>([])
