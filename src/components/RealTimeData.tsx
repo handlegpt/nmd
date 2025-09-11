@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
+import { realtimeSystem, RealtimeUser, LeaderboardEntry, ActivityEvent } from '@/lib/realtimeSystem'
 import { 
   Wifi, 
   WifiOff, 
@@ -17,34 +18,13 @@ import {
   Award
 } from 'lucide-react'
 
-interface UserStatus {
-  id: string
-  name: string
-  avatar: string
-  city: string
-  status: 'online' | 'offline' | 'away' | 'busy'
-  lastSeen: Date
-  activity: string
-  isTyping: boolean
-  typingTo?: string
-}
-
-interface LeaderboardEntry {
-  id: string
-  name: string
-  avatar: string
-  city: string
-  score: number
-  change: number
-  badges: string[]
-  meetups: number
-  reviews: number
-}
+// 使用从realtimeSystem导入的类型
 
 export default function RealTimeData() {
   const { t } = useTranslation()
-  const [onlineUsers, setOnlineUsers] = useState<UserStatus[]>([])
+  const [onlineUsers, setOnlineUsers] = useState<RealtimeUser[]>([])
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([])
+  const [activities, setActivities] = useState<ActivityEvent[]>([])
   const [isConnected, setIsConnected] = useState(false)
   const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'connected' | 'disconnected'>('connecting')
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
@@ -52,125 +32,42 @@ export default function RealTimeData() {
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Mock data for demonstration
+  // 初始化真实数据
   useEffect(() => {
-    const mockUsers: UserStatus[] = [
-      {
-        id: '1',
-        name: 'Tom',
-        avatar: 'T',
-        city: 'Lisbon',
-        status: 'online',
-        lastSeen: new Date(),
-        activity: 'Browsing meetups',
-        isTyping: false
-      },
-      {
-        id: '2',
-        name: 'Anna',
-        avatar: 'A',
-        city: 'Chiang Mai',
-        status: 'online',
-        lastSeen: new Date(),
-        activity: 'Creating new meetup',
-        isTyping: true,
-        typingTo: 'Tom'
-      },
-      {
-        id: '3',
-        name: 'May',
-        avatar: 'M',
-        city: 'Bali',
-        status: 'away',
-        lastSeen: new Date(Date.now() - 5 * 60 * 1000),
-        activity: 'In a meeting',
-        isTyping: false
-      },
-      {
-        id: '4',
-        name: 'Sam',
-        avatar: 'S',
-        city: 'Porto',
-        status: 'online',
-        lastSeen: new Date(),
-        activity: 'Joining coworking session',
-        isTyping: false
-      },
-      {
-        id: '5',
-        name: 'Alex',
-        avatar: 'A',
-        city: 'Mexico City',
-        status: 'busy',
-        lastSeen: new Date(Date.now() - 2 * 60 * 1000),
-        activity: 'Working on project',
-        isTyping: false
-      }
-    ]
+    // 初始化实时系统数据
+    realtimeSystem.initializeRealData()
+    
+    // 加载真实数据
+    const users = realtimeSystem.getOnlineUsers()
+    const leaderboardData = realtimeSystem.getLeaderboard()
+    const activitiesData = realtimeSystem.getActivities()
+    
+    setOnlineUsers(users)
+    setLeaderboard(leaderboardData)
+    setActivities(activitiesData)
 
-    const mockLeaderboard: LeaderboardEntry[] = [
-      {
-        id: '1',
-        name: 'Tom',
-        avatar: 'T',
-        city: 'Lisbon',
-        score: 2847,
-        change: 12,
-        badges: ['Coffee Hero', 'Community Builder'],
-        meetups: 15,
-        reviews: 23
-      },
-      {
-        id: '2',
-        name: 'Anna',
-        avatar: 'A',
-        city: 'Chiang Mai',
-        score: 2654,
-        change: 8,
-        badges: ['Nomad Explorer', 'Meetup Master'],
-        meetups: 12,
-        reviews: 19
-      },
-      {
-        id: '3',
-        name: 'May',
-        avatar: 'M',
-        city: 'Bali',
-        score: 2432,
-        change: -3,
-        badges: ['City Guide'],
-        meetups: 8,
-        reviews: 15
-      },
-      {
-        id: '4',
-        name: 'Sam',
-        avatar: 'S',
-        city: 'Porto',
-        score: 2187,
-        change: 15,
-        badges: ['Helpful Nomad'],
-        meetups: 6,
-        reviews: 12
-      },
-      {
-        id: '5',
-        name: 'Alex',
-        avatar: 'A',
-        city: 'Mexico City',
-        score: 1956,
-        change: 5,
-        badges: ['Newcomer'],
-        meetups: 4,
-        reviews: 8
-      }
-    ]
+    // 启动实时更新
+    const cleanup = realtimeSystem.startRealTimeUpdates()
+    
+    // 设置数据更新间隔
+    const updateInterval = setInterval(() => {
+      const updatedUsers = realtimeSystem.getOnlineUsers()
+      const updatedLeaderboard = realtimeSystem.getLeaderboard()
+      const updatedActivities = realtimeSystem.getActivities()
+      
+      setOnlineUsers(updatedUsers)
+      setLeaderboard(updatedLeaderboard)
+      setActivities(updatedActivities)
+      setLastUpdate(new Date())
+    }, 10000) // 每10秒更新一次
 
-    setOnlineUsers(mockUsers)
-    setLeaderboard(mockLeaderboard)
-
-    // Simulate WebSocket connection
+    // 模拟WebSocket连接
     simulateWebSocketConnection()
+
+    return () => {
+      cleanup()
+      clearInterval(updateInterval)
+    }
   }, [])
 
   // Simulate WebSocket connection and real-time updates
@@ -194,7 +91,7 @@ export default function RealTimeData() {
       setOnlineUsers(prev => prev.map(user => {
         // Randomly change some user statuses
         if (Math.random() < 0.3) {
-          const newStatus = ['online', 'away', 'busy'][Math.floor(Math.random() * 3)] as UserStatus['status']
+          const newStatus = ['online', 'away', 'busy'][Math.floor(Math.random() * 3)] as RealtimeUser['status']
           return {
             ...user,
             status: newStatus,
@@ -304,9 +201,27 @@ export default function RealTimeData() {
         return '🤝'
       case 'Newcomer':
         return '🆕'
+      case 'Code Nomad':
+        return '💻'
+      case 'Coffee Lover':
+        return '☕'
       default:
         return '🏆'
     }
+  }
+
+  // Get time ago
+  const getTimeAgo = (timestamp: Date): string => {
+    const now = new Date()
+    const diff = now.getTime() - timestamp.getTime()
+    const minutes = Math.floor(diff / (1000 * 60))
+    const hours = Math.floor(diff / (1000 * 60 * 60))
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24))
+
+    if (minutes < 1) return 'Just now'
+    if (minutes < 60) return `${minutes}m ago`
+    if (hours < 24) return `${hours}h ago`
+    return `${days}d ago`
   }
 
   return (
@@ -396,15 +311,16 @@ export default function RealTimeData() {
                               
                               {/* Interest Tags */}
                               <div className="flex flex-wrap gap-1 mt-2">
-                                <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                                  🧑‍💻 开发
-                                </span>
-                                <span className="px-2 py-1 bg-green-100 text-green-700 text-xs rounded-full">
-                                  ✈️ 旅行
-                                </span>
-                                <span className="px-2 py-1 bg-purple-100 text-purple-700 text-xs rounded-full">
-                                  ☕ 咖啡
-                                </span>
+                                {user.interests.slice(0, 3).map((interest, index) => (
+                                  <span key={index} className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
+                                    {interest}
+                                  </span>
+                                ))}
+                                {user.interests.length > 3 && (
+                                  <span className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded-full">
+                                    +{user.interests.length - 3} more
+                                  </span>
+                                )}
                               </div>
                               
                               {/* Last Active Time */}
@@ -502,37 +418,40 @@ export default function RealTimeData() {
         </h3>
         
         <div className="space-y-3">
-          <div className="flex items-center space-x-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              <strong>Anna</strong> created a new meetup: "Chiang Mai Dev Coworking"
-            </span>
-            <span className="text-xs text-gray-500">2 min ago</span>
-          </div>
-          
-          <div className="flex items-center space-x-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              <strong>Tom</strong> joined "Lisbon Coffee Chat" meetup
-            </span>
-            <span className="text-xs text-gray-500">5 min ago</span>
-          </div>
-          
-          <div className="flex items-center space-x-3 p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
-            <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              <strong>May</strong> earned "City Guide" badge
-            </span>
-            <span className="text-xs text-gray-500">8 min ago</span>
-          </div>
-          
-          <div className="flex items-center space-x-3 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-            <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse" />
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              <strong>Sam</strong> left "Porto Wine Tasting" meetup
-            </span>
-            <span className="text-xs text-gray-500">12 min ago</span>
-          </div>
+          {activities.slice(-10).map((activity) => (
+            <div key={activity.id} className={`flex items-center space-x-3 p-3 rounded-lg ${
+              activity.type === 'meetup' ? 'bg-green-50 dark:bg-green-900/20' :
+              activity.type === 'review' ? 'bg-blue-50 dark:bg-blue-900/20' :
+              activity.type === 'badge' ? 'bg-purple-50 dark:bg-purple-900/20' :
+              activity.type === 'join' ? 'bg-orange-50 dark:bg-orange-900/20' :
+              'bg-gray-50 dark:bg-gray-700'
+            }`}>
+              <div className={`w-2 h-2 rounded-full animate-pulse ${
+                activity.type === 'meetup' ? 'bg-green-500' :
+                activity.type === 'review' ? 'bg-blue-500' :
+                activity.type === 'badge' ? 'bg-purple-500' :
+                activity.type === 'join' ? 'bg-orange-500' :
+                'bg-gray-500'
+              }`} />
+              <div className="flex items-center space-x-2">
+                <div className="w-6 h-6 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs font-medium">
+                  {activity.userAvatar}
+                </div>
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  <strong>{activity.userName}</strong> {activity.action}: {activity.details}
+                </span>
+              </div>
+              <span className="text-xs text-gray-500">
+                {getTimeAgo(activity.timestamp)}
+              </span>
+            </div>
+          ))}
+          {activities.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              <Activity className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p>No recent activities</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
