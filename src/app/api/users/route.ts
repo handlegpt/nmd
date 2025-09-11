@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     
     logInfo('Fetching all registered users', { includeHidden }, 'UsersAPI')
     
-    // 构建查询
+    // 构建查询 - 只查询存在的字段
     let query = supabase
       .from('users')
       .select(`
@@ -18,22 +18,12 @@ export async function GET(request: NextRequest) {
         email,
         name,
         avatar_url,
-        current_city,
-        profession,
-        company,
-        bio,
-        interests,
-        coordinates,
-        created_at,
-        updated_at,
-        is_visible_in_nomads
+        created_at
       `)
       .order('created_at', { ascending: false })
     
-    // 如果不包含隐藏用户，只获取可见的用户
-    if (!includeHidden) {
-      query = query.eq('is_visible_in_nomads', true)
-    }
+    // 注意：is_visible_in_nomads字段不存在，暂时跳过过滤
+    // TODO: 添加is_visible_in_nomads字段到数据库
     
     const { data: users, error } = await query
     
@@ -42,21 +32,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 })
     }
     
-    // 格式化用户数据
+    // 格式化用户数据 - 只使用存在的字段
     const formattedUsers = users?.map((user: any) => ({
       id: user.id,
       name: user.name || 'Anonymous',
       email: user.email,
       avatar: user.avatar_url || (user.name ? user.name.substring(0, 2).toUpperCase() : 'NN'),
-      profession: user.profession || 'Digital Nomad',
-      company: user.company || 'Freelance',
-      location: user.current_city || 'Unknown Location',
-      bio: user.bio || 'Digital nomad exploring the world!',
-      interests: user.interests || ['Travel', 'Technology'],
-      coordinates: user.coordinates,
+      profession: 'Digital Nomad', // 默认值，因为字段不存在
+      company: 'Freelance', // 默认值，因为字段不存在
+      location: 'Unknown Location', // 默认值，因为字段不存在
+      bio: 'Digital nomad exploring the world!', // 默认值，因为字段不存在
+      interests: ['Travel', 'Technology'], // 默认值，因为字段不存在
+      coordinates: null, // 默认值，因为字段不存在
       createdAt: user.created_at,
-      updatedAt: user.updated_at,
-      isVisible: user.is_visible_in_nomads !== false // 默认为true
+      updatedAt: user.created_at, // 使用created_at作为updated_at
+      isVisible: true // 默认可见，因为字段不存在
     })) || []
     
     logInfo('Successfully fetched users', { count: formattedUsers.length }, 'UsersAPI')
