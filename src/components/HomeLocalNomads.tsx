@@ -107,6 +107,7 @@ export default function HomeLocalNomads({
     removeFromFavorites,
     hideUser,
     sendCoffeeInvitation,
+    sendWorkTogetherInvitation,
     getFavorites,
     getUserById
   } = useNomadUsers({
@@ -224,10 +225,14 @@ export default function HomeLocalNomads({
     setSendingInvitation(true)
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      const success = await sendWorkTogetherInvitation(userId)
       
-      const targetUser = getUserById(userId)
-      alert(`Work together invitation sent to ${targetUser?.name}! They will respond within 24 hours.`)
+      if (success) {
+        const targetUser = getUserById(userId)
+        alert(`Work together invitation sent to ${targetUser?.name}! They will respond within 7 days.`)
+      } else {
+        alert('Failed to send invitation. Please try again.')
+      }
       
     } catch (error) {
       logError('Failed to send work together invitation', error, 'HomeLocalNomads')

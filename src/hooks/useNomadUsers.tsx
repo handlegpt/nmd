@@ -90,6 +90,7 @@ export interface UseNomadUsersReturn {
   hideUser: (userId: string) => Promise<void>
   showUser: (userId: string) => Promise<void>
   sendCoffeeInvitation: (userId: string) => Promise<boolean>
+  sendWorkTogetherInvitation: (userId: string) => Promise<boolean>
   
   // 工具函数
   getUserById: (userId: string) => NomadUser | null
@@ -762,21 +763,77 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
 
   const sendCoffeeInvitation = useCallback(async (userId: string): Promise<boolean> => {
     try {
-      // 模拟API调用
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
+      if (!user?.profile?.id) {
+        throw new Error('User not authenticated')
+      }
+
       const targetUser = allUsers.find(u => u.id === userId)
       if (!targetUser) {
         throw new Error('User not found')
       }
+
+      // Import invitation service dynamically to avoid circular dependencies
+      const { invitationService } = await import('@/lib/invitationService')
       
-      logInfo('Coffee invitation sent', { userId, targetUserName: targetUser.name }, 'useNomadUsers')
+      const result = await invitationService.createInvitation({
+        receiver_id: userId,
+        invitation_type: 'coffee_meetup',
+        message: `Hi ${targetUser.name}! Would you like to meet for coffee? I'd love to connect with a fellow digital nomad!`
+      })
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to send invitation')
+      }
+      
+      logInfo('Coffee invitation sent successfully', { 
+        userId, 
+        targetUserName: targetUser.name,
+        invitationId: result.data?.id 
+      }, 'useNomadUsers')
+      
       return true
     } catch (error) {
       handleError(error, 'Failed to send coffee invitation')
       return false
     }
-  }, [allUsers, handleError])
+  }, [allUsers, handleError, user?.profile?.id])
+
+  const sendWorkTogetherInvitation = useCallback(async (userId: string): Promise<boolean> => {
+    try {
+      if (!user?.profile?.id) {
+        throw new Error('User not authenticated')
+      }
+
+      const targetUser = allUsers.find(u => u.id === userId)
+      if (!targetUser) {
+        throw new Error('User not found')
+      }
+
+      // Import invitation service dynamically to avoid circular dependencies
+      const { invitationService } = await import('@/lib/invitationService')
+      
+      const result = await invitationService.createInvitation({
+        receiver_id: userId,
+        invitation_type: 'work_together',
+        message: `Hi ${targetUser.name}! Would you like to work together? I think we could collaborate on some interesting projects!`
+      })
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to send invitation')
+      }
+      
+      logInfo('Work together invitation sent successfully', { 
+        userId, 
+        targetUserName: targetUser.name,
+        invitationId: result.data?.id 
+      }, 'useNomadUsers')
+      
+      return true
+    } catch (error) {
+      handleError(error, 'Failed to send work together invitation')
+      return false
+    }
+  }, [allUsers, handleError, user?.profile?.id])
 
   // 工具函数
   const getUserById = useCallback((userId: string): NomadUser | null => {
@@ -991,6 +1048,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
     hideUser,
     showUser,
     sendCoffeeInvitation,
+    sendWorkTogetherInvitation,
     
     // 工具函数
     getUserById,
