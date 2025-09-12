@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 
 // GET /api/online-users - 获取在线用户
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
@@ -35,7 +34,7 @@ export async function GET(request: NextRequest) {
     }
 
     // 过滤掉不可见的用户
-    const visibleUsers = data?.filter(onlineUser => 
+    const visibleUsers = data?.filter((onlineUser: any) => 
       onlineUser.user?.is_visible_in_nomads === true
     ) || []
 
@@ -52,7 +51,6 @@ export async function GET(request: NextRequest) {
 // POST /api/online-users - 更新用户在线状态
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
@@ -105,7 +103,6 @@ export async function POST(request: NextRequest) {
 // PUT /api/online-users - 批量更新在线状态
 export async function PUT(request: NextRequest) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }

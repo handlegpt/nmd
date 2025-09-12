@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 
 // GET /api/meetups/[id] - 获取特定聚会详情
 export async function GET(
@@ -7,7 +7,6 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
@@ -62,7 +61,6 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
@@ -119,7 +117,6 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }

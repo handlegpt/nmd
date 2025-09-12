@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 
 // GET /api/vote-summaries - 获取投票摘要
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
@@ -46,7 +45,6 @@ export async function GET(request: NextRequest) {
 // POST /api/vote-summaries - 重新计算投票摘要
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }

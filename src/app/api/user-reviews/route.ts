@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 
 // GET /api/user-reviews - 获取用户评论
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
@@ -46,7 +45,6 @@ export async function GET(request: NextRequest) {
 // POST /api/user-reviews - 创建用户评论
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createClient()
     if (!supabase) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
