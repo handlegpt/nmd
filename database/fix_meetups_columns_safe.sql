@@ -175,5 +175,3 @@ CREATE INDEX IF NOT EXISTS idx_meetups_start_time ON meetups(start_time);
 CREATE INDEX IF NOT EXISTS idx_meetups_end_time ON meetups(end_time);
 CREATE INDEX IF NOT EXISTS idx_meetups_is_public ON meetups(is_public);
 CREATE INDEX IF NOT EXISTS idx_meetups_is_cancelled ON meetups(is_cancelled);
-
-RAISE NOTICE 'Created performance indexes';
