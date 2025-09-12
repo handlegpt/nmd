@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import LocalNomads from '@/components/LocalNomads'
 import GlobalNomadsMap from '@/components/GlobalNomadsMap'
-import MeetupSystem from '@/components/MeetupSystem'
+import MeetupSystemApi from '@/components/MeetupSystemApi'
 import RealTimeData from '@/components/RealTimeData'
 import MobileNavigation from '@/components/MobileNavigation'
 import ThemeToggle from '@/components/ThemeToggle'
@@ -453,7 +453,7 @@ export default function LocalNomadsPage() {
                   </button>
                 </div>
                 
-                <MeetupSystem />
+                <MeetupSystemApi userId={user?.id} />
               </div>
             </section>
 
@@ -524,7 +524,7 @@ export default function LocalNomadsPage() {
         
         {activeTab === 'my-meetups' && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <MeetupSystem />
+            <MeetupSystemApi userId={user?.id} />
           </div>
         )}
         
