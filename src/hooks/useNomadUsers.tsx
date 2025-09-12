@@ -877,20 +877,9 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
     // 加载收藏和隐藏用户列表
     const loadUserPreferences = async () => {
       if (!user?.profile?.id) {
-        // 如果用户未登录，从localStorage加载
-        try {
-          const savedFavorites = localStorage.getItem('nomadFavorites')
-          if (savedFavorites) {
-            setFavorites(JSON.parse(savedFavorites))
-          }
-          
-          const savedHiddenUsers = localStorage.getItem('hidden_nomad_users')
-          if (savedHiddenUsers) {
-            setHiddenUsers(JSON.parse(savedHiddenUsers))
-          }
-        } catch (error) {
-          logError('Failed to load user preferences from localStorage', error, 'useNomadUsers')
-        }
+        // 如果用户未登录，设置为空数组
+        setFavorites([])
+        setHiddenUsers([])
         return
       }
 
@@ -901,21 +890,9 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         setHiddenUsers(preferences.hidden_users)
       } catch (error) {
         logError('Failed to load user preferences from database', error, 'useNomadUsers')
-        
-        // 如果数据库失败，回退到localStorage
-        try {
-          const savedFavorites = localStorage.getItem('nomadFavorites')
-          if (savedFavorites) {
-            setFavorites(JSON.parse(savedFavorites))
-          }
-          
-          const savedHiddenUsers = localStorage.getItem('hidden_nomad_users')
-          if (savedHiddenUsers) {
-            setHiddenUsers(JSON.parse(savedHiddenUsers))
-          }
-        } catch (localError) {
-          logError('Failed to load user preferences from localStorage fallback', localError, 'useNomadUsers')
-        }
+        // 如果数据库失败，设置为空数组
+        setFavorites([])
+        setHiddenUsers([])
       }
     }
 

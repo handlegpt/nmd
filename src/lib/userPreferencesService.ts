@@ -50,35 +50,18 @@ class UserPreferencesService {
       }
 
       const result = data || defaultPreferences
-      
-      // 同时更新localStorage作为缓存
-      localStorage.setItem('nomadFavorites', JSON.stringify(result.favorites))
-      localStorage.setItem('hidden_nomad_users', JSON.stringify(result.hidden_users))
 
       logInfo('Successfully fetched user preferences', { userId, favoritesCount: result.favorites.length, hiddenCount: result.hidden_users.length }, 'UserPreferencesService')
       return result
     } catch (error) {
       logError('Error fetching user preferences', error, 'UserPreferencesService')
       
-      // 如果数据库失败，尝试从localStorage获取
-      try {
-        const favorites = JSON.parse(localStorage.getItem('nomadFavorites') || '[]')
-        const hiddenUsers = JSON.parse(localStorage.getItem('hidden_nomad_users') || '[]')
-        
-        return {
-          favorites,
-          hidden_users: hiddenUsers,
-          blocked_users: [],
-          preferences: {}
-        }
-      } catch (localError) {
-        logError('Failed to get preferences from localStorage', localError, 'UserPreferencesService')
-        return {
-          favorites: [],
-          hidden_users: [],
-          blocked_users: [],
-          preferences: {}
-        }
+      // 如果数据库失败，返回默认值
+      return {
+        favorites: [],
+        hidden_users: [],
+        blocked_users: [],
+        preferences: {}
       }
     }
   }
@@ -117,10 +100,6 @@ class UserPreferencesService {
         logError('Failed to update user preferences', error, 'UserPreferencesService')
         return false
       }
-
-      // 同时更新localStorage作为缓存
-      localStorage.setItem('nomadFavorites', JSON.stringify(updatedPreferences.favorites))
-      localStorage.setItem('hidden_nomad_users', JSON.stringify(updatedPreferences.hidden_users))
 
       logInfo('Successfully updated user preferences', { userId }, 'UserPreferencesService')
       return true
