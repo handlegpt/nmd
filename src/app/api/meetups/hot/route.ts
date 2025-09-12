@@ -60,15 +60,15 @@ export async function GET(request: NextRequest) {
         description,
         city,
         meetup_type,
-        COALESCE(scheduled_date, meeting_time, scheduled_time) as scheduled_date,
+        scheduled_time as scheduled_date,
         max_participants,
         current_participants,
-        organizer_id,
+        creator_id as organizer_id,
         status,
         created_at
       `)
       .eq('status', 'active')
-      .or('scheduled_date.gte.' + new Date().toISOString() + ',meeting_time.gte.' + new Date().toISOString() + ',scheduled_time.gte.' + new Date().toISOString())
+      .gte('scheduled_time', new Date().toISOString())
       .order('current_participants', { ascending: false })
       .limit(10)
 
