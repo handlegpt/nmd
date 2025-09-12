@@ -237,12 +237,29 @@ export default function HomeLocalNomads({
     }
   }
 
-  // 热门城市数据现在从数据库获取，移除硬编码数据
-  const getHotCities = () => {
-    // TODO: 从数据库API获取真实的热门城市数据
-    // 暂时返回空数组，避免显示假数据
-    return []
-  }
+  // 热门城市数据现在从真实API获取
+  const [hotCities, setHotCities] = useState<any[]>([])
+  const [loadingHotCities, setLoadingHotCities] = useState(false)
+
+  // 获取热门城市数据
+  useEffect(() => {
+    const fetchHotCities = async () => {
+      setLoadingHotCities(true)
+      try {
+        const response = await fetch('/api/cities/hot')
+        const result = await response.json()
+        if (result.success) {
+          setHotCities(result.data)
+        }
+      } catch (error) {
+        logError('Failed to fetch hot cities', error, 'HomeLocalNomads')
+      } finally {
+        setLoadingHotCities(false)
+      }
+    }
+
+    fetchHotCities()
+  }, [])
 
   // 数据埋点函数
   const trackEvent = (eventName: string, properties: Record<string, any> = {}) => {
@@ -801,16 +818,74 @@ export default function HomeLocalNomads({
               </button>
             </div>
             
-            {/* 热门城市现在从数据库获取，移除硬编码数据 */}
-            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-              <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-              <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                {t('localNomads.hotCities')}
-              </h4>
-              <p className="text-sm">
-                {t('localNomads.comingSoon')} - {t('localNomads.realTimeCityData')}
-              </p>
-            </div>
+            {/* 热门城市数据 */}
+            {loadingHotCities ? (
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <Loader2 className="h-12 w-12 mx-auto mb-4 text-gray-400 animate-spin" />
+                <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  {t('localNomads.loadingHotCities')}
+                </h4>
+              </div>
+            ) : hotCities.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {hotCities.map((city, index) => (
+                  <div 
+                    key={city.name} 
+                    className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer relative"
+                    onClick={() => {
+                      trackEvent('hot_city_card_click', {
+                        city: city.name,
+                        rank: index + 1,
+                        user_id: user?.profile?.id || 'anonymous'
+                      })
+                    }}
+                  >
+                    {/* 右上角排名 */}
+                    <div className="absolute top-3 right-3">
+                      <span className="text-sm font-bold text-gray-500">#{index + 1}</span>
+                    </div>
+                    
+                    {/* 城市名称 */}
+                    <h4 className="font-medium text-gray-900 dark:text-white mb-3 pr-8">{city.name}</h4>
+                    
+                    {/* 城市数据 */}
+                    <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                      <div className="flex items-center justify-between">
+                        <span>🟢 {city.onlineCount} online</span>
+                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                          {city.hotness}% hot
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>☕ ${city.coffeePrice}</span>
+                        <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Community</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span>📶 {city.wifiSpeed} Mbps</span>
+                        <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Verified</span>
+                      </div>
+                    </div>
+                    
+                    {/* 左下角"去看看"轻按钮 */}
+                    <div className="mt-3 flex justify-start">
+                      <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">
+                        {t('common.goSee')} →
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                  {t('localNomads.noHotCities')}
+                </h4>
+                <p className="text-sm">
+                  {t('localNomads.beFirstInYourCity')}
+                </p>
+              </div>
+            )}
           </div>
 
         </div>

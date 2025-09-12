@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       lastActivity: string
     }>()
 
-    hotCities?.forEach(user => {
+    hotCities?.forEach((user: any) => {
       const city = user.current_city
       if (!city) return
 
@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
 
     // 合并数据
     const result = sortedCities.map(city => {
-      const details = cityDetails?.find(d => d.name === city.name)
+      const details = cityDetails?.find((d: any) => d.name === city.name)
       return {
         name: city.name,
         onlineCount: city.onlineUsers,

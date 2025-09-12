@@ -72,15 +72,15 @@ export async function GET(request: NextRequest) {
     }
 
     // 获取组织者信息
-    const organizerIds = meetups?.map(m => m.organizer_id).filter(Boolean) || []
+    const organizerIds = meetups?.map((m: any) => m.organizer_id).filter(Boolean) || []
     const { data: organizers } = await supabase
       .from('users')
       .select('id, name, avatar_url')
       .in('id', organizerIds)
 
     // 合并数据
-    const result = meetups?.map(meetup => {
-      const organizer = organizers?.find(o => o.id === meetup.organizer_id)
+    const result = meetups?.map((meetup: any) => {
+      const organizer = organizers?.find((o: any) => o.id === meetup.organizer_id)
       return {
         id: meetup.id,
         title: meetup.title,

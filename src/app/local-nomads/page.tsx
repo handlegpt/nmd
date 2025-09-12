@@ -23,7 +23,8 @@ import {
   Clock,
   Search,
   Filter,
-  SortAsc
+  SortAsc,
+  Loader2
 } from 'lucide-react'
 import ErrorAlert, { ErrorAlertSimple } from '@/components/ErrorAlert'
 
@@ -44,17 +45,76 @@ export default function LocalNomadsPage() {
     updateInterval: 60000 // 1分钟更新一次统计数据
   })
 
-  // 计算城市数量（基于数据库数据，移除localStorage依赖）
-  const totalCities = React.useMemo(() => {
-    // 暂时使用固定值，后续可以从数据库获取真实城市数量
-    // TODO: 实现从数据库获取城市数量的API
-    return Math.max(1, Math.floor((stats?.totalUsers || 0) / 5)) // 估算：每5个用户一个城市
-  }, [stats?.totalUsers])
+  // 获取城市统计数据
+  const [cityStats, setCityStats] = useState<any>(null)
+  const [loadingCityStats, setLoadingCityStats] = useState(false)
+
+  // 获取热门聚会数据
+  const [hotMeetups, setHotMeetups] = useState<any[]>([])
+  const [loadingHotMeetups, setLoadingHotMeetups] = useState(false)
+
+  // 获取活跃用户排行榜
+  const [leaderboard, setLeaderboard] = useState<any[]>([])
+  const [loadingLeaderboard, setLoadingLeaderboard] = useState(false)
+
+  useEffect(() => {
+    const fetchCityStats = async () => {
+      setLoadingCityStats(true)
+      try {
+        const response = await fetch('/api/cities/stats')
+        const result = await response.json()
+        if (result.success) {
+          setCityStats(result.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch city stats:', error)
+      } finally {
+        setLoadingCityStats(false)
+      }
+    }
+
+    const fetchHotMeetups = async () => {
+      setLoadingHotMeetups(true)
+      try {
+        const response = await fetch('/api/meetups/hot')
+        const result = await response.json()
+        if (result.success) {
+          setHotMeetups(result.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch hot meetups:', error)
+      } finally {
+        setLoadingHotMeetups(false)
+      }
+    }
+
+    const fetchLeaderboard = async () => {
+      setLoadingLeaderboard(true)
+      try {
+        const response = await fetch('/api/users/leaderboard')
+        const result = await response.json()
+        if (result.success) {
+          setLeaderboard(result.data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch leaderboard:', error)
+      } finally {
+        setLoadingLeaderboard(false)
+      }
+    }
+
+    fetchCityStats()
+    fetchHotMeetups()
+    fetchLeaderboard()
+  }, [])
+
+  // 使用真实API数据
+  const totalCities = cityStats?.totalCities || 0
 
   // 统一的社区统计数据
   const communityStats = {
     totalCities,
-    totalNomads: stats?.totalUsers || 0,
+    totalNomads: cityStats?.totalUsers || stats?.totalUsers || 0,
     totalMeetups: stats?.todayMeetups || 0
   }
 
@@ -162,15 +222,15 @@ export default function LocalNomadsPage() {
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center space-x-2">
               <Star className="w-5 h-5 text-yellow-500 fill-current" />
-              <span className="font-medium">{t('localNomads.stats.communityRating')}: {stats?.successRate ? (stats.successRate / 20).toFixed(1) : '0.0'}/5</span>
+              <span className="font-medium">{t('localNomads.stats.communityRating')}: {cityStats?.communityRating || '0.0'}/5</span>
             </div>
             <div className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5 text-green-500" />
-              <span className="font-medium">{t('localNomads.successRate')}: {stats?.successRate || 0}%</span>
+              <span className="font-medium">{t('localNomads.successRate')}: {cityStats?.successRate || 0}%</span>
             </div>
             <div className="flex items-center space-x-2">
               <Clock className="w-5 h-5 text-blue-500" />
-              <span className="font-medium">{t('localNomads.avgConnectionTime')}: {stats?.todayMeetups ? (stats.todayMeetups / 10).toFixed(1) : '0.0'} {t('localNomads.stats.days')}</span>
+              <span className="font-medium">{t('localNomads.avgConnectionTime')}: {cityStats?.avgConnectionTime || '0.0'} {t('localNomads.stats.days')}</span>
             </div>
           </div>
         </div>
@@ -331,16 +391,52 @@ export default function LocalNomadsPage() {
                   </button>
                 </div>
                 
-                {/* 热门聚会现在从数据库获取，移除硬编码数据 */}
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <Coffee className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    {t('localNomads.hotMeetups')}
-                  </h4>
-                  <p className="text-sm">
-                    {t('localNomads.comingSoon')} - {t('localNomads.realTimeMeetups')}
-                  </p>
-                </div>
+                {/* 热门聚会数据 */}
+                {loadingHotMeetups ? (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <Loader2 className="h-12 w-12 mx-auto mb-4 text-gray-400 animate-spin" />
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      {t('localNomads.loadingHotMeetups')}
+                    </h4>
+                  </div>
+                ) : hotMeetups.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {hotMeetups.map((meetup) => (
+                      <div key={meetup.id} className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-medium text-gray-900 dark:text-white">
+                            {meetup.title}
+                          </h4>
+                          <span className="text-sm text-orange-600 bg-orange-100 px-2 py-1 rounded-full">
+                            {meetup.currentParticipants} {t('localNomads.peopleJoined')}
+                          </span>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                          {meetup.description}
+                        </p>
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs text-gray-500">{meetup.city}</span>
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                            {meetup.hotness}% hot
+                          </span>
+                        </div>
+                        <button className="w-full bg-orange-600 text-white px-3 py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm">
+                          {t('localNomads.joinMeetup')}
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <Coffee className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      {t('localNomads.noHotMeetups')}
+                    </h4>
+                    <p className="text-sm">
+                      {t('localNomads.createFirstMeetup')}
+                    </p>
+                  </div>
+                )}
               </div>
             </section>
             
@@ -374,16 +470,51 @@ export default function LocalNomadsPage() {
                   </button>
                 </div>
                 
-                {/* 活跃用户排行榜现在从数据库获取，移除硬编码数据 */}
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                    {t('localNomads.activeUsers')}
-                  </h4>
-                  <p className="text-sm">
-                    {t('localNomads.comingSoon')} - {t('localNomads.realTimeLeaderboard')}
-                  </p>
-                </div>
+                {/* 活跃用户排行榜数据 */}
+                {loadingLeaderboard ? (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <Loader2 className="h-12 w-12 mx-auto mb-4 text-gray-400 animate-spin" />
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      {t('localNomads.loadingLeaderboard')}
+                    </h4>
+                  </div>
+                ) : leaderboard.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {leaderboard.slice(0, 8).map((user, index) => (
+                      <div key={user.id} className="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
+                        <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold overflow-hidden">
+                          {user.avatar ? (
+                            <img 
+                              src={user.avatar} 
+                              alt={user.name}
+                              className="w-16 h-16 rounded-full object-cover"
+                            />
+                          ) : (
+                            user.name.charAt(0).toUpperCase()
+                          )}
+                        </div>
+                        <h4 className="font-medium text-gray-900 dark:text-white mb-1">{user.name}</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{user.city}</p>
+                        <div className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs mb-2">
+                          #{index + 1} • {user.activityScore} pts
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          {user.badge}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                    <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                    <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                      {t('localNomads.noActiveUsers')}
+                    </h4>
+                    <p className="text-sm">
+                      {t('localNomads.beFirstActiveUser')}
+                    </p>
+                  </div>
+                )}
               </div>
             </section>
 
