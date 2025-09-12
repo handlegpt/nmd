@@ -453,7 +453,7 @@ export default function LocalNomadsPage() {
                   </button>
                 </div>
                 
-                <MeetupSystemApi userId={user?.id} />
+                <MeetupSystemApi userId={user?.profile?.id} />
               </div>
             </section>
 
@@ -524,7 +524,7 @@ export default function LocalNomadsPage() {
         
         {activeTab === 'my-meetups' && (
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <MeetupSystemApi userId={user?.id} />
+            <MeetupSystemApi userId={user?.profile?.id} />
           </div>
         )}
         

@@ -94,8 +94,6 @@ export default function HomePage() {
             </div>
             <HomeLocalNomadsApi 
               className="mt-8"
-              showLocationDetection={true}
-              showStats={true}
             />
           </div>
         </section>
