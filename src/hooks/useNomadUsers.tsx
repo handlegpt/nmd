@@ -209,7 +209,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         isOnline: diffMinutes <= 30
       })
       
-      return diffMinutes <= 30 // 30分钟内活跃视为在线
+      return diffMinutes <= 1440 // 24小时内活跃视为在线（临时调试）
     } catch (e) {
       console.log('🔍 calculateOnlineStatus - error', { lastUpdated, error: e })
       logError('Error calculating online status', e, 'useNomadUsers')
@@ -239,7 +239,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         isAvailable: diffMinutes <= 60
       })
       
-      return diffMinutes <= 60 // 1小时内活跃视为可用
+      return diffMinutes <= 1440 // 24小时内活跃视为可用（临时调试）
     } catch (e) {
       console.log('🔍 calculateAvailabilityStatus - error', { lastUpdated, error: e })
       logError('Error calculating availability status', e, 'useNomadUsers')
