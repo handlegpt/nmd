@@ -54,11 +54,35 @@ export default function NomadPlaceRecommendations() {
   const [showPermissionGuide, setShowPermissionGuide] = useState(false)
   const [locationError, setLocationError] = useState<string | null>(null)
   const [showLocationDetection, setShowLocationDetection] = useState(false)
+  const [cities, setCities] = useState<City[]>([])
 
   useEffect(() => {
+    loadCities()
     loadTopPlaces()
     loadUserLocation()
   }, [])
+
+  const loadCities = async () => {
+    try {
+      const citiesData = await getCities()
+      setCities(citiesData)
+    } catch (error) {
+      logError('Error loading cities', error, 'NomadPlaceRecommendations')
+    }
+  }
+
+  const getCityName = (cityId: string): string => {
+    if (!cityId || cityId === 'Unknown City') return 'Unknown City'
+    
+    // 如果cityId看起来像UUID，尝试从cities数组中查找
+    if (cityId.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i)) {
+      const city = cities.find(c => c.id === cityId)
+      return city ? `${city.name}, ${city.country}` : 'Unknown City'
+    }
+    
+    // 如果cityId已经是城市名称，直接返回
+    return cityId
+  }
 
   const loadTopPlaces = async () => {
     setLoading(true)
@@ -380,7 +404,7 @@ export default function NomadPlaceRecommendations() {
               {place.city_id && place.city_id !== 'Unknown City' && (
                 <div className="mt-2">
                   <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs rounded-full">
-                    📍 {place.city_id}
+                    📍 {getCityName(place.city_id)}
                   </span>
                 </div>
               )}
