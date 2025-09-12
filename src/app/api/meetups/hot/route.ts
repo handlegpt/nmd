@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
         description,
         city,
         meetup_type,
-        scheduled_date,
+        meeting_time as scheduled_date,
         max_participants,
         current_participants,
         organizer_id,
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
         created_at
       `)
       .eq('status', 'active')
-      .gte('scheduled_date', new Date().toISOString())
+      .gte('meeting_time', new Date().toISOString())
       .order('current_participants', { ascending: false })
       .limit(10)
 
