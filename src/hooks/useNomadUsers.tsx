@@ -189,29 +189,13 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
 
   // 计算在线状态（基于最后活动时间）
   const calculateOnlineStatus = useCallback((lastUpdated: string): boolean => {
-    console.log('🔍 calculateOnlineStatus - input', { lastUpdated })
-    
-    if (!lastUpdated) {
-      console.log('🔍 calculateOnlineStatus - no lastUpdated, returning false')
-      return false
-    }
-    
+    if (!lastUpdated) return false
     try {
       const lastUpdate = new Date(lastUpdated)
       const now = new Date()
       const diffMinutes = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
-      
-      console.log('🔍 calculateOnlineStatus - calculation', {
-        lastUpdated,
-        lastUpdate: lastUpdate.toISOString(),
-        now: now.toISOString(),
-        diffMinutes: Math.round(diffMinutes),
-        isOnline: diffMinutes <= 30
-      })
-      
-      return diffMinutes <= 1440 // 24小时内活跃视为在线（临时调试）
+      return diffMinutes <= 120 // 2小时内活跃视为在线
     } catch (e) {
-      console.log('🔍 calculateOnlineStatus - error', { lastUpdated, error: e })
       logError('Error calculating online status', e, 'useNomadUsers')
       return false
     }
@@ -219,29 +203,13 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
 
   // 计算可用状态（基于最后活动时间）
   const calculateAvailabilityStatus = useCallback((lastUpdated: string): boolean => {
-    console.log('🔍 calculateAvailabilityStatus - input', { lastUpdated })
-    
-    if (!lastUpdated) {
-      console.log('🔍 calculateAvailabilityStatus - no lastUpdated, returning false')
-      return false
-    }
-    
+    if (!lastUpdated) return false
     try {
       const lastUpdate = new Date(lastUpdated)
       const now = new Date()
       const diffMinutes = (now.getTime() - lastUpdate.getTime()) / (1000 * 60)
-      
-      console.log('🔍 calculateAvailabilityStatus - calculation', {
-        lastUpdated,
-        lastUpdate: lastUpdate.toISOString(),
-        now: now.toISOString(),
-        diffMinutes: Math.round(diffMinutes),
-        isAvailable: diffMinutes <= 60
-      })
-      
-      return diffMinutes <= 1440 // 24小时内活跃视为可用（临时调试）
+      return diffMinutes <= 480 // 8小时内活跃视为可用
     } catch (e) {
-      console.log('🔍 calculateAvailabilityStatus - error', { lastUpdated, error: e })
       logError('Error calculating availability status', e, 'useNomadUsers')
       return false
     }
@@ -448,16 +416,6 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
               const isOnline = calculateOnlineStatus(profile.updated_at)
               const isAvailable = calculateAvailabilityStatus(profile.updated_at)
               const lastSeen = calculateLastSeen(profile.updated_at)
-              
-              console.log('🔍 User status calculation', {
-                userId: profile.id,
-                name: profile.name,
-                updated_at: profile.updated_at,
-                isOnline,
-                isAvailable,
-                lastSeen,
-                finalStatus: isOnline && isAvailable ? 'Available' : 'Busy'
-              })
               
               const nomadUser: NomadUser = {
                 id: profile.id,
