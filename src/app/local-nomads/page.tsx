@@ -162,15 +162,15 @@ export default function LocalNomadsPage() {
           <div className="flex flex-wrap justify-center gap-6 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center space-x-2">
               <Star className="w-5 h-5 text-yellow-500 fill-current" />
-              <span className="font-medium">{t('localNomads.stats.communityRating')}: 4.8/5</span>
+              <span className="font-medium">{t('localNomads.stats.communityRating')}: {stats?.successRate ? (stats.successRate / 20).toFixed(1) : '0.0'}/5</span>
             </div>
             <div className="flex items-center space-x-2">
               <TrendingUp className="w-5 h-5 text-green-500" />
-                              <span className="font-medium">{t('localNomads.successRate')}: 94%</span>
+              <span className="font-medium">{t('localNomads.successRate')}: {stats?.successRate || 0}%</span>
             </div>
             <div className="flex items-center space-x-2">
               <Clock className="w-5 h-5 text-blue-500" />
-                              <span className="font-medium">{t('localNomads.avgConnectionTime')}: 2.3 {t('localNomads.stats.days')}</span>
+              <span className="font-medium">{t('localNomads.avgConnectionTime')}: {stats?.todayMeetups ? (stats.todayMeetups / 10).toFixed(1) : '0.0'} {t('localNomads.stats.days')}</span>
             </div>
           </div>
         </div>
@@ -233,8 +233,12 @@ export default function LocalNomadsPage() {
                 
                 {/* Real Google Maps Integration */}
                 <GlobalNomadsMap 
-                  onCityClick={(city) => console.log('City clicked:', city)}
-                  onMeetupClick={(meetupId) => console.log('Meetup clicked:', meetupId)}
+                  onCityClick={(city) => {
+                    // TODO: 实现城市点击处理逻辑
+                  }}
+                  onMeetupClick={(meetupId) => {
+                    // TODO: 实现聚会点击处理逻辑
+                  }}
                 />
               </div>
             </section>
@@ -327,60 +331,15 @@ export default function LocalNomadsPage() {
                   </button>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {/* Meetup Card 1 */}
-                  <div className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-lg p-4 border border-orange-200 dark:border-orange-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900 dark:text-white">
-                        🔥 {t('localNomads.lisbonCoffeeChat')}
-                      </h4>
-                      <span className="text-sm text-orange-600 bg-orange-100 px-2 py-1 rounded-full">
-                        8 {t('localNomads.peopleJoined')}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                      {t('localNomads.lisbonCoffeeChatDesc')}
-                    </p>
-                    <button className="w-full bg-orange-600 text-white px-3 py-2 rounded-lg hover:bg-orange-700 transition-colors text-sm">
-                      {t('localNomads.joinMeetup')}
-                    </button>
-                  </div>
-                  
-                  {/* Meetup Card 2 */}
-                  <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-blue-900/40 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900 dark:text-white">
-                        🧑‍💻 {t('localNomads.chiangMaiDevCowork')}
-                      </h4>
-                      <span className="text-sm text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
-                        12 {t('localNomads.peopleJoined')}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                      {t('localNomads.chiangMaiDevCoworkDesc')}
-                    </p>
-                    <button className="w-full bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-colors text-sm">
-                      {t('localNomads.joinMeetup')}
-                    </button>
-                  </div>
-                  
-                  {/* Meetup Card 3 */}
-                  <div className="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-green-900/40 rounded-lg p-4 border border-green-200 dark:border-green-800">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900 dark:text-white">
-                        🏖️ {t('localNomads.baliBeachCoworking')}
-                      </h4>
-                      <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                        15 {t('localNomads.peopleJoined')}
-                      </span>
-                    </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                      {t('localNomads.baliBeachCoworkingDesc')}
-                    </p>
-                    <button className="w-full bg-green-600 text-white px-3 py-2 rounded-lg hover:bg-green-700 transition-colors text-sm">
-                      {t('localNomads.joinMeetup')}
-                    </button>
-                  </div>
+                {/* 热门聚会现在从数据库获取，移除硬编码数据 */}
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <Coffee className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    {t('localNomads.hotMeetups')}
+                  </h4>
+                  <p className="text-sm">
+                    {t('localNomads.comingSoon')} - {t('localNomads.realTimeMeetups')}
+                  </p>
                 </div>
               </div>
             </section>
@@ -415,54 +374,15 @@ export default function LocalNomadsPage() {
                   </button>
                 </div>
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {/* User 1 */}
-                  <div className="text-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                    <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
-                      T
-                    </div>
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-1">Tom</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Lisbon</p>
-                    <div className="inline-flex items-center px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs">
-                      ☕ {t('localNomads.coffeeHero')}
-                    </div>
-                  </div>
-                  
-                  {/* User 2 */}
-                  <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-blue-900/40 rounded-lg border border-blue-200 dark:border-blue-800">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-purple-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
-                      M
-                    </div>
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-1">May</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Bali</p>
-                    <div className="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                      🗺️ {t('localNomads.nomadExplorer')}
-                    </div>
-                  </div>
-                  
-                  {/* User 3 */}
-                  <div className="text-center p-4 bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-green-900/40 rounded-lg border border-green-200 dark:border-green-800">
-                    <div className="w-16 h-16 bg-gradient-to-br from-green-400 to-teal-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
-                      A
-                    </div>
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-1">Anna</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Chiang Mai</p>
-                    <div className="inline-flex items-center px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
-                      🏗️ {t('localNomads.communityBuilder')}
-                    </div>
-                  </div>
-                  
-                  {/* User 4 */}
-                  <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-purple-900/40 rounded-lg border border-purple-200 dark:border-purple-800">
-                    <div className="w-16 h-16 bg-gradient-to-br from-purple-400 to-pink-500 text-white rounded-full flex items-center justify-center mx-auto mb-3 text-xl font-bold">
-                      S
-                    </div>
-                    <h4 className="font-medium text-gray-900 dark:text-white mb-1">Sam</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Porto</p>
-                    <div className="inline-flex items-center px-2 py-1 bg-purple-100 text-purple-800 rounded-full text-xs">
-                      🎯 {t('localNomads.meetupMaster')}
-                    </div>
-                  </div>
+                {/* 活跃用户排行榜现在从数据库获取，移除硬编码数据 */}
+                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                  <Users className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+                  <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    {t('localNomads.activeUsers')}
+                  </h4>
+                  <p className="text-sm">
+                    {t('localNomads.comingSoon')} - {t('localNomads.realTimeLeaderboard')}
+                  </p>
                 </div>
               </div>
             </section>

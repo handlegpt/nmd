@@ -92,7 +92,7 @@ export default function LocalNomads() {
         const favoritesList = await getFavorites()
         setFavorites(favoritesList)
       } catch (error) {
-        console.error('Failed to sync favorites:', error)
+        logError('Failed to sync favorites', error, 'LocalNomads')
       }
     }
     syncFavorites()

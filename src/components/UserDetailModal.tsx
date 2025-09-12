@@ -67,7 +67,7 @@ export default function UserDetailModal({
         const favorites = await getFavorites()
         setIsFavorite(favorites.includes(user.id))
       } catch (error) {
-        console.error('Failed to check favorite status:', error)
+        logError('Failed to check favorite status', error, 'UserDetailModal')
       }
     }
     checkFavorite()

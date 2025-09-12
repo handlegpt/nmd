@@ -146,7 +146,7 @@ export default function HomeLocalNomads({
         const favoritesList = await getFavorites()
         setFavorites(favoritesList)
       } catch (error) {
-        console.error('Failed to sync favorites:', error)
+        logError('Failed to sync favorites', error, 'HomeLocalNomads')
       }
     }
     syncFavorites()
@@ -237,26 +237,25 @@ export default function HomeLocalNomads({
     }
   }
 
+  // 热门城市数据现在从数据库获取，移除硬编码数据
   const getHotCities = () => {
-    return [
-      { name: 'Chiang Mai', onlineCount: 56, coffeePrice: 2, wifiSpeed: 90 },
-      { name: 'Bali', onlineCount: 43, coffeePrice: 3, wifiSpeed: 25 },
-      { name: 'Lisbon', onlineCount: 28, coffeePrice: 2.5, wifiSpeed: 80 }
-    ]
+    // TODO: 从数据库API获取真实的热门城市数据
+    // 暂时返回空数组，避免显示假数据
+    return []
   }
 
   // 数据埋点函数
   const trackEvent = (eventName: string, properties: Record<string, any> = {}) => {
     try {
       // 这里可以集成 Google Analytics, Mixpanel 等
-      console.log('📊 Track Event:', eventName, properties)
+      logInfo('Track Event', { eventName, properties }, 'HomeLocalNomads')
       
       // 示例：发送到分析服务
       if (typeof window !== 'undefined' && (window as any).gtag) {
         (window as any).gtag('event', eventName, properties)
       }
     } catch (error) {
-      console.error('Failed to track event:', error)
+      logError('Failed to track event', error, 'HomeLocalNomads')
     }
   }
 
@@ -387,7 +386,7 @@ export default function HomeLocalNomads({
   const handleStatusChange = (newStatus: NonNullable<NomadUser['status']>) => {
     setSelectedStatus(newStatus)
     // 这里可以调用API更新用户状态
-    console.log('Status changed to:', newStatus)
+    logInfo('Status changed', { newStatus }, 'HomeLocalNomads')
   }
 
   // 标签筛选函数
@@ -534,7 +533,7 @@ export default function HomeLocalNomads({
                 <div className="text-xs text-gray-600 dark:text-gray-400">{t('localNomads.availableNow')}</div>
               </div>
               <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700 text-center min-w-[100px]">
-                <div className="text-xl font-bold text-purple-600 dark:text-purple-400">94%</div>
+                <div className="text-xl font-bold text-purple-600 dark:text-purple-400">{stats?.successRate || 0}%</div>
                 <div className="text-xs text-gray-600 dark:text-gray-400">{t('localNomads.successRate')}</div>
               </div>
             </div>
@@ -546,14 +545,14 @@ export default function HomeLocalNomads({
               <div>
                 <h3 className="text-sm font-medium text-green-900 dark:text-green-100 flex items-center">
                   <span className="text-lg mr-2">🌟</span>
-                  {t('localNomads.trustAndResponse')}: 94% {t('localNomads.requestsGetResponse')}
+                  {t('localNomads.trustAndResponse')}: {stats?.successRate || 0}% {t('localNomads.requestsGetResponse')}
                 </h3>
                 <p className="text-sm text-green-700 dark:text-green-300">
                   {t('localNomads.recent30DaysData')} • {t('localNomads.basedOnRealRequests', { count: totalUsers.toString() })}
                 </p>
               </div>
               <div className="text-right">
-                <div className="text-2xl font-bold text-green-600 dark:text-green-400">94%</div>
+                <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats?.successRate || 0}%</div>
                 <div className="text-xs text-green-600 dark:text-green-400">{t('localNomads.successRate')}</div>
               </div>
             </div>
@@ -802,51 +801,15 @@ export default function HomeLocalNomads({
               </button>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {getHotCities().map((city, index) => (
-                <div 
-                  key={city.name} 
-                  className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer relative"
-                  onClick={() => {
-                    // 埋点：热门城市卡片点击
-                    trackEvent('hot_city_card_click', {
-                      city: city.name,
-                      rank: index + 1,
-                      user_id: user?.profile?.id || 'anonymous'
-                    })
-                  }}
-                >
-                  {/* 右上角排名 */}
-                  <div className="absolute top-3 right-3">
-                    <span className="text-sm font-bold text-gray-500">#{index + 1}</span>
-                  </div>
-                  
-                  {/* 城市名称 */}
-                  <h4 className="font-medium text-gray-900 dark:text-white mb-3 pr-8">{city.name}</h4>
-                  
-                  {/* 三个字段固定顺序：在线人数 → 咖啡均价 → WiFi */}
-                  <div className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-                    <div className="flex items-center justify-between">
-                      <span>🟢 {city.onlineCount} online</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>☕ ${city.coffeePrice}</span>
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">Community</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>📶 {city.wifiSpeed} Mbps</span>
-                      <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Verified</span>
-                    </div>
-                  </div>
-                  
-                  {/* 左下角"去看看"轻按钮 */}
-                  <div className="mt-3 flex justify-start">
-                    <button className="text-xs text-blue-600 hover:text-blue-700 font-medium">
-                      {t('common.goSee')} →
-                    </button>
-                  </div>
-                </div>
-              ))}
+            {/* 热门城市现在从数据库获取，移除硬编码数据 */}
+            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+              <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-400" />
+              <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                {t('localNomads.hotCities')}
+              </h4>
+              <p className="text-sm">
+                {t('localNomads.comingSoon')} - {t('localNomads.realTimeCityData')}
+              </p>
             </div>
           </div>
 
@@ -863,7 +826,7 @@ export default function HomeLocalNomads({
         }}
         onSendMessage={(userId: string) => {
           // 处理发送消息
-          console.log('Send message to:', userId)
+          logInfo('Send message', { userId }, 'HomeLocalNomads')
         }}
         addToFavorites={addToFavorites}
         removeFromFavorites={removeFromFavorites}
