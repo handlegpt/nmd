@@ -1,0 +1,26 @@
+{
+  "localNomads": {
+    "title": "Local Nomads",
+    "youAreIn": "You're in",
+    "showAll": "Show All",
+    "showNearby": "Show Nearby",
+    "nearby": "people online nearby",
+    "global": "nomads active globally",
+    "noUsers": "No nomads online at the moment",
+    "coffee": "Coffee",
+    "work": "Work",
+    "rate": "Rate",
+    "viewAll": "View All Online Nomads"
+  },
+  "meetups": {
+    "title": "Meetups",
+    "create": "Create Meetup",
+    "types": {
+      "all": "All",
+      "coffee": "Coffee",
+      "work": "Work",
+      "social": "Social"
+    },
+    "noMeetups": "No meetups available at the moment"
+  }
+}

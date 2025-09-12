@@ -43,10 +43,14 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Error fetching meetups:', error)
+      // 如果表不存在，返回空数组而不是错误
+      if (error.code === '42P01') { // Table doesn't exist
+        return NextResponse.json({ meetups: [] })
+      }
       return NextResponse.json({ error: 'Failed to fetch meetups' }, { status: 500 })
     }
 
-    return NextResponse.json({ meetups: data })
+    return NextResponse.json({ meetups: data || [] })
   } catch (error) {
     console.error('Error in meetups GET:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

@@ -176,7 +176,7 @@
     },
     "costLevel": {
       "low": "Low",
-      "moderate": "Moderate", 
+      "moderate": "Moderate",
       "high": "High",
       "expensive": "Expensive",
       "affordable": "Affordable"
@@ -188,7 +188,13 @@
       "affordableCost": "Affordable cost of living",
       "goodWifi": "Good WiFi infrastructure",
       "longVisa": "Long-term visa options",
-      "nomadFriendly": "Nomad-friendly environment"
+      "nomadFriendly": "Nomad-friendly environment",
+      "goodWeather": "Great weather year-round",
+      "affordableCostDesc": "Monthly expenses under $2000",
+      "goodWifiDesc": "Reliable internet speeds over 50 Mbps",
+      "longVisaDesc": "Visa-free stay over 90 days",
+      "nomadFriendlyDesc": "High overall rating from digital nomads",
+      "goodWeatherDesc": "Pleasant climate for remote work"
     },
     "cons": {
       "languageBarrier": "Language barrier",
@@ -203,18 +209,6 @@
       "highCostDesc": "Expensive compared to other nomad destinations",
       "slowWifiDesc": "Internet speeds below 25 Mbps",
       "shortVisaDesc": "Visa-free stay less than 30 days"
-    },
-    "pros": {
-      "affordableCost": "Affordable cost of living",
-      "goodWifi": "Good WiFi infrastructure",
-      "longVisa": "Long-term visa options",
-      "nomadFriendly": "Nomad-friendly environment",
-      "goodWeather": "Great weather year-round",
-      "affordableCostDesc": "Monthly expenses under $2000",
-      "goodWifiDesc": "Reliable internet speeds over 50 Mbps",
-      "longVisaDesc": "Visa-free stay over 90 days",
-      "nomadFriendlyDesc": "High overall rating from digital nomads",
-      "goodWeatherDesc": "Pleasant climate for remote work"
     },
     "addPro": "Add a pro",
     "addCon": "Add a con",
@@ -277,7 +271,7 @@
     "moderate": "Moderate",
     "easy": "Easy",
     "hotel": "Hotel",
-      "requirements": "Requirements",
+    "requirements": "Requirements",
     "applicationDifficulty": "Application Difficulty",
     "stayDuration": "Stay Duration",
     "visaType": "Visa Type",
@@ -309,8 +303,8 @@
     "quickInfo": "Quick Info",
     "timezone": "Timezone",
     "coordinates": "Coordinates",
-      "utilities": "Utilities",
-      "entertainment": "Entertainment",
+    "utilities": "Utilities",
+    "entertainment": "Entertainment",
     "transportation": "Transportation",
     "food": "Food",
     "accommodation": "Accommodation",
@@ -345,7 +339,7 @@
     "hotels": "Hotels",
     "apartmentRental": "Apartment Rental",
     "coworkingSpaces": "Coworking Spaces",
-      "taxi": "Taxi",
+    "taxi": "Taxi",
     "publicTransport": "Public Transport",
     "airport": "Airport",
     "accommodationInfo": "Accommodation Information",
@@ -1069,7 +1063,7 @@
     "message": "Message",
     "days": "Days",
     "meetups": "Meetups",
-      "timezone": "Timezone",
+    "timezone": "Timezone",
     "interests": "Interests",
     "lastSeen": "Last Seen",
     "userProfile": "User Profile",
@@ -1152,7 +1146,7 @@
     "settingsSaved": "Settings saved!",
     "tabs": {
       "profile": "Profile",
-      "preferences": "Preferences", 
+      "preferences": "Preferences",
       "visa": "Visa Info",
       "travel": "Travel",
       "privacy": "Privacy"
@@ -2287,7 +2281,7 @@
         "medium": "Medium",
         "hard": "Hard"
       },
-    "categories": {
+      "categories": {
         "taxHaven": "Tax Haven",
         "territorial": "Territorial Tax",
         "companyStructure": "Company Structure",
@@ -3415,7 +3409,18 @@
     "pageTitle": "Local Nomads",
     "favorites": "Favorites",
     "myMeetups": "My Meetups",
-    "discover": "Discover"
+    "discover": "Discover",
+    "title": "Local Nomads",
+    "youAreIn": "You're in",
+    "showAll": "Show All",
+    "showNearby": "Show Nearby",
+    "nearby": "people online nearby",
+    "global": "nomads active globally",
+    "noUsers": "No nomads online at the moment",
+    "coffee": "Coffee",
+    "work": "Work",
+    "rate": "Rate",
+    "viewAll": "View All Online Nomads"
   },
   "navigation": {
     "language": "Language",
@@ -3798,5 +3803,16 @@
       "loginButton": "Login",
       "signupButton": "Sign Up"
     }
+  },
+  "meetups": {
+    "title": "Meetups",
+    "create": "Create Meetup",
+    "types": {
+      "all": "All",
+      "coffee": "Coffee",
+      "work": "Work",
+      "social": "Social"
+    },
+    "noMeetups": "No meetups available at the moment"
   }
-} 
+}
