@@ -880,10 +880,12 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
   useEffect(() => {
     const handleUserProfileUpdate = (event: CustomEvent) => {
       logInfo('User profile update event received', { userId: event.detail?.userId }, 'useNomadUsers')
-      // 延迟刷新，确保数据库更新完成
+      // 立即刷新一次，然后延迟再刷新一次确保数据同步
+      loadUsers()
       setTimeout(() => {
+        logInfo('Refreshing users after profile update (delayed)', {}, 'useNomadUsers')
         loadUsers()
-      }, 1000)
+      }, 2000) // 增加延迟时间确保数据库更新完成
     }
 
     window.addEventListener('userProfileUpdated', handleUserProfileUpdate as EventListener)

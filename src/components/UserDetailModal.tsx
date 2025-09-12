@@ -55,10 +55,10 @@ export default function UserDetailModal({
   // 使用统一的用户数据管理Hook - 从父组件传入操作函数
   // 避免重复实例化Hook，提高性能和数据一致性
 
-  if (!isOpen || !user) return null
-
   // 检查是否为收藏用户
   const [isFavorite, setIsFavorite] = useState(false)
+
+  if (!isOpen || !user) return null
   
   useEffect(() => {
     const checkFavorite = async () => {
