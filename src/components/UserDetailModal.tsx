@@ -58,9 +58,8 @@ export default function UserDetailModal({
   // 检查是否为收藏用户
   const [isFavorite, setIsFavorite] = useState(false)
 
-  if (!isOpen || !user) return null
-  
   useEffect(() => {
+    if (!isOpen || !user || !getFavorites) return
     const checkFavorite = async () => {
       if (!getFavorites) return
       try {
@@ -71,7 +70,9 @@ export default function UserDetailModal({
       }
     }
     checkFavorite()
-  }, [getFavorites, user.id])
+  }, [isOpen, user?.id, getFavorites])
+
+  if (!isOpen || !user) return null
 
   const handleCoffeeMeetup = async () => {
     if (!currentUser.isAuthenticated) {

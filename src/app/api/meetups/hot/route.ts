@@ -6,6 +6,15 @@ export async function GET(request: NextRequest) {
   try {
     logInfo('Fetching hot meetups data', {}, 'HotMeetupsAPI')
     
+    // 检查Supabase客户端是否可用
+    if (!supabase) {
+      logError('Supabase client not available', new Error('Supabase client is null'), 'HotMeetupsAPI')
+      return NextResponse.json(
+        { success: false, message: 'Database not available', data: [] },
+        { status: 503 }
+      )
+    }
+    
     // 检查是否有meetups表，如果没有则返回模拟数据
     const { data: meetupsTable, error: tableError } = await supabase
       .from('meetups')
