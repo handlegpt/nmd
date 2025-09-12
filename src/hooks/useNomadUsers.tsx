@@ -776,6 +776,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       const { invitationService } = await import('@/lib/invitationService')
       
       const result = await invitationService.createInvitation({
+        sender_id: user.profile.id,
         receiver_id: userId,
         invitation_type: 'coffee_meetup',
         message: `Hi ${targetUser.name}! Would you like to meet for coffee? I'd love to connect with a fellow digital nomad!`
@@ -813,6 +814,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       const { invitationService } = await import('@/lib/invitationService')
       
       const result = await invitationService.createInvitation({
+        sender_id: user.profile.id,
         receiver_id: userId,
         invitation_type: 'work_together',
         message: `Hi ${targetUser.name}! Would you like to work together? I think we could collaborate on some interesting projects!`

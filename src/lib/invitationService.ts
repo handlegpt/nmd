@@ -25,6 +25,7 @@ export interface Invitation {
 }
 
 export interface CreateInvitationData {
+  sender_id: string
   receiver_id: string
   invitation_type: 'coffee_meetup' | 'work_together'
   message?: string
