@@ -111,7 +111,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
 
     try {
       const meetup = await meetupApiService.createMeetup({
-        organizer_id: user.id,
+        organizer_id: user?.id,
         title: 'Coffee Meetup',
         description: 'Let\'s grab a coffee together!',
         location: 'Local Coffee Shop',
@@ -136,7 +136,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
 
     try {
       const meetup = await meetupApiService.createMeetup({
-        organizer_id: user.id,
+        organizer_id: user?.id,
         title: 'Work Together',
         description: 'Let\'s work together and share ideas!',
         location: 'Co-working Space',
@@ -161,7 +161,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
 
     try {
       const result = await userRatingApiService.createUserRating(
-        user.id,
+        user?.id,
         targetUserId,
         category,
         rating

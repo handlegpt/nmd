@@ -98,10 +98,10 @@ export default function EnhancedCityRanking({
 
   // 生成个性化推荐
   useEffect(() => {
-    if (user.isAuthenticated && cities.length > 0) {
+    if (user?.isAuthenticated && cities.length > 0) {
       generatePersonalizedRecommendations()
     }
-  }, [cities, user.isAuthenticated])
+  }, [cities, user?.isAuthenticated])
 
   const fetchCities = async () => {
     setLoading(true)
@@ -172,7 +172,7 @@ export default function EnhancedCityRanking({
 
   const generatePersonalizedRecommendations = () => {
     // 基于用户偏好生成推荐
-    const userPreferences = user.profile?.preferences || {}
+    const userPreferences = user?.profile?.preferences || {}
     let scoredCities = cities.map(city => {
       let score = 0
       
@@ -425,7 +425,7 @@ export default function EnhancedCityRanking({
       )}
 
       {/* Personalized Recommendations */}
-      {showPersonalized && user.isAuthenticated && personalizedCities.length > 0 && (
+      {showPersonalized && user?.isAuthenticated && personalizedCities.length > 0 && (
         <div className="mb-6 p-4 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-200">
           <div className="flex items-center space-x-2 mb-3">
             <TrendingUpIcon className="h-5 w-5 text-purple-600" />

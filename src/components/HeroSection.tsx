@@ -252,11 +252,11 @@ export default function HeroSection() {
               {user?.isAuthenticated && (
                 <div className="flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-4 border border-blue-200 shadow-sm">
                   <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                    {user.profile?.name?.charAt(0).toUpperCase() || 'U'}
+                    {user?.profile?.name?.charAt(0).toUpperCase() || 'U'}
                   </div>
                   <div>
                     <p className="text-sm font-semibold text-gray-900">
-                      {t('home.hero.liveInfo.hi')}, {user.profile?.name || 'User'}!
+                      {t('home.hero.liveInfo.hi')}, {user?.profile?.name || 'User'}!
                     </p>
                     <p className="text-xs text-gray-600">Ready to explore?</p>
                   </div>
