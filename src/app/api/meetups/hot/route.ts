@@ -51,7 +51,7 @@ export async function GET(request: NextRequest) {
 
     // Format response
     const formattedMeetups = meetups.map((meetup: any) => {
-      const organizer = organizerMap.get(meetup.creator_id)
+      const organizer = organizerMap.get(meetup.creator_id) as any
       
       return {
         id: meetup.id,
