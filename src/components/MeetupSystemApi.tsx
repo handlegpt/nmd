@@ -160,14 +160,14 @@ export default function MeetupSystemApi({
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-900">
-          {t('meetups.title', 'Meetups')}
+          {t('meetups.title') || 'Meetups'}
         </h2>
         <button
           onClick={() => setShowCreateForm(true)}
           className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
           <Plus className="w-4 h-4" />
-          {t('meetups.create', 'Create Meetup')}
+          {t('meetups.create') || 'Create Meetup'}
         </button>
       </div>
 
@@ -183,7 +183,7 @@ export default function MeetupSystemApi({
                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
-            {t(`meetups.types.${type}`, type.charAt(0).toUpperCase() + type.slice(1))}
+            {t(`meetups.types.${type}`) || type.charAt(0).toUpperCase() + type.slice(1)}
           </button>
         ))}
       </div>
@@ -192,12 +192,12 @@ export default function MeetupSystemApi({
       {showCreateForm && (
         <div className="bg-white p-6 rounded-lg shadow-md border">
           <h3 className="text-lg font-semibold mb-4">
-            {t('meetups.createNew', 'Create New Meetup')}
+            {t('meetups.createNew') || 'Create New Meetup'}
           </h3>
           <form onSubmit={handleCreateMeetup} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('meetups.title', 'Title')}
+                {t('meetups.title') || 'Title'}
               </label>
               <input
                 type="text"
@@ -210,7 +210,7 @@ export default function MeetupSystemApi({
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                {t('meetups.description', 'Description')}
+                {t('meetups.description') || 'Description'}
               </label>
               <textarea
                 value={newMeetup.description}
@@ -223,7 +223,7 @@ export default function MeetupSystemApi({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('meetups.location', 'Location')}
+                  {t('meetups.location') || 'Location'}
                 </label>
                 <input
                   type="text"
@@ -236,7 +236,7 @@ export default function MeetupSystemApi({
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('meetups.meetingTime', 'Meeting Time')}
+                  {t('meetups.meetingTime') || 'Meeting Time'}
                 </label>
                 <input
                   type="datetime-local"
@@ -251,23 +251,23 @@ export default function MeetupSystemApi({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('meetups.type', 'Type')}
+                  {t('meetups.type') || 'Type'}
                 </label>
                 <select
                   value={newMeetup.meetup_type}
                   onChange={(e) => setNewMeetup(prev => ({ ...prev, meetup_type: e.target.value as any }))}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 >
-                  <option value="coffee">{t('meetups.types.coffee', 'Coffee')}</option>
-                  <option value="work">{t('meetups.types.work', 'Work')}</option>
-                  <option value="social">{t('meetups.types.social', 'Social')}</option>
-                  <option value="other">{t('meetups.types.other', 'Other')}</option>
+                  <option value="coffee">{t('meetups.types.coffee') || 'Coffee'}</option>
+                  <option value="work">{t('meetups.types.work') || 'Work'}</option>
+                  <option value="social">{t('meetups.types.social') || 'Social'}</option>
+                  <option value="other">{t('meetups.types.other') || 'Other'}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  {t('meetups.maxParticipants', 'Max Participants')}
+                  {t('meetups.maxParticipants') || 'Max Participants'}
                 </label>
                 <input
                   type="number"
@@ -285,14 +285,14 @@ export default function MeetupSystemApi({
                 type="submit"
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                {t('meetups.create', 'Create Meetup')}
+                {t('meetups.create') || 'Create Meetup'}
               </button>
               <button
                 type="button"
                 onClick={() => setShowCreateForm(false)}
                 className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition-colors"
               >
-                {t('common.cancel', 'Cancel')}
+                {t('common.cancel') || 'Cancel'}
               </button>
             </div>
           </form>
@@ -303,7 +303,7 @@ export default function MeetupSystemApi({
       <div className="space-y-4">
         {filteredMeetups.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            {t('meetups.noMeetups', 'No meetups found')}
+            {t('meetups.noMeetups') || 'No meetups found'}
           </div>
         ) : (
           filteredMeetups.map((meetup) => (
@@ -333,13 +333,13 @@ export default function MeetupSystemApi({
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="w-4 h-4" />
-                      {t(`meetups.types.${meetup.meetup_type}`, meetup.meetup_type)}
+                       {t(`meetups.types.${meetup.meetup_type}`) || meetup.meetup_type}
                     </div>
                   </div>
 
                   {meetup.organizer && (
                     <div className="text-sm text-gray-500 mb-3">
-                      {t('meetups.organizedBy', 'Organized by')}: {meetup.organizer.name}
+                      {t('meetups.organizedBy') || 'Organized by'}: {meetup.organizer.name}
                     </div>
                   )}
 
@@ -364,7 +364,7 @@ export default function MeetupSystemApi({
                       className="flex items-center gap-1 bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition-colors text-sm"
                     >
                       <UserMinus className="w-4 h-4" />
-                      {t('meetups.leave', 'Leave')}
+                      {t('meetups.leave') || 'Leave'}
                     </button>
                   ) : (
                     <button
@@ -373,7 +373,7 @@ export default function MeetupSystemApi({
                       className="flex items-center gap-1 bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:bg-gray-400 disabled:cursor-not-allowed"
                     >
                       <UserPlus className="w-4 h-4" />
-                      {t('meetups.join', 'Join')}
+                      {t('meetups.join') || 'Join'}
                     </button>
                   )}
                 </div>

@@ -65,7 +65,7 @@ export default function CityReviewSystemApi({
 
   const handleVote = async (voteType: 'upvote' | 'downvote' | 'neutral') => {
     if (!user?.id) {
-      alert(t('auth.loginRequired', 'Please login to vote'))
+      alert(t('auth.loginRequired') || 'Please login to vote')
       return
     }
 
@@ -78,7 +78,7 @@ export default function CityReviewSystemApi({
       await loadVoteData()
     } catch (error) {
       console.error('Error voting:', error)
-      alert(t('error.voteFailed', 'Failed to submit vote'))
+      alert(t('error.voteFailed') || 'Failed to submit vote')
     } finally {
       setVoting(false)
     }
@@ -90,12 +90,12 @@ export default function CityReviewSystemApi({
 
     try {
       // In a real app, you would submit the review to an API
-      alert(t('review.submitted', 'Review submitted successfully!'))
+      alert(t('review.submitted') || 'Review submitted successfully!')
       setNewReview({ content: '', rating: 5 })
       setShowReviewForm(false)
     } catch (error) {
       console.error('Error submitting review:', error)
-      alert(t('error.reviewFailed', 'Failed to submit review'))
+      alert(t('error.reviewFailed') || 'Failed to submit review')
     }
   }
 
@@ -126,7 +126,7 @@ export default function CityReviewSystemApi({
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {t('cityReview.title', 'City Reviews')}
+            {t('cityReview.title') || 'City Reviews'}
           </h2>
           <div className="flex items-center text-gray-600">
             <MapPin className="w-4 h-4 mr-1" />
@@ -139,7 +139,7 @@ export default function CityReviewSystemApi({
           className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
         >
           <MessageCircle className="w-4 h-4" />
-          {t('cityReview.writeReview', 'Write Review')}
+          {t('cityReview.writeReview') || 'Write Review'}
         </button>
       </div>
 
@@ -152,7 +152,7 @@ export default function CityReviewSystemApi({
                 {voteSummary.total_votes}
               </div>
               <div className="text-sm text-gray-600">
-                {t('cityReview.totalVotes', 'Total Votes')}
+                {t('cityReview.totalVotes') || 'Total Votes'}
               </div>
             </div>
             
@@ -161,7 +161,7 @@ export default function CityReviewSystemApi({
                 {voteSummary.upvotes}
               </div>
               <div className="text-sm text-gray-600">
-                {t('cityReview.upvotes', 'Upvotes')}
+                {t('cityReview.upvotes') || 'Upvotes'}
               </div>
             </div>
             
@@ -170,7 +170,7 @@ export default function CityReviewSystemApi({
                 {voteSummary.downvotes}
               </div>
               <div className="text-sm text-gray-600">
-                {t('cityReview.downvotes', 'Downvotes')}
+                {t('cityReview.downvotes') || 'Downvotes'}
               </div>
             </div>
             
@@ -179,7 +179,7 @@ export default function CityReviewSystemApi({
                 {voteSummary.average_rating.toFixed(1)}
               </div>
               <div className="text-sm text-gray-600">
-                {t('cityReview.averageRating', 'Average Rating')}
+                {t('cityReview.averageRating') || 'Average Rating'}
               </div>
             </div>
           </div>
@@ -189,7 +189,7 @@ export default function CityReviewSystemApi({
             <div className="flex items-center justify-between text-sm">
               <span className="text-green-600">
                 <TrendingUp className="w-4 h-4 inline mr-1" />
-                {t('cityReview.positive', 'Positive')}
+                {t('cityReview.positive') || 'Positive'}
               </span>
               <span>{getVotePercentage(voteSummary.upvotes, voteSummary.total_votes)}%</span>
             </div>
@@ -203,7 +203,7 @@ export default function CityReviewSystemApi({
             <div className="flex items-center justify-between text-sm">
               <span className="text-red-600">
                 <TrendingDown className="w-4 h-4 inline mr-1" />
-                {t('cityReview.negative', 'Negative')}
+                {t('cityReview.negative') || 'Negative'}
               </span>
               <span>{getVotePercentage(voteSummary.downvotes, voteSummary.total_votes)}%</span>
             </div>
@@ -229,7 +229,7 @@ export default function CityReviewSystemApi({
           } ${voting ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <ThumbsUp className="w-5 h-5" />
-          {t('cityReview.upvote', 'Upvote')}
+          {t('cityReview.upvote') || 'Upvote'}
         </button>
         
         <button
@@ -242,7 +242,7 @@ export default function CityReviewSystemApi({
           } ${voting ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <Star className="w-5 h-5" />
-          {t('cityReview.neutral', 'Neutral')}
+          {t('cityReview.neutral') || 'Neutral'}
         </button>
         
         <button
@@ -255,7 +255,7 @@ export default function CityReviewSystemApi({
           } ${voting ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
           <ThumbsDown className="w-5 h-5" />
-          {t('cityReview.downvote', 'Downvote')}
+          {t('cityReview.downvote') || 'Downvote'}
         </button>
       </div>
 
@@ -263,12 +263,12 @@ export default function CityReviewSystemApi({
       {showReviewForm && (
         <div className="bg-gray-50 rounded-lg p-6 mb-6">
           <h3 className="text-lg font-semibold mb-4">
-            {t('cityReview.writeReview', 'Write a Review')}
+            {t('cityReview.writeReview') || 'Write a Review'}
           </h3>
           <form onSubmit={handleSubmitReview} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('cityReview.rating', 'Rating')}
+                {t('cityReview.rating') || 'Rating'}
               </label>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((rating) => (
@@ -290,14 +290,14 @@ export default function CityReviewSystemApi({
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('cityReview.comment', 'Comment')}
+                {t('cityReview.comment') || 'Comment'}
               </label>
               <textarea
                 value={newReview.content}
                 onChange={(e) => setNewReview(prev => ({ ...prev, content: e.target.value }))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 rows={4}
-                placeholder={t('cityReview.commentPlaceholder', 'Share your experience...')}
+                placeholder={t('cityReview.commentPlaceholder') || 'Share your experience...'}
                 required
               />
             </div>
@@ -307,14 +307,14 @@ export default function CityReviewSystemApi({
                 type="submit"
                 className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                {t('cityReview.submit', 'Submit Review')}
+                {t('cityReview.submit') || 'Submit Review'}
               </button>
               <button
                 type="button"
                 onClick={() => setShowReviewForm(false)}
                 className="bg-gray-300 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-400 transition-colors"
               >
-                {t('common.cancel', 'Cancel')}
+                {t('common.cancel') || 'Cancel'}
               </button>
             </div>
           </form>
@@ -324,7 +324,7 @@ export default function CityReviewSystemApi({
       {/* Recent Reviews */}
       <div>
         <h3 className="text-lg font-semibold mb-4">
-          {t('cityReview.recentReviews', 'Recent Reviews')}
+          {t('cityReview.recentReviews') || 'Recent Reviews'}
         </h3>
         <div className="space-y-4">
           {/* Mock reviews - in real app, fetch from API */}

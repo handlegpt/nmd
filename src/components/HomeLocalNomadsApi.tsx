@@ -113,11 +113,11 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
 
       if (meetup) {
         // In a real app, you would send an invitation to the target user
-        alert('Coffee meetup invitation sent!')
+        alert(t('meetup.invitationSent') || 'Coffee meetup invitation sent!')
       }
     } catch (error) {
       console.error('Error creating coffee meetup:', error)
-      alert('Failed to send coffee meetup invitation')
+      alert(t('error.meetupFailed') || 'Failed to send coffee meetup invitation')
     }
   }
 
@@ -138,11 +138,11 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
 
       if (meetup) {
         // In a real app, you would send an invitation to the target user
-        alert('Work together invitation sent!')
+        alert(t('meetup.workInvitationSent') || 'Work together invitation sent!')
       }
     } catch (error) {
       console.error('Error creating work together meetup:', error)
-      alert('Failed to send work together invitation')
+      alert(t('error.workInvitationFailed') || 'Failed to send work together invitation')
     }
   }
 
@@ -158,11 +158,11 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
       )
 
       if (result) {
-        alert('Rating submitted successfully!')
+        alert(t('rating.submitted') || 'Rating submitted successfully!')
       }
     } catch (error) {
       console.error('Error rating user:', error)
-      alert('Failed to submit rating')
+      alert(t('error.ratingFailed') || 'Failed to submit rating')
     }
   }
 
@@ -177,10 +177,10 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'online': return t('status.online', 'Online')
-      case 'away': return t('status.away', 'Away')
-      case 'busy': return t('status.busy', 'Busy')
-      default: return t('status.offline', 'Offline')
+      case 'online': return t('status.online') || 'Online'
+      case 'away': return t('status.away') || 'Away'
+      case 'busy': return t('status.busy') || 'Busy'
+      default: return t('status.offline') || 'Offline'
     }
   }
 
@@ -202,13 +202,13 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
       <div className="flex items-center justify-between mb-6">
         <div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {t('localNomads.title', 'Local Nomads')}
+            {t('localNomads.title') || 'Local Nomads'}
           </h2>
           {location && (
             <div className="flex items-center text-gray-600">
               <MapPin className="w-4 h-4 mr-1" />
               <span>
-                {t('localNomads.youAreIn', 'You\'re in')} {location.city}, {location.country}
+                {t('localNomads.youAreIn') || 'You\'re in'} {location.city}, {location.country}
               </span>
             </div>
           )}
@@ -218,7 +218,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
             onClick={() => setShowAllUsers(!showAllUsers)}
             className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200 transition-colors"
           >
-            {showAllUsers ? t('localNomads.showNearby', 'Show Nearby') : t('localNomads.showAll', 'Show All')}
+            {showAllUsers ? (t('localNomads.showNearby') || 'Show Nearby') : (t('localNomads.showAll') || 'Show All')}
           </button>
         </div>
       </div>
@@ -231,7 +231,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
             <div>
               <div className="text-2xl font-bold text-blue-900">{nearbyUsers.length}</div>
               <div className="text-sm text-blue-700">
-                {t('localNomads.nearby', 'people online nearby')}
+                {t('localNomads.nearby') || 'people online nearby'}
               </div>
             </div>
           </div>
@@ -243,7 +243,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
             <div>
               <div className="text-2xl font-bold text-green-900">{onlineUsers.length}</div>
               <div className="text-sm text-green-700">
-                {t('localNomads.global', 'nomads active globally')}
+                {t('localNomads.global') || 'nomads active globally'}
               </div>
             </div>
           </div>
@@ -255,7 +255,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
             <div>
               <div className="text-2xl font-bold text-purple-900">128</div>
               <div className="text-sm text-purple-700">
-                {t('localNomads.globalNomads', 'Global Nomads')}
+                {t('localNomads.globalNomads') || 'Global Nomads'}
               </div>
             </div>
           </div>
@@ -266,7 +266,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
       <div className="space-y-3">
         {displayUsers.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            {t('localNomads.noUsers', 'No nomads online at the moment')}
+            {t('localNomads.noUsers') || 'No nomads online at the moment'}
           </div>
         ) : (
           displayUsers.map((onlineUser) => (
@@ -306,28 +306,28 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
                 <button
                   onClick={() => handleCoffeeMeetup(onlineUser.user_id)}
                   className="flex items-center gap-1 px-3 py-1 bg-orange-100 text-orange-700 rounded-lg text-sm hover:bg-orange-200 transition-colors"
-                  title={t('localNomads.coffeeMeetup', 'Coffee Meetup')}
+                  title={t('localNomads.coffeeMeetup') || 'Coffee Meetup'}
                 >
                   <Coffee className="w-4 h-4" />
-                  {t('localNomads.coffee', 'Coffee')}
+                  {t('localNomads.coffee') || 'Coffee'}
                 </button>
                 
                 <button
                   onClick={() => handleWorkTogether(onlineUser.user_id)}
                   className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200 transition-colors"
-                  title={t('localNomads.workTogether', 'Work Together')}
+                  title={t('localNomads.workTogether') || 'Work Together'}
                 >
                   <Briefcase className="w-4 h-4" />
-                  {t('localNomads.work', 'Work')}
+                  {t('localNomads.work') || 'Work'}
                 </button>
 
                 <button
                   onClick={() => handleRateUser(onlineUser.user_id, 5, 'overall')}
                   className="flex items-center gap-1 px-3 py-1 bg-yellow-100 text-yellow-700 rounded-lg text-sm hover:bg-yellow-200 transition-colors"
-                  title={t('localNomads.rateUser', 'Rate User')}
+                  title={t('localNomads.rateUser') || 'Rate User'}
                 >
                   <Star className="w-4 h-4" />
-                  {t('localNomads.rate', 'Rate')}
+                  {t('localNomads.rate') || 'Rate'}
                 </button>
               </div>
             </div>
@@ -342,7 +342,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
             onClick={() => setShowAllUsers(true)}
             className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
-            {t('localNomads.viewAll', 'View All Online Nomads')}
+            {t('localNomads.viewAll') || 'View All Online Nomads'}
           </button>
         </div>
       )}
