@@ -41,16 +41,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Get organizer information for each meetup
-    const organizerIds = [...new Set(meetups.map(m => m.creator_id).filter(Boolean))]
+    const organizerIds = [...new Set(meetups.map((m: any) => m.creator_id).filter(Boolean))]
     const { data: organizers } = await supabase
       .from('users')
       .select('id, name, avatar_url')
       .in('id', organizerIds)
 
-    const organizerMap = new Map(organizers?.map(o => [o.id, o]) || [])
+    const organizerMap = new Map(organizers?.map((o: any) => [o.id, o]) || [])
 
     // Format response
-    const formattedMeetups = meetups.map(meetup => {
+    const formattedMeetups = meetups.map((meetup: any) => {
       const organizer = organizerMap.get(meetup.creator_id)
       
       return {
