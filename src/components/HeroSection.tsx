@@ -10,7 +10,17 @@ import WifiSpeedTest from '@/components/WifiSpeedTest'
 
 export default function HeroSection() {
   const { t } = useLanguage()
-  const { user } = useUser()
+  
+  // Safely get user context - handle case where UserProvider is not available during static generation
+  let user = null
+  try {
+    const userContext = useUser()
+    user = userContext?.user || null
+  } catch (error) {
+    // UserProvider not available during static generation
+    user = null
+  }
+  
   const [currentTime, setCurrentTime] = useState('--:--')
   const [currentLocation, setCurrentLocation] = useState(t('home.hero.liveInfo.gettingLocation'))
   const [isLoading, setIsLoading] = useState(true)

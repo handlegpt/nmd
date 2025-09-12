@@ -47,7 +47,17 @@ export default function EnhancedCityRanking({
   showPersonalized = true
 }: EnhancedCityRankingProps) {
   const { t } = useTranslation()
-  const { user } = useUser()
+  
+  // Safely get user context - handle case where UserProvider is not available during static generation
+  let user = null
+  try {
+    const userContext = useUser()
+    user = userContext?.user || null
+  } catch (error) {
+    // UserProvider not available during static generation
+    user = null
+  }
+  
   const [cities, setCities] = useState<City[]>([])
   const [filteredCities, setFilteredCities] = useState<City[]>([])
   const [loading, setLoading] = useState(true)

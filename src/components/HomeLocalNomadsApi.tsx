@@ -25,7 +25,17 @@ interface HomeLocalNomadsApiProps {
 
 export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsApiProps) {
   const { t } = useTranslation()
-  const { user } = useUser()
+  
+  // Safely get user context - handle case where UserProvider is not available during static generation
+  let user = null
+  try {
+    const userContext = useUser()
+    user = userContext?.user || null
+  } catch (error) {
+    // UserProvider not available during static generation
+    user = null
+  }
+  
   const [onlineUsers, setOnlineUsers] = useState<OnlineUser[]>([])
   const [loading, setLoading] = useState(true)
   const [location, setLocation] = useState<{ city: string; country: string } | null>(null)
