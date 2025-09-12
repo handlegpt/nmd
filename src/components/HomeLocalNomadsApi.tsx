@@ -78,31 +78,9 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
       }
     } catch (error) {
       console.error('Error loading online users:', error)
-      // 如果API失败，使用模拟数据
-      const mockUsers = [
-        {
-          id: '1',
-          name: 'Sarah Chen',
-          avatar: 'SC',
-          status: 'online',
-          lastSeen: new Date(),
-          location: { city: 'Tokyo', country: 'Japan' },
-          interests: ['咖啡', '摄影', '技术'],
-          isAvailable: true
-        },
-        {
-          id: '2',
-          name: 'Alex Rodriguez',
-          avatar: 'AR',
-          status: 'online',
-          lastSeen: new Date(),
-          location: { city: 'Tokyo', country: 'Japan' },
-          interests: ['创业', '旅行', '美食'],
-          isAvailable: true
-        }
-      ]
-      setOnlineUsers(mockUsers)
-      setNearbyUsers(mockUsers)
+      // 如果API失败，设置为空数组
+      setOnlineUsers([])
+      setNearbyUsers([])
     } finally {
       setLoading(false)
     }
