@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react'
-import { userPreferencesMigration } from '@/lib/migrateUserPreferences'
+import { singleUserMigration } from '@/lib/singleUserMigration'
 import { useUser } from '@/contexts/GlobalStateContext'
 
 export default function TestMigrationPage() {
@@ -12,7 +12,7 @@ export default function TestMigrationPage() {
 
   useEffect(() => {
     // 获取迁移统计信息
-    const migrationStats = userPreferencesMigration.getMigrationStats()
+    const migrationStats = singleUserMigration.getMigrationStats()
     setStats(migrationStats)
   }, [])
 
@@ -24,11 +24,11 @@ export default function TestMigrationPage() {
 
     setIsLoading(true)
     try {
-      const result = await userPreferencesMigration.migrateCurrentUser()
+      const result = await singleUserMigration.migrateUser(user.profile.id)
       setMigrationResult(result)
       
       // 更新统计信息
-      const newStats = userPreferencesMigration.getMigrationStats()
+      const newStats = singleUserMigration.getMigrationStats()
       setStats(newStats)
     } catch (error) {
       console.error('Migration test failed:', error)
@@ -45,7 +45,7 @@ export default function TestMigrationPage() {
     }
 
     try {
-      const verification = await userPreferencesMigration.verifyMigration(user.profile.id)
+      const verification = await singleUserMigration.verifyMigration(user.profile.id)
       console.log('Migration verification:', verification)
       alert(`Migration verification: ${verification.matches ? 'SUCCESS' : 'FAILED'}`)
     } catch (error) {
