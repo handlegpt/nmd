@@ -54,7 +54,7 @@ SELECT
         'os', 'macOS',
         'device', 'desktop'
     ) as device_info,
-    NOW() - INTERVAL '0 to 10 minutes' * RANDOM()
+    NOW() - (RANDOM() * INTERVAL '10 minutes')
 FROM users u
 WHERE u.is_visible_in_nomads = true
 LIMIT 20;
@@ -84,7 +84,7 @@ SELECT
         'os', 'iOS',
         'device', 'mobile'
     ),
-    NOW() - INTERVAL '0 to 5 minutes' * RANDOM()
+    NOW() - (RANDOM() * INTERVAL '5 minutes')
 FROM users u
 WHERE u.is_visible_in_nomads = true
 AND u.id NOT IN (SELECT user_id FROM online_users)
