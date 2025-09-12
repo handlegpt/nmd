@@ -1,103 +1,105 @@
--- Fix meetups table structure
--- Add missing columns that are referenced in the API
+-- 修复 meetups 表结构
+-- 处理 organizer_id 列不存在的问题
 
--- Add city column if it doesn't exist
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'meetups' AND column_name = 'city'
-    ) THEN
-        ALTER TABLE meetups ADD COLUMN city VARCHAR(255);
-    END IF;
-END $$;
+-- 首先检查表是否存在，如果存在则删除重建
+DROP TABLE IF EXISTS meetup_participants CASCADE;
+DROP TABLE IF EXISTS meetups CASCADE;
 
--- Add country column if it doesn't exist
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'meetups' AND column_name = 'country'
-    ) THEN
-        ALTER TABLE meetups ADD COLUMN country VARCHAR(255);
-    END IF;
-END $$;
+-- 重新创建 meetups 表
+CREATE TABLE meetups (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    organizer_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    location VARCHAR(255) NOT NULL,
+    meeting_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    max_participants INTEGER DEFAULT 10,
+    current_participants INTEGER DEFAULT 1,
+    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'cancelled', 'completed', 'full')),
+    meetup_type VARCHAR(20) DEFAULT 'coffee' CHECK (meetup_type IN ('coffee', 'work', 'social', 'other')),
+    tags TEXT[] DEFAULT '{}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 
--- Add coordinates column if it doesn't exist
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'meetups' AND column_name = 'coordinates'
-    ) THEN
-        ALTER TABLE meetups ADD COLUMN coordinates JSONB;
-    END IF;
-END $$;
+-- 创建 meetup_participants 表
+CREATE TABLE meetup_participants (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    meetup_id UUID REFERENCES meetups(id) ON DELETE CASCADE NOT NULL,
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE NOT NULL,
+    status VARCHAR(20) DEFAULT 'joined' CHECK (status IN ('joined', 'left', 'removed')),
+    joined_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    left_at TIMESTAMP WITH TIME ZONE,
+    
+    -- 防止重复参与者
+    UNIQUE(meetup_id, user_id)
+);
 
--- Add status column if it doesn't exist
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'meetups' AND column_name = 'status'
-    ) THEN
-        ALTER TABLE meetups ADD COLUMN status VARCHAR(50) DEFAULT 'upcoming';
-    END IF;
-END $$;
+-- 添加基本索引
+CREATE INDEX idx_meetups_organizer_id ON meetups(organizer_id);
+CREATE INDEX idx_meetups_meeting_time ON meetups(meeting_time);
+CREATE INDEX idx_meetups_status ON meetups(status);
+CREATE INDEX idx_meetups_meetup_type ON meetups(meetup_type);
 
--- Add current_participants column if it doesn't exist
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'meetups' AND column_name = 'current_participants'
-    ) THEN
-        ALTER TABLE meetups ADD COLUMN current_participants INTEGER DEFAULT 0;
-    END IF;
-END $$;
+CREATE INDEX idx_meetup_participants_meetup_id ON meetup_participants(meetup_id);
+CREATE INDEX idx_meetup_participants_user_id ON meetup_participants(user_id);
 
--- Add organizer column if it doesn't exist
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'meetups' AND column_name = 'organizer'
-    ) THEN
-        ALTER TABLE meetups ADD COLUMN organizer JSONB;
-    END IF;
-END $$;
+-- 启用行级安全
+ALTER TABLE meetups ENABLE ROW LEVEL SECURITY;
+ALTER TABLE meetup_participants ENABLE ROW LEVEL SECURITY;
 
--- Add tags column if it doesn't exist
-DO $$ 
-BEGIN
-    IF NOT EXISTS (
-        SELECT 1 FROM information_schema.columns 
-        WHERE table_name = 'meetups' AND column_name = 'tags'
-    ) THEN
-        ALTER TABLE meetups ADD COLUMN tags TEXT[];
-    END IF;
-END $$;
+-- 基本 RLS 策略
+CREATE POLICY "Users can view all active meetups" ON meetups
+    FOR SELECT USING (status = 'active');
 
--- Update existing records with default values
-UPDATE meetups 
-SET 
-    city = COALESCE(city, 'Unknown'),
-    country = COALESCE(country, 'Unknown'),
-    status = COALESCE(status, 'upcoming'),
-    current_participants = COALESCE(current_participants, 0),
-    tags = COALESCE(tags, ARRAY[]::TEXT[])
-WHERE 
-    city IS NULL 
-    OR country IS NULL 
-    OR status IS NULL 
-    OR current_participants IS NULL 
-    OR tags IS NULL;
+CREATE POLICY "Users can view their own meetups" ON meetups
+    FOR SELECT USING (auth.uid() = organizer_id);
 
--- Create index on city for better performance
-CREATE INDEX IF NOT EXISTS idx_meetups_city ON meetups(city);
+CREATE POLICY "Users can create meetups" ON meetups
+    FOR INSERT WITH CHECK (auth.uid() = organizer_id);
 
--- Create index on status for filtering
-CREATE INDEX IF NOT EXISTS idx_meetups_status ON meetups(status);
+CREATE POLICY "Users can update their own meetups" ON meetups
+    FOR UPDATE USING (auth.uid() = organizer_id);
 
--- Create index on meetup_type for filtering
-CREATE INDEX IF NOT EXISTS idx_meetups_type ON meetups(meetup_type);
+CREATE POLICY "Users can delete their own meetups" ON meetups
+    FOR DELETE USING (auth.uid() = organizer_id);
+
+-- meetup_participants 策略
+CREATE POLICY "Users can view participants of meetups they're in" ON meetup_participants
+    FOR SELECT USING (
+        auth.uid() = user_id OR 
+        EXISTS (SELECT 1 FROM meetups WHERE id = meetup_id AND organizer_id = auth.uid())
+    );
+
+CREATE POLICY "Users can join meetups" ON meetup_participants
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own participation" ON meetup_participants
+    FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can leave meetups" ON meetup_participants
+    FOR DELETE USING (auth.uid() = user_id);
+
+-- 插入一些测试数据
+INSERT INTO meetups (organizer_id, title, description, location, meeting_time, max_participants, meetup_type, tags)
+SELECT 
+    u.id,
+    'Coffee Chat in ' || COALESCE(u.current_city, 'Tokyo'),
+    'Let''s grab coffee and chat about digital nomad life!',
+    'Local Coffee Shop',
+    NOW() + INTERVAL '1 day',
+    4,
+    'coffee',
+    ARRAY['coffee', 'networking', 'casual']
+FROM users u
+WHERE u.is_visible_in_nomads = true
+LIMIT 3;
+
+-- 将组织者添加为参与者
+INSERT INTO meetup_participants (meetup_id, user_id, status)
+SELECT m.id, m.organizer_id, 'joined'
+FROM meetups m
+WHERE NOT EXISTS (
+    SELECT 1 FROM meetup_participants mp 
+    WHERE mp.meetup_id = m.id AND mp.user_id = m.organizer_id
+);

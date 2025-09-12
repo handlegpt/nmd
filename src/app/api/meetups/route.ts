@@ -19,13 +19,7 @@ export async function GET(request: NextRequest) {
       .from('meetups')
       .select(`
         *,
-        organizer:organizer_id(id, name, avatar_url, current_city),
-        participants:meetup_participants(
-          id,
-          status,
-          joined_at,
-          user:user_id(id, name, avatar_url)
-        )
+        organizer:organizer_id(id, name, avatar_url, current_city)
       `)
       .eq('status', status)
       .order('meeting_time', { ascending: true })
