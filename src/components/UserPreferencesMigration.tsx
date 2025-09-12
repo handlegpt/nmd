@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { userPreferencesMigration, MigrationResult } from '@/lib/migrateUserPreferences'
-import { useAuth } from '@/contexts/AuthContext'
+import { useUser } from '@/contexts/GlobalStateContext'
 import { logInfo, logError } from '@/lib/logger'
 
 interface MigrationStats {
@@ -13,7 +13,7 @@ interface MigrationStats {
 }
 
 export default function UserPreferencesMigration() {
-  const { user } = useAuth()
+  const { user } = useUser()
   const [stats, setStats] = useState<MigrationStats>({
     hasLocalData: false,
     localFavoritesCount: 0,
