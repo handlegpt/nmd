@@ -66,6 +66,7 @@ export interface RouteOption {
   pros: string[]
   cons: string[]
   score: number
+  riskAssessment?: RiskAssessment
 }
 
 export interface VisaStrategy {
@@ -98,15 +99,15 @@ export interface RiskAssessment {
 // =====================================================
 
 abstract class BaseAgent {
-  protected name: string
-  protected description: string
+  public name: string
+  public description: string
 
   constructor(name: string, description: string) {
     this.name = name
     this.description = description
   }
 
-  abstract execute(input: any): Promise<any>
+  abstract execute(...args: any[]): Promise<any>
 
   protected log(message: string, data?: any): void {
     console.log(`[${this.name}] ${message}`, data || '')
@@ -351,17 +352,17 @@ export class RoutePlanningAgent extends BaseAgent {
 
     // 生成多城市路线
     if (candidates.length >= 2) {
-      const multiCityRoutes = this.generateMultiCityRoutes(candidates, userProfile)
+      const multiCityRoutes = await this.generateMultiCityRoutes(candidates, userProfile)
       routes.push(...multiCityRoutes)
     }
 
     return routes
   }
 
-  private generateMultiCityRoutes(
+  private async generateMultiCityRoutes(
     candidates: CityRecommendation[],
     userProfile: UserProfile
-  ): RouteOption[] {
+  ): Promise<RouteOption[]> {
     const routes: RouteOption[] = []
     const maxCities = Math.min(userProfile.constraints.maxCities, 3)
 
@@ -377,7 +378,7 @@ export class RoutePlanningAgent extends BaseAgent {
             cities: selectedCities,
             totalCost: selectedCities.reduce((sum, city) => sum + city.estimatedCost, 0),
             totalDuration: selectedCities.reduce((sum, city) => sum + city.stayDuration, 0),
-            visaStrategy: this.generateVisaStrategy(selectedCities),
+            visaStrategy: await this.generateVisaStrategy(selectedCities),
             highlights: this.generateHighlights(selectedCities),
             pros: this.generatePros(selectedCities),
             cons: this.generateCons(selectedCities),

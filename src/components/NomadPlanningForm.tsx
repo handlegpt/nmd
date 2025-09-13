@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
-import { MapPin, DollarSign, Clock, Globe, Heart, Coffee, Wifi, Users } from 'lucide-react'
+import { MapPin, DollarSign, Clock, Globe, Heart, Coffee, Wifi, Users, Brain } from 'lucide-react'
 
 interface NomadPlanningFormProps {
   onSubmit: (data: any) => void

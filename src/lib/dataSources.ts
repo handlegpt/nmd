@@ -620,10 +620,10 @@ export class POIService {
 
 export class DataSourceManager {
   private static instance: DataSourceManager
-  private costService: CostOfLivingService
-  private visaService: NomadVisaService
-  private exchangeService: ExchangeRateService
-  private poiService: POIService
+  public costService: CostOfLivingService
+  public visaService: NomadVisaService
+  public exchangeService: ExchangeRateService
+  public poiService: POIService
 
   constructor() {
     this.costService = CostOfLivingService.getInstance()

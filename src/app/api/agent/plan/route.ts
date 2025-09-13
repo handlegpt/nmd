@@ -137,7 +137,7 @@ export async function POST(request: NextRequest) {
         updatedAt: plan.updatedAt
       },
       meta: {
-        processingTime: Date.now() - request.headers.get('x-request-time') || Date.now(),
+        processingTime: Date.now() - (parseInt(request.headers.get('x-request-time') || '0') || Date.now()),
         agentStatus: nomadPlanningAgent.getAgentStatus()
       }
     })
