@@ -324,15 +324,42 @@ export class NomadVisaService {
     }
 
     try {
-      // 从数据库获取数据
-      const response = await fetch('/api/nomad-visas')
-      if (!response.ok) {
-        throw new Error('Failed to fetch nomad visas')
-      }
+      // 直接使用Supabase客户端获取数据
+      const { createClient } = await import('@/lib/supabase/server')
+      const supabase = createClient()
       
-      const visas = await response.json()
-      this.cache.set(cacheKey, visas)
-      return visas
+      const { data: visas, error } = await supabase
+        .from('nomad_visas')
+        .select('*')
+        .eq('is_active', true)
+        .order('income_requirement_usd', { ascending: true })
+
+      if (error) {
+        console.error('Error fetching nomad visas from database:', error)
+        throw error
+      }
+
+      // 转换数据格式
+      const formattedVisas: NomadVisaData[] = (visas || []).map((visa: any) => ({
+        country: visa.country_code,
+        countryName: visa.country_name,
+        visaName: visa.visa_name,
+        visaType: visa.visa_type,
+        durationMonths: visa.duration_months,
+        costUSD: visa.cost_usd,
+        incomeRequirementUSD: visa.income_requirement_usd,
+        applicationTimeDays: visa.application_time_days,
+        requirements: visa.requirements || [],
+        benefits: visa.benefits || [],
+        taxImplications: visa.tax_implications || '',
+        renewalPossible: visa.renewal_possible,
+        maxRenewals: visa.max_renewals,
+        isActive: visa.is_active,
+        lastUpdated: new Date(visa.last_updated)
+      }))
+
+      this.cache.set(cacheKey, formattedVisas)
+      return formattedVisas
     } catch (error) {
       console.error('Error fetching nomad visas:', error)
       // 返回默认数据

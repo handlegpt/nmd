@@ -1209,23 +1209,33 @@ export class NomadPlanningAgent {
    */
   private async getAvailableCities(countries: string[]): Promise<any[]> {
     try {
-      // 从数据库获取城市数据
-      const response = await fetch('/api/cities')
-      if (!response.ok) {
-        throw new Error('Failed to fetch cities')
-      }
+      // 直接使用Supabase客户端获取城市数据
+      const { createClient } = await import('@/lib/supabase/server')
+      const supabase = createClient()
       
-      const cities = await response.json()
-      return cities.filter((city: any) => countries.includes(city.country_code))
+      const { data: cities, error } = await supabase
+        .from('cities')
+        .select('*')
+        .in('country_code', countries)
+        .eq('is_active', true)
+        .order('nomad_score', { ascending: false })
+        .limit(50)
+
+      if (error) {
+        console.error('获取城市数据失败:', error)
+        throw error
+      }
+
+      return cities || []
     } catch (error) {
       console.error('获取城市数据失败:', error)
       // 返回默认城市数据
       return [
-        { name: 'Berlin', country: 'Germany', country_code: 'DEU' },
-        { name: 'Lisbon', country: 'Portugal', country_code: 'PRT' },
-        { name: 'Bangkok', country: 'Thailand', country_code: 'THA' },
-        { name: 'Mexico City', country: 'Mexico', country_code: 'MEX' },
-        { name: 'Buenos Aires', country: 'Argentina', country_code: 'ARG' }
+        { name: 'Berlin', country: 'Germany', country_code: 'DEU', nomad_score: 8.5 },
+        { name: 'Lisbon', country: 'Portugal', country_code: 'PRT', nomad_score: 8.2 },
+        { name: 'Bangkok', country: 'Thailand', country_code: 'THA', nomad_score: 7.8 },
+        { name: 'Mexico City', country: 'Mexico', country_code: 'MEX', nomad_score: 7.5 },
+        { name: 'Buenos Aires', country: 'Argentina', country_code: 'ARG', nomad_score: 7.2 }
       ]
     }
   }
