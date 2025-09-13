@@ -33,7 +33,7 @@ export default function ToolsPage() {
   const { t } = useLanguage();
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [pinnedTools, setPinnedTools] = useState<string[]>(['domain-tracker', 'ai-recommendations', 'city-comparison', 'tax-calculator']);
+  const [pinnedTools, setPinnedTools] = useState<string[]>(['domain-tracker', 'city-comparison', 'tax-calculator']);
 
   // 工具元数据配置 - 便于快速增减工具
   const toolsData = [
@@ -175,20 +175,6 @@ export default function ToolsPage() {
       lastUpdated: '2024-01-21'
     },
     
-    // AI Tools
-    {
-      id: 'ai-recommendations',
-      title: 'AI Recommendations',
-      description: 'Get personalized city and place recommendations based on your preferences and lifestyle',
-      icon: Brain,
-      emoji: '🧠',
-      category: 'planners',
-      status: 'live',
-      tags: ['ai', 'recommendations', 'personalized', 'lifestyle'],
-      features: ['Smart matching', 'Preference analysis', 'Lifestyle insights', 'Personalized suggestions'],
-      popularity: 92,
-      lastUpdated: '2024-01-24'
-    },
     {
       id: 'city-comparison',
       title: 'City Comparison Tool',
@@ -274,10 +260,6 @@ export default function ToolsPage() {
       switch (tool.id) {
         case 'domain-tracker':
           window.location.href = '/nomadtools/domains';
-          break;
-        case 'ai-recommendations':
-          // Show AI recommendations component inline
-          window.location.href = '/nomadtools/ai-recommendations';
           break;
         case 'city-comparison':
           // Show city comparison component inline
