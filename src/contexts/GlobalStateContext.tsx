@@ -204,6 +204,9 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
 
   // 初始化时检查认证状态
   useEffect(() => {
+    // 确保只在客户端运行
+    if (typeof window === 'undefined') return
+    
     let isMounted = true
     
     const initializeAuth = async () => {
@@ -261,39 +264,42 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
       
       // 为每个用户创建独立的profile存储，并添加到用户列表中
       try {
-        const userProfileKey = `user_profile_details_${profile.id}`
-        const existingProfile = localStorage.getItem(userProfileKey)
-        
-        if (!existingProfile) {
-          const defaultProfile = {
-            id: profile.id,
-            name: profile.name || 'New Nomad',
-            email: profile.email || '',
-            avatar_url: profile.avatar_url || '',
-            bio: '',
-            current_city: profile.current_city || '',
-            profession: '',
-            company: '',
-            skills: [],
-            interests: [],
-            social_links: {},
-            contact: {},
-            travel_preferences: {
-              budget_range: '',
-              preferred_climate: '',
-              travel_style: '',
-              accommodation_type: ''
-            },
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString()
+        // 检查是否在浏览器环境中
+        if (typeof window !== 'undefined' && window.localStorage) {
+          const userProfileKey = `user_profile_details_${profile.id}`
+          const existingProfile = localStorage.getItem(userProfileKey)
+          
+          if (!existingProfile) {
+            const defaultProfile = {
+              id: profile.id,
+              name: profile.name || 'New Nomad',
+              email: profile.email || '',
+              avatar_url: profile.avatar_url || '',
+              bio: '',
+              current_city: profile.current_city || '',
+              profession: '',
+              company: '',
+              skills: [],
+              interests: [],
+              social_links: {},
+              contact: {},
+              travel_preferences: {
+                budget_range: '',
+                preferred_climate: '',
+                travel_style: '',
+                accommodation_type: ''
+              },
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            }
+            localStorage.setItem(userProfileKey, JSON.stringify(defaultProfile))
+            logInfo('Created user profile for Local Nomads', { userId: profile.id }, 'GlobalState')
           }
-          localStorage.setItem(userProfileKey, JSON.stringify(defaultProfile))
-          logInfo('Created user profile for Local Nomads', { userId: profile.id }, 'GlobalState')
+          
+          // 同时更新通用的user_profile_details键（向后兼容）
+          const currentProfile = JSON.parse(localStorage.getItem(userProfileKey) || '{}')
+          localStorage.setItem('user_profile_details', JSON.stringify(currentProfile))
         }
-        
-        // 同时更新通用的user_profile_details键（向后兼容）
-        const currentProfile = JSON.parse(localStorage.getItem(userProfileKey) || '{}')
-        localStorage.setItem('user_profile_details', JSON.stringify(currentProfile))
         
       } catch (error) {
         logError('Failed to create user profile details', error, 'GlobalState')

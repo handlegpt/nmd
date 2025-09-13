@@ -35,18 +35,19 @@ export async function GET(request: NextRequest) {
     if (error) {
       logError('Failed to fetch meetups data', error, 'HotMeetupsAPI')
       
-      // 如果表不存在，返回空数组而不是错误
-      if (error.code === '42P01') { // Table doesn't exist
+      // 如果表不存在或其他错误，返回空数组而不是错误
+      if (error.code === '42P01' || error.code === 'PGRST116') { // Table doesn't exist or column doesn't exist
         return NextResponse.json({
           success: true,
           data: []
         })
       }
       
-      return NextResponse.json(
-        { error: 'Failed to fetch meetups' },
-        { status: 500 }
-      )
+      // 对于其他错误，也返回空数组而不是500错误
+      return NextResponse.json({
+        success: true,
+        data: []
+      })
     }
 
     // Get organizer information for each meetup

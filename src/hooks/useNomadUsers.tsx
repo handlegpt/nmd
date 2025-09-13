@@ -159,12 +159,14 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
     
     try {
       // 如果用户资料中有坐标信息，使用真实距离计算
-      const userProfile = JSON.parse(localStorage.getItem('user_profile_details') || '{}')
-      if (userProfile.coordinates && currentLocation.lat && currentLocation.lng) {
-        return calculateHaversineDistance(
-          currentLocation.lat, currentLocation.lng,
-          userProfile.coordinates.lat, userProfile.coordinates.lng
-        )
+      if (typeof window !== 'undefined' && window.localStorage) {
+        const userProfile = JSON.parse(localStorage.getItem('user_profile_details') || '{}')
+        if (userProfile.coordinates && currentLocation.lat && currentLocation.lng) {
+          return calculateHaversineDistance(
+            currentLocation.lat, currentLocation.lng,
+            userProfile.coordinates.lat, userProfile.coordinates.lng
+          )
+        }
       }
     } catch (e) {
       logError('Error calculating distance', e, 'useNomadUsers')
