@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { useTranslation } from '@/hooks/useTranslation'
 import PageLayout from '@/components/PageLayout'
-import NomadAgent from '@/components/NomadAgent'
+import PersonalizedRecommendations from '@/components/PersonalizedRecommendations'
 import { Brain, ArrowLeft, Star, MapPin, Users } from 'lucide-react'
 
 export default function AIRecommendationsPage() {
@@ -63,9 +63,9 @@ export default function AIRecommendationsPage() {
         </div>
       </div>
 
-      {/* Nomad Agent Component */}
+      {/* AI Recommendations Component */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200">
-        <NomadAgent />
+        <PersonalizedRecommendations />
       </div>
 
       {/* How It Works */}

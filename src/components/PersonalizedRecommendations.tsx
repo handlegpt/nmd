@@ -200,48 +200,6 @@ export default function PersonalizedRecommendations() {
     return icons[id] || '⚙️'
   }
 
-  // 生成数字游民路线
-  const generateNomadRoute = (selectedCity: ScoredCity) => {
-    // 基于用户偏好和选中的城市生成路线
-    const route = {
-      primaryCity: selectedCity,
-      alternativeCities: recommendations.filter(city => city.id !== selectedCity.id).slice(0, 2),
-      totalDuration: 6, // 默认6个月
-      estimatedCost: selectedCity.cost_of_living * 6,
-      visaStrategy: generateVisaStrategy(selectedCity),
-      highlights: generateRouteHighlights(selectedCity)
-    }
-    
-    // 显示路线规划结果
-    alert(`数字游民路线规划完成！\n\n主要目的地：${selectedCity.name}\n预计总成本：$${route.estimatedCost}\n签证策略：${route.visaStrategy}\n\n详细规划功能正在开发中...`)
-  }
-
-  // 生成签证策略
-  const generateVisaStrategy = (city: ScoredCity) => {
-    if (city.visa_type?.includes('Visa Free')) {
-      return '免签入境，可停留90天'
-    } else if (city.visa_type?.includes('Digital Nomad')) {
-      return '申请数字游民签证，可停留12个月'
-    } else {
-      return '需要申请旅游签证，建议提前1个月申请'
-    }
-  }
-
-  // 生成路线亮点
-  const generateRouteHighlights = (city: ScoredCity) => {
-    const highlights = []
-    if (city.wifi_speed && city.wifi_speed > 50) {
-      highlights.push('高速网络环境')
-    }
-    if (city.cost_of_living && city.cost_of_living < 2000) {
-      highlights.push('生活成本较低')
-    }
-    if (city.visa_type?.includes('Visa Free')) {
-      highlights.push('免签便利')
-    }
-    return highlights.join('、')
-  }
-
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
       {/* Enhanced Header with Description */}
@@ -467,17 +425,6 @@ export default function PersonalizedRecommendations() {
                   </button>
                   <button className="flex-1 border border-gray-300 text-gray-700 py-2 px-3 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium">
                     {t('recommendations.addToFavorites')}
-                  </button>
-                </div>
-                
-                {/* 新增：路线规划按钮 */}
-                <div className="mt-3">
-                  <button 
-                    onClick={() => generateNomadRoute(city)}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 text-sm font-medium flex items-center justify-center space-x-2"
-                  >
-                    <span>🚀</span>
-                    <span>生成数字游民路线</span>
                   </button>
                 </div>
               </div>
