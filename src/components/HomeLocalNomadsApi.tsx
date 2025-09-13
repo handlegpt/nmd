@@ -41,15 +41,10 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
   const [location, setLocation] = useState<{ city: string; country: string } | null>(null)
   const [nearbyUsers, setNearbyUsers] = useState<OnlineUser[]>([])
   const [showAllUsers, setShowAllUsers] = useState(false)
-  
-  // Hot Cities state
-  const [hotCities, setHotCities] = useState<any[]>([])
-  const [loadingHotCities, setLoadingHotCities] = useState(false)
 
   useEffect(() => {
     loadOnlineUsers()
     getCurrentLocation()
-    fetchHotCities()
     
     // Set up periodic updates
     const interval = setInterval(loadOnlineUsers, 30000) // Update every 30 seconds
