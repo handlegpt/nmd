@@ -9,7 +9,10 @@ import {
   ArrowRight, 
   ArrowLeft, 
   CheckCircle,
-  X
+  X,
+  Brain,
+  Route,
+  Clock
 } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
 import FixedLink from '@/components/FixedLink'
@@ -32,43 +35,43 @@ export default function QuickStartWizard() {
 
   const steps: WizardStep[] = [
     {
-      id: 'explore-cities',
-      title: t('quickStart.step1.title'),
-      description: t('quickStart.step1.description'),
+      id: 'ai-planning',
+      title: 'AI智能规划',
+      description: '让AI为你规划个性化的数字游民路线，基于你的预算、国籍和偏好',
+      icon: <Brain className="h-6 w-6" />,
+      action: {
+        text: '开始AI规划',
+        href: '/nomadagent'
+      }
+    },
+    {
+      id: 'route-optimization',
+      title: '路线优化',
+      description: '获得最优的数字游民路线，考虑签证要求、成本和时间安排',
+      icon: <Route className="h-6 w-6" />,
+      action: {
+        text: '查看路线',
+        href: '/nomadagent'
+      }
+    },
+    {
+      id: 'visa-strategy',
+      title: '签证策略',
+      description: '基于你的国籍制定智能签证策略，最大化停留时间和便利性',
       icon: <Globe className="h-6 w-6" />,
       action: {
-        text: t('quickStart.step1.action'),
-        href: '/nomadcities'
+        text: '签证分析',
+        href: '/nomadagent'
       }
     },
     {
-      id: 'find-places',
-      title: t('quickStart.step2.title'),
-      description: t('quickStart.step2.description'),
-      icon: <MapPin className="h-6 w-6" />,
+      id: 'budget-forecast',
+      title: '预算预测',
+      description: '准确预测你的数字游民成本，优化预算分配和支出计划',
+      icon: <Clock className="h-6 w-6" />,
       action: {
-        text: t('quickStart.step2.action'),
-        href: '/nomadplaces'
-      }
-    },
-    {
-      id: 'connect-nomads',
-      title: t('quickStart.step3.title'),
-      description: t('quickStart.step3.description'),
-      icon: <Users className="h-6 w-6" />,
-      action: {
-        text: t('quickStart.step3.action'),
-        href: '/local-nomads'
-      }
-    },
-    {
-      id: 'rate-cities',
-      title: t('quickStart.step4.title'),
-      description: t('quickStart.step4.description'),
-      icon: <Star className="h-6 w-6" />,
-      action: {
-        text: t('quickStart.step4.action'),
-        href: '/nomadcities'
+        text: '预算分析',
+        href: '/nomadagent'
       }
     }
   ]
@@ -103,14 +106,14 @@ export default function QuickStartWizard() {
       <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-blue-600 to-purple-600 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 group"
-        aria-label={t('quickStart.open')}
+        aria-label="Nomad Agent"
       >
         <div className="relative">
-          <Globe className="h-6 w-6" />
+          <Brain className="h-6 w-6" />
           <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
         </div>
         <div className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-white text-gray-800 px-3 py-2 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
-          {t('quickStart.tooltip')}
+          Nomad Agent - AI智能规划
         </div>
       </button>
 
@@ -121,7 +124,7 @@ export default function QuickStartWizard() {
             {/* 头部 */}
             <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6">
               <div className="flex justify-between items-center">
-                <h2 className="text-xl font-bold">{t('quickStart.title')}</h2>
+                <h2 className="text-xl font-bold">Nomad Agent</h2>
                 <button
                   onClick={handleComplete}
                   className="text-white hover:text-gray-200 transition-colors"
@@ -129,7 +132,7 @@ export default function QuickStartWizard() {
                   <X className="h-6 w-6" />
                 </button>
               </div>
-              <p className="text-blue-100 mt-2">{t('quickStart.subtitle')}</p>
+              <p className="text-blue-100 mt-2">AI智能规划你的数字游民路线</p>
             </div>
 
             {/* 进度条 */}

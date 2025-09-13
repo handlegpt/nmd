@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { SparklesIcon, MapPinIcon, StarIcon, FilterIcon } from 'lucide-react'
+import { SparklesIcon, MapPinIcon, StarIcon, FilterIcon, Route, Globe, Clock } from 'lucide-react'
 import { getCities } from '@/lib/api'
 import { City } from '@/lib/supabase'
 import { useTranslation } from '@/hooks/useTranslation'
+import { NomadRoute, NomadRouteService, UserPreferences } from '@/lib/nomadRouteService'
+import NomadRouteResult from './NomadRouteResult'
 
 interface Preference {
   id: string
@@ -16,13 +18,24 @@ interface ScoredCity extends City {
   score: number
 }
 
-export default function PersonalizedRecommendations() {
+export default function NomadAgent() {
   const { t } = useTranslation()
   
   const [cities, setCities] = useState<City[]>([])
   const [userPreferences, setUserPreferences] = useState<Preference[]>([])
   const [recommendations, setRecommendations] = useState<ScoredCity[]>([])
   const [loading, setLoading] = useState(false)
+  const [generatedRoute, setGeneratedRoute] = useState<NomadRoute | null>(null)
+  const [routeLoading, setRouteLoading] = useState(false)
+  const [userProfile, setUserProfile] = useState<UserPreferences>({
+    nationality: 'CN',
+    budget: 2000,
+    duration: 6,
+    interests: ['culture', 'nature'],
+    visaPreference: 'easy',
+    climatePreference: 'warm',
+    socialPreference: 'medium'
+  })
 
   useEffect(() => {
     fetchCities()
@@ -200,22 +213,128 @@ export default function PersonalizedRecommendations() {
     return icons[id] || '⚙️'
   }
 
+  // 生成数字游民路线
+  const generateNomadRoute = async (selectedCity: ScoredCity) => {
+    setRouteLoading(true)
+    
+    try {
+      // 选择相关城市
+      const selectedCities = [selectedCity, ...recommendations.filter(city => city.id !== selectedCity.id).slice(0, 2)]
+      
+      // 生成路线
+      const route = await NomadRouteService.generateRoute(userProfile, selectedCities)
+      setGeneratedRoute(route)
+      
+      // 滚动到结果区域
+      setTimeout(() => {
+        const resultElement = document.getElementById('route-result')
+        if (resultElement) {
+          resultElement.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+      
+    } catch (error) {
+      console.error('Error generating route:', error)
+      alert('生成路线时出现错误，请稍后重试')
+    } finally {
+      setRouteLoading(false)
+    }
+  }
+
+  // 生成签证策略
+  const generateVisaStrategy = (city: ScoredCity) => {
+    if (city.visa_type?.includes('Visa Free')) {
+      return '免签入境，可停留90天'
+    } else if (city.visa_type?.includes('Digital Nomad')) {
+      return '申请数字游民签证，可停留12个月'
+    } else {
+      return '需要申请旅游签证，建议提前1个月申请'
+    }
+  }
+
+  // 生成路线亮点
+  const generateRouteHighlights = (city: ScoredCity) => {
+    const highlights = []
+    if (city.wifi_speed && city.wifi_speed > 50) {
+      highlights.push('高速网络环境')
+    }
+    if (city.cost_of_living && city.cost_of_living < 2000) {
+      highlights.push('生活成本较低')
+    }
+    if (city.visa_type?.includes('Visa Free')) {
+      highlights.push('免签便利')
+    }
+    return highlights.join('、')
+  }
+
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
-      {/* Enhanced Header with Description */}
-      <div className="mb-6">
-        <div className="flex items-center mb-3">
-          <SparklesIcon className="h-6 w-6 text-purple-500 mr-3" />
-          <h2 className="text-2xl font-bold text-gray-900">{t('recommendations.title')}</h2>
-        </div>
-        <p className="text-gray-600 mb-4">{t('recommendations.description')}</p>
+    <div className="space-y-8">
+      {/* User Profile Settings */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+          <Globe className="h-5 w-5 mr-2" />
+          个人信息设置
+        </h3>
         
-        {/* Algorithm Explanation with Info Icon */}
-        <div className="flex items-start space-x-2 p-3 bg-blue-50 rounded-lg">
-          <div className="text-blue-500 mt-0.5">ℹ️</div>
-          <p className="text-sm text-blue-700">{t('recommendations.algorithmExplanation')}</p>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">国籍</label>
+            <select
+              value={userProfile.nationality}
+              onChange={(e) => setUserProfile(prev => ({ ...prev, nationality: e.target.value }))}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="CN">中国</option>
+              <option value="US">美国</option>
+              <option value="EU">欧盟</option>
+              <option value="UK">英国</option>
+              <option value="AU">澳大利亚</option>
+            </select>
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">月预算 (USD)</label>
+            <input
+              type="number"
+              value={userProfile.budget}
+              onChange={(e) => setUserProfile(prev => ({ ...prev, budget: parseInt(e.target.value) }))}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              min="500"
+              max="10000"
+              step="100"
+            />
+          </div>
+          
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">计划时长 (月)</label>
+            <input
+              type="number"
+              value={userProfile.duration}
+              onChange={(e) => setUserProfile(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+              className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              min="1"
+              max="24"
+            />
+          </div>
         </div>
       </div>
+
+      {/* Main Nomad Agent Interface */}
+      <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+        {/* Enhanced Header with Description */}
+        <div className="mb-6">
+          <div className="flex items-center mb-3">
+            <SparklesIcon className="h-6 w-6 text-purple-500 mr-3" />
+            <h2 className="text-2xl font-bold text-gray-900">AI智能推荐</h2>
+          </div>
+          <p className="text-gray-600 mb-4">基于你的偏好和预算，AI为你推荐最适合的数字游民城市</p>
+          
+          {/* Algorithm Explanation with Info Icon */}
+          <div className="flex items-start space-x-2 p-3 bg-blue-50 rounded-lg">
+            <div className="text-blue-500 mt-0.5">ℹ️</div>
+            <p className="text-sm text-blue-700">我们的AI算法会综合考虑成本、签证、网络、气候等因素，为你找到最匹配的城市</p>
+          </div>
+        </div>
 
       {/* Preferences */}
       <div className="mb-6">
@@ -427,13 +546,42 @@ export default function PersonalizedRecommendations() {
                     {t('recommendations.addToFavorites')}
                   </button>
                 </div>
+                
+                {/* 新增：路线规划按钮 */}
+                <div className="mt-3">
+                  <button 
+                    onClick={() => generateNomadRoute(city)}
+                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-2 px-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 text-sm font-medium flex items-center justify-center space-x-2"
+                  >
+                    <span>🚀</span>
+                    <span>生成数字游民路线</span>
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         </div>
       )}
 
+      {/* Route Result */}
+      {generatedRoute && (
+        <div id="route-result" className="mt-8">
+          <NomadRouteResult 
+            route={generatedRoute}
+            onSave={(route) => {
+              console.log('Route saved:', route)
+            }}
+            onShare={(route) => {
+              console.log('Route shared:', route)
+            }}
+            onExport={(route) => {
+              console.log('Route exported:', route)
+            }}
+          />
+        </div>
+      )}
 
+      </div>
     </div>
   )
 }
