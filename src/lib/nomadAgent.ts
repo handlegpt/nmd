@@ -1,9 +1,30 @@
 /**
  * Nomad Agent 核心架构
- * 多Agent协作系统，为数字游民提供智能规划服务
+ * 基于大模型的智能数字游民规划系统
+ * 使用AI进行个性化推荐和智能分析
  */
 
 import { dataSourceManager, CostOfLivingData, NomadVisaData, POIData } from './dataSources'
+
+// =====================================================
+// AI模型配置
+// =====================================================
+
+interface AIModelConfig {
+  provider: 'openai' | 'gemini' | 'claude'
+  model: string
+  apiKey: string
+  temperature: number
+  maxTokens: number
+}
+
+const AI_CONFIG: AIModelConfig = {
+  provider: 'openai',
+  model: 'gpt-4o-mini',
+  apiKey: process.env.OPENAI_API_KEY || '',
+  temperature: 0.7,
+  maxTokens: 2000
+}
 
 // =====================================================
 // 类型定义
@@ -67,6 +88,15 @@ export interface RouteOption {
   cons: string[]
   score: number
   riskAssessment?: RiskAssessment
+  aiInsights?: string[]
+  optimizations?: {
+    route?: string
+    cost?: string
+    timing?: string
+    risk?: string
+    personalization?: string
+  }
+  aiEnhanced?: boolean
 }
 
 export interface VisaStrategy {
@@ -92,6 +122,357 @@ export interface RiskAssessment {
     network: { level: string; details: string[] }
   }
   mitigation: string[]
+  factors?: string[]
+}
+
+// =====================================================
+// AI智能推荐引擎
+// =====================================================
+
+export class AIRecommendationEngine {
+  private static instance: AIRecommendationEngine
+
+  static getInstance(): AIRecommendationEngine {
+    if (!AIRecommendationEngine.instance) {
+      AIRecommendationEngine.instance = new AIRecommendationEngine()
+    }
+    return AIRecommendationEngine.instance
+  }
+
+  /**
+   * 使用大模型进行智能城市推荐
+   */
+  async generateCityRecommendations(
+    userProfile: UserProfile,
+    availableCities: any[],
+    visaData: NomadVisaData[]
+  ): Promise<CityRecommendation[]> {
+    if (!AI_CONFIG.apiKey) {
+      console.warn('⚠️ OpenAI API密钥未配置，使用默认推荐')
+      return this.getDefaultRecommendations(userProfile, availableCities)
+    }
+
+    try {
+      const prompt = this.buildRecommendationPrompt(userProfile, availableCities, visaData)
+      const response = await this.callOpenAI(prompt)
+      
+      return this.parseAIResponse(response, availableCities)
+    } catch (error) {
+      console.error('❌ AI推荐失败，使用默认推荐:', error)
+      return this.getDefaultRecommendations(userProfile, availableCities)
+    }
+  }
+
+  /**
+   * 使用大模型进行智能路线规划
+   */
+  async generateRouteRecommendations(
+    userProfile: UserProfile,
+    cityRecommendations: CityRecommendation[]
+  ): Promise<RouteOption[]> {
+    if (!AI_CONFIG.apiKey) {
+      return this.getDefaultRoutes(userProfile, cityRecommendations)
+    }
+
+    try {
+      const prompt = this.buildRoutePrompt(userProfile, cityRecommendations)
+      const response = await this.callOpenAI(prompt)
+      
+      return this.parseRouteResponse(response, cityRecommendations)
+    } catch (error) {
+      console.error('❌ AI路线规划失败，使用默认路线:', error)
+      return this.getDefaultRoutes(userProfile, cityRecommendations)
+    }
+  }
+
+  /**
+   * 构建推荐提示词
+   */
+  private buildRecommendationPrompt(
+    userProfile: UserProfile,
+    availableCities: any[],
+    visaData: NomadVisaData[]
+  ): string {
+    return `
+你是一个专业的数字游民规划专家。请根据用户信息推荐最适合的城市。
+
+用户信息：
+- 国籍: ${userProfile.nationality}
+- 预算: $${userProfile.budget}/月
+- 计划时长: ${userProfile.duration}个月
+- 气候偏好: ${userProfile.preferences.climate.join(', ')}
+- 活动偏好: ${userProfile.preferences.activities.join(', ')}
+- 住宿偏好: ${userProfile.preferences.accommodation}
+- 饮食偏好: ${userProfile.preferences.food}
+- 社交需求: ${userProfile.preferences.social}
+- 签证便利性: ${userProfile.preferences.visa}
+
+可用城市数据: ${JSON.stringify(availableCities.slice(0, 10), null, 2)}
+签证信息: ${JSON.stringify(visaData, null, 2)}
+
+请推荐3-5个最适合的城市，考虑以下因素：
+1. 预算匹配度
+2. 签证便利性
+3. 气候适宜性
+4. 活动匹配度
+5. 数字游民友好度
+6. 生活成本性价比
+
+返回JSON格式：
+{
+  "recommendations": [
+    {
+      "city": "城市名",
+      "country": "国家",
+      "score": 0.95,
+      "reasons": ["原因1", "原因2", "原因3"],
+      "stayDuration": 30,
+      "estimatedCost": 1500
+    }
+  ]
+}
+`
+  }
+
+  /**
+   * 构建路线规划提示词
+   */
+  private buildRoutePrompt(
+    userProfile: UserProfile,
+    cityRecommendations: CityRecommendation[]
+  ): string {
+    return `
+你是一个专业的数字游民路线规划师。请为用户规划最优的多城市路线。
+
+用户信息：
+- 预算: $${userProfile.budget}/月
+- 总时长: ${userProfile.duration}个月
+- 最多城市数: ${userProfile.constraints.maxCities}
+- 最少停留: ${userProfile.constraints.minStayDays}天
+- 最多停留: ${userProfile.constraints.maxStayDays}天
+
+推荐城市: ${JSON.stringify(cityRecommendations, null, 2)}
+
+请规划2-3条不同的路线，考虑：
+1. 地理位置的合理性
+2. 签证的连续性
+3. 气候的季节性
+4. 成本的最优化
+5. 文化体验的多样性
+
+返回JSON格式：
+{
+  "routes": [
+    {
+      "id": "route_1",
+      "name": "路线名称",
+      "cities": [
+        {
+          "city": "城市名",
+          "country": "国家",
+          "stayDays": 30,
+          "cost": 1500,
+          "reason": "选择原因"
+        }
+      ],
+      "totalCost": 4500,
+      "totalDays": 90,
+      "highlights": ["亮点1", "亮点2"],
+      "score": 0.92
+    }
+  ]
+}
+`
+  }
+
+  /**
+   * 调用OpenAI API
+   */
+  private async callOpenAI(prompt: string): Promise<string> {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${AI_CONFIG.apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: AI_CONFIG.model,
+        messages: [
+          {
+            role: 'system',
+            content: '你是一个专业的数字游民规划专家，擅长分析城市特点、成本预算和路线规划。请提供准确、实用的建议。'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: AI_CONFIG.temperature,
+        max_tokens: AI_CONFIG.maxTokens,
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(`OpenAI API error: ${response.status}`)
+    }
+
+    const data = await response.json()
+    return data.choices[0].message.content
+  }
+
+  /**
+   * 解析AI推荐响应
+   */
+  private parseAIResponse(response: string, availableCities: any[]): CityRecommendation[] {
+    try {
+      const parsed = JSON.parse(response)
+      return parsed.recommendations || []
+    } catch (error) {
+      console.error('解析AI响应失败:', error)
+      return this.getDefaultRecommendations({} as UserProfile, availableCities)
+    }
+  }
+
+  /**
+   * 解析AI路线响应
+   */
+  private parseRouteResponse(response: string, cityRecommendations: CityRecommendation[]): RouteOption[] {
+    try {
+      const parsed = JSON.parse(response)
+      return parsed.routes || []
+    } catch (error) {
+      console.error('解析AI路线响应失败:', error)
+      return this.getDefaultRoutes({} as UserProfile, cityRecommendations)
+    }
+  }
+
+  /**
+   * 默认推荐（无AI时使用）
+   */
+  private getDefaultRecommendations(userProfile: UserProfile, availableCities: any[]): CityRecommendation[] {
+    return availableCities.slice(0, 3).map((city, index) => ({
+      city: city.name || `城市${index + 1}`,
+      country: city.country || '未知',
+      score: 0.8 - index * 0.1,
+      reasons: ['默认推荐', '基础匹配'],
+      cost: {} as CostOfLivingData,
+      visa: null,
+      pois: [],
+      stayDuration: 30,
+      estimatedCost: userProfile.budget * 0.8
+    }))
+  }
+
+  /**
+   * 使用AI增强现有路线
+   */
+  async enhanceRouteWithAI(route: RouteOption, userProfile: UserProfile): Promise<Partial<RouteOption>> {
+    if (!AI_CONFIG.apiKey) {
+      return {}
+    }
+
+    try {
+      const prompt = this.buildEnhancementPrompt(route, userProfile)
+      const response = await this.callOpenAI(prompt)
+      
+      return this.parseEnhancementResponse(response)
+    } catch (error) {
+      console.error('AI路线增强失败:', error)
+      return {}
+    }
+  }
+
+  /**
+   * 构建路线增强提示词
+   */
+  private buildEnhancementPrompt(route: RouteOption, userProfile: UserProfile): string {
+    return `
+你是一个专业的数字游民路线优化专家。请分析现有路线并提供改进建议。
+
+现有路线：
+${JSON.stringify(route, null, 2)}
+
+用户信息：
+- 预算: $${userProfile.budget}/月
+- 时长: ${userProfile.duration}个月
+- 偏好: ${JSON.stringify(userProfile.preferences, null, 2)}
+
+请提供以下优化建议：
+1. 路线优化建议
+2. 成本优化建议
+3. 时间安排优化
+4. 风险缓解建议
+5. 个性化推荐
+
+返回JSON格式：
+{
+  "optimizations": {
+    "route": "路线优化建议",
+    "cost": "成本优化建议", 
+    "timing": "时间安排建议",
+    "risk": "风险缓解建议",
+    "personalization": "个性化建议"
+  },
+  "enhancedHighlights": ["新亮点1", "新亮点2"],
+  "improvedScore": 0.95,
+  "aiInsights": ["AI洞察1", "AI洞察2"]
+}
+`
+  }
+
+  /**
+   * 解析AI增强响应
+   */
+  private parseEnhancementResponse(response: string): Partial<RouteOption> {
+    try {
+      const parsed = JSON.parse(response)
+      return {
+        highlights: parsed.enhancedHighlights || [],
+        score: parsed.improvedScore || 0.8,
+        aiInsights: parsed.aiInsights || [],
+        optimizations: parsed.optimizations || {}
+      }
+    } catch (error) {
+      console.error('解析AI增强响应失败:', error)
+      return {}
+    }
+  }
+
+  /**
+   * 默认路线（无AI时使用）
+   */
+  private getDefaultRoutes(userProfile: UserProfile, cityRecommendations: CityRecommendation[]): RouteOption[] {
+    return [{
+      id: 'default_route',
+      name: '默认路线',
+      cities: cityRecommendations.slice(0, 2),
+      totalCost: userProfile.budget * userProfile.duration * 0.8,
+      totalDuration: userProfile.duration * 30,
+      visaStrategy: {
+        requiredVisas: [],
+        applicationTimeline: [],
+        totalCost: 0,
+        totalTime: 0,
+        risks: []
+      },
+      highlights: ['基础路线', '成本优化'],
+      pros: ['成本优化', '基础匹配'],
+      cons: ['缺乏个性化'],
+      score: 0.7,
+      riskAssessment: {
+        overall: 'medium',
+        categories: {
+          visa: { level: 'medium', details: [] },
+          cost: { level: 'medium', details: [] },
+          safety: { level: 'low', details: [] },
+          weather: { level: 'low', details: [] },
+          network: { level: 'medium', details: [] }
+        },
+        mitigation: ['标准建议'],
+        factors: ['基础风险']
+      }
+    }]
+  }
 }
 
 // =====================================================
@@ -740,37 +1121,44 @@ export class NomadPlanningAgent {
   private costAgent: CostCalculationAgent
   private routeAgent: RoutePlanningAgent
   private riskAgent: RiskAssessmentAgent
+  private aiEngine: AIRecommendationEngine
 
   constructor() {
     this.visaAgent = new VisaAnalysisAgent()
     this.costAgent = new CostCalculationAgent()
     this.routeAgent = new RoutePlanningAgent()
     this.riskAgent = new RiskAssessmentAgent()
+    this.aiEngine = AIRecommendationEngine.getInstance()
   }
 
   /**
    * 生成数字游民规划
    */
   async generatePlan(userProfile: UserProfile): Promise<TravelPlan> {
-    console.log('🚀 开始生成数字游民规划', userProfile)
+    console.log('🚀 开始生成AI智能数字游民规划', userProfile)
 
     try {
       // 1. 分析签证要求
       console.log('📋 分析签证要求...')
       const eligibleVisas = await this.visaAgent.execute(userProfile)
 
-      // 2. 计算生活成本
-      console.log('💰 计算生活成本...')
-      const candidateCities = eligibleVisas.map(visa => 
-        `${visa.countryName}, ${visa.country}`
+      // 2. 获取可用城市数据
+      console.log('🏙️ 获取城市数据...')
+      const availableCities = await this.getAvailableCities(eligibleVisas.map(v => v.country))
+
+      // 3. 使用AI进行智能城市推荐
+      console.log('🤖 AI智能推荐城市...')
+      const cityRecommendations = await this.aiEngine.generateCityRecommendations(
+        userProfile,
+        availableCities,
+        eligibleVisas
       )
-      const costData = await this.costAgent.execute(candidateCities, userProfile)
 
-      // 3. 规划路线
-      console.log('🗺️ 规划路线...')
-      const routes = await this.routeAgent.execute(userProfile, eligibleVisas, costData)
+      // 4. 使用AI进行智能路线规划
+      console.log('🗺️ AI智能规划路线...')
+      const routes = await this.aiEngine.generateRouteRecommendations(userProfile, cityRecommendations)
 
-      // 4. 评估风险
+      // 5. 评估风险
       console.log('⚠️ 评估风险...')
       const routesWithRisk = await Promise.all(
         routes.map(async (route) => {
@@ -779,10 +1167,10 @@ export class NomadPlanningAgent {
         })
       )
 
-      // 5. 生成最终规划
+      // 6. 生成最终规划
       const plan: TravelPlan = {
         id: `plan_${Date.now()}`,
-        title: `数字游民规划 - ${userProfile.duration}个月`,
+        title: `AI智能数字游民规划 - ${userProfile.duration}个月`,
         userProfile,
         routes: routesWithRisk,
         totalCost: Math.min(...routesWithRisk.map(r => r.totalCost)),
@@ -802,16 +1190,86 @@ export class NomadPlanningAgent {
         updatedAt: new Date()
       }
 
-      console.log('✅ 数字游民规划生成完成', { 
+      console.log('✅ AI智能数字游民规划生成完成', { 
         planId: plan.id, 
         routesCount: plan.routes.length,
-        totalCost: plan.totalCost 
+        totalCost: plan.totalCost,
+        aiPowered: !!AI_CONFIG.apiKey
       })
 
       return plan
     } catch (error) {
       console.error('❌ 规划生成失败', error)
       throw new Error('Failed to generate nomad plan')
+    }
+  }
+
+  /**
+   * 获取可用城市数据
+   */
+  private async getAvailableCities(countries: string[]): Promise<any[]> {
+    try {
+      // 从数据库获取城市数据
+      const response = await fetch('/api/cities')
+      if (!response.ok) {
+        throw new Error('Failed to fetch cities')
+      }
+      
+      const cities = await response.json()
+      return cities.filter((city: any) => countries.includes(city.country_code))
+    } catch (error) {
+      console.error('获取城市数据失败:', error)
+      // 返回默认城市数据
+      return [
+        { name: 'Berlin', country: 'Germany', country_code: 'DEU' },
+        { name: 'Lisbon', country: 'Portugal', country_code: 'PRT' },
+        { name: 'Bangkok', country: 'Thailand', country_code: 'THA' },
+        { name: 'Mexico City', country: 'Mexico', country_code: 'MEX' },
+        { name: 'Buenos Aires', country: 'Argentina', country_code: 'ARG' }
+      ]
+    }
+  }
+
+  /**
+   * 使用AI增强现有规划 - 新增方法
+   */
+  async enhancePlanWithAI(plan: TravelPlan): Promise<TravelPlan> {
+    if (!AI_CONFIG.apiKey) {
+      console.warn('⚠️ OpenAI API密钥未配置，跳过AI增强')
+      return plan
+    }
+
+    try {
+      console.log('🤖 使用AI增强规划...')
+      
+      // 使用AI分析现有规划并提供改进建议
+      const enhancedRoutes = await Promise.all(
+        plan.routes.map(async (route) => {
+          const aiEnhancement = await this.aiEngine.enhanceRouteWithAI(route, plan.userProfile)
+          return {
+            ...route,
+            ...aiEnhancement,
+            aiEnhanced: true
+          }
+        })
+      )
+
+      const enhancedPlan: TravelPlan = {
+        ...plan,
+        routes: enhancedRoutes,
+        title: `${plan.title} (AI增强版)`,
+        updatedAt: new Date()
+      }
+
+      console.log('✅ AI增强完成', { 
+        planId: enhancedPlan.id,
+        aiEnhanced: true
+      })
+
+      return enhancedPlan
+    } catch (error) {
+      console.error('❌ AI增强失败，返回原规划:', error)
+      return plan
     }
   }
 

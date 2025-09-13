@@ -19,6 +19,7 @@ export default function NomadPlanningForm({ onSubmit, loading = false }: NomadPl
     budget: 2000,
     duration: 6,
     startDate: '',
+    useAI: false, // AI增强选项
     
     // 偏好设置
     preferences: {
@@ -473,6 +474,26 @@ export default function NomadPlanningForm({ onSubmit, loading = false }: NomadPl
           </div>
         </div>
 
+        {/* AI增强选项 */}
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="useAI"
+              checked={formData.useAI}
+              onChange={(e) => setFormData(prev => ({ ...prev, useAI: e.target.checked }))}
+              className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+            />
+            <label htmlFor="useAI" className="flex items-center gap-2 text-sm font-medium text-gray-700">
+              <Brain className="h-4 w-4 text-purple-600" />
+              使用AI增强推荐
+            </label>
+          </div>
+          <p className="text-xs text-gray-600 mt-2 ml-7">
+            启用AI智能分析，提供更个性化的路线优化建议和深度洞察
+          </p>
+        </div>
+
         {/* 提交按钮 */}
         <div className="text-center">
           <button
@@ -483,12 +504,12 @@ export default function NomadPlanningForm({ onSubmit, loading = false }: NomadPl
             {loading ? (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>AI正在规划中...</span>
+                <span>{formData.useAI ? 'AI智能规划中...' : 'AI正在规划中...'}</span>
               </div>
             ) : (
               <div className="flex items-center space-x-2">
                 <Brain className="h-5 w-5" />
-                <span>开始AI规划</span>
+                <span>{formData.useAI ? '开始AI智能规划' : '开始AI规划'}</span>
               </div>
             )}
           </button>

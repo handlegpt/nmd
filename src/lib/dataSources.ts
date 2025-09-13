@@ -36,9 +36,9 @@ export const DATA_SOURCES: Record<string, DataSourceConfig> = {
     isActive: true
   },
   
-  // 汇率数据
+  // 汇率数据 - 免费API，无需密钥
   exchangerate: {
-    name: 'Exchange Rate API',
+    name: 'ExchangeRate-API (Free)',
     type: 'api',
     endpoint: 'https://api.exchangerate-api.com/v4/latest/',
     updateFrequency: 'daily',
@@ -155,16 +155,69 @@ export class CostOfLivingService {
 
   /**
    * 从Numbeo获取数据
+   * 参考: https://github.com/sixthextinction/cost-of-living-agent
    */
   private async fetchFromNumbeo(city: string, country: string): Promise<Partial<CostOfLivingData>> {
-    // 模拟API调用 - 实际实现需要Numbeo API
+    try {
+      // 方法1: 直接API调用 (如果有API密钥)
+      if (process.env.NUMBEO_API_KEY) {
+        return await this.fetchFromNumbeoDirectAPI(city, country)
+      }
+      
+      // 方法2: 使用搜索API获取实时数据 (参考cost-of-living-agent)
+      if (process.env.BRIGHT_DATA_CUSTOMER_ID) {
+        return await this.fetchFromSearchAPI(city, country, 'numbeo')
+      }
+      
+      // 方法3: 使用默认数据
+      return this.getDefaultNumbeoData(city, country)
+    } catch (error) {
+      console.error('Error fetching Numbeo data:', error)
+      return this.getDefaultNumbeoData(city, country)
+    }
+  }
+
+  /**
+   * 从Numbeo直接API获取数据
+   */
+  private async fetchFromNumbeoDirectAPI(city: string, country: string): Promise<Partial<CostOfLivingData>> {
+    // 实际实现需要Numbeo API调用
+    // 这里返回模拟数据
     return {
       accommodation: { monthly: 800, daily: 27 },
       food: { monthly: 400, daily: 13 },
       transport: { monthly: 100, daily: 3 },
       coworking: { monthly: 200, daily: 7 },
       currency: 'USD',
-      source: 'Numbeo'
+      source: 'Numbeo API'
+    }
+  }
+
+  /**
+   * 从搜索API获取实时数据 (参考cost-of-living-agent)
+   */
+  private async fetchFromSearchAPI(city: string, country: string, source: string): Promise<Partial<CostOfLivingData>> {
+    // 实现类似cost-of-living-agent的搜索逻辑
+    // 使用Bright Data SERP API搜索最新成本数据
+    const searchQuery = `${city} ${country} cost of living ${source} 2024`
+    
+    // 这里需要实现搜索API调用
+    // 参考: https://github.com/sixthextinction/cost-of-living-agent/blob/main/search.js
+    
+    return this.getDefaultNumbeoData(city, country)
+  }
+
+  /**
+   * 获取默认Numbeo数据
+   */
+  private getDefaultNumbeoData(city: string, country: string): Partial<CostOfLivingData> {
+    return {
+      accommodation: { monthly: 800, daily: 27 },
+      food: { monthly: 400, daily: 13 },
+      transport: { monthly: 100, daily: 3 },
+      coworking: { monthly: 200, daily: 7 },
+      currency: 'USD',
+      source: 'Numbeo (Default)'
     }
   }
 
@@ -390,26 +443,34 @@ export class ExchangeRateService {
     }
 
     try {
-      // 从API获取汇率数据
+      // 从免费的 ExchangeRate-API 获取汇率数据
+      // API文档: https://api.exchangerate-api.com/v4/latest/USD
       const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency}`)
       if (!response.ok) {
-        throw new Error('Failed to fetch exchange rates')
+        throw new Error(`Failed to fetch exchange rates: ${response.status}`)
       }
       
       const data = await response.json()
+      
+      // 验证API响应格式
+      if (!data.rates || typeof data.rates !== 'object') {
+        throw new Error('Invalid API response format')
+      }
+      
       const exchangeData: ExchangeRateData = {
-        base: data.base,
+        base: data.base || baseCurrency,
         rates: data.rates,
         lastUpdated: new Date()
       }
 
-      // 缓存数据
+      // 缓存数据 (1小时缓存)
       this.cache.set(cacheKey, exchangeData)
-      this.cacheExpiry.set(cacheKey, new Date(Date.now() + 60 * 60 * 1000)) // 1小时缓存
+      this.cacheExpiry.set(cacheKey, new Date(Date.now() + 60 * 60 * 1000))
 
+      console.log(`✅ 汇率数据更新成功: ${baseCurrency} -> ${Object.keys(data.rates).length} 种货币`)
       return exchangeData
     } catch (error) {
-      console.error('Error fetching exchange rates:', error)
+      console.error('❌ 获取汇率数据失败:', error)
       // 返回默认汇率
       return this.getDefaultExchangeRates(baseCurrency)
     }

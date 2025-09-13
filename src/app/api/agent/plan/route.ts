@@ -13,6 +13,7 @@ const PlanRequestSchema = z.object({
   budget: z.number().min(500).max(10000), // 月预算 (USD)
   duration: z.number().min(1).max(24), // 计划时长 (月)
   startDate: z.string().optional(), // 开始日期
+  useAI: z.boolean().optional().default(false), // 是否使用AI增强
   
   // 用户偏好
   preferences: z.object({
@@ -34,7 +35,7 @@ const PlanRequestSchema = z.object({
   }),
   
   // 可选参数
-  userId: z.string().uuid().optional(),
+  userId: z.string().uuid().optional().nullable(),
   savePlan: z.boolean().optional().default(false)
 })
 
@@ -67,6 +68,13 @@ export async function POST(request: NextRequest) {
 
     // 生成规划
     const plan = await nomadPlanningAgent.generatePlan(userProfile)
+    
+    // 如果请求AI增强，则进行AI优化
+    let finalPlan = plan
+    if (validatedData.useAI) {
+      console.log('🤖 应用AI增强...')
+      finalPlan = await nomadPlanningAgent.enhancePlanWithAI(plan)
+    }
 
     // 如果用户登录且要求保存，则保存到数据库
     if (validatedData.userId && validatedData.savePlan) {
@@ -77,9 +85,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       data: {
-        planId: plan.id,
-        title: plan.title,
-        routes: plan.routes.map(route => ({
+        planId: finalPlan.id,
+        title: finalPlan.title,
+        routes: finalPlan.routes.map(route => ({
           id: route.id,
           name: route.name,
           cities: route.cities.map(city => ({
@@ -130,11 +138,12 @@ export async function POST(request: NextRequest) {
           score: route.score,
           riskAssessment: route.riskAssessment
         })),
-        totalCost: plan.totalCost,
-        totalDuration: plan.totalDuration,
-        riskAssessment: plan.riskAssessment,
-        createdAt: plan.createdAt,
-        updatedAt: plan.updatedAt
+        totalCost: finalPlan.totalCost,
+        totalDuration: finalPlan.totalDuration,
+        riskAssessment: finalPlan.riskAssessment,
+        createdAt: finalPlan.createdAt,
+        updatedAt: finalPlan.updatedAt,
+        aiEnhanced: validatedData.useAI
       },
       meta: {
         processingTime: Date.now() - (parseInt(request.headers.get('x-request-time') || '0') || Date.now()),
