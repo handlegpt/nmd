@@ -18,22 +18,31 @@ export async function GET(request: NextRequest) {
         id,
         title,
         description,
-        city,
+        location,
         meetup_type,
-        scheduled_date,
+        meetup_date,
         max_participants,
         current_participants,
-        creator_id,
+        organizer_id,
         status,
         created_at
       `)
       .eq('status', 'active')
-      .gte('scheduled_date', new Date().toISOString())
+      .gte('meetup_date', new Date().toISOString())
       .order('current_participants', { ascending: false })
       .limit(10)
 
     if (error) {
       logError('Failed to fetch meetups data', error, 'HotMeetupsAPI')
+      
+      // 如果表不存在，返回空数组而不是错误
+      if (error.code === '42P01') { // Table doesn't exist
+        return NextResponse.json({
+          success: true,
+          data: []
+        })
+      }
+      
       return NextResponse.json(
         { error: 'Failed to fetch meetups' },
         { status: 500 }
@@ -41,7 +50,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get organizer information for each meetup
-    const organizerIds = [...new Set(meetups.map((m: any) => m.creator_id).filter(Boolean))]
+    const organizerIds = [...new Set(meetups.map((m: any) => m.organizer_id).filter(Boolean))]
     const { data: organizers } = await supabase
       .from('users')
       .select('id, name, avatar_url')
@@ -51,15 +60,15 @@ export async function GET(request: NextRequest) {
 
     // Format response
     const formattedMeetups = meetups.map((meetup: any) => {
-      const organizer = organizerMap.get(meetup.creator_id) as any
+      const organizer = organizerMap.get(meetup.organizer_id) as any
       
       return {
         id: meetup.id,
         title: meetup.title,
         description: meetup.description,
-        city: meetup.city,
+        location: meetup.location,
         type: meetup.meetup_type,
-        scheduledDate: meetup.scheduled_date,
+        scheduledDate: meetup.meetup_date,
         maxParticipants: meetup.max_participants,
         currentParticipants: meetup.current_participants,
         organizer: organizer ? {
