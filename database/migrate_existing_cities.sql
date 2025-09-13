@@ -238,8 +238,16 @@ SET
   is_active = true
 WHERE wifi_speed_mbps IS NULL;
 
--- Add unique constraint on slug
-ALTER TABLE cities ADD CONSTRAINT IF NOT EXISTS cities_slug_unique UNIQUE (slug);
+-- Add unique constraint on slug (drop first if exists)
+DO $$ 
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint 
+        WHERE conname = 'cities_slug_unique'
+    ) THEN
+        ALTER TABLE cities ADD CONSTRAINT cities_slug_unique UNIQUE (slug);
+    END IF;
+END $$;
 
 -- Create indexes for the new fields
 CREATE INDEX IF NOT EXISTS idx_cities_slug ON cities (slug);

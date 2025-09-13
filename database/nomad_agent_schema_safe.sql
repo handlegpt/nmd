@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS nomad_visas (
 
 -- 2. Cities Main Data Table (only if not exists)
 CREATE TABLE IF NOT EXISTS cities (
-  id SERIAL PRIMARY KEY,
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   slug VARCHAR(100) UNIQUE NOT NULL,              -- URL-friendly identifier
   name VARCHAR(100) NOT NULL,                     -- City name
   country VARCHAR(3) NOT NULL,                    -- Country code
@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS cities (
 -- 3. City Cost of Living Details Table (only if not exists)
 CREATE TABLE IF NOT EXISTS city_costs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  city_id INTEGER REFERENCES cities(id) ON DELETE CASCADE,
+  city_id UUID REFERENCES cities(id) ON DELETE CASCADE,
   cost_type VARCHAR(50) NOT NULL,                 -- Cost type (accommodation, food, transport, etc.)
   monthly_estimate_usd DECIMAL(10,2),             -- Monthly estimate (USD)
   daily_estimate_usd DECIMAL(10,2),               -- Daily estimate (USD)
