@@ -19,6 +19,11 @@ import {
   TrendingUp
 } from 'lucide-react'
 import { NomadRoute, NomadRouteService } from '@/lib/nomadRouteService'
+import CostComparisonChart from './charts/CostComparisonChart'
+import WeatherForecastChart from './charts/WeatherForecastChart'
+import CommunityAnalyticsChart from './charts/CommunityAnalyticsChart'
+import TrendAnalysisChart from './charts/TrendAnalysisChart'
+import { ChartDataService } from '@/lib/chartDataService'
 
 interface NomadRouteResultProps {
   route: NomadRoute
@@ -34,7 +39,7 @@ export default function NomadRouteResult({
   onExport 
 }: NomadRouteResultProps) {
   const [isSaved, setIsSaved] = useState(false)
-  const [activeTab, setActiveTab] = useState<'overview' | 'visa' | 'cities' | 'tips'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'visa' | 'cities' | 'tips' | 'analytics'>('overview')
 
   const handleSave = () => {
     NomadRouteService.saveRoute(route)
@@ -155,6 +160,7 @@ export default function NomadRouteResult({
             { id: 'overview', label: '概览', icon: <Route className="h-4 w-4" /> },
             { id: 'visa', label: '签证策略', icon: <Plane className="h-4 w-4" /> },
             { id: 'cities', label: '城市详情', icon: <MapPin className="h-4 w-4" /> },
+            { id: 'analytics', label: '数据分析', icon: <TrendingUp className="h-4 w-4" /> },
             { id: 'tips', label: '实用建议', icon: <Star className="h-4 w-4" /> }
           ].map(tab => (
             <button
@@ -322,6 +328,53 @@ export default function NomadRouteResult({
                 </div>
               </div>
             ))}
+          </div>
+        )}
+
+        {activeTab === 'analytics' && (
+          <div className="space-y-8">
+            {/* Cost Comparison Chart */}
+            <div>
+              <CostComparisonChart 
+                data={ChartDataService.generateCostData(
+                  route.cities.map(city => ({ name: city.name, country: city.country }))
+                )}
+                userCurrency="USD"
+                showTrends={true}
+              />
+            </div>
+
+            {/* Weather Forecast for First City */}
+            {route.cities.length > 0 && (
+              <div>
+                <WeatherForecastChart 
+                  data={ChartDataService.generateWeatherData(route.cities[0].name, route.cities[0].country)}
+                  city={route.cities[0].name}
+                  country={route.cities[0].country}
+                />
+              </div>
+            )}
+
+            {/* Community Analytics */}
+            <div>
+              <CommunityAnalyticsChart 
+                data={ChartDataService.generateCommunityData(
+                  route.cities.map(city => ({ name: city.name, country: city.country }))
+                )}
+              />
+            </div>
+
+            {/* Trend Analysis for First City */}
+            {route.cities.length > 0 && (
+              <div>
+                <TrendAnalysisChart 
+                  data={ChartDataService.generateTrendData(route.cities[0].name, route.cities[0].country)}
+                  city={route.cities[0].name}
+                  country={route.cities[0].country}
+                  metrics={['cost', 'community', 'events']}
+                />
+              </div>
+            )}
           </div>
         )}
 
