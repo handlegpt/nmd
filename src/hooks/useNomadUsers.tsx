@@ -172,8 +172,8 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       logError('Error calculating distance', e, 'useNomadUsers')
     }
     
-    // 如果没有坐标信息，返回随机距离作为fallback
-    return Math.round((Math.random() * 100) + Number.EPSILON) / 10
+    // 如果没有坐标信息，返回较小的随机距离作为fallback（避免被距离筛选器过滤）
+    return Math.round((Math.random() * 20) + Number.EPSILON) / 10
   }, [])
 
   // 使用Haversine公式计算两点间距离（公里）

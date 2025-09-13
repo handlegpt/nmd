@@ -59,6 +59,7 @@ interface HomeLocalNomadsProps {
   showLocationDetection?: boolean
   showStats?: boolean
   showNewUsers?: boolean
+  className?: string
 }
 
 export default function HomeLocalNomads({
@@ -66,7 +67,8 @@ export default function HomeLocalNomads({
   showPagination = true,
   showLocationDetection = true,
   showStats = true,
-  showNewUsers = true
+  showNewUsers = true,
+  className = ''
 }: HomeLocalNomadsProps) {
   logInfo('HomeLocalNomads component rendering', { maxUsers, showPagination, showLocationDetection, showStats, showNewUsers }, 'HomeLocalNomads')
   
@@ -440,7 +442,7 @@ export default function HomeLocalNomads({
   }
 
   return (
-    <div className="space-y-6">
+    <div className={`space-y-6 ${className}`}>
       {/* 错误显示 */}
       {error && (
         <ErrorAlertSimple

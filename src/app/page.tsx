@@ -10,7 +10,7 @@ import HeroSection from '@/components/HeroSection'
 // Temporarily disabled components for debugging React errors
 import UnifiedLiveInfoCard from '@/components/UnifiedLiveInfoCard'
 import EnhancedCityRanking from '@/components/EnhancedCityRanking'
-import HomeLocalNomadsApi from '@/components/HomeLocalNomadsApi'
+import HomeLocalNomads from '@/components/HomeLocalNomads'
 import NomadPlaceRecommendations from '@/components/NomadPlaceRecommendations'
 
 import WifiSpeedTest from '@/components/WifiSpeedTest'
@@ -92,7 +92,7 @@ export default function HomePage() {
                 <ArrowRight className="h-4 w-4 ml-2" />
               </FixedLink>
             </div>
-            <HomeLocalNomadsApi 
+            <HomeLocalNomads 
               className="mt-8"
             />
           </div>
