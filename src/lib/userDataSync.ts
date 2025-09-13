@@ -210,6 +210,12 @@ class UserDataSyncService {
     try {
       logInfo('Loading tool data from server', { toolName, userId }, 'UserDataSync')
 
+      // 检查Supabase客户端是否可用
+      if (!supabase) {
+        logError('Supabase client not available', null, 'UserDataSync')
+        return null
+      }
+
       const { data, error } = await supabase
         .from('user_tool_data')
         .select('data')
@@ -223,6 +229,17 @@ class UserDataSyncService {
           logInfo('Tool data not found on server', { toolName, userId }, 'UserDataSync')
           return null
         }
+        
+        // 处理406错误 - 可能是认证问题
+        if (error.status === 406) {
+          logError('Authentication error when loading tool data', { 
+            toolName, 
+            userId, 
+            error: error.message 
+          }, 'UserDataSync')
+          return null
+        }
+        
         logError('Failed to load tool data from server', error, 'UserDataSync')
         return null
       }

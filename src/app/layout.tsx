@@ -97,6 +97,7 @@ export const metadata: Metadata = {
   other: {
     'theme-color': '#3B82F6',
     'msapplication-TileColor': '#3B82F6',
+    'mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-capable': 'yes',
     'apple-mobile-web-app-status-bar-style': 'default',
     'apple-mobile-web-app-title': 'NomadNow',
