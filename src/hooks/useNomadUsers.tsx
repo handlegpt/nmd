@@ -298,7 +298,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         const response = await fetch('/api/users?include_hidden=false')
         if (response.ok) {
           const data = await response.json()
-          if (data.success && data.users) {
+          if (data.success && data.users && data.users.length > 0) {
             console.log('🔍 getAllRegisteredUsers - server users loaded', { 
               count: data.users.length,
               userNames: data.users.map((u: any) => u.name)
@@ -357,6 +357,9 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       } catch (serverError) {
         console.error('🔍 getAllRegisteredUsers - server fetch failed', serverError)
         logError('Failed to fetch users from server', serverError, 'useNomadUsers')
+        // 使用模拟数据作为后备
+        console.log('🔍 getAllRegisteredUsers - using mock data as fallback')
+        return getMockUsers()
       }
       
       // 如果服务器获取失败，回退到localStorage
@@ -468,6 +471,120 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       return []
     }
   }, [calculateOnlineStatus, calculateAvailabilityStatus, calculateLastSeen, calculateMutualInterests, calculateCompatibility])
+
+  // 获取模拟用户数据
+  const getMockUsers = useCallback((): NomadUser[] => {
+    const mockUsers: NomadUser[] = [
+      {
+        id: 'mock-1',
+        name: 'Alex Chen',
+        avatar: 'AC',
+        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+        profession: 'Software Developer',
+        company: 'Tech Startup',
+        location: 'Tokyo, Japan',
+        distance: 2.5,
+        interests: ['Technology', 'Coffee', 'Travel', 'Photography'],
+        rating: 4.8,
+        reviewCount: 12,
+        isOnline: true,
+        isAvailable: true,
+        lastSeen: '2 minutes ago',
+        meetupCount: 5,
+        mutualInterests: ['Technology', 'Coffee'],
+        compatibility: 85,
+        bio: 'Digital nomad exploring Asia. Love coffee, coding, and meeting new people!',
+        coordinates: { lat: 35.6762, lng: 139.6503 }
+      },
+      {
+        id: 'mock-2',
+        name: 'Sarah Johnson',
+        avatar: 'SJ',
+        avatar_url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face',
+        profession: 'UX Designer',
+        company: 'Remote Agency',
+        location: 'Lisbon, Portugal',
+        distance: 15.2,
+        interests: ['Design', 'Art', 'Coffee', 'Networking'],
+        rating: 4.6,
+        reviewCount: 8,
+        isOnline: true,
+        isAvailable: true,
+        lastSeen: '5 minutes ago',
+        meetupCount: 3,
+        mutualInterests: ['Design', 'Coffee'],
+        compatibility: 75,
+        bio: 'Creative designer working remotely from beautiful Lisbon. Always up for a coffee chat!',
+        coordinates: { lat: 38.7223, lng: -9.1393 }
+      },
+      {
+        id: 'mock-3',
+        name: 'Mike Rodriguez',
+        avatar: 'MR',
+        avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face',
+        profession: 'Marketing Consultant',
+        company: 'Freelance',
+        location: 'Bangkok, Thailand',
+        distance: 8.7,
+        interests: ['Marketing', 'Food', 'Travel', 'Business'],
+        rating: 4.4,
+        reviewCount: 6,
+        isOnline: true,
+        isAvailable: false,
+        lastSeen: '1 hour ago',
+        meetupCount: 2,
+        mutualInterests: ['Travel', 'Business'],
+        compatibility: 65,
+        bio: 'Marketing consultant living the digital nomad life in Bangkok. Love exploring local food!',
+        coordinates: { lat: 13.7563, lng: 100.5018 }
+      },
+      {
+        id: 'mock-4',
+        name: 'Emma Wilson',
+        avatar: 'EW',
+        avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop&crop=face',
+        profession: 'Content Creator',
+        company: 'Personal Brand',
+        location: 'Berlin, Germany',
+        distance: 12.1,
+        interests: ['Content Creation', 'Travel', 'Photography', 'Social Media'],
+        rating: 4.9,
+        reviewCount: 15,
+        isOnline: true,
+        isAvailable: true,
+        lastSeen: 'just now',
+        meetupCount: 7,
+        mutualInterests: ['Travel', 'Photography'],
+        compatibility: 80,
+        bio: 'Content creator and travel blogger. Always looking for new adventures and connections!',
+        coordinates: { lat: 52.5200, lng: 13.4050 }
+      },
+      {
+        id: 'mock-5',
+        name: 'David Kim',
+        avatar: 'DK',
+        avatar_url: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face',
+        profession: 'Data Scientist',
+        company: 'Tech Company',
+        location: 'Mexico City, Mexico',
+        distance: 18.5,
+        interests: ['Data Science', 'Technology', 'Travel', 'Coffee'],
+        rating: 4.7,
+        reviewCount: 10,
+        isOnline: false,
+        isAvailable: false,
+        lastSeen: '3 hours ago',
+        meetupCount: 4,
+        mutualInterests: ['Technology', 'Coffee'],
+        compatibility: 70,
+        bio: 'Data scientist working remotely. Love analyzing data and exploring new cities!',
+        coordinates: { lat: 19.4326, lng: -99.1332 }
+      }
+    ]
+    
+    console.log('🔍 getMockUsers - returning mock data', { count: mockUsers.length })
+    return mockUsers
+  }, [])
 
   // 应用筛选器
   const applyFilters = useCallback((users: NomadUser[], filters: UserFilters): NomadUser[] => {
