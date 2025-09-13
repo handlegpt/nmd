@@ -1,4 +1,6 @@
 // Nomad Route Planning Service
+import { DataIntegrationService, WeatherData, CostOfLivingData, NomadCommunityData } from './dataIntegrationService'
+
 export interface NomadRoute {
   id: string
   title: string
@@ -23,6 +25,10 @@ export interface RouteCity {
   highlights: string[]
   arrivalDate?: string
   departureDate?: string
+  // 实时数据
+  weather?: WeatherData
+  costOfLiving?: CostOfLivingData
+  community?: NomadCommunityData
 }
 
 export interface VisaStrategy {
@@ -52,17 +58,31 @@ export class NomadRouteService {
   ): Promise<NomadRoute> {
     const routeId = `route_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     
+    // 获取实时数据
+    const realTimeData = await DataIntegrationService.getCityDataBatch(
+      selectedCities.map(city => ({ name: city.name, country: city.country }))
+    )
+    
     // 基于用户偏好和选中的城市生成路线
-    const cities: RouteCity[] = selectedCities.map((city, index) => ({
-      id: city.id,
-      name: city.name,
-      country: city.country,
-      duration: this.calculateOptimalDuration(city, preferences),
-      cost: city.cost_of_living || 1500,
-      visaType: city.visa_type || 'Tourist Visa',
-      visaDays: city.visa_days || 30,
-      highlights: this.generateCityHighlights(city, preferences)
-    }))
+    const cities: RouteCity[] = selectedCities.map((city, index) => {
+      const weather = realTimeData.weather.find(w => w.city === city.name)
+      const costOfLiving = realTimeData.costOfLiving.find(c => c.city === city.name)
+      const community = realTimeData.community.find(c => c.city === city.name)
+      
+      return {
+        id: city.id,
+        name: city.name,
+        country: city.country,
+        duration: this.calculateOptimalDuration(city, preferences),
+        cost: costOfLiving?.categories.accommodation || city.cost_of_living || 1500,
+        visaType: city.visa_type || 'Tourist Visa',
+        visaDays: city.visa_days || 30,
+        highlights: this.generateCityHighlights(city, preferences),
+        weather,
+        costOfLiving,
+        community
+      }
+    })
 
     const totalDuration = cities.reduce((sum, city) => sum + city.duration, 0)
     const totalCost = cities.reduce((sum, city) => sum + (city.cost * city.duration / 30), 0)

@@ -7,6 +7,7 @@ import { City } from '@/lib/supabase'
 import { useTranslation } from '@/hooks/useTranslation'
 import { NomadRoute, NomadRouteService, UserPreferences } from '@/lib/nomadRouteService'
 import NomadRouteResult from './NomadRouteResult'
+import RealTimeDataCard from './RealTimeDataCard'
 
 interface Preference {
   id: string
@@ -560,6 +561,17 @@ export default function NomadAgent() {
               </div>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Real-time Data for Top Recommendation */}
+      {recommendations.length > 0 && (
+        <div className="mt-8">
+          <RealTimeDataCard 
+            city={recommendations[0].name}
+            country={recommendations[0].country}
+            userCurrency="USD"
+          />
         </div>
       )}
 

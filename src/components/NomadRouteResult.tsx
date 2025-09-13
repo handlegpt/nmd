@@ -13,7 +13,10 @@ import {
   Heart,
   AlertTriangle,
   CheckCircle,
-  Route
+  Route,
+  Cloud,
+  Users,
+  TrendingUp
 } from 'lucide-react'
 import { NomadRoute, NomadRouteService } from '@/lib/nomadRouteService'
 
@@ -273,6 +276,39 @@ export default function NomadRouteResult({
                     <div className="text-xs text-gray-500">{city.visaDays} 天</div>
                   </div>
                 </div>
+                
+                {/* 实时数据展示 */}
+                {(city.weather || city.costOfLiving || city.community) && (
+                  <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">实时数据</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {city.weather && (
+                        <div className="flex items-center space-x-2">
+                          <Cloud className="h-4 w-4 text-blue-600" />
+                          <span className="text-sm text-gray-600">
+                            {city.weather.temperature}°C • {city.weather.condition}
+                          </span>
+                        </div>
+                      )}
+                      {city.costOfLiving && (
+                        <div className="flex items-center space-x-2">
+                          <DollarSign className="h-4 w-4 text-green-600" />
+                          <span className="text-sm text-gray-600">
+                            食物 ${city.costOfLiving.categories.food}/月
+                          </span>
+                        </div>
+                      )}
+                      {city.community && (
+                        <div className="flex items-center space-x-2">
+                          <Users className="h-4 w-4 text-purple-600" />
+                          <span className="text-sm text-gray-600">
+                            {city.community.communitySize} 数字游民
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
                 
                 <div className="mb-3">
                   <h4 className="text-sm font-medium text-gray-700 mb-2">城市亮点</h4>
