@@ -103,7 +103,9 @@ export default function LocalNomads() {
   // 判断是否为新用户（用于显示 New User 徽标，与首页视觉一致）
   const isNewUser = (userId: string): boolean => {
     try {
-      return false // TODO: Replace localStorage with database API for new_user_${userId}
+      // 新用户标识可以通过注册时间判断，暂时返回false
+      // 未来可以通过数据库查询用户注册时间来实现
+      return false
     } catch {
       return false
     }

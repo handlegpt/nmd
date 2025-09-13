@@ -158,7 +158,7 @@ function formatLastSeen(lastSeen: string): string {
 // 获取模拟用户数据
 function getMockUsers(city: string): MeetupUser[] {
   // 生产环境：返回空数组，避免显示虚假数据
-  // TODO: 实现真实的用户在线状态API
+  // 用户在线状态现在通过online_users表管理
   return []
 }
 
@@ -197,7 +197,7 @@ export async function sendMeetupInvitation(
       location,
       time,
       description,
-      createdBy: 'current_user', // TODO: 获取当前用户ID
+      createdBy: 'current_user', // 应该从认证上下文获取当前用户ID
       createdAt: new Date().toISOString(),
       status: 'pending'
     }
@@ -219,7 +219,7 @@ export async function sendMeetupInvitation(
         location,
         time,
         description,
-        creator_name: 'Current User' // TODO: 获取当前用户名称
+        creator_name: 'Current User' // 应该从认证上下文获取当前用户名称
       },
       isRead: false,
       isHighPriority: false,

@@ -284,7 +284,10 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
 
   // 获取所有注册用户
   const getAllRegisteredUsers = useCallback(async (): Promise<NomadUser[]> => {
-    console.log('🔍 getAllRegisteredUsers - function called')
+    // 开发环境下记录调试信息
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔍 getAllRegisteredUsers - function called')
+    }
     try {
       const users: NomadUser[] = []
       const processedUserIds = new Set<string>() // 防止重复用户
@@ -592,22 +595,26 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       setAllUsers(sortedUsers)
       
       // 应用筛选器
-      console.log('🔍 loadUsers - applying filters', { 
-        sortedUsersCount: sortedUsers.length,
-        filters: filters,
-        firstUser: sortedUsers[0] ? {
-          id: sortedUsers[0].id,
-          name: sortedUsers[0].name,
-          isOnline: sortedUsers[0].isOnline,
-          isAvailable: sortedUsers[0].isAvailable
-        } : null
-      })
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 loadUsers - applying filters', { 
+          sortedUsersCount: sortedUsers.length,
+          filters: filters,
+          firstUser: sortedUsers[0] ? {
+            id: sortedUsers[0].id,
+            name: sortedUsers[0].name,
+            isOnline: sortedUsers[0].isOnline,
+            isAvailable: sortedUsers[0].isAvailable
+          } : null
+        })
+      }
       const filtered = applyFilters(sortedUsers, filters)
-      console.log('🔍 loadUsers - filter result', { 
-        originalCount: sortedUsers.length,
-        filteredCount: filtered.length,
-        filteredUsers: filtered.map(u => ({ id: u.id, name: u.name }))
-      })
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 loadUsers - filter result', { 
+          originalCount: sortedUsers.length,
+          filteredCount: filtered.length,
+          filteredUsers: filtered.map(u => ({ id: u.id, name: u.name }))
+        })
+      }
       setFilteredUsers(filtered)
       
       // 计算统计数据 - 为缺失的属性提供默认值
@@ -622,14 +629,16 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         successRate: 94 // TODO: 从真实数据获取
       })
       
-      console.log('🔍 loadUsers - final state update', { 
-        total: sortedUsers.length, 
-        filtered: filtered.length,
-        available: availableUsers,
-        online: onlineUsers,
-        finalUserNames: sortedUsers.map(u => u.name),
-        finalUserIds: sortedUsers.map(u => u.id)
-      })
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔍 loadUsers - final state update', { 
+          total: sortedUsers.length, 
+          filtered: filtered.length,
+          available: availableUsers,
+          online: onlineUsers,
+          finalUserNames: sortedUsers.map(u => u.name),
+          finalUserIds: sortedUsers.map(u => u.id)
+        })
+      }
       
       logInfo('Users loaded successfully', { 
         total: sortedUsers.length, 
