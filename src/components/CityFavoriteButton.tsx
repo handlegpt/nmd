@@ -4,10 +4,16 @@ import { useState, useEffect } from 'react'
 import { Heart } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
+import { cityFavoritesService } from '@/lib/cityFavoritesService'
 
 interface CityFavoriteButtonProps {
   cityId: string
   cityName: string
+  country?: string
+  coordinates?: {
+    lat: number
+    lng: number
+  }
   initialFavorited?: boolean
   onToggle?: (favorited: boolean) => void
   size?: 'sm' | 'md' | 'lg'
@@ -17,6 +23,8 @@ interface CityFavoriteButtonProps {
 export default function CityFavoriteButton({
   cityId,
   cityName,
+  country = 'Unknown',
+  coordinates,
   initialFavorited = false,
   onToggle,
   size = 'md',
@@ -28,13 +36,23 @@ export default function CityFavoriteButton({
   const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
-    // 从localStorage加载收藏状态
-    const favorites: string[] = [] // TODO: Replace localStorage with database API for cityFavorites
-    setIsFavorited(favorites.includes(cityId))
-  }, [cityId])
+    // 从数据库加载收藏状态
+    const loadFavoriteStatus = async () => {
+      if (user.isAuthenticated && user.profile?.id) {
+        try {
+          const isFavorite = await cityFavoritesService.isFavorite(user.profile.id, cityId)
+          setIsFavorited(isFavorite)
+        } catch (error) {
+          console.error('Error loading favorite status:', error)
+        }
+      }
+    }
+
+    loadFavoriteStatus()
+  }, [cityId, user.isAuthenticated, user.profile?.id])
 
   const toggleFavorite = async () => {
-    if (!user.isAuthenticated) {
+    if (!user.isAuthenticated || !user.profile?.id) {
       // 如果用户未登录，可以显示登录提示
       alert(t('loginRequired.favoriteMessage'))
       return
@@ -42,23 +60,19 @@ export default function CityFavoriteButton({
 
     setIsLoading(true)
     try {
-      const favorites: string[] = [] // TODO: Replace localStorage with database API for cityFavorites
-      let newFavorites: string[]
+      const success = await cityFavoritesService.toggleFavorite(user.profile.id, {
+        city_id: cityId,
+        city_name: cityName,
+        country: country,
+        coordinates: coordinates
+      })
 
-      if (isFavorited) {
-        // 取消收藏
-        newFavorites = favorites.filter((id: string) => id !== cityId)
+      if (success) {
+        setIsFavorited(!isFavorited)
+        onToggle?.(!isFavorited)
       } else {
-        // 添加收藏
-        newFavorites = [...favorites, cityId]
+        console.error('Failed to toggle favorite')
       }
-
-      // TODO: Replace localStorage with database API for cityFavorites)
-      setIsFavorited(!isFavorited)
-      onToggle?.(!isFavorited)
-
-      // 这里可以调用API来同步收藏状态到服务器
-      // await updateUserFavorites(newFavorites)
     } catch (error) {
       console.error('Error toggling favorite:', error)
     } finally {

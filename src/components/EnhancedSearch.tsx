@@ -14,6 +14,8 @@ import {
 import { useTranslation } from '@/hooks/useTranslation'
 import FixedLink from '@/components/FixedLink'
 import { useRouter } from 'next/navigation'
+import { useUser } from '@/contexts/GlobalStateContext'
+import { searchHistoryService } from '@/lib/searchHistoryService'
 
 interface SearchSuggestion {
   id: string
@@ -35,6 +37,7 @@ interface SearchHistory {
 export default function EnhancedSearch() {
   const { t } = useTranslation()
   const router = useRouter()
+  const { user } = useUser()
   const [query, setQuery] = useState('')
   const [isOpen, setIsOpen] = useState(false)
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
@@ -53,11 +56,25 @@ export default function EnhancedSearch() {
 
   // 加载搜索历史
   useEffect(() => {
-    const history = null // TODO: Replace localStorage with database API for searchHistory
-    if (history) {
-      setSearchHistory(JSON.parse(history))
+    const loadSearchHistory = async () => {
+      if (user.isAuthenticated && user.profile?.id) {
+        try {
+          const history = await searchHistoryService.getUserSearchHistory(user.profile.id, 10)
+          const formattedHistory = history.map(entry => ({
+            id: entry.id,
+            query: entry.search_query,
+            timestamp: new Date(entry.created_at).getTime(),
+            type: (entry.search_type as 'city' | 'place' | 'user') || 'city'
+          }))
+          setSearchHistory(formattedHistory)
+        } catch (error) {
+          console.error('Error loading search history:', error)
+        }
+      }
     }
-  }, [])
+
+    loadSearchHistory()
+  }, [user.isAuthenticated, user.profile?.id])
 
   // 点击外部关闭搜索
   useEffect(() => {
@@ -140,10 +157,23 @@ export default function EnhancedSearch() {
   }
 
   // 处理搜索提交
-  const handleSearchSubmit = (searchQuery: string = query) => {
+  const handleSearchSubmit = async (searchQuery: string = query) => {
     if (!searchQuery.trim()) return
 
     // 保存到搜索历史
+    if (user.isAuthenticated && user.profile?.id) {
+      try {
+        await searchHistoryService.addSearchEntry(user.profile.id, {
+          search_query: searchQuery,
+          search_type: 'city',
+          results_count: 0 // 这里可以后续更新实际结果数量
+        })
+      } catch (error) {
+        console.error('Error saving search history:', error)
+      }
+    }
+
+    // 更新本地状态
     const newHistory: SearchHistory = {
       id: Date.now().toString(),
       query: searchQuery,
@@ -153,7 +183,6 @@ export default function EnhancedSearch() {
 
     const updatedHistory = [newHistory, ...searchHistory.filter(h => h.query !== searchQuery)].slice(0, 10)
     setSearchHistory(updatedHistory)
-    // TODO: Replace localStorage with database API for searchHistory)
 
     // 导航到搜索结果
     router.push(`/cities?search=${encodeURIComponent(searchQuery)}`)
@@ -162,16 +191,28 @@ export default function EnhancedSearch() {
   }
 
   // 清除搜索历史
-  const clearHistory = () => {
-    setSearchHistory([])
-    // TODO: Replace localStorage with database API for searchHistory
+  const clearHistory = async () => {
+    if (user.isAuthenticated && user.profile?.id) {
+      try {
+        await searchHistoryService.clearUserSearchHistory(user.profile.id)
+        setSearchHistory([])
+      } catch (error) {
+        console.error('Error clearing search history:', error)
+      }
+    } else {
+      setSearchHistory([])
+    }
   }
 
   // 删除单个历史记录
-  const removeHistoryItem = (id: string) => {
-    const updatedHistory = searchHistory.filter(h => h.id !== id)
-    setSearchHistory(updatedHistory)
-    // TODO: Replace localStorage with database API for searchHistory)
+  const removeHistoryItem = async (id: string) => {
+    try {
+      await searchHistoryService.deleteSearchEntry(id)
+      const updatedHistory = searchHistory.filter(h => h.id !== id)
+      setSearchHistory(updatedHistory)
+    } catch (error) {
+      console.error('Error removing search history item:', error)
+    }
   }
 
   return (
