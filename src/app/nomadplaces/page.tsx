@@ -58,6 +58,8 @@ import { PlaceDataService } from '@/lib/placeDataService'
 import { getPlaces } from '@/lib/api'
 import { PLACE_CATEGORIES, getCategoryIcon, getCategoryName, getCategoryColor } from '@/lib/placeCategories'
 import PlaceRecommendationForm from '@/components/PlaceRecommendationForm'
+import { PlaceDataCleanupService } from '@/lib/placeDataCleanup'
+import DataQualityIndicator from '@/components/DataQualityIndicator'
 
 // 推荐分算法类型
 interface PlaceScore {
@@ -131,11 +133,20 @@ export default function PlacesPage() {
         index === self.findIndex(p => p.id === place.id)
       )
       
-      setPlaces(uniquePlaces)
-      logInfo('Successfully fetched places', { 
+      // 清理和修复数据
+      const cleanedPlaces = PlaceDataCleanupService.cleanPlaces(uniquePlaces)
+      
+      // 生成数据质量报告
+      const report = PlaceDataCleanupService.generateReport(uniquePlaces)
+      logInfo('Place data quality report', report, 'PlacesPage')
+      
+      setPlaces(cleanedPlaces)
+      logInfo('Successfully fetched and cleaned places', { 
         local: localPlaces.length, 
         supabase: supabasePlaces.length, 
-        total: uniquePlaces.length 
+        original: uniquePlaces.length,
+        cleaned: cleanedPlaces.length,
+        removed: uniquePlaces.length - cleanedPlaces.length
       }, 'PlacesPage')
     } catch (error) {
       logError('Error fetching places', error, 'PlacesPage')
@@ -451,6 +462,9 @@ export default function PlacesPage() {
 
   return (
     <PageLayout>
+      {/* Data Quality Indicator */}
+      <DataQualityIndicator places={places} />
+      
       {/* 顶部工具条 - 吸顶设计 */}
       <div className="sticky top-0 z-40 bg-white border-b border-gray-200 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
