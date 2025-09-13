@@ -34,17 +34,17 @@ export class PlaceDataService {
       const places: Place[] = dbPlaces.map(dbPlace => ({
         id: dbPlace.id,
         name: dbPlace.place_name,
-        category: dbPlace.place_type || 'other',
+        category: (dbPlace.place_type as any) || 'other',
         address: dbPlace.address || '',
         description: dbPlace.notes || '',
         tags: [],
         wifi_speed: undefined,
-        price_level: undefined,
-        noise_level: undefined,
-        social_atmosphere: undefined,
+        price_level: 3,
+        noise_level: 'moderate',
+        social_atmosphere: 'medium',
         city_id: dbPlace.city,
-        latitude: dbPlace.coordinates?.lat,
-        longitude: dbPlace.coordinates?.lng,
+        latitude: dbPlace.coordinates?.lat || 0,
+        longitude: dbPlace.coordinates?.lng || 0,
         submitted_by: userId,
         created_at: dbPlace.created_at,
         updated_at: dbPlace.updated_at,
@@ -143,33 +143,61 @@ export class PlaceDataService {
   }
 
   // 更新地点
-  static updatePlace(placeId: string, updates: Partial<Place>): void {
+  static async updatePlace(placeId: string, updates: Partial<Place>, userId?: string): Promise<void> {
     try {
-      const places = this.getLocalPlaces()
-      const index = places.findIndex(p => p.id === placeId)
-      if (index !== -1) {
-        places[index] = {
-          ...places[index],
-          ...updates,
-          updated_at: new Date().toISOString()
+      if (!userId) {
+        // 如果没有用户ID，更新localStorage
+        const places = await this.getLocalPlaces()
+        const index = places.findIndex(p => p.id === placeId)
+        if (index !== -1) {
+          places[index] = {
+            ...places[index],
+            ...updates,
+            updated_at: new Date().toISOString()
+          }
+          await this.saveLocalPlaces(places)
+          logInfo('Place updated in local storage', { placeId }, 'PlaceDataService')
         }
-        this.saveLocalPlaces(places)
-        logInfo('Place updated in local storage', { placeId }, 'PlaceDataService')
+        return
       }
+
+      // 更新数据库
+      const updateData = {
+        place_name: updates.name,
+        place_type: updates.category,
+        coordinates: updates.latitude && updates.longitude ? {
+          lat: updates.latitude,
+          lng: updates.longitude
+        } : undefined,
+        address: updates.address,
+        rating: updates.rating,
+        notes: updates.description
+      }
+
+      await localPlacesService.updateLocalPlace(userId, placeId, updateData)
+      logInfo('Place updated in database', { placeId }, 'PlaceDataService')
     } catch (error) {
-      logError('Error updating place in local storage', error, 'PlaceDataService')
+      logError('Error updating place', error, 'PlaceDataService')
     }
   }
 
   // 删除地点
-  static deletePlace(placeId: string): void {
+  static async deletePlace(placeId: string, userId?: string): Promise<void> {
     try {
-      const places = this.getLocalPlaces()
-      const filteredPlaces = places.filter(p => p.id !== placeId)
-      this.saveLocalPlaces(filteredPlaces)
-      logInfo('Place deleted from local storage', { placeId }, 'PlaceDataService')
+      if (!userId) {
+        // 如果没有用户ID，删除localStorage中的数据
+        const places = await this.getLocalPlaces()
+        const filteredPlaces = places.filter(p => p.id !== placeId)
+        await this.saveLocalPlaces(filteredPlaces)
+        logInfo('Place deleted from local storage', { placeId }, 'PlaceDataService')
+        return
+      }
+
+      // 删除数据库中的数据
+      await localPlacesService.deleteLocalPlace(userId, placeId)
+      logInfo('Place deleted from database', { placeId }, 'PlaceDataService')
     } catch (error) {
-      logError('Error deleting place from local storage', error, 'PlaceDataService')
+      logError('Error deleting place', error, 'PlaceDataService')
     }
   }
 
@@ -182,16 +210,16 @@ export class PlaceDataService {
   }
 
   // 获取热门地点
-  static getTopPlaces(limit: number = 10): Place[] {
-    const places = this.getLocalPlaces()
+  static async getTopPlaces(limit: number = 10, userId?: string): Promise<Place[]> {
+    const places = await this.getLocalPlaces(userId)
     return places
       .sort((a, b) => (b.rating || 0) - (a.rating || 0))
       .slice(0, limit)
   }
 
   // 搜索地点
-  static searchPlaces(query: string): Place[] {
-    const places = this.getLocalPlaces()
+  static async searchPlaces(query: string, userId?: string): Promise<Place[]> {
+    const places = await this.getLocalPlaces(userId)
     const lowerQuery = query.toLowerCase()
     
     return places.filter(place => 
@@ -203,8 +231,8 @@ export class PlaceDataService {
   }
 
   // 根据类别获取地点
-  static getPlacesByCategory(category: string): Place[] {
-    const places = this.getLocalPlaces()
+  static async getPlacesByCategory(category: string, userId?: string): Promise<Place[]> {
+    const places = await this.getLocalPlaces(userId)
     return places.filter(place => place.category === category)
   }
 
@@ -218,7 +246,7 @@ export class PlaceDataService {
       }
 
       // 从数据库获取用户位置
-      const dbLocation = await userLocationService.getUserLocation(userId)
+      const dbLocation = await userLocationService.getCurrentLocation(userId)
       if (dbLocation) {
         return {
           city: dbLocation.city || '',
@@ -249,7 +277,7 @@ export class PlaceDataService {
       }
 
       // 保存到数据库
-      await userLocationService.saveUserLocation(userId, {
+      await userLocationService.updateLocation(userId, {
         city: location.city,
         country: location.country,
         latitude: location.latitude,
@@ -263,13 +291,13 @@ export class PlaceDataService {
   }
 
   // 获取地点统计信息
-  static getPlaceStats(): {
+  static async getPlaceStats(userId?: string): Promise<{
     totalPlaces: number
     byCategory: Record<string, number>
     byCity: Record<string, number>
     averageRating: number
-  } {
-    const places = this.getLocalPlaces()
+  }> {
+    const places = await this.getLocalPlaces(userId)
     
     const stats = {
       totalPlaces: places.length,

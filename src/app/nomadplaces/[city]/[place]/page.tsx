@@ -161,7 +161,7 @@ export default function PlaceDetailPage() {
       setCities(citiesData)
       
       // 获取所有地点数据：先检查本地存储，再检查Supabase
-      const localPlaces = PlaceDataService.getLocalPlaces()
+      const localPlaces = await PlaceDataService.getLocalPlaces()
       const supabasePlaces = await getPlaces()
       
       // 合并本地和Supabase数据，去重

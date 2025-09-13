@@ -120,7 +120,7 @@ export default function PlacesPage() {
     setError(null)
     try {
       // 获取本地存储的地点
-      const localPlaces = PlaceDataService.getLocalPlaces()
+      const localPlaces = await PlaceDataService.getLocalPlaces()
       
       // 获取Supabase的地点数据
       const supabasePlaces = await getPlaces()

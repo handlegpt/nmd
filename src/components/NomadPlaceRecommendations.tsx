@@ -88,7 +88,7 @@ export default function NomadPlaceRecommendations() {
     setLoading(true)
     try {
       // 获取本地存储的地点
-      const localPlaces = PlaceDataService.getLocalPlaces()
+      const localPlaces = await PlaceDataService.getLocalPlaces()
       
       // 获取Supabase的地点数据
       const supabasePlaces = await getPlaces()
@@ -118,15 +118,15 @@ export default function NomadPlaceRecommendations() {
     } catch (error) {
       logError('Error loading places', error, 'NomadPlaceRecommendations')
       // 如果出错，至少显示本地数据
-      const localPlaces = PlaceDataService.getLocalPlaces()
+      const localPlaces = await PlaceDataService.getLocalPlaces()
       setPlaces(localPlaces.slice(0, 6))
     } finally {
       setLoading(false)
     }
   }
 
-  const loadUserLocation = () => {
-    const location = PlaceDataService.getUserLocation()
+  const loadUserLocation = async () => {
+    const location = await PlaceDataService.getUserLocation()
     setUserLocation(location)
   }
 
