@@ -1,3 +1,5 @@
+import { sanitizeValue, isSensitiveField } from './secureLogger'
+
 type LogLevel = 'debug' | 'info' | 'warn' | 'error'
 
 interface LogEntry {
@@ -31,30 +33,39 @@ class Logger {
     return false
   }
 
+  private sanitizeData(data: any): any {
+    if (this.isProduction) {
+      return sanitizeValue(data)
+    }
+    return data
+  }
+
   private log(level: LogLevel, message: string, data?: any, context?: string) {
     if (!this.shouldLog(level)) return
 
-    const formattedMessage = this.formatMessage(level, message, data, context)
+    // 在生产环境中清理敏感数据
+    const sanitizedData = this.sanitizeData(data)
+    const formattedMessage = this.formatMessage(level, message, sanitizedData, context)
     
     switch (level) {
       case 'debug':
         if (this.isDevelopment) {
-          console.log(formattedMessage, data || '')
+          console.log(formattedMessage, sanitizedData || '')
         }
         break
       case 'info':
         if (this.isDevelopment) {
-          console.info(formattedMessage, data || '')
+          console.info(formattedMessage, sanitizedData || '')
         }
         break
       case 'warn':
-        console.warn(formattedMessage, data || '')
+        console.warn(formattedMessage, sanitizedData || '')
         break
       case 'error':
-        console.error(formattedMessage, data || '')
+        console.error(formattedMessage, sanitizedData || '')
         // 在生产环境中，这里可以发送错误到错误追踪服务
         if (this.isProduction) {
-          this.sendToErrorTracking(level, message, data, context)
+          this.sendToErrorTracking(level, message, sanitizedData, context)
         }
         break
     }

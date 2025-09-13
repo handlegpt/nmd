@@ -82,6 +82,22 @@ const nextConfig = {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
           },
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-eval' https://fonts.googleapis.com https://maps.googleapis.com https://maps.gstatic.com",
+              "style-src 'self' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com",
+              "img-src 'self' data: https: blob: https://maps.googleapis.com https://maps.gstatic.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openweathermap.org https://worldtimeapi.org https://ip-api.com https://api.ipapi.com https://api.exchangerate-api.com",
+              "frame-src 'none'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "upgrade-insecure-requests"
+            ].join('; ')
+          },
         ],
       },
       {

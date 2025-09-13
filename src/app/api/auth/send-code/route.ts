@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
-import { logInfo, logError } from '@/lib/logger'
+import { logInfo, logError } from '@/lib/secureLogger'
 import { safeValidate, emailSchema } from '@/lib/validation'
 import { sendVerificationEmail, checkEmailServiceConfig } from '@/lib/emailService'
 

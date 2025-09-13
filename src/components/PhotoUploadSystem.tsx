@@ -148,12 +148,32 @@ export default function PhotoUploadSystem({
           continue
         }
 
+        // 验证文件扩展名
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.gif']
+        const fileExtension = file.name.toLowerCase().substring(file.name.lastIndexOf('.'))
+        if (!allowedExtensions.includes(fileExtension)) {
+          addNotification({
+            type: 'error',
+            message: t('photoUpload.invalidFileExtension', { file: file.name })
+          })
+          continue
+        }
+
         // 验证文件大小
         if (file.size > maxFileSize * 1024 * 1024) {
-                  addNotification({
-          type: 'error',
-          message: t('photoUpload.fileTooLarge', { file: file.name, max: maxFileSize.toString() })
-        })
+          addNotification({
+            type: 'error',
+            message: t('photoUpload.fileTooLarge', { file: file.name, max: maxFileSize.toString() })
+          })
+          continue
+        }
+
+        // 验证文件大小 (最小1KB)
+        if (file.size < 1024) {
+          addNotification({
+            type: 'error',
+            message: t('photoUpload.fileTooSmall', { file: file.name })
+          })
           continue
         }
 
