@@ -51,22 +51,22 @@ export default function NomadResultsDisplay({ planData, onReset }: NomadResultsD
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* 头部信息 */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+      <div className="mb-6 md:mb-8">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
+          <div className="mb-4 md:mb-0">
+            <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">
               {planData.title}
             </h2>
-            <p className="text-gray-600">
+            <p className="text-sm md:text-base text-gray-600">
               基于你的偏好生成的个性化数字游民路线规划
             </p>
           </div>
-          <div className="flex space-x-3">
+          <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-3">
             <button
               onClick={onReset}
-              className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+              className="flex items-center justify-center space-x-2 px-4 py-3 md:py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors text-sm md:text-base touch-manipulation"
             >
               <RotateCcw className="h-4 w-4" />
               <span>重新规划</span>

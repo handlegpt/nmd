@@ -12,6 +12,10 @@ interface NomadPlanningFormProps {
 export default function NomadPlanningForm({ onSubmit, loading = false }: NomadPlanningFormProps) {
   const { t } = useTranslation()
   
+  // 移动端优化的输入样式
+  const inputClasses = "w-full px-3 py-3 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-base md:text-sm"
+  const labelClasses = "block text-sm font-medium text-gray-700 mb-2"
+  
   // 表单状态
   const [formData, setFormData] = useState({
     // 基本信息
@@ -215,38 +219,38 @@ export default function NomadPlanningForm({ onSubmit, loading = false }: NomadPl
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* 预设场景 */}
-      <div className="mb-8">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Heart className="h-5 w-5 mr-2 text-red-500" />
+      <div className="mb-6 md:mb-8">
+        <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 flex items-center">
+          <Heart className="h-4 w-4 md:h-5 md:w-5 mr-2 text-red-500" />
           快速开始 - 选择你的数字游民类型
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
           {presetScenarios.map((preset) => (
             <button
               key={preset.id}
               onClick={() => applyPreset(preset)}
-              className="p-4 bg-gradient-to-br from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 border border-purple-200 rounded-xl transition-all duration-200 hover:scale-105 text-left group"
+              className="p-3 md:p-4 bg-gradient-to-br from-purple-50 to-blue-50 hover:from-purple-100 hover:to-blue-100 border border-purple-200 rounded-lg md:rounded-xl transition-all duration-200 hover:scale-105 text-left group touch-manipulation"
             >
-              <div className="text-2xl mb-2">{preset.icon}</div>
-              <h4 className="font-semibold text-gray-900 mb-1">{preset.name}</h4>
-              <p className="text-sm text-gray-600">{preset.description}</p>
+              <div className="text-xl md:text-2xl mb-2">{preset.icon}</div>
+              <h4 className="font-semibold text-gray-900 mb-1 text-sm md:text-base">{preset.name}</h4>
+              <p className="text-xs md:text-sm text-gray-600">{preset.description}</p>
             </button>
           ))}
         </div>
       </div>
 
       {/* 表单 */}
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit} className="space-y-6 md:space-y-8">
         {/* 基本信息 */}
-        <div className="bg-gray-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-            <Globe className="h-5 w-5 mr-2 text-blue-500" />
+        <div className="bg-gray-50 rounded-lg p-4 md:p-6">
+          <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-3 md:mb-4 flex items-center">
+            <Globe className="h-4 w-4 md:h-5 md:w-5 mr-2 text-blue-500" />
             基本信息
           </h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
             {/* 国籍 */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -255,7 +259,7 @@ export default function NomadPlanningForm({ onSubmit, loading = false }: NomadPl
               <select
                 value={formData.nationality}
                 onChange={(e) => handleInputChange('nationality', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className={inputClasses}
               >
                 {nationalityOptions.map((option) => (
                   <option key={option.value} value={option.value}>
@@ -499,15 +503,15 @@ export default function NomadPlanningForm({ onSubmit, loading = false }: NomadPl
           <button
             type="submit"
             disabled={loading}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-lg"
+            className="w-full md:w-auto bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 md:px-8 py-4 md:py-3 rounded-lg hover:from-purple-700 hover:to-blue-700 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed font-semibold text-base md:text-lg touch-manipulation"
           >
             {loading ? (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-center space-x-2">
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                 <span>{formData.useAI ? 'AI智能规划中...' : 'AI正在规划中...'}</span>
               </div>
             ) : (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center justify-center space-x-2">
                 <Brain className="h-5 w-5" />
                 <span>{formData.useAI ? '开始AI智能规划' : '开始AI规划'}</span>
               </div>
