@@ -297,7 +297,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       // 首先尝试从服务器获取所有用户
       try {
         console.log('🔍 getAllRegisteredUsers - fetching users from server')
-        const response = await fetch('/api/users?include_hidden=false')
+        const response = await fetch('/api/users?include_hidden=false&debug=true')
         if (response.ok) {
           const data = await response.json()
           if (data.success && data.users && data.users.length > 0) {
