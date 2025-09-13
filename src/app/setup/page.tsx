@@ -138,7 +138,7 @@ export default function SetupPage() {
 
   // Load settings from localStorage on mount
   useEffect(() => {
-    const savedSettings = localStorage.getItem('userSettings')
+    const savedSettings = null // TODO: Replace localStorage with database API for userSettings
     if (savedSettings) {
       try {
         const parsed = JSON.parse(savedSettings)
@@ -195,7 +195,7 @@ export default function SetupPage() {
     await new Promise(resolve => setTimeout(resolve, 1000))
     
     // Save to local storage
-    localStorage.setItem('userSettings', JSON.stringify(settings))
+    // TODO: Replace localStorage with database API for userSettings)
     
     // Update language settings
     if (settings.preferences.language !== locale) {

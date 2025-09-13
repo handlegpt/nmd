@@ -29,7 +29,7 @@ export default function CityFavoriteButton({
 
   useEffect(() => {
     // 从localStorage加载收藏状态
-    const favorites = JSON.parse(localStorage.getItem('cityFavorites') || '[]')
+    const favorites: string[] = [] // TODO: Replace localStorage with database API for cityFavorites
     setIsFavorited(favorites.includes(cityId))
   }, [cityId])
 
@@ -42,7 +42,7 @@ export default function CityFavoriteButton({
 
     setIsLoading(true)
     try {
-      const favorites = JSON.parse(localStorage.getItem('cityFavorites') || '[]')
+      const favorites: string[] = [] // TODO: Replace localStorage with database API for cityFavorites
       let newFavorites: string[]
 
       if (isFavorited) {
@@ -53,7 +53,7 @@ export default function CityFavoriteButton({
         newFavorites = [...favorites, cityId]
       }
 
-      localStorage.setItem('cityFavorites', JSON.stringify(newFavorites))
+      // TODO: Replace localStorage with database API for cityFavorites)
       setIsFavorited(!isFavorited)
       onToggle?.(!isFavorited)
 

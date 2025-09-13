@@ -27,7 +27,7 @@ export function useErrorMonitoring() {
         errorInfo,
         userAgent: navigator.userAgent,
         url: window.location.href,
-        userId: localStorage.getItem('user_id') || undefined,
+        userId: undefined, // TODO: Replace localStorage with database API for user_id
         sessionId: sessionStorage.getItem('session_id') || undefined,
         timestamp: new Date().toISOString()
       }
@@ -49,7 +49,7 @@ export function useErrorMonitoring() {
       }
 
       // 同时记录到 localStorage 作为备份
-      const existingErrors = JSON.parse(localStorage.getItem('react_errors') || '[]')
+      const existingErrors: any[] = [] // TODO: Replace localStorage with database API for react_errors
       existingErrors.push(errorReport)
       
       // 只保留最近 20 个错误
@@ -57,7 +57,7 @@ export function useErrorMonitoring() {
         existingErrors.splice(0, existingErrors.length - 20)
       }
       
-      localStorage.setItem('react_errors', JSON.stringify(existingErrors))
+      // TODO: Replace localStorage with database API for react_errors)
 
     } catch (reportError) {
       console.error('Failed to report error:', reportError)
@@ -164,7 +164,7 @@ export function useErrorMonitoring() {
   // 清除错误记录
   const clearErrors = useCallback(() => {
     setErrors([])
-    localStorage.removeItem('react_errors')
+    // TODO: Replace localStorage with database API for react_errors
   }, [])
 
   // 自动启动监控

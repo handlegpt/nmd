@@ -47,14 +47,14 @@ export function ReactErrorMonitor() {
         setErrors(prev => [...prev, reactError])
 
         // 保存到 localStorage
-        const existingErrors = JSON.parse(localStorage.getItem('react_errors_detailed') || '[]')
+        const existingErrors: any[] = [] // TODO: Replace localStorage with database API for react_errors_detailed
         existingErrors.push(reactError)
         
         if (existingErrors.length > 50) {
           existingErrors.splice(0, existingErrors.length - 50)
         }
         
-        localStorage.setItem('react_errors_detailed', JSON.stringify(existingErrors))
+        // TODO: Replace localStorage with database API for react_errors_detailed)
 
         // 尝试发送到服务器
         fetch('/api/errors', {
@@ -131,7 +131,7 @@ export function ReactErrorMonitor() {
 
   const clearErrors = () => {
     setErrors([])
-    localStorage.removeItem('react_errors_detailed')
+    // TODO: Replace localStorage with database API for react_errors_detailed
   }
 
   const exportErrors = () => {

@@ -72,7 +72,7 @@ export default function CityReviewSystem({
     setLoading(true)
     try {
       // 从localStorage加载评论数据
-      const storedReviews = JSON.parse(localStorage.getItem(`city_reviews_${cityId}`) || '[]')
+      const storedReviews: any[] = [] // TODO: Replace localStorage with database API for city_reviews_${cityId}
       setReviews(storedReviews)
     } catch (error) {
       console.error('Error loading reviews:', error)
@@ -129,7 +129,7 @@ export default function CityReviewSystem({
 
       // 保存到localStorage
       const updatedReviews = [newReview, ...reviews]
-      localStorage.setItem(`city_reviews_${cityId}`, JSON.stringify(updatedReviews))
+      // TODO: Replace localStorage with database API for city_reviews_${cityId})
       
       setReviews(updatedReviews)
       setShowReviewForm(false)
@@ -190,7 +190,7 @@ export default function CityReviewSystem({
     })
     
     setReviews(updatedReviews)
-    localStorage.setItem(`city_reviews_${cityId}`, JSON.stringify(updatedReviews))
+    // TODO: Replace localStorage with database API for city_reviews_${cityId})
   }
 
   const addField = (type: 'pros' | 'cons') => {

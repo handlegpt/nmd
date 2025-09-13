@@ -300,10 +300,10 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
       }
       
       // 检查是否是新用户（首次登录）
-      const isNewUser = localStorage.getItem(`new_user_${profile.id}`)
+      const isNewUser = null // TODO: Replace localStorage with database API for new_user_${profile.id}
       if (isNewUser === null) {
         // 标记为新用户
-        localStorage.setItem(`new_user_${profile.id}`, 'true')
+        // TODO: Replace localStorage with database API for new_user_${profile.id}
         logInfo('New user detected, marked for Local Nomads', { userId: profile.id }, 'GlobalState')
       }
     }

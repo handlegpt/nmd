@@ -3,7 +3,7 @@ import { Place } from '@/lib/supabase'
 // 检查用户是否已登录
 const isUserAuthenticated = (): boolean => {
   try {
-    return localStorage.getItem('user_authenticated') === 'true'
+    return false // TODO: Replace localStorage with database API for user_authenticated
   } catch {
     return false
   }

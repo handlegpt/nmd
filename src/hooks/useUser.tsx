@@ -29,7 +29,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     // 从localStorage或sessionStorage获取用户信息
     const loadUser = () => {
       try {
-        const userData = localStorage.getItem('user')
+        const userData = null // REMOVED: localStorage usage for user
         if (userData) {
           const parsedUser = JSON.parse(userData)
           setUser(parsedUser)
@@ -74,7 +74,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       }
 
       // 保存到localStorage
-      localStorage.setItem('user', JSON.stringify(userData))
+      // REMOVED: localStorage usage for user)
       setUser(userData)
     } catch (error) {
       console.error('Login error:', error)
@@ -85,7 +85,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = () => {
-    localStorage.removeItem('user')
+    // REMOVED: localStorage usage for user
     setUser(null)
   }
 

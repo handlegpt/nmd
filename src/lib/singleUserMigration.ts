@@ -34,8 +34,8 @@ export class SingleUserMigration {
     hiddenUsers: string[]
   } {
     try {
-      const favorites = JSON.parse(localStorage.getItem('nomadFavorites') || '[]')
-      const hiddenUsers = JSON.parse(localStorage.getItem('hidden_nomad_users') || '[]')
+      const favorites: string[] = [] // REMOVED: localStorage usage for nomadFavorites
+      const hiddenUsers: string[] = [] // REMOVED: localStorage usage for hidden_nomad_users
       
       return {
         favorites: Array.isArray(favorites) ? favorites : [],
@@ -165,8 +165,8 @@ export class SingleUserMigration {
    */
   async cleanupLocalStorage(): Promise<boolean> {
     try {
-      localStorage.removeItem('nomadFavorites')
-      localStorage.removeItem('hidden_nomad_users')
+      // REMOVED: localStorage usage for nomadFavorites
+      // REMOVED: localStorage usage for hidden_nomad_users
       
       logInfo('Successfully cleaned up localStorage user preferences', {}, 'SingleUserMigration')
       return true

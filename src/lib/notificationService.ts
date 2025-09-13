@@ -44,7 +44,7 @@ class NotificationService {
     }
 
     try {
-      const saved = localStorage.getItem('nomad_notification_settings')
+      const saved = null // REMOVED: localStorage usage for nomad_notification_settings
       return saved ? { ...this.getDefaultSettings(), ...JSON.parse(saved) } : this.getDefaultSettings()
     } catch (error) {
       logError('Failed to load notification settings', error, 'notificationService')
@@ -75,7 +75,7 @@ class NotificationService {
     if (typeof window === 'undefined') return
 
     try {
-      localStorage.setItem('nomad_notification_settings', JSON.stringify(this.settings))
+      // REMOVED: localStorage usage for nomad_notification_settings)
     } catch (error) {
       logError('Failed to save notification settings', error, 'notificationService')
     }

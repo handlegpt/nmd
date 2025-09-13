@@ -103,7 +103,7 @@ export default function LocalNomads() {
   // 判断是否为新用户（用于显示 New User 徽标，与首页视觉一致）
   const isNewUser = (userId: string): boolean => {
     try {
-      return localStorage.getItem(`new_user_${userId}`) === 'true'
+      return false // TODO: Replace localStorage with database API for new_user_${userId}
     } catch {
       return false
     }

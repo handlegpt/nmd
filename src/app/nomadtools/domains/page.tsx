@@ -466,7 +466,7 @@ export default function DomainTrackerPage() {
           if (serverStats) setStats(serverStats);
         } else {
           // 2. 服务器没有数据，尝试从本地加载
-          const savedDomains = localStorage.getItem('domainTracker_domains');
+          const savedDomains = null // TODO: Replace localStorage with database API for domainTracker_domains;
           if (savedDomains) {
             const decryptedDomains = decryptData(savedDomains);
             if (decryptedDomains) {
@@ -476,7 +476,7 @@ export default function DomainTrackerPage() {
             }
           }
 
-          const savedTransactions = localStorage.getItem('domainTracker_transactions');
+          const savedTransactions = null // TODO: Replace localStorage with database API for domainTracker_transactions;
           if (savedTransactions) {
             const decryptedTransactions = decryptData(savedTransactions);
             if (decryptedTransactions) {
@@ -486,7 +486,7 @@ export default function DomainTrackerPage() {
             }
           }
 
-          const savedStats = localStorage.getItem('domainTracker_stats');
+          const savedStats = null // TODO: Replace localStorage with database API for domainTracker_stats;
           if (savedStats) {
             const decryptedStats = decryptData(savedStats);
             if (decryptedStats) {
@@ -500,19 +500,19 @@ export default function DomainTrackerPage() {
         console.error('Error loading data:', error);
         // 出错时回退到本地存储
         try {
-          const savedDomains = localStorage.getItem('domainTracker_domains');
+          const savedDomains = null // TODO: Replace localStorage with database API for domainTracker_domains;
           if (savedDomains) {
             const decryptedDomains = decryptData(savedDomains);
             if (decryptedDomains) setDomains(decryptedDomains);
           }
 
-          const savedTransactions = localStorage.getItem('domainTracker_transactions');
+          const savedTransactions = null // TODO: Replace localStorage with database API for domainTracker_transactions;
           if (savedTransactions) {
             const decryptedTransactions = decryptData(savedTransactions);
             if (decryptedTransactions) setTransactions(decryptedTransactions);
           }
 
-          const savedStats = localStorage.getItem('domainTracker_stats');
+          const savedStats = null // TODO: Replace localStorage with database API for domainTracker_stats;
           if (savedStats) {
             const decryptedStats = decryptData(savedStats);
             if (decryptedStats) setStats(decryptedStats);
@@ -547,9 +547,9 @@ export default function DomainTrackerPage() {
           const encryptedTransactions = encryptData(transactions);
           const encryptedStats = encryptData(stats);
           
-          localStorage.setItem('domainTracker_domains', encryptedDomains);
-          localStorage.setItem('domainTracker_transactions', encryptedTransactions);
-          localStorage.setItem('domainTracker_stats', encryptedStats);
+          // TODO: Replace localStorage with database API for domainTracker_domains;
+          // TODO: Replace localStorage with database API for domainTracker_transactions;
+          // TODO: Replace localStorage with database API for domainTracker_stats;
           
           console.log('Data saved successfully');
         } catch (error) {
@@ -560,9 +560,9 @@ export default function DomainTrackerPage() {
             const encryptedTransactions = encryptData(transactions);
             const encryptedStats = encryptData(stats);
             
-            localStorage.setItem('domainTracker_domains', encryptedDomains);
-            localStorage.setItem('domainTracker_transactions', encryptedTransactions);
-            localStorage.setItem('domainTracker_stats', encryptedStats);
+            // TODO: Replace localStorage with database API for domainTracker_domains;
+            // TODO: Replace localStorage with database API for domainTracker_transactions;
+            // TODO: Replace localStorage with database API for domainTracker_stats;
             
             console.log('Data saved to localStorage as fallback');
           } catch (localError) {

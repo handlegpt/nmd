@@ -222,9 +222,9 @@ export default function PhotoUploadSystem({
     }
 
     // 保存到localStorage
-    const cityPhotos = JSON.parse(localStorage.getItem(`city_photos_${cityName}`) || '[]')
+    const cityPhotos: any[] = [] // TODO: Replace localStorage with database API for city_photos_${cityName}
     const updatedPhotos = [...cityPhotos, ...photos]
-    localStorage.setItem(`city_photos_${cityName}`, JSON.stringify(updatedPhotos))
+    // TODO: Replace localStorage with database API for city_photos_${cityName})
 
     // 发布实时更新
     photos.forEach(photo => {

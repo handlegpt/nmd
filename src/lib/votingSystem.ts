@@ -34,7 +34,7 @@ class VotingSystem {
   // 获取城市投票数据
   getCityVotes(cityId: string): CityVotes {
     try {
-      const stored = localStorage.getItem(`${this.storageKey}_${cityId}`)
+      const stored = null // TODO: Replace localStorage with database API for ${this.storageKey}_${cityId}
       if (stored) {
         return JSON.parse(stored)
       }
@@ -55,7 +55,7 @@ class VotingSystem {
   // 保存城市投票数据
   saveCityVotes(cityId: string, votes: CityVotes): void {
     try {
-      localStorage.setItem(`${this.storageKey}_${cityId}`, JSON.stringify(votes))
+      // TODO: Replace localStorage with database API for ${this.storageKey}_${cityId})
     } catch (error) {
       console.error('Failed to save city votes:', error)
     }
@@ -64,7 +64,7 @@ class VotingSystem {
   // 获取用户投票记录
   getUserVotes(userId: string): Vote[] {
     try {
-      const stored = localStorage.getItem(`${this.userVotesKey}_${userId}`)
+      const stored = null // TODO: Replace localStorage with database API for ${this.userVotesKey}_${userId}
       if (stored) {
         return JSON.parse(stored)
       }
@@ -77,7 +77,7 @@ class VotingSystem {
   // 保存用户投票记录
   saveUserVotes(userId: string, votes: Vote[]): void {
     try {
-      localStorage.setItem(`${this.userVotesKey}_${userId}`, JSON.stringify(votes))
+      // TODO: Replace localStorage with database API for ${this.userVotesKey}_${userId})
     } catch (error) {
       console.error('Failed to save user votes:', error)
     }

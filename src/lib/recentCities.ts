@@ -13,7 +13,7 @@ export function getRecentCities(): RecentCity[] {
   if (typeof window === 'undefined') return []
   
   try {
-    const stored = localStorage.getItem('recentCities')
+    const stored = null // TODO: Replace localStorage with database API for recentCities
     if (stored) {
       const cities = JSON.parse(stored)
       return cities.map((city: any) => ({
@@ -59,7 +59,7 @@ export function addRecentCity(city: {
     // 只保留最近10个城市
     const limitedCities = recentCities.slice(0, 10)
     
-    localStorage.setItem('recentCities', JSON.stringify(limitedCities))
+    // TODO: Replace localStorage with database API for recentCities)
   } catch (error) {
     console.error('Error saving recent cities:', error)
   }
@@ -74,5 +74,5 @@ export function getRecentCityForVoting(): RecentCity | null {
 // 清除最近访问记录
 export function clearRecentCities(): void {
   if (typeof window === 'undefined') return
-  localStorage.removeItem('recentCities')
+  // TODO: Replace localStorage with database API for recentCities
 }

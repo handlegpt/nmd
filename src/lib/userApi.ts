@@ -103,9 +103,9 @@ export async function registerUser(userData: {
     }
     
     // 保存到本地存储（模拟数据库）
-    const users = JSON.parse(localStorage.getItem('nomad_users') || '[]')
+    const users: any[] = [] // REMOVED: localStorage usage for nomad_users
     users.push(newUser)
-    localStorage.setItem('nomad_users', JSON.stringify(users))
+    // REMOVED: localStorage usage for nomad_users)
     
     return { success: true, user: newUser }
   } catch (error) {
@@ -127,7 +127,7 @@ export async function updateUserStatus(userId: string, status: {
     await new Promise(resolve => setTimeout(resolve, 300))
     
     // 更新本地存储
-    const users = JSON.parse(localStorage.getItem('nomad_users') || '[]')
+    const users: any[] = [] // REMOVED: localStorage usage for nomad_users
     const userIndex = users.findIndex((u: UserProfile) => u.id === userId)
     
     if (userIndex !== -1) {
@@ -136,7 +136,7 @@ export async function updateUserStatus(userId: string, status: {
         ...status,
         lastSeen: new Date().toISOString()
       }
-      localStorage.setItem('nomad_users', JSON.stringify(users))
+      // REMOVED: localStorage usage for nomad_users)
     }
     
     return { success: true }
@@ -161,12 +161,12 @@ export async function updateUserLocation(userId: string, location: {
     await new Promise(resolve => setTimeout(resolve, 300))
     
     // 更新本地存储
-    const users = JSON.parse(localStorage.getItem('nomad_users') || '[]')
+    const users: any[] = [] // REMOVED: localStorage usage for nomad_users
     const userIndex = users.findIndex((u: UserProfile) => u.id === userId)
     
     if (userIndex !== -1) {
       users[userIndex].currentLocation = location
-      localStorage.setItem('nomad_users', JSON.stringify(users))
+      // REMOVED: localStorage usage for nomad_users)
     }
     
     return { success: true }
@@ -188,7 +188,7 @@ export async function getOnlineUsers(
     await new Promise(resolve => setTimeout(resolve, 500))
     
     // 从本地存储获取用户数据
-    const users = JSON.parse(localStorage.getItem('nomad_users') || '[]')
+    const users: any[] = [] // REMOVED: localStorage usage for nomad_users
     
     // 过滤在线用户
     const onlineUsers = users.filter((user: UserProfile) => 
@@ -294,7 +294,7 @@ export async function getUserStats(city: string): Promise<{
     // 这里应该调用真实的API
     await new Promise(resolve => setTimeout(resolve, 300))
     
-    const users = JSON.parse(localStorage.getItem('nomad_users') || '[]')
+    const users: any[] = [] // REMOVED: localStorage usage for nomad_users
     
     const totalUsers = users.length
     const onlineUsers = users.filter((u: UserProfile) => u.onlineStatus.isOnline).length

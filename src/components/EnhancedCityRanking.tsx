@@ -81,7 +81,7 @@ export default function EnhancedCityRanking({
   // 加载收藏状态
   const loadFavorites = () => {
     try {
-      const savedFavorites = localStorage.getItem('cityFavorites')
+      const savedFavorites = null // TODO: Replace localStorage with database API for cityFavorites
       if (savedFavorites) {
         const favoriteIds = JSON.parse(savedFavorites)
         setFavorites(new Set(favoriteIds))
@@ -273,7 +273,7 @@ export default function EnhancedCityRanking({
     
     // 保存到localStorage
     try {
-      localStorage.setItem('cityFavorites', JSON.stringify([...newFavorites]))
+      // TODO: Replace localStorage with database API for cityFavorites)
     } catch (error) {
       console.error('Error saving favorites:', error)
     }

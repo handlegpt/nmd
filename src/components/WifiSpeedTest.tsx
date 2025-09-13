@@ -175,7 +175,7 @@ export default function WifiSpeedTest() {
 
   const saveTestResult = (result: SpeedTestResult) => {
     try {
-      const savedResults = JSON.parse(localStorage.getItem('speedTestResults') || '[]')
+      const savedResults = [] // TODO: Replace localStorage with database API for speedTestResults
       savedResults.unshift(result)
       
       // 只保留最近10次测试结果
@@ -183,7 +183,7 @@ export default function WifiSpeedTest() {
         savedResults.splice(10)
       }
       
-      localStorage.setItem('speedTestResults', JSON.stringify(savedResults))
+      // TODO: Replace localStorage with database API for speedTestResults)
     } catch (error) {
       logError('Failed to save test result:', error)
     }

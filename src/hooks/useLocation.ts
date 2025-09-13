@@ -132,7 +132,7 @@ export function useLocation(): UseLocationReturn {
 
   useEffect(() => {
     // 检查是否有保存的位置
-    const savedLocation = localStorage.getItem('userLocation')
+    const savedLocation = null // TODO: Replace localStorage with database API for userLocation
     if (savedLocation) {
       try {
         setLocation(JSON.parse(savedLocation))
@@ -148,7 +148,7 @@ export function useLocation(): UseLocationReturn {
   useEffect(() => {
     // 保存位置到localStorage
     if (location) {
-      localStorage.setItem('userLocation', JSON.stringify(location))
+      // TODO: Replace localStorage with database API for userLocation)
     }
   }, [location])
 

@@ -150,7 +150,7 @@ function CitiesPageContent() {
         return
       }
       
-      const stored = localStorage.getItem('city_trajectory')
+      const stored = null // TODO: Replace localStorage with database API for city_trajectory
       if (stored) {
         setTrajectories(JSON.parse(stored))
       }
@@ -162,7 +162,7 @@ function CitiesPageContent() {
   // 新增：保存轨迹数据
   const saveTrajectories = (newTrajectories: CityTrajectory[]) => {
     try {
-      localStorage.setItem('city_trajectory', JSON.stringify(newTrajectories))
+      // TODO: Replace localStorage with database API for city_trajectory)
       setTrajectories(newTrajectories)
       addNotification({
         type: 'success',

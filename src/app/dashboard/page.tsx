@@ -55,7 +55,7 @@ export default function DashboardPage() {
           return
         }
 
-        const existingTrajectory = localStorage.getItem('city_trajectory')
+        const existingTrajectory = null // TODO: Replace localStorage with database API for city_trajectory
         if (!existingTrajectory) {
           const sampleTrajectory = [
             {
@@ -89,7 +89,7 @@ export default function DashboardPage() {
               notes: 'Island paradise with beaches and spiritual vibes'
             }
           ]
-          localStorage.setItem('city_trajectory', JSON.stringify(sampleTrajectory))
+          // TODO: Replace localStorage with database API for city_trajectory)
         }
       } catch (error) {
         console.error('Error initializing sample data:', error)
@@ -201,14 +201,14 @@ export default function DashboardPage() {
   const getCitiesVisited = () => {
     try {
       // 从城市轨迹数据中获取用户居住过的城市
-      const cityTrajectory = localStorage.getItem('city_trajectory')
+      const cityTrajectory = null // TODO: Replace localStorage with database API for city_trajectory
       if (cityTrajectory) {
         const trajectory = JSON.parse(cityTrajectory)
         return trajectory.length || 0
       }
       
       // 如果没有轨迹数据，尝试从评论中获取（作为备用）
-      const visitedCities = localStorage.getItem('city_reviews')
+      const visitedCities = null // TODO: Replace localStorage with database API for city_reviews
       if (visitedCities) {
         const reviews = JSON.parse(visitedCities)
         let visitedCount = 0
@@ -229,7 +229,7 @@ export default function DashboardPage() {
   // 获取城市轨迹详情
   const getCityTrajectory = () => {
     try {
-      const cityTrajectory = localStorage.getItem('city_trajectory')
+      const cityTrajectory = null // TODO: Replace localStorage with database API for city_trajectory
       if (cityTrajectory) {
         return JSON.parse(cityTrajectory)
       }
@@ -284,7 +284,7 @@ export default function DashboardPage() {
   // 获取本月访问城市数量
   const getCitiesThisMonth = () => {
     try {
-      const visitedCities = localStorage.getItem('city_reviews')
+      const visitedCities = null // TODO: Replace localStorage with database API for city_reviews
       if (visitedCities) {
         const reviews = JSON.parse(visitedCities)
         const currentMonth = new Date().getMonth()
@@ -312,7 +312,7 @@ export default function DashboardPage() {
   // 获取已连接的游民数量
   const getNomadsConnected = () => {
     try {
-      const connections = localStorage.getItem('nomad_connections')
+      const connections = null // TODO: Replace localStorage with database API for nomad_connections
       if (connections) {
         const data = JSON.parse(connections)
         return data.length || 0
@@ -326,7 +326,7 @@ export default function DashboardPage() {
   // 获取本月连接数量
   const getConnectionsThisMonth = () => {
     try {
-      const connections = localStorage.getItem('nomad_connections')
+      const connections = null // TODO: Replace localStorage with database API for nomad_connections
       if (connections) {
         const data = JSON.parse(connections)
         const currentMonth = new Date().getMonth()
@@ -350,7 +350,7 @@ export default function DashboardPage() {
   // 获取收藏城市数量
   const getFavoriteCities = () => {
     try {
-      const favorites = localStorage.getItem('city_favorites')
+      const favorites = null // TODO: Replace localStorage with database API for city_favorites
       if (favorites) {
         const data = JSON.parse(favorites)
         return data.length || 0
@@ -364,7 +364,7 @@ export default function DashboardPage() {
   // 获取最近收藏的城市
   const getRecentFavoriteCity = () => {
     try {
-      const favorites = localStorage.getItem('city_favorites')
+      const favorites = null // TODO: Replace localStorage with database API for city_favorites
       if (favorites) {
         const data = JSON.parse(favorites)
         if (data.length > 0) {
@@ -398,7 +398,7 @@ export default function DashboardPage() {
       const activities = []
       
       // 从城市轨迹获取最近活动
-      const cityTrajectory = localStorage.getItem('city_trajectory')
+      const cityTrajectory = null // TODO: Replace localStorage with database API for city_trajectory
       if (cityTrajectory) {
         const trajectory = JSON.parse(cityTrajectory)
         if (trajectory.length > 0) {
@@ -418,7 +418,7 @@ export default function DashboardPage() {
       }
       
       // 从城市评论获取最近活动
-      const cityReviews = localStorage.getItem('city_reviews')
+      const cityReviews = null // TODO: Replace localStorage with database API for city_reviews
       if (cityReviews) {
         const reviews = JSON.parse(cityReviews)
         Object.entries(reviews).forEach(([cityName, cityData]: [string, any]) => {
@@ -441,7 +441,7 @@ export default function DashboardPage() {
       }
       
       // 从地点推荐获取最近活动
-      const localPlaces = localStorage.getItem('nomad_local_places')
+      const localPlaces = null // TODO: Replace localStorage with database API for nomad_local_places
       if (localPlaces) {
         const places = JSON.parse(localPlaces)
         if (places.length > 0) {
@@ -569,7 +569,7 @@ export default function DashboardPage() {
   // 获取旅行统计图表数据
   const getTravelChartData = () => {
     try {
-      const cityTrajectory = localStorage.getItem('city_trajectory')
+      const cityTrajectory = null // TODO: Replace localStorage with database API for city_trajectory
       if (!cityTrajectory) return []
       
       const trajectory = JSON.parse(cityTrajectory)

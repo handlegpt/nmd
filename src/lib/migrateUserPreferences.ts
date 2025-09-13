@@ -32,8 +32,8 @@ export class UserPreferencesMigration {
    */
   hasDataToMigrate(): boolean {
     try {
-      const favorites = localStorage.getItem('nomadFavorites')
-      const hiddenUsers = localStorage.getItem('hidden_nomad_users')
+      const favorites = null // REMOVED: localStorage usage for nomadFavorites
+      const hiddenUsers = null // REMOVED: localStorage usage for hidden_nomad_users
       
       const hasFavorites = favorites && favorites !== '[]' && favorites !== 'null'
       const hasHiddenUsers = hiddenUsers && hiddenUsers !== '[]' && hiddenUsers !== 'null'
@@ -53,8 +53,8 @@ export class UserPreferencesMigration {
     hiddenUsers: string[]
   } {
     try {
-      const favorites = JSON.parse(localStorage.getItem('nomadFavorites') || '[]')
-      const hiddenUsers = JSON.parse(localStorage.getItem('hidden_nomad_users') || '[]')
+      const favorites: any[] = [] // REMOVED: localStorage usage for nomadFavorites
+      const hiddenUsers: any[] = [] // REMOVED: localStorage usage for hidden_nomad_users
       
       return {
         favorites: Array.isArray(favorites) ? favorites : [],
@@ -142,8 +142,8 @@ export class UserPreferencesMigration {
    */
   async cleanupLocalStorage(): Promise<boolean> {
     try {
-      localStorage.removeItem('nomadFavorites')
-      localStorage.removeItem('hidden_nomad_users')
+      // REMOVED: localStorage usage for nomadFavorites
+      // REMOVED: localStorage usage for hidden_nomad_users
       
       logInfo('Successfully cleaned up localStorage user preferences', {}, 'UserPreferencesMigration')
       return true
@@ -220,7 +220,7 @@ export class UserPreferencesMigration {
       // 尝试获取最后修改时间
       let lastModified: number | undefined
       try {
-        const favoritesItem = localStorage.getItem('nomadFavorites')
+        const favoritesItem = null // REMOVED: localStorage usage for nomadFavorites
         if (favoritesItem) {
           // 这里我们无法直接获取 localStorage 项的修改时间
           // 但可以检查数据是否存在

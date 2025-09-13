@@ -53,7 +53,7 @@ export default function EnhancedSearch() {
 
   // 加载搜索历史
   useEffect(() => {
-    const history = localStorage.getItem('searchHistory')
+    const history = null // TODO: Replace localStorage with database API for searchHistory
     if (history) {
       setSearchHistory(JSON.parse(history))
     }
@@ -153,7 +153,7 @@ export default function EnhancedSearch() {
 
     const updatedHistory = [newHistory, ...searchHistory.filter(h => h.query !== searchQuery)].slice(0, 10)
     setSearchHistory(updatedHistory)
-    localStorage.setItem('searchHistory', JSON.stringify(updatedHistory))
+    // TODO: Replace localStorage with database API for searchHistory)
 
     // 导航到搜索结果
     router.push(`/cities?search=${encodeURIComponent(searchQuery)}`)
@@ -164,14 +164,14 @@ export default function EnhancedSearch() {
   // 清除搜索历史
   const clearHistory = () => {
     setSearchHistory([])
-    localStorage.removeItem('searchHistory')
+    // TODO: Replace localStorage with database API for searchHistory
   }
 
   // 删除单个历史记录
   const removeHistoryItem = (id: string) => {
     const updatedHistory = searchHistory.filter(h => h.id !== id)
     setSearchHistory(updatedHistory)
-    localStorage.setItem('searchHistory', JSON.stringify(updatedHistory))
+    // TODO: Replace localStorage with database API for searchHistory)
   }
 
   return (

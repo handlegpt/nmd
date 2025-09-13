@@ -40,7 +40,7 @@ export async function getOnlineUsers(city: string, currentLocation?: { latitude:
     logInfo('Fetching online users for city', { city }, 'meetupApi')
     
     // 如果没有真实用户数据，返回模拟数据
-    const users = JSON.parse(localStorage.getItem('nomad_users') || '[]')
+    const users: any[] = [] // REMOVED: localStorage usage for nomad_users
     
     if (users.length === 0) {
       // 返回模拟数据
@@ -203,9 +203,9 @@ export async function sendMeetupInvitation(
     }
     
     // 保存到 localStorage 作为模拟数据库
-    const existingInvitations = JSON.parse(localStorage.getItem('meetup_invitations') || '[]')
+    const existingInvitations: any[] = [] // REMOVED: localStorage usage for meetup_invitations
     existingInvitations.push(meetupInvitation)
-    localStorage.setItem('meetup_invitations', JSON.stringify(existingInvitations))
+    // REMOVED: localStorage usage for meetup_invitations)
     
     // 创建通知记录
     const notification = {
@@ -228,9 +228,9 @@ export async function sendMeetupInvitation(
     }
     
     // 保存通知到 localStorage
-    const existingNotifications = JSON.parse(localStorage.getItem('user_notifications') || '[]')
+    const existingNotifications: any[] = [] // REMOVED: localStorage usage for user_notifications
     existingNotifications.push(notification)
-    localStorage.setItem('user_notifications', JSON.stringify(existingNotifications))
+    // REMOVED: localStorage usage for user_notifications)
     
     logInfo('Meetup invitation and notification created', { 
       meetupId: meetupInvitation.id, 

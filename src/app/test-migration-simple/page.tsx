@@ -15,15 +15,15 @@ export default function TestMigrationSimplePage() {
 
   // 添加测试数据到 localStorage
   const addTestData = () => {
-    localStorage.setItem('nomadFavorites', JSON.stringify(testData.favorites))
-    localStorage.setItem('hidden_nomad_users', JSON.stringify(testData.hiddenUsers))
+    // REMOVED: localStorage usage for nomadFavorites)
+    // REMOVED: localStorage usage for hidden_nomad_users)
     alert('测试数据已添加到 localStorage！')
   }
 
   // 清理测试数据
   const clearTestData = () => {
-    localStorage.removeItem('nomadFavorites')
-    localStorage.removeItem('hidden_nomad_users')
+    // REMOVED: localStorage usage for nomadFavorites
+    // REMOVED: localStorage usage for hidden_nomad_users
     alert('测试数据已清理！')
   }
 

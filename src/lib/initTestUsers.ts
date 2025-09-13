@@ -20,7 +20,7 @@ export interface TestUser {
 
 export function initializeTestUsers(): void {
   // 检查是否已经有nomad_users数据
-  const existingUsers = localStorage.getItem('nomad_users')
+  const existingUsers = null // REMOVED: localStorage usage for nomad_users
   if (existingUsers && JSON.parse(existingUsers).length > 0) {
     console.log('Test users already exist, skipping initialization')
     return
@@ -174,7 +174,7 @@ export function initializeTestUsers(): void {
   ]
 
   // 保存测试用户到localStorage
-  localStorage.setItem('nomad_users', JSON.stringify(testUsers))
+  // REMOVED: localStorage usage for nomad_users)
   console.log('Initialized test users:', testUsers.length)
 }
 
