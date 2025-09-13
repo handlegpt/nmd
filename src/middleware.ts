@@ -41,7 +41,7 @@ const cspHeader = {
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob: https://maps.googleapis.com https://maps.gstatic.com",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openweathermap.org https://worldtimeapi.org https://ip-api.com https://api.ipapi.com https://api.exchangerate-api.com https://static.cloudflareinsights.com",
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openweathermap.org https://worldtimeapi.org https://ip-api.com https://api.ipapi.com https://api.exchangerate-api.com https://static.cloudflareinsights.com https://api.bigdatacloud.net",
     "frame-src 'none'",
     "object-src 'none'",
     "base-uri 'self'",

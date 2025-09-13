@@ -266,7 +266,7 @@ export default function HomeLocalNomadsApi({ className = '' }: HomeLocalNomadsAp
           <div className="flex items-center">
             <Wifi className="w-8 h-8 text-purple-600 mr-3" />
             <div>
-              <div className="text-2xl font-bold text-purple-900">{onlineUsers.length + nearbyUsers.length || 128}</div>
+              <div className="text-2xl font-bold text-purple-900">{onlineUsers.length + nearbyUsers.length}</div>
               <div className="text-sm text-purple-700">
                 {t('localNomads.globalNomads') || 'Global Nomads'}
               </div>
