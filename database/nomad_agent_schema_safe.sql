@@ -373,11 +373,11 @@ WHERE NOT EXISTS (SELECT 1 FROM cities WHERE cities.slug = v.slug);
 -- Insert data source information (only if not exists)
 INSERT INTO data_sources (source_name, source_type, endpoint_url, update_frequency, last_updated, is_active) 
 SELECT * FROM (VALUES
-('Numbeo', 'api', 'https://www.numbeo.com/api/', 'monthly', '2024-09-01', true),
-('NomadList', 'api', 'https://nomadlist.com/api/', 'weekly', '2024-09-01', true),
-('Exchange Rates API', 'api', 'https://api.exchangerate-api.com/', 'daily', '2024-09-01', true),
-('Google Places API', 'api', 'https://maps.googleapis.com/maps/api/', 'real-time', '2024-09-01', true),
-('Visa Information', 'manual', NULL, 'monthly', '2024-09-01', true)
+('Numbeo', 'api', 'https://www.numbeo.com/api/', 'monthly', '2024-09-01'::timestamp with time zone, true),
+('NomadList', 'api', 'https://nomadlist.com/api/', 'weekly', '2024-09-01'::timestamp with time zone, true),
+('Exchange Rates API', 'api', 'https://api.exchangerate-api.com/', 'daily', '2024-09-01'::timestamp with time zone, true),
+('Google Places API', 'api', 'https://maps.googleapis.com/maps/api/', 'real-time', '2024-09-01'::timestamp with time zone, true),
+('Visa Information', 'manual', NULL, 'monthly', '2024-09-01'::timestamp with time zone, true)
 ) AS v(source_name, source_type, endpoint_url, update_frequency, last_updated, is_active)
 WHERE NOT EXISTS (SELECT 1 FROM data_sources WHERE data_sources.source_name = v.source_name);
 
