@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS plan_legs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   plan_id UUID REFERENCES travel_plans(id) ON DELETE CASCADE,
   sequence_order INTEGER NOT NULL,                -- Sequence order
-  city_id INTEGER REFERENCES cities(id),          -- City ID
+  city_id UUID REFERENCES cities(id),          -- City ID
   arrive_date DATE,                               -- Arrival date
   depart_date DATE,                               -- Departure date
   duration_days INTEGER,                          -- Stay duration in days
