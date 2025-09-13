@@ -54,11 +54,11 @@ export default function CityPlacesSection({ cityName, cityCountry }: CityPlacesS
     loadUserLocation()
   }, [cityName])
 
-  const loadCityPlaces = () => {
+  const loadCityPlaces = async () => {
     setLoading(true)
     try {
       // 获取用户添加的该城市地点
-      const userPlaces = PlaceDataService.getPlacesByCity(cityName)
+      const userPlaces = await PlaceDataService.getPlacesByCity(cityName)
       
       // 获取城市特定推荐地点
       const recommendedPlaces = getRecommendedPlacesForCity(cityName, userPlaces)
@@ -71,8 +71,8 @@ export default function CityPlacesSection({ cityName, cityCountry }: CityPlacesS
     }
   }
 
-  const loadUserLocation = () => {
-    const location = PlaceDataService.getUserLocation()
+  const loadUserLocation = async () => {
+    const location = await PlaceDataService.getUserLocation()
     setUserLocation(location)
   }
 

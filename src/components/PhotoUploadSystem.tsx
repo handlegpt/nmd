@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useEffect } from 'react'
 import { 
   UploadIcon, 
   X, 
@@ -15,6 +15,7 @@ import { useTranslation } from '@/hooks/useTranslation'
 import { useUser } from '@/contexts/GlobalStateContext'
 import { useNotifications } from '@/contexts/GlobalStateContext'
 import realtimeService from '@/lib/realtimeUpdateService'
+import { cityPhotosService } from '@/lib/cityPhotosService'
 
 interface UploadedPhoto {
   id: string
@@ -54,7 +55,47 @@ export default function PhotoUploadSystem({
   const [uploading, setUploading] = useState(false)
   const [dragActive, setDragActive] = useState(false)
   const [editingPhoto, setEditingPhoto] = useState<UploadedPhoto | null>(null)
+  const [loading, setLoading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  // 加载现有照片
+  useEffect(() => {
+    const loadExistingPhotos = async () => {
+      if (!user.isAuthenticated || !user.profile?.id) return
+
+      setLoading(true)
+      try {
+        const existingPhotos = await cityPhotosService.getCityPhotos(
+          user.profile.id, 
+          cityName.toLowerCase().replace(/\s+/g, '-')
+        )
+
+        // 将数据库照片转换为组件格式
+        const convertedPhotos: UploadedPhoto[] = existingPhotos.map(photo => ({
+          id: photo.id,
+          file: new File([], photo.photo_url), // 占位符文件
+          preview: photo.photo_url,
+          name: photo.photo_description || 'Photo',
+          description: photo.photo_description || '',
+          tags: [],
+          photographer: user.profile?.name || 'Anonymous',
+          location: photo.city_name,
+          uploadedAt: photo.upload_date,
+          size: photo.file_size || 0,
+          width: 0,
+          height: 0
+        }))
+
+        setPhotos(convertedPhotos)
+      } catch (error) {
+        console.error('Error loading existing photos:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadExistingPhotos()
+  }, [user.isAuthenticated, user.profile?.id, cityName])
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -180,18 +221,81 @@ export default function PhotoUploadSystem({
     }
   }
 
-  const removePhoto = (photoId: string) => {
-    setPhotos(prev => prev.filter(photo => photo.id !== photoId))
-    addNotification({
-      type: 'success',
-      message: t('photoUpload.photoRemoved')
-    })
+  const removePhoto = async (photoId: string) => {
+    if (!user.isAuthenticated || !user.profile?.id) {
+      addNotification({
+        type: 'error',
+        message: t('photoUpload.loginRequired')
+      })
+      return
+    }
+
+    try {
+      const success = await cityPhotosService.deleteCityPhoto(user.profile.id, photoId)
+      
+      if (success) {
+        setPhotos(prev => prev.filter(photo => photo.id !== photoId))
+        addNotification({
+          type: 'success',
+          message: t('photoUpload.photoRemoved')
+        })
+      } else {
+        addNotification({
+          type: 'error',
+          message: t('photoUpload.removeError')
+        })
+      }
+    } catch (error) {
+      console.error('Error removing photo:', error)
+      addNotification({
+        type: 'error',
+        message: t('photoUpload.removeError')
+      })
+    }
   }
 
-  const updatePhoto = (photoId: string, updates: Partial<UploadedPhoto>) => {
-    setPhotos(prev => prev.map(photo => 
-      photo.id === photoId ? { ...photo, ...updates } : photo
-    ))
+  const updatePhoto = async (photoId: string, updates: Partial<UploadedPhoto>) => {
+    if (!user.isAuthenticated || !user.profile?.id) {
+      addNotification({
+        type: 'error',
+        message: t('photoUpload.loginRequired')
+      })
+      return
+    }
+
+    try {
+      const updateData = {
+        photo_description: updates.description,
+        photo_url: updates.preview
+      }
+
+      const updatedPhoto = await cityPhotosService.updateCityPhoto(
+        user.profile.id, 
+        photoId, 
+        updateData
+      )
+
+      if (updatedPhoto) {
+        setPhotos(prev => prev.map(photo => 
+          photo.id === photoId ? { ...photo, ...updates } : photo
+        ))
+        addNotification({
+          type: 'success',
+          message: t('photoUpload.photoUpdated')
+        })
+      } else {
+        addNotification({
+          type: 'error',
+          message: t('photoUpload.updateError')
+        })
+      }
+    } catch (error) {
+      console.error('Error updating photo:', error)
+      addNotification({
+        type: 'error',
+        message: t('photoUpload.updateError')
+      })
+    }
   }
 
   const addTag = (photoId: string, tag: string) => {
@@ -212,7 +316,7 @@ export default function PhotoUploadSystem({
     ))
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (photos.length === 0) {
       addNotification({
         type: 'error',
@@ -221,37 +325,71 @@ export default function PhotoUploadSystem({
       return
     }
 
-    // 保存到localStorage
-    const cityPhotos: any[] = [] // TODO: Replace localStorage with database API for city_photos_${cityName}
-    const updatedPhotos = [...cityPhotos, ...photos]
-    // TODO: Replace localStorage with database API for city_photos_${cityName})
-
-    // 发布实时更新
-    photos.forEach(photo => {
-      realtimeService.publish({
-        type: 'photo',
-        action: 'create',
-        data: {
-          id: photo.id,
-          cityId: cityName,
-          cityName: cityName,
-          photographer: photo.photographer,
-          name: photo.name,
-          description: photo.description
-        },
-        userId: user.profile?.id
+    if (!user.isAuthenticated || !user.profile?.id) {
+      addNotification({
+        type: 'error',
+        message: t('photoUpload.loginRequired')
       })
-    })
+      return
+    }
 
-    onPhotosUploaded?.(photos)
-    
-    addNotification({
-      type: 'success',
-      message: t('photoUpload.submitSuccess', { count: photos.length.toString() })
-    })
+    setUploading(true)
 
-    // 清空当前上传的照片
-    setPhotos([])
+    try {
+      // 保存到数据库
+      const photosToSave = photos.map(photo => ({
+        city_id: cityName.toLowerCase().replace(/\s+/g, '-'),
+        city_name: cityName,
+        photo_url: photo.preview, // 这里应该是实际的上传URL
+        photo_description: photo.description,
+        file_size: photo.size,
+        file_type: photo.file.type
+      }))
+
+      const savedPhotos = await cityPhotosService.addCityPhotos(user.profile.id, photosToSave)
+
+      if (savedPhotos.length > 0) {
+        // 发布实时更新
+        photos.forEach(photo => {
+          realtimeService.publish({
+            type: 'photo',
+            action: 'create',
+            data: {
+              id: photo.id,
+              cityId: cityName,
+              cityName: cityName,
+              photographer: photo.photographer,
+              name: photo.name,
+              description: photo.description
+            },
+            userId: user.profile?.id
+          })
+        })
+
+        onPhotosUploaded?.(photos)
+        
+        addNotification({
+          type: 'success',
+          message: t('photoUpload.submitSuccess', { count: photos.length.toString() })
+        })
+
+        // 清空当前上传的照片
+        setPhotos([])
+      } else {
+        addNotification({
+          type: 'error',
+          message: t('photoUpload.submitError')
+        })
+      }
+    } catch (error) {
+      console.error('Error saving photos:', error)
+      addNotification({
+        type: 'error',
+        message: t('photoUpload.submitError')
+      })
+    } finally {
+      setUploading(false)
+    }
   }
 
   const formatFileSize = (bytes: number) => {

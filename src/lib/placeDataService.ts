@@ -1,5 +1,7 @@
 import { Place } from '@/lib/supabase'
 import { logInfo, logError } from '@/lib/logger'
+import { localPlacesService } from './localPlacesService'
+import { userLocationService } from './userLocationService'
 
 // Mock data removed - now using real data from Supabase
 
@@ -16,46 +18,122 @@ export interface UserLocation {
 }
 
 export class PlaceDataService {
-  // 获取本地存储的地点
-  static getLocalPlaces(): Place[] {
+  // 获取本地存储的地点（现在从数据库获取）
+  static async getLocalPlaces(userId?: string): Promise<Place[]> {
     try {
-      const stored = localStorage.getItem(LOCAL_PLACES_KEY)
-      const localPlaces = stored ? JSON.parse(stored) : []
+      if (!userId) {
+        // 如果没有用户ID，返回localStorage中的缓存数据
+        const stored = localStorage.getItem(LOCAL_PLACES_KEY)
+        return stored ? JSON.parse(stored) : []
+      }
+
+      // 从数据库获取用户地点
+      const dbPlaces = await localPlacesService.getUserLocalPlaces(userId)
       
-      // 只返回用户添加的地点，不包含示例数据
-      return localPlaces
+      // 转换为Place格式
+      const places: Place[] = dbPlaces.map(dbPlace => ({
+        id: dbPlace.id,
+        name: dbPlace.place_name,
+        category: dbPlace.place_type || 'other',
+        address: dbPlace.address || '',
+        description: dbPlace.notes || '',
+        tags: [],
+        wifi_speed: undefined,
+        price_level: undefined,
+        noise_level: undefined,
+        social_atmosphere: undefined,
+        city_id: dbPlace.city,
+        latitude: dbPlace.coordinates?.lat,
+        longitude: dbPlace.coordinates?.lng,
+        submitted_by: userId,
+        created_at: dbPlace.created_at,
+        updated_at: dbPlace.updated_at,
+        rating: dbPlace.rating,
+        review_count: 0,
+        upvotes: 0,
+        downvotes: 0
+      }))
+
+      return places
     } catch (error) {
       logError('Error loading local places', error, 'PlaceDataService')
-      // 如果出错，返回空数组
-      return []
+      // 如果出错，返回localStorage中的缓存数据
+      const stored = localStorage.getItem(LOCAL_PLACES_KEY)
+      return stored ? JSON.parse(stored) : []
     }
   }
 
-  // 保存地点到本地存储
-  static saveLocalPlaces(places: Place[]): void {
+  // 保存地点到本地存储（现在保存到数据库）
+  static async saveLocalPlaces(places: Place[], userId?: string): Promise<void> {
     try {
-      localStorage.setItem(LOCAL_PLACES_KEY, JSON.stringify(places))
-      logInfo('Places saved to local storage', { count: places.length }, 'PlaceDataService')
+      if (!userId) {
+        // 如果没有用户ID，保存到localStorage
+        localStorage.setItem(LOCAL_PLACES_KEY, JSON.stringify(places))
+        logInfo('Places saved to local storage', { count: places.length }, 'PlaceDataService')
+        return
+      }
+
+      // 保存到数据库
+      const placesToSave = places.map(place => ({
+        place_id: place.id,
+        place_name: place.name,
+        city: place.city_id,
+        country: '',
+        place_type: place.category,
+        coordinates: place.latitude && place.longitude ? {
+          lat: place.latitude,
+          lng: place.longitude
+        } : undefined,
+        address: place.address,
+        rating: place.rating,
+        notes: place.description
+      }))
+
+      await localPlacesService.addLocalPlaces(userId, placesToSave)
+      logInfo('Places saved to database', { count: places.length }, 'PlaceDataService')
     } catch (error) {
-      logError('Error saving places to local storage', error, 'PlaceDataService')
+      logError('Error saving places', error, 'PlaceDataService')
     }
   }
 
   // 添加新地点
-  static addPlace(place: Place): void {
+  static async addPlace(place: Place, userId?: string): Promise<void> {
     try {
-      const places = this.getLocalPlaces()
-      const newPlace = {
-        ...place,
-        id: place.id || `local-${Date.now()}`,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+      if (!userId) {
+        // 如果没有用户ID，保存到localStorage
+        const places = await this.getLocalPlaces()
+        const newPlace = {
+          ...place,
+          id: place.id || `local-${Date.now()}`,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+        places.push(newPlace)
+        await this.saveLocalPlaces(places)
+        logInfo('Place added to local storage', { placeId: newPlace.id }, 'PlaceDataService')
+        return
       }
-      places.push(newPlace)
-      this.saveLocalPlaces(places)
-      logInfo('Place added to local storage', { placeId: newPlace.id }, 'PlaceDataService')
+
+      // 保存到数据库
+      const placeToSave = {
+        place_id: place.id || `local-${Date.now()}`,
+        place_name: place.name,
+        city: place.city_id,
+        country: '',
+        place_type: place.category,
+        coordinates: place.latitude && place.longitude ? {
+          lat: place.latitude,
+          lng: place.longitude
+        } : undefined,
+        address: place.address,
+        rating: place.rating,
+        notes: place.description
+      }
+
+      await localPlacesService.addLocalPlace(userId, placeToSave)
+      logInfo('Place added to database', { placeId: place.id, name: place.name }, 'PlaceDataService')
     } catch (error) {
-      logError('Error adding place to local storage', error, 'PlaceDataService')
+      logError('Error adding place', error, 'PlaceDataService')
     }
   }
 
@@ -96,8 +174,8 @@ export class PlaceDataService {
   }
 
   // 根据城市获取地点
-  static getPlacesByCity(city: string): Place[] {
-    const places = this.getLocalPlaces()
+  static async getPlacesByCity(city: string, userId?: string): Promise<Place[]> {
+    const places = await this.getLocalPlaces(userId)
     return places.filter(place => 
       place.city_id?.toLowerCase() === city.toLowerCase()
     )
@@ -131,21 +209,54 @@ export class PlaceDataService {
   }
 
   // 获取用户位置
-  static getUserLocation(): UserLocation | null {
+  static async getUserLocation(userId?: string): Promise<UserLocation | null> {
     try {
-      const stored = localStorage.getItem(USER_LOCATION_KEY)
-      return stored ? JSON.parse(stored) : null
+      if (!userId) {
+        // 如果没有用户ID，从localStorage获取
+        const stored = localStorage.getItem(USER_LOCATION_KEY)
+        return stored ? JSON.parse(stored) : null
+      }
+
+      // 从数据库获取用户位置
+      const dbLocation = await userLocationService.getUserLocation(userId)
+      if (dbLocation) {
+        return {
+          city: dbLocation.city || '',
+          country: dbLocation.country || '',
+          latitude: dbLocation.latitude || 0,
+          longitude: dbLocation.longitude || 0,
+          timestamp: new Date(dbLocation.created_at).getTime()
+        }
+      }
+
+      return null
     } catch (error) {
       logError('Error loading user location', error, 'PlaceDataService')
-      return null
+      // 如果出错，从localStorage获取
+      const stored = localStorage.getItem(USER_LOCATION_KEY)
+      return stored ? JSON.parse(stored) : null
     }
   }
 
   // 保存用户位置
-  static saveUserLocation(location: UserLocation): void {
+  static async saveUserLocation(location: UserLocation, userId?: string): Promise<void> {
     try {
-      localStorage.setItem(USER_LOCATION_KEY, JSON.stringify(location))
-      logInfo('User location saved', { city: location.city }, 'PlaceDataService')
+      if (!userId) {
+        // 如果没有用户ID，保存到localStorage
+        localStorage.setItem(USER_LOCATION_KEY, JSON.stringify(location))
+        logInfo('User location saved to local storage', { city: location.city }, 'PlaceDataService')
+        return
+      }
+
+      // 保存到数据库
+      await userLocationService.saveUserLocation(userId, {
+        city: location.city,
+        country: location.country,
+        latitude: location.latitude,
+        longitude: location.longitude,
+        accuracy: 0
+      })
+      logInfo('User location saved to database', { city: location.city }, 'PlaceDataService')
     } catch (error) {
       logError('Error saving user location', error, 'PlaceDataService')
     }
