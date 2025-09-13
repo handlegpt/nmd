@@ -357,17 +357,17 @@ SELECT * FROM (VALUES
 WHERE NOT EXISTS (SELECT 1 FROM nomad_visas WHERE nomad_visas.country = v.country AND nomad_visas.visa_name = v.visa_name);
 
 -- Insert city data (only if not exists)
-INSERT INTO cities (slug, name, country, country_name, latitude, longitude, timezone, population, language, currency, climate_tag, safety_score, wifi_speed_mbps, cost_min_usd, cost_max_usd, nomad_score, community_score, coffee_score, coworking_score) 
+INSERT INTO cities (slug, name, country, country_code, country_name, latitude, longitude, timezone, population, language, currency, climate_tag, safety_score, wifi_speed_mbps, cost_min_usd, cost_max_usd, nomad_score, community_score, coffee_score, coworking_score) 
 SELECT * FROM (VALUES
-('tallinn', 'Tallinn', 'EST', 'Estonia', 59.4370, 24.7536, 'Europe/Tallinn', 437000, 'Estonian, English', 'EUR', 'temperate', 8.5, 85.2, 1200, 2000, 8.2, 7.8, 8.0, 8.5),
-('lisbon', 'Lisbon', 'PRT', 'Portugal', 38.7223, -9.1393, 'Europe/Lisbon', 547000, 'Portuguese, English', 'EUR', 'mediterranean', 8.0, 65.8, 1000, 1800, 8.5, 8.2, 9.0, 8.0),
-('berlin', 'Berlin', 'DEU', 'Germany', 52.5200, 13.4050, 'Europe/Berlin', 3670000, 'German, English', 'EUR', 'temperate', 7.5, 78.5, 1500, 2500, 8.8, 9.0, 8.5, 9.2),
-('madrid', 'Madrid', 'ESP', 'Spain', 40.4168, -3.7038, 'Europe/Madrid', 3220000, 'Spanish, English', 'EUR', 'mediterranean', 8.2, 72.3, 1200, 2200, 8.0, 7.5, 8.8, 7.8),
-('bangkok', 'Bangkok', 'THA', 'Thailand', 13.7563, 100.5018, 'Asia/Bangkok', 10539000, 'Thai, English', 'THB', 'tropical', 7.0, 45.2, 800, 1500, 7.5, 6.8, 7.2, 6.5),
-('mexico-city', 'Mexico City', 'MEX', 'Mexico', 19.4326, -99.1332, 'America/Mexico_City', 9200000, 'Spanish, English', 'MXN', 'subtropical', 6.5, 38.7, 600, 1200, 7.0, 6.5, 7.8, 6.2),
-('prague', 'Prague', 'CZE', 'Czech Republic', 50.0755, 14.4378, 'Europe/Prague', 1300000, 'Czech, English', 'CZK', 'temperate', 8.8, 68.9, 1000, 1800, 8.0, 7.2, 8.5, 7.8),
-('budapest', 'Budapest', 'HUN', 'Hungary', 47.4979, 19.0402, 'Europe/Budapest', 1750000, 'Hungarian, English', 'HUF', 'temperate', 8.0, 62.4, 800, 1500, 7.8, 6.8, 8.2, 7.5)
-) AS v(slug, name, country, country_name, latitude, longitude, timezone, population, language, currency, climate_tag, safety_score, wifi_speed_mbps, cost_min_usd, cost_max_usd, nomad_score, community_score, coffee_score, coworking_score)
+('tallinn', 'Tallinn', 'EST', 'EST', 'Estonia', 59.4370, 24.7536, 'Europe/Tallinn', 437000, 'Estonian, English', 'EUR', 'temperate', 8.5, 85.2, 1200, 2000, 8.2, 7.8, 8.0, 8.5),
+('lisbon', 'Lisbon', 'PRT', 'PRT', 'Portugal', 38.7223, -9.1393, 'Europe/Lisbon', 547000, 'Portuguese, English', 'EUR', 'mediterranean', 8.0, 65.8, 1000, 1800, 8.5, 8.2, 9.0, 8.0),
+('berlin', 'Berlin', 'DEU', 'DEU', 'Germany', 52.5200, 13.4050, 'Europe/Berlin', 3670000, 'German, English', 'EUR', 'temperate', 7.5, 78.5, 1500, 2500, 8.8, 9.0, 8.5, 9.2),
+('madrid', 'Madrid', 'ESP', 'ESP', 'Spain', 40.4168, -3.7038, 'Europe/Madrid', 3220000, 'Spanish, English', 'EUR', 'mediterranean', 8.2, 72.3, 1200, 2200, 8.0, 7.5, 8.8, 7.8),
+('bangkok', 'Bangkok', 'THA', 'THA', 'Thailand', 13.7563, 100.5018, 'Asia/Bangkok', 10539000, 'Thai, English', 'THB', 'tropical', 7.0, 45.2, 800, 1500, 7.5, 6.8, 7.2, 6.5),
+('mexico-city', 'Mexico City', 'MEX', 'MEX', 'Mexico', 19.4326, -99.1332, 'America/Mexico_City', 9200000, 'Spanish, English', 'MXN', 'subtropical', 6.5, 38.7, 600, 1200, 7.0, 6.5, 7.8, 6.2),
+('prague', 'Prague', 'CZE', 'CZE', 'Czech Republic', 50.0755, 14.4378, 'Europe/Prague', 1300000, 'Czech, English', 'CZK', 'temperate', 8.8, 68.9, 1000, 1800, 8.0, 7.2, 8.5, 7.8),
+('budapest', 'Budapest', 'HUN', 'HUN', 'Hungary', 47.4979, 19.0402, 'Europe/Budapest', 1750000, 'Hungarian, English', 'HUF', 'temperate', 8.0, 62.4, 800, 1500, 7.8, 6.8, 8.2, 7.5)
+) AS v(slug, name, country, country_code, country_name, latitude, longitude, timezone, population, language, currency, climate_tag, safety_score, wifi_speed_mbps, cost_min_usd, cost_max_usd, nomad_score, community_score, coffee_score, coworking_score)
 WHERE NOT EXISTS (SELECT 1 FROM cities WHERE cities.slug = v.slug);
 
 -- Insert data source information (only if not exists)
