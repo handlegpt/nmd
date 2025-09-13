@@ -180,8 +180,8 @@ export default function CityComparisonSelector({ cities, onCompare }: CityCompar
                         <Calendar className="h-3 w-3 mr-1" />
                         {t('cities.visaType')}
                       </span>
-                      <span className={getVisaColor(city.visa_days)}>
-                        {city.visa_days} {t('cities.stayDays')}
+                      <span className={getVisaColor(city.visa_days || 0)}>
+                        {city.visa_days || 'N/A'} {t('cities.stayDays')}
                       </span>
                     </div>
                   </div>

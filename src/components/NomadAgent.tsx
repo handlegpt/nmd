@@ -207,7 +207,7 @@ export default function PersonalizedRecommendations() {
       primaryCity: selectedCity,
       alternativeCities: recommendations.filter(city => city.id !== selectedCity.id).slice(0, 2),
       totalDuration: 6, // 默认6个月
-      estimatedCost: selectedCity.cost_of_living * 6,
+      estimatedCost: (selectedCity.cost_of_living || selectedCity.cost_min_usd || 0) * 6,
       visaStrategy: generateVisaStrategy(selectedCity),
       highlights: generateRouteHighlights(selectedCity)
     }

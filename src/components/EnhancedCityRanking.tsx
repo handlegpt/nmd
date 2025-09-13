@@ -133,7 +133,7 @@ export default function EnhancedCityRanking({
         break
       case 'visa-free':
         filtered = filtered.filter(city => 
-          city.visa_days >= 90 || city.visa_type?.toLowerCase().includes('visa free')
+          (city.visa_days || 0) >= 90 || city.visa_type?.toLowerCase().includes('visa free')
         )
         break
       case 'low-cost':

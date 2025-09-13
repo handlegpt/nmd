@@ -22,21 +22,37 @@ export { supabase }
 
 export interface City {
   id: string
+  slug: string
   name: string
   country: string
   country_code: string
+  country_name: string
   timezone: string
   latitude: number
   longitude: number
-  visa_days: number
-  visa_type: string
-  cost_of_living: number
-  wifi_speed: number
+  population: number
+  language: string
+  currency: string
+  climate_tag: string
+  safety_score: number
+  wifi_speed_mbps: number
+  cost_min_usd: number
+  cost_max_usd: number
+  nomad_score: number
+  community_score: number
+  coffee_score: number
+  coworking_score: number
+  is_active: boolean
   created_at: string
   updated_at: string
   // Computed fields from views or aggregations
   avg_overall_rating?: number
   vote_count?: number
+  // Backward compatibility fields
+  cost_of_living?: number  // 保留用于兼容旧代码
+  wifi_speed?: number      // 保留用于兼容旧代码
+  visa_days?: number       // 从nomad_visas表获取
+  visa_type?: string       // 从nomad_visas表获取
 }
 
 export interface Vote {

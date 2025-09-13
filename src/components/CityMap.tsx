@@ -18,7 +18,8 @@ interface CityMapProps {
     country: string
     latitude: number
     longitude: number
-    wifi_speed: number
+    wifi_speed?: number
+    wifi_speed_mbps?: number
   }
 }
 
@@ -205,7 +206,7 @@ export default function CityMap({ cityData }: CityMapProps) {
           <div className="flex items-center space-x-2">
             <Wifi className="h-4 w-4 text-blue-500" />
             <span className="text-sm font-medium text-gray-900 dark:text-white">
-              {cityData.wifi_speed} Mbps
+              {cityData.wifi_speed_mbps || cityData.wifi_speed || 'N/A'} Mbps
             </span>
           </div>
         </div>

@@ -22,7 +22,9 @@ interface CostBreakdownData {
 
 interface CostBreakdownChartProps {
   cityData: {
-    cost_of_living: number
+    cost_of_living?: number
+    cost_min_usd?: number
+    cost_max_usd?: number
     name: string
     country: string
   }
@@ -39,7 +41,7 @@ export default function CostBreakdownChart({ cityData }: CostBreakdownChartProps
       setIsLoading(true)
       
       // 基于总成本计算各项分解（模拟数据）
-      const total = cityData.cost_of_living
+      const total = cityData.cost_of_living || cityData.cost_min_usd || 0
       const accommodation = Math.round(total * 0.45) // 45% 住宿
       const food = Math.round(total * 0.25) // 25% 餐饮
       const transportation = Math.round(total * 0.15) // 15% 交通
@@ -57,7 +59,7 @@ export default function CostBreakdownChart({ cityData }: CostBreakdownChartProps
     }
 
     fetchCostBreakdown()
-  }, [cityData.cost_of_living])
+  }, [cityData.cost_of_living, cityData.cost_min_usd])
 
   const getCostCategoryIcon = (category: string) => {
     switch (category) {

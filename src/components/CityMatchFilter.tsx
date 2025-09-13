@@ -44,16 +44,16 @@ export default function CityMatchFilter({ cities, onMatchResults, onReset }: Cit
     const reasons: string[] = []
 
     // 签证便利性计算
-    if (prefs.stayDuration === 'short' && city.visa_days >= 30) {
+    if (prefs.stayDuration === 'short' && (city.visa_days || 0) >= 30) {
       visaConvenience = 90
       reasons.push('旅游免签')
-    } else if (prefs.stayDuration === 'medium' && city.visa_days >= 90) {
+    } else if (prefs.stayDuration === 'medium' && (city.visa_days || 0) >= 90) {
       visaConvenience = 85
       reasons.push('长期旅游签证')
-    } else if (city.visa_type.includes('Digital Nomad')) {
+    } else if (city.visa_type?.includes('Digital Nomad')) {
       visaConvenience = 95
       reasons.push('数字游民签证')
-    } else if (city.visa_type.includes('Work')) {
+    } else if (city.visa_type?.includes('Work')) {
       visaConvenience = 80
       reasons.push('工作签证')
     } else {
@@ -106,7 +106,7 @@ export default function CityMatchFilter({ cities, onMatchResults, onReset }: Cit
     if (city.wifi_speed && city.wifi_speed >= 30) {
       lifestyleQuality += 25
     }
-    if (city.visa_days >= 90) {
+    if ((city.visa_days || 0) >= 90) {
       lifestyleQuality += 25
     }
     lifestyleQuality += 20 // 基础分

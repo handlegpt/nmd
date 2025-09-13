@@ -360,18 +360,34 @@ function CitiesPageContent() {
       // 模拟API调用
       const newCity: City = {
         id: `temp-${Date.now()}`,
+        slug: cityData.name.toLowerCase().replace(/\s+/g, '-'),
         name: cityData.name,
         country: cityData.country,
         country_code: cityData.country_code || 'XX',
+        country_name: cityData.country,
         timezone: cityData.timezone || 'UTC+0',
         latitude: cityData.latitude || 0,
         longitude: cityData.longitude || 0,
+        population: 0,
+        language: 'English',
+        currency: 'USD',
+        climate_tag: 'temperate',
+        safety_score: 7.0,
+        wifi_speed_mbps: cityData.wifi_speed || 0,
+        cost_min_usd: cityData.cost_of_living || 0,
+        cost_max_usd: cityData.cost_of_living || 0,
+        nomad_score: 7.0,
+        community_score: 7.0,
+        coffee_score: 7.0,
+        coworking_score: 7.0,
+        is_active: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        // 向后兼容字段
         cost_of_living: cityData.cost_of_living || 0,
         wifi_speed: cityData.wifi_speed || 0,
-        visa_type: cityData.visa_type || 'Tourist',
         visa_days: cityData.visa_days || 0,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
+        visa_type: cityData.visa_type || 'Tourist'
       }
       
       setCities(prev => [newCity, ...prev])
@@ -996,22 +1012,22 @@ function CitiesPageContent() {
                   rating: city.avg_overall_rating || 0,
                   reviewCount: city.vote_count || 0,
                   costOfLiving: {
-                    monthly: city.cost_of_living || 0,
+                    monthly: city.cost_of_living || city.cost_min_usd || 0,
                     currency: 'USD',
-                    category: city.cost_of_living < 1000 ? 'budget' : 
-                              city.cost_of_living < 2000 ? 'affordable' :
-                              city.cost_of_living < 3500 ? 'moderate' :
-                              city.cost_of_living < 5000 ? 'expensive' : 'luxury'
+                    category: (city.cost_of_living || city.cost_min_usd || 0) < 1000 ? 'budget' : 
+                              (city.cost_of_living || city.cost_min_usd || 0) < 2000 ? 'affordable' :
+                              (city.cost_of_living || city.cost_min_usd || 0) < 3500 ? 'moderate' :
+                              (city.cost_of_living || city.cost_min_usd || 0) < 5000 ? 'expensive' : 'luxury'
                   },
                   wifi: {
-                    speed: city.wifi_speed || 0,
+                    speed: city.wifi_speed_mbps || city.wifi_speed || 0,
                     reliability: 85 // 默认值
                   },
                   visa: {
                     type: city.visa_type || 'Tourist',
                     duration: city.visa_days || 0,
-                    difficulty: city.visa_days >= 365 ? 'easy' : 
-                               city.visa_days >= 90 ? 'medium' : 'hard'
+                    difficulty: (city.visa_days || 0) >= 365 ? 'easy' : 
+                               (city.visa_days || 0) >= 90 ? 'medium' : 'hard'
                   },
                   nomads: {
                     count: (city.id.charCodeAt(0) + city.id.charCodeAt(city.id.length - 1)) % 50 + 10, // 基于城市ID的固定数量

@@ -18,11 +18,14 @@ interface RelatedCity {
   name: string
   country: string
   country_code: string
-  cost_of_living: number
-  wifi_speed: number
-  visa_days: number
-  avg_overall_rating: number
-  vote_count: number
+  cost_of_living?: number
+  cost_min_usd?: number
+  cost_max_usd?: number
+  wifi_speed?: number
+  wifi_speed_mbps?: number
+  visa_days?: number
+  avg_overall_rating?: number
+  vote_count?: number
   similarity_score: number
   similarity_reason: string
 }
@@ -32,9 +35,12 @@ interface RelatedCitiesProps {
     id: string
     name: string
     country: string
-    cost_of_living: number
-    wifi_speed: number
-    visa_days: number
+    cost_of_living?: number
+    cost_min_usd?: number
+    cost_max_usd?: number
+    wifi_speed?: number
+    wifi_speed_mbps?: number
+    visa_days?: number
   }
 }
 
@@ -167,8 +173,8 @@ export default function RelatedCities({ currentCity }: RelatedCitiesProps) {
 
       <div className="space-y-4">
         {relatedCities.map((city) => {
-          const costLevel = getCostLevel(city.cost_of_living)
-          const wifiLevel = getWifiLevel(city.wifi_speed)
+          const costLevel = getCostLevel(city.cost_of_living || city.cost_min_usd || 0)
+          const wifiLevel = getWifiLevel(city.wifi_speed_mbps || city.wifi_speed || 0)
           
           return (
             <Link
@@ -195,7 +201,7 @@ export default function RelatedCities({ currentCity }: RelatedCitiesProps) {
                     <div className="flex items-center space-x-1 mb-1">
                       <Star className="h-4 w-4 text-yellow-400" />
                       <span className="text-sm font-medium text-gray-900 dark:text-white">
-                        {city.avg_overall_rating.toFixed(1)}
+                        {(city.avg_overall_rating || 0).toFixed(1)}
                       </span>
                       <span className="text-xs text-gray-500 dark:text-gray-500">
                         ({city.vote_count})
@@ -204,15 +210,15 @@ export default function RelatedCities({ currentCity }: RelatedCitiesProps) {
                     <div className="flex items-center space-x-3 text-xs text-gray-600 dark:text-gray-400">
                       <span className={`flex items-center space-x-1 ${costLevel.color}`}>
                         <DollarSign className="h-3 w-3" />
-                        <span>${city.cost_of_living}</span>
+                        <span>${city.cost_of_living || city.cost_min_usd || 'N/A'}</span>
                       </span>
                       <span className={`flex items-center space-x-1 ${wifiLevel.color}`}>
                         <Wifi className="h-3 w-3" />
-                        <span>{city.wifi_speed}Mbps</span>
+                        <span>{city.wifi_speed_mbps || city.wifi_speed || 'N/A'}Mbps</span>
                       </span>
                       <span className="flex items-center space-x-1">
                         <Calendar className="h-3 w-3" />
-                        <span>{city.visa_days}d</span>
+                        <span>{city.visa_days || 'N/A'}d</span>
                       </span>
                     </div>
                   </div>
