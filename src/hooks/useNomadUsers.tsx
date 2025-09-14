@@ -326,8 +326,9 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
                   interests: userData.interests,
                   rating: ratingSummary?.averageRating || 0,
                   reviewCount: ratingSummary?.totalRatings || 0,
-                  isOnline: calculateOnlineStatus(userData.updatedAt),
-                  isAvailable: calculateAvailabilityStatus(userData.updatedAt),
+                  // 优先使用API返回的状态，如果没有则计算
+                  isOnline: userData.isOnline !== undefined ? userData.isOnline : calculateOnlineStatus(userData.updatedAt),
+                  isAvailable: userData.isAvailable !== undefined ? userData.isAvailable : calculateAvailabilityStatus(userData.updatedAt),
                   lastSeen: calculateLastSeen(userData.updatedAt),
                   meetupCount: 0,
                   mutualInterests: calculateMutualInterests(userData.interests || []),
