@@ -190,13 +190,8 @@ export default function HomeLocalNomads({
     setSendingInvitation(true)
     
     try {
-      const success = await sendCoffeeInvitation(userId)
-      if (success) {
-        const targetUser = getUserById(userId)
-        alert(`Coffee meetup invitation sent to ${targetUser?.name}! They will respond within 24 hours.`)
-      } else {
-        alert('Failed to send invitation. Please try again.')
-      }
+      const result = await sendCoffeeInvitation(userId)
+      alert(result.message || (result.success ? 'Invitation sent successfully!' : 'Failed to send invitation.'))
     } catch (error) {
       logError('Failed to send coffee meetup invitation', error, 'HomeLocalNomads')
       alert('Failed to send invitation. Please try again.')

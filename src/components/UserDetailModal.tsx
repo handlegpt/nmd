@@ -33,7 +33,7 @@ interface UserDetailModalProps {
   // 从父组件传入操作函数，避免重复Hook实例化
   addToFavorites?: (userId: string) => Promise<void>
   removeFromFavorites?: (userId: string) => Promise<void>
-  sendCoffeeInvitation?: (userId: string) => Promise<boolean>
+  sendCoffeeInvitation?: (userId: string) => Promise<{ success: boolean; message?: string }>
   getFavorites?: () => Promise<string[]>
 }
 
@@ -89,12 +89,12 @@ export default function UserDetailModal({
     setError(null)
     
     try {
-      const success = await sendCoffeeInvitation(user.id)
-      if (success) {
+      const result = await sendCoffeeInvitation(user.id)
+      if (result.success) {
         logInfo('Coffee invitation sent successfully', { userId: user.id }, 'UserDetailModal')
-        alert(`Coffee meetup invitation sent to ${user.name}! They will respond within 24 hours.`)
+        alert(result.message || `Coffee meetup invitation sent to ${user.name}! They will respond within 24 hours.`)
       } else {
-        setError('Failed to send invitation. Please try again.')
+        setError(result.message || 'Failed to send invitation. Please try again.')
       }
     } catch (error) {
       logError('Failed to send coffee meetup invitation', error, 'UserDetailModal')

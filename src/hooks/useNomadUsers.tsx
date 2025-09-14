@@ -89,7 +89,7 @@ export interface UseNomadUsersReturn {
   removeFromFavorites: (userId: string) => Promise<void>
   hideUser: (userId: string) => Promise<void>
   showUser: (userId: string) => Promise<void>
-  sendCoffeeInvitation: (userId: string) => Promise<boolean>
+  sendCoffeeInvitation: (userId: string) => Promise<{ success: boolean; message?: string }>
   sendWorkTogetherInvitation: (userId: string) => Promise<boolean>
   
   // 工具函数
@@ -890,7 +890,7 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
     }
   }, [user?.profile?.id])
 
-  const sendCoffeeInvitation = useCallback(async (userId: string): Promise<boolean> => {
+  const sendCoffeeInvitation = useCallback(async (userId: string): Promise<{ success: boolean; message?: string }> => {
     try {
       if (!user?.profile?.id) {
         throw new Error('User not authenticated')
@@ -914,9 +914,15 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       if (!result.success) {
         // 处理特定的错误类型
         if (result.error === 'Invitation already sent') {
-          throw new Error('You have already sent a coffee invitation to this person. Please wait for their response.')
+          return { 
+            success: false, 
+            message: 'You have already sent a coffee invitation to this person. Please wait for their response.' 
+          }
         }
-        throw new Error(result.error || 'Failed to send invitation')
+        return { 
+          success: false, 
+          message: result.error || 'Failed to send invitation' 
+        }
       }
       
       logInfo('Coffee invitation sent successfully', { 
@@ -925,10 +931,14 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         invitationId: result.data?.id 
       }, 'useNomadUsers')
       
-      return true
-    } catch (error) {
+      return { 
+        success: true, 
+        message: `Coffee meetup invitation sent to ${targetUser.name}! They will respond within 24 hours.` 
+      }
+    } catch (error: any) {
+      const errorMessage = error?.message || 'Failed to send coffee invitation'
       handleError(error, 'Failed to send coffee invitation')
-      return false
+      return { success: false, message: errorMessage }
     }
   }, [allUsers, handleError, user?.profile?.id])
 
