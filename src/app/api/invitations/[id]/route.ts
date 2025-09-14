@@ -62,6 +62,60 @@ export async function PUT(
       )
     }
 
+    // If invitation is accepted and it's a coffee meetup, create a meetup
+    if (status === 'accepted' && data.invitation_type === 'coffee_meetup') {
+      try {
+        // Create a meetup for the accepted coffee invitation
+        const meetupData = {
+          organizer_id: data.sender_id,
+          title: `Coffee Meetup with ${data.receiver?.name || 'Friend'}`,
+          description: data.message || `Coffee meetup between ${data.sender?.name} and ${data.receiver?.name}`,
+          location: data.meeting_location || 'To be determined',
+          meeting_time: data.meeting_time || new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // Default to tomorrow
+          max_participants: 2,
+          meetup_type: 'coffee',
+          tags: ['coffee', 'networking', 'digital-nomad']
+        }
+
+        const { data: meetup, error: meetupError } = await supabase
+          .from('meetups')
+          .insert(meetupData)
+          .select(`
+            *,
+            organizer:organizer_id(id, name, avatar_url, current_city)
+          `)
+          .single()
+
+        if (meetupError) {
+          logError('Failed to create meetup from accepted invitation', meetupError, 'InvitationsAPI')
+          // Don't fail the invitation update, just log the error
+        } else {
+          // Add both users as participants
+          const participants = [
+            { meetup_id: meetup.id, user_id: data.sender_id, status: 'joined' },
+            { meetup_id: meetup.id, user_id: data.receiver_id, status: 'joined' }
+          ]
+
+          const { error: participantError } = await supabase
+            .from('meetup_participants')
+            .insert(participants)
+
+          if (participantError) {
+            logError('Failed to add participants to meetup', participantError, 'InvitationsAPI')
+          } else {
+            logInfo('Meetup created successfully from accepted invitation', { 
+              invitationId: id, 
+              meetupId: meetup.id,
+              participants: [data.sender_id, data.receiver_id]
+            }, 'InvitationsAPI')
+          }
+        }
+      } catch (meetupCreationError) {
+        logError('Unexpected error creating meetup from invitation', meetupCreationError, 'InvitationsAPI')
+        // Don't fail the invitation update
+      }
+    }
+
     logInfo('Invitation updated successfully', { id, status }, 'InvitationsAPI')
 
     return NextResponse.json({

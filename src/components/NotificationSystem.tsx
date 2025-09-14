@@ -122,8 +122,13 @@ export default function NotificationSystem() {
       if (response.ok) {
         // 移除通知
         removeNotification(invitationId)
+        
         // 显示成功消息
-        alert(`Invitation ${action}ed successfully!`)
+        if (action === 'accept') {
+          alert('Invitation accepted! A coffee meetup has been created. You can now coordinate the time and location.')
+        } else {
+          alert('Invitation declined.')
+        }
       }
     } catch (error) {
       logError('Failed to handle invitation action', error, 'NotificationSystem')
