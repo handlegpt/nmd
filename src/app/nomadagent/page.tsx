@@ -144,31 +144,40 @@ export default function NomadAgentPage() {
   // Parse user message and extract preferences
   const parseUserMessage = (message: string): Partial<UserPreferences> => {
     const newPreferences: Partial<UserPreferences> = {}
+    const lowerMessage = message.toLowerCase()
     
-    // Budget parsing
-    const budgetMatch = message.match(/\$?(\d+)(?:\/month|\/mo)?/i)
+    // Budget parsing - support multiple formats
+    const budgetMatch = message.match(/\$?(\d+)(?:\/month|\/mo|每月|月)?/i)
     if (budgetMatch) {
       newPreferences.budget = parseInt(budgetMatch[1])
     }
     
-    // Visa days parsing
-    const visaMatch = message.match(/(\d+)\s*days?/i)
+    // Visa days parsing - support Chinese and English
+    const visaMatch = message.match(/(\d+)\s*(?:days?|天|居住|停留)/i)
     if (visaMatch) {
       newPreferences.visaDaysNeeded = parseInt(visaMatch[1])
     }
     
-    // Region parsing
-    if (message.toLowerCase().includes('asia')) newPreferences.region = 'Asia'
-    if (message.toLowerCase().includes('europe')) newPreferences.region = 'Europe'
-    if (message.toLowerCase().includes('america')) newPreferences.region = 'Americas'
+    // Region parsing - support Chinese
+    if (lowerMessage.includes('asia') || lowerMessage.includes('亚洲')) newPreferences.region = 'Asia'
+    if (lowerMessage.includes('europe') || lowerMessage.includes('欧洲')) newPreferences.region = 'Europe'
+    if (lowerMessage.includes('america') || lowerMessage.includes('美洲')) newPreferences.region = 'Americas'
     
-    // Climate parsing
-    const climateKeywords = ['tropical', 'coastal', 'island', 'beach', 'mountain', 'urban', 'desert']
+    // Climate parsing - support Chinese
+    const climateKeywords = [
+      'tropical', 'coastal', 'island', 'beach', 'mountain', 'urban', 'desert',
+      '热带', '沿海', '海岛', '海滩', '山区', '城市', '沙漠'
+    ]
     const foundClimates = climateKeywords.filter(keyword => 
-      message.toLowerCase().includes(keyword)
+      lowerMessage.includes(keyword)
     )
     if (foundClimates.length > 0) {
       newPreferences.climate = foundClimates
+    }
+    
+    // Tax preference parsing
+    if (lowerMessage.includes('low tax') || lowerMessage.includes('低税') || lowerMessage.includes('tax burden')) {
+      newPreferences.socialPreference = 'low' // Using socialPreference as a proxy for tax preference
     }
     
     return newPreferences
@@ -176,8 +185,9 @@ export default function NomadAgentPage() {
 
   // Generate route plan based on preferences
   const generateRoutePlan = async (prefs: UserPreferences): Promise<RoutePlan> => {
-    // Mock data - in real implementation, this would call your city database
+    // Extended mock data - in real implementation, this would call your city database
     const mockCities: CityRecommendation[] = [
+      // Asia - Tropical
       {
         id: '1',
         name: 'Da Nang',
@@ -219,28 +229,125 @@ export default function NomadAgentPage() {
         stayDays: 75,
         reasoning: ['Vibrant nomad community', 'Beautiful beaches', 'Rich culture'],
         seasonality: 'Best: Apr-Oct'
+      },
+      // Asia - Other climates
+      {
+        id: '4',
+        name: 'Chiang Mai',
+        country: 'Thailand',
+        region: 'Asia',
+        costPerMonth: 1000,
+        wifiSpeed: 70,
+        visaFeasibility: 'easy',
+        climate: 'tropical',
+        communityScore: 9,
+        stayDays: 90,
+        reasoning: ['Very low cost', 'Huge nomad community', 'Great food and culture'],
+        seasonality: 'Best: Nov-Mar'
+      },
+      {
+        id: '5',
+        name: 'Tokyo',
+        country: 'Japan',
+        region: 'Asia',
+        costPerMonth: 3000,
+        wifiSpeed: 100,
+        visaFeasibility: 'moderate',
+        climate: 'urban',
+        communityScore: 6,
+        stayDays: 30,
+        reasoning: ['Excellent infrastructure', 'Safe and clean', 'Unique culture'],
+        seasonality: 'Best: Mar-May, Sep-Nov'
+      },
+      // Europe
+      {
+        id: '6',
+        name: 'Lisbon',
+        country: 'Portugal',
+        region: 'Europe',
+        costPerMonth: 2000,
+        wifiSpeed: 80,
+        visaFeasibility: 'easy',
+        climate: 'coastal',
+        communityScore: 8,
+        stayDays: 90,
+        reasoning: ['Digital nomad visa available', 'Great weather', 'Growing tech scene'],
+        seasonality: 'Best: Apr-Oct'
+      },
+      {
+        id: '7',
+        name: 'Berlin',
+        country: 'Germany',
+        region: 'Europe',
+        costPerMonth: 2500,
+        wifiSpeed: 90,
+        visaFeasibility: 'moderate',
+        climate: 'urban',
+        communityScore: 7,
+        stayDays: 60,
+        reasoning: ['Vibrant startup scene', 'Rich culture', 'Good public transport'],
+        seasonality: 'Best: May-Sep'
+      },
+      // Americas
+      {
+        id: '8',
+        name: 'Mexico City',
+        country: 'Mexico',
+        region: 'Americas',
+        costPerMonth: 1500,
+        wifiSpeed: 60,
+        visaFeasibility: 'easy',
+        climate: 'urban',
+        communityScore: 7,
+        stayDays: 90,
+        reasoning: ['Low cost of living', 'Rich culture', 'Growing nomad scene'],
+        seasonality: 'Best: Oct-Apr'
       }
     ]
 
-    // Filter and score cities based on preferences
+    // Filter cities based on preferences
     let filteredCities = mockCities.filter(city => {
+      // Region filter
       if (prefs.region && city.region !== prefs.region) return false
-      if (prefs.climate && !prefs.climate.some(c => city.climate.includes(c))) return false
+      
+      // Climate filter
+      if (prefs.climate && prefs.climate.length > 0) {
+        const hasMatchingClimate = prefs.climate.some(prefClimate => 
+          city.climate.includes(prefClimate) || prefClimate.includes(city.climate)
+        )
+        if (!hasMatchingClimate) return false
+      }
+      
+      // Budget filter (allow 20% over budget)
       if (prefs.budget && city.costPerMonth > prefs.budget * 1.2) return false
+      
       return true
     })
 
-    // Sort by score (simplified scoring)
+    // If no cities match filters, return default Asian cities
+    if (filteredCities.length === 0) {
+      filteredCities = mockCities.filter(city => city.region === 'Asia').slice(0, 3)
+    }
+
+    // Sort by score (simplified scoring algorithm)
     filteredCities.sort((a, b) => {
       let scoreA = 0, scoreB = 0
       
+      // Budget score (closer to budget = higher score)
       if (prefs.budget) {
-        scoreA += Math.max(0, 10 - (a.costPerMonth - prefs.budget) / 100)
-        scoreB += Math.max(0, 10 - (b.costPerMonth - prefs.budget) / 100)
+        const budgetDiffA = Math.abs(a.costPerMonth - prefs.budget)
+        const budgetDiffB = Math.abs(b.costPerMonth - prefs.budget)
+        scoreA += Math.max(0, 10 - budgetDiffA / 200)
+        scoreB += Math.max(0, 10 - budgetDiffB / 200)
       }
       
+      // Community score
       scoreA += a.communityScore
       scoreB += b.communityScore
+      
+      // WiFi score
+      scoreA += a.wifiSpeed / 10
+      scoreB += b.wifiSpeed / 10
       
       return scoreB - scoreA
     })
@@ -251,7 +358,9 @@ export default function NomadAgentPage() {
     // Calculate route details
     const totalDuration = selectedCities.reduce((sum, city) => sum + city.stayDays, 0)
     const totalBudget = selectedCities.reduce((sum, city) => sum + city.costPerMonth * (city.stayDays / 30), 0)
-    const averageWifi = selectedCities.reduce((sum, city) => sum + city.wifiSpeed, 0) / selectedCities.length
+    const averageWifi = selectedCities.length > 0 
+      ? selectedCities.reduce((sum, city) => sum + city.wifiSpeed, 0) / selectedCities.length 
+      : 0
 
     return {
       cities: selectedCities,
@@ -294,14 +403,40 @@ export default function NomadAgentPage() {
       // Generate AI response
       let response = "Based on your preferences, here's my recommendation:\n\n"
       
-      plan.cities.forEach((city, index) => {
-        response += `**${index + 1}. ${city.name}, ${city.country}** (${city.stayDays} days)\n`
-        response += `💰 $${city.costPerMonth}/month | 📶 ${city.wifiSpeed} Mbps | 👥 Community: ${city.communityScore}/10\n`
-        response += `Why: ${city.reasoning.join(', ')}\n\n`
-      })
+      // Debug: Show parsed preferences
+      const parsedPrefs = Object.entries(updatedPreferences).filter(([_, value]) => value !== undefined && value !== null)
+      if (parsedPrefs.length > 0) {
+        response += `*I understood: ${parsedPrefs.map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(', ') : value}`).join(', ')}*\n\n`
+      }
+      
+      if (plan.cities.length === 0) {
+        response += "I couldn't find cities matching your preferences. Let me suggest some popular destinations:\n\n"
+        // Add default cities if no matches
+        const defaultCities = [
+          { name: 'Chiang Mai', country: 'Thailand', costPerMonth: 1000, wifiSpeed: 70, communityScore: 9, stayDays: 90, reasoning: ['Very low cost', 'Huge nomad community', 'Great food and culture'] },
+          { name: 'Da Nang', country: 'Vietnam', costPerMonth: 1200, wifiSpeed: 85, communityScore: 8, stayDays: 60, reasoning: ['Low cost of living', 'Excellent WiFi infrastructure', 'Easy visa for most nationalities'] },
+          { name: 'Bali', country: 'Indonesia', costPerMonth: 1600, wifiSpeed: 65, communityScore: 9, stayDays: 75, reasoning: ['Vibrant nomad community', 'Beautiful beaches', 'Rich culture'] }
+        ]
+        
+        defaultCities.forEach((city, index) => {
+          response += `**${index + 1}. ${city.name}, ${city.country}** (${city.stayDays} days)\n`
+          response += `💰 $${city.costPerMonth}/month | 📶 ${city.wifiSpeed} Mbps | 👥 Community: ${city.communityScore}/10\n`
+          response += `Why: ${city.reasoning.join(', ')}\n\n`
+        })
+        
+        response += `**Total Route:** ${Math.round((defaultCities.reduce((sum, city) => sum + city.stayDays, 0)) / 30)} months, ~$${Math.round(defaultCities.reduce((sum, city) => sum + city.costPerMonth * (city.stayDays / 30), 0))} total budget\n`
+        response += `**Average WiFi:** ${Math.round(defaultCities.reduce((sum, city) => sum + city.wifiSpeed, 0) / defaultCities.length)} Mbps\n\n`
+      } else {
+        plan.cities.forEach((city, index) => {
+          response += `**${index + 1}. ${city.name}, ${city.country}** (${city.stayDays} days)\n`
+          response += `💰 $${city.costPerMonth}/month | 📶 ${city.wifiSpeed} Mbps | 👥 Community: ${city.communityScore}/10\n`
+          response += `Why: ${city.reasoning.join(', ')}\n\n`
+        })
 
-      response += `**Total Route:** ${Math.round(plan.totalDuration / 30)} months, ~$${Math.round(plan.totalBudget)} total budget\n`
-      response += `**Average WiFi:** ${Math.round(plan.averageWifi)} Mbps\n\n`
+        response += `**Total Route:** ${Math.round(plan.totalDuration / 30)} months, ~$${Math.round(plan.totalBudget)} total budget\n`
+        response += `**Average WiFi:** ${Math.round(plan.averageWifi)} Mbps\n\n`
+      }
+      
       response += "You can ask me to adjust any city, change duration, or modify your budget!"
 
       const assistantMessage: ChatMessage = {
