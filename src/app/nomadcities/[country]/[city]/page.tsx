@@ -442,153 +442,150 @@ export default function CityDetailPage() {
         <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
         
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
-            
-            {/* Left Content - City Info */}
-            <div className="lg:col-span-3">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="relative">
-                  <span className="text-6xl drop-shadow-lg">{getCountryFlag(cityData.country_code)}</span>
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
-                </div>
-                <div>
-                  <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 dark:from-white dark:via-blue-100 dark:to-purple-100 bg-clip-text text-transparent">
-                    {cityData.name}
-                  </h1>
-                  <p className="text-2xl text-gray-600 dark:text-gray-300 font-medium">{cityData.country}</p>
-                  <div className="flex items-center space-x-3 mt-3">
-                    <div className="flex items-center space-x-1">
-                      {[1,2,3,4,5].map((star) => (
-                        <Star key={star} className={`h-5 w-5 ${star <= Math.floor(parseFloat(getCityScore())) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
-                      ))}
-                    </div>
-                    <span className="text-xl font-bold text-gray-900 dark:text-white">{getCityScore()}</span>
-                    <span className="text-gray-500 dark:text-gray-400">({cityData.vote_count || 0} reviews)</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Key Metrics Grid */}
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                {/* Cost of Living */}
-                <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                      <DollarSign className="h-6 w-6 text-white" />
-                    </div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Monthly Cost</p>
-                    <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                      ${cityData.cost_of_living || cityData.cost_min_usd || 'N/A'}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
-                      {costLevel.level} budget
-                    </p>
-                  </div>
-                </div>
-
-                {/* WiFi Speed */}
-                <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                      <Wifi className="h-6 w-6 text-white" />
-                    </div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">WiFi Speed</p>
-                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                      {cityData.wifi_speed_mbps || cityData.wifi_speed || 'N/A'} Mbps
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
-                      {wifiLevel.level} quality
-                    </p>
-                  </div>
-                </div>
-
-                {/* Visa Duration */}
-                <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                      <Calendar className="h-6 w-6 text-white" />
-                    </div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Visa Duration</p>
-                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                      {visaInfo ? `${visaInfo.duration_months}mo` : cityData.visa_days ? `${cityData.visa_days}d` : 'N/A'}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
-                      {visaDifficulty.level} process
-                    </p>
-                  </div>
-                </div>
-
-                {/* Community Score */}
-                <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  <div className="relative">
-                    <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                      <Users className="h-6 w-6 text-white" />
-                    </div>
-                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Community</p>
-                    <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
-                      {cityData.community_score || 7}/10
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
-                      {communityActivity} activity
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap gap-4">
-                <a
-                  href="/local-nomads"
-                  className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 font-semibold text-lg"
-                >
-                  <Users className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
-                  <span>Join Community</span>
-                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                </a>
-                <a
-                  href={`/nomadagent?city=${cityData.slug || cityData.name.toLowerCase().replace(/\s+/g, '-')}&country=${cityData.country_code}`}
-                  className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 font-semibold text-lg"
-                >
-                  <Brain className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
-                  <span>AI Route Planning</span>
-                  <Rocket className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                </a>
-              </div>
-            </div>
-
-            {/* Right Content - City Image */}
-            <div className="lg:col-span-2">
+          {/* City Header */}
+          <div className="text-center mb-12">
+            <div className="flex items-center justify-center space-x-4 mb-6">
               <div className="relative">
-                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-6 border border-white/20 dark:border-gray-700/50 shadow-2xl">
-                  <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-2xl overflow-hidden">
-                    <CityImageGallery cityData={cityData} />
+                <span className="text-6xl drop-shadow-lg">{getCountryFlag(cityData.country_code)}</span>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+              </div>
+              <div>
+                <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 dark:from-white dark:via-blue-100 dark:to-purple-100 bg-clip-text text-transparent">
+                  {cityData.name}
+                </h1>
+                <p className="text-2xl text-gray-600 dark:text-gray-300 font-medium">{cityData.country}</p>
+                <div className="flex items-center justify-center space-x-3 mt-3">
+                  <div className="flex items-center space-x-1">
+                    {[1,2,3,4,5].map((star) => (
+                      <Star key={star} className={`h-5 w-5 ${star <= Math.floor(parseFloat(getCityScore())) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                    ))}
                   </div>
-                  
-                  {/* Quick Stats Overlay */}
-                  <div className="absolute -bottom-4 -right-4 bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-xl border border-gray-200 dark:border-gray-700">
-                    <div className="flex items-center space-x-4">
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                          {cityData.nomad_score || 8.5}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Nomad Score</p>
-                      </div>
-                      <div className="w-px h-8 bg-gray-200 dark:bg-gray-600"></div>
-                      <div className="text-center">
-                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                          {cityData.coffee_score || 9.2}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Coffee Score</p>
-                      </div>
+                  <span className="text-xl font-bold text-gray-900 dark:text-white">{getCityScore()}</span>
+                  <span className="text-gray-500 dark:text-gray-400">({cityData.vote_count || 0} reviews)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* City Image Gallery - Full Width */}
+          <div className="mb-12">
+            <div className="relative">
+              <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-6 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+                <div className="aspect-[21/9] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-2xl overflow-hidden">
+                  <CityImageGallery cityData={cityData} />
+                </div>
+                
+                {/* Quick Stats Overlay */}
+                <div className="absolute -bottom-4 -right-4 bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-xl border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center space-x-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                        {cityData.nomad_score || 8.5}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Nomad Score</p>
+                    </div>
+                    <div className="w-px h-8 bg-gray-200 dark:bg-gray-600"></div>
+                    <div className="text-center">
+                      <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                        {cityData.coffee_score || 9.2}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Coffee Score</p>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Key Metrics Grid */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {/* Cost of Living */}
+            <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
+                  <DollarSign className="h-6 w-6 text-white" />
+                </div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Monthly Cost</p>
+                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                  ${cityData.cost_of_living || cityData.cost_min_usd || 'N/A'}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                  {costLevel.level} budget
+                </p>
+              </div>
+            </div>
+
+            {/* WiFi Speed */}
+            <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
+                  <Wifi className="h-6 w-6 text-white" />
+                </div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">WiFi Speed</p>
+                <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                  {cityData.wifi_speed_mbps || cityData.wifi_speed || 'N/A'} Mbps
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                  {wifiLevel.level} quality
+                </p>
+              </div>
+            </div>
+
+            {/* Visa Duration */}
+            <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
+                  <Calendar className="h-6 w-6 text-white" />
+                </div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Visa Duration</p>
+                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                  {visaInfo ? `${visaInfo.duration_months}mo` : cityData.visa_days ? `${cityData.visa_days}d` : 'N/A'}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                  {visaDifficulty.level} process
+                </p>
+              </div>
+            </div>
+
+            {/* Community Score */}
+            <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Community</p>
+                <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                  {cityData.community_score || 7}/10
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                  {communityActivity} activity
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex flex-wrap justify-center gap-4">
+            <a
+              href="/local-nomads"
+              className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 font-semibold text-lg"
+            >
+              <Users className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+              <span>Join Community</span>
+              <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+            </a>
+            <a
+              href={`/nomadagent?city=${cityData.slug || cityData.name.toLowerCase().replace(/\s+/g, '-')}&country=${cityData.country_code}`}
+              className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 font-semibold text-lg"
+            >
+              <Brain className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+              <span>AI Route Planning</span>
+              <Rocket className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+            </a>
           </div>
         </div>
       </div>
