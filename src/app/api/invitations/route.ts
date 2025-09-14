@@ -1,9 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
 import { logInfo, logError } from '@/lib/logger'
+
+// 使用服务角色密钥来绕过RLS策略
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Missing required environment variables for Supabase')
+}
+
+const supabase = supabaseUrl && supabaseServiceKey ? createClient(
+  supabaseUrl,
+  supabaseServiceKey
+) : null
 
 export async function POST(request: NextRequest) {
   try {
+    if (!supabase) {
+      return NextResponse.json(
+        { success: false, error: 'Database connection not available' },
+        { status: 500 }
+      )
+    }
+
     const body = await request.json()
     const { sender_id, receiver_id, invitation_type, message, meeting_time, meeting_location } = body
 
@@ -112,6 +132,13 @@ export async function POST(request: NextRequest) {
 
 export async function GET(request: NextRequest) {
   try {
+    if (!supabase) {
+      return NextResponse.json(
+        { success: false, error: 'Database connection not available' },
+        { status: 500 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const userId = searchParams.get('user_id')
     const type = searchParams.get('type')
