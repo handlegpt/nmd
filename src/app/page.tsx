@@ -47,11 +47,29 @@ export default function HomePage() {
             <div className="text-center mt-8">
               <a 
                 href="/nomadcities" 
-                className="group btn btn-lg btn-outline flex items-center space-x-2 mx-auto border-2 hover:border-blue-500 hover:bg-blue-50 transition-all"
+                className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden"
               >
-                <Globe className="h-5 w-5" />
-                <span>Explore All 500+ Cities</span>
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+                {/* Animated background gradient */}
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 via-purple-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                {/* Shimmer effect */}
+                <div className="absolute inset-0 -top-1 -left-1 bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                
+                {/* Content */}
+                <div className="relative flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <Globe className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent font-bold">
+                    Explore All 500+ Cities
+                  </span>
+                  <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm">
+                    <ArrowRight className="h-4 w-4 text-white group-hover:translate-x-1 transition-transform duration-300" />
+                  </div>
+                </div>
+                
+                {/* Glow effect */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300 -z-10"></div>
               </a>
             </div>
           </div>
