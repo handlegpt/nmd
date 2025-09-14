@@ -43,6 +43,7 @@ export default function HomePage() {
               showFilters={false}
               showPersonalized={false}
               randomize={true}
+              showViewAllButton={false}
             />
             <div className="text-center mt-8">
               <a 

@@ -35,6 +35,7 @@ interface EnhancedCityRankingProps {
   showFilters?: boolean
   showPersonalized?: boolean
   randomize?: boolean
+  showViewAllButton?: boolean
 }
 
 type SortOption = 'rating' | 'votes' | 'cost' | 'wifi' | 'visa'
@@ -46,7 +47,8 @@ export default function EnhancedCityRanking({
   showCurrentCityVote = true,
   showFilters = true,
   showPersonalized = true,
-  randomize = false
+  randomize = false,
+  showViewAllButton = true
 }: EnhancedCityRankingProps) {
   const { t } = useTranslation()
   
@@ -603,7 +605,7 @@ export default function EnhancedCityRanking({
       </div>
 
       {/* Load More Button */}
-      {filteredCities.length > limit && (
+      {showViewAllButton && filteredCities.length > limit && (
         <div className="text-center mt-6">
           <FixedLink
             href="/nomadcities"
