@@ -3,21 +3,8 @@
  * 处理用户收藏、隐藏用户等偏好数据的数据库操作
  */
 
-import { createClient } from '@supabase/supabase-js'
+import { supabase } from './supabase'
 import { logInfo, logError } from './logger'
-
-// 使用服务角色密钥来绕过RLS策略
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
-
-if (!supabaseUrl || !supabaseServiceKey) {
-  console.error('Missing required environment variables for Supabase')
-}
-
-const supabase = supabaseUrl && supabaseServiceKey ? createClient(
-  supabaseUrl,
-  supabaseServiceKey
-) : null
 
 export interface UserPreferences {
   favorites: string[]
@@ -50,11 +37,6 @@ class UserPreferencesService {
    */
   async getUserPreferences(userId: string): Promise<UserPreferences> {
     try {
-      if (!supabase) {
-        logError('Supabase client not available', null, 'UserPreferencesService')
-        return this.getDefaultPreferences()
-      }
-
       logInfo('Fetching user preferences from database', { userId }, 'UserPreferencesService')
 
       const { data, error } = await supabase
@@ -91,11 +73,6 @@ class UserPreferencesService {
    */
   async updateUserPreferences(userId: string, preferences: Partial<UserPreferences>): Promise<boolean> {
     try {
-      if (!supabase) {
-        logError('Supabase client not available', null, 'UserPreferencesService')
-        return false
-      }
-
       logInfo('Updating user preferences in database', { userId, preferences }, 'UserPreferencesService')
 
       // 获取当前偏好数据

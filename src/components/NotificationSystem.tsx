@@ -59,16 +59,16 @@ export default function NotificationSystem() {
 
   // 请求浏览器通知权限
   const requestNotificationPermission = async () => {
-    if ('Notification' in window && Notification.permission === 'default') {
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'default') {
       const permission = await Notification.requestPermission()
       return permission === 'granted'
     }
-    return Notification.permission === 'granted'
+    return typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted'
   }
 
   // 显示浏览器通知
   const showBrowserNotification = (notification: Notification) => {
-    if ('Notification' in window && Notification.permission === 'granted') {
+    if (typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'granted') {
       new Notification('New Invitation!', {
         body: notification.message,
         icon: '/favicon.ico',

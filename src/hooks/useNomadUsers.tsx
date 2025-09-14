@@ -912,6 +912,10 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
       })
 
       if (!result.success) {
+        // 处理特定的错误类型
+        if (result.error === 'Invitation already sent') {
+          throw new Error('You have already sent a coffee invitation to this person. Please wait for their response.')
+        }
         throw new Error(result.error || 'Failed to send invitation')
       }
       
