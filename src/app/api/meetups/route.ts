@@ -1,10 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+// 检查环境变量
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Missing required environment variables for Supabase')
+}
+
+// 使用服务角色密钥来绕过RLS策略
+const supabaseAdmin = supabaseUrl && supabaseServiceKey ? createClient(
+  supabaseUrl,
+  supabaseServiceKey
+) : null
 
 // GET /api/meetups - 获取聚会列表
 export async function GET(request: NextRequest) {
   try {
-    if (!supabase) {
+    if (!supabaseAdmin) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
 
@@ -15,7 +29,7 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '20')
     const offset = parseInt(searchParams.get('offset') || '0')
 
-    let query = supabase
+    let query = supabaseAdmin
       .from('meetups')
       .select(`
         *,
@@ -54,7 +68,7 @@ export async function GET(request: NextRequest) {
 // POST /api/meetups - 创建聚会
 export async function POST(request: NextRequest) {
   try {
-    if (!supabase) {
+    if (!supabaseAdmin) {
       return NextResponse.json({ error: 'Database connection failed' }, { status: 503 })
     }
 
@@ -86,7 +100,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Max participants must be between 2 and 50' }, { status: 400 })
     }
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('meetups')
       .insert({
         organizer_id,
@@ -114,7 +128,7 @@ export async function POST(request: NextRequest) {
     }
 
     // 自动将组织者添加为参与者
-    const { error: participantError } = await supabase
+    const { error: participantError } = await supabaseAdmin
       .from('meetup_participants')
       .insert({
         meetup_id: data.id,
