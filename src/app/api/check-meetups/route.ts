@@ -49,58 +49,18 @@ export async function POST(request: NextRequest) {
       error: checkError?.message || 'Table not found'
     })
 
-    // 插入一些测试数据
-    const { data: users } = await supabase
-      .from('users')
-      .select('id')
-      .limit(1)
-
-    if (users && users.length > 0) {
-      const testMeetups = [
-        {
-          organizer_id: users[0].id,
-          title: 'Coffee Chat in Tokyo',
-          description: 'Let\'s grab a coffee and chat about digital nomad life!',
-          location: 'Shibuya, Tokyo',
-          meeting_time: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2小时后
-          max_participants: 4,
-          meetup_type: 'coffee',
-          tags: ['coffee', 'casual', 'networking']
-        },
-        {
-          organizer_id: users[0].id,
-          title: 'Co-working Session',
-          description: 'Join me for a productive co-working session at a local cafe',
-          location: 'Shinjuku, Tokyo',
-          meeting_time: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 1天后
-          max_participants: 6,
-          meetup_type: 'work',
-          tags: ['work', 'productivity', 'coworking']
-        }
-      ]
-
-      const { data: insertedMeetups, error: insertError } = await supabase
-        .from('meetups')
-        .insert(testMeetups)
-        .select()
-
-      if (insertError) {
-        logError('Error inserting test meetups', insertError, 'SetupMeetupsAPI')
-      }
-    }
-
     // 检查创建结果
-    const { data: meetupsCount } = await supabase
+    const { data: meetupsCount } = await supabase!
       .from('meetups')
       .select('*', { count: 'exact', head: true })
 
-    const { data: participantsCount } = await supabase
+    const { data: participantsCount } = await supabase!
       .from('meetup_participants')
       .select('*', { count: 'exact', head: true })
 
     const result = {
       success: true,
-      message: 'Meetups tables created successfully',
+      message: 'Meetups tables check completed',
       meetupsCount: meetupsCount?.length || 0,
       participantsCount: participantsCount?.length || 0
     }
