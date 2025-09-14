@@ -1,37 +1,134 @@
 'use client'
 
-import { useState } from 'react'
-import { Bell, X } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Bell, X, Coffee, Users, Calendar } from 'lucide-react'
 import { useTranslation } from '@/hooks/useTranslation'
+import { useUser } from '@/contexts/GlobalStateContext'
+import { logInfo, logError } from '@/lib/logger'
+
+interface Notification {
+  id: string
+  type: 'info' | 'warning' | 'success' | 'error' | 'invitation'
+  message: string
+  read: boolean
+  data?: any
+  created_at?: string
+}
 
 export default function NotificationSystem() {
   const { t } = useTranslation()
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      type: 'info',
-      message: t('notifications.welcome'),
-      read: false
-    },
-    {
-      id: 2,
-      type: 'warning',
-      message: t('notifications.visaExpiry'),
-      read: false
-    }
-  ])
+  const { user } = useUser()
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const [isOpen, setIsOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const unreadCount = notifications.filter(n => !n.read).length
 
-  const markAsRead = (id: number) => {
+  // 获取邀请通知
+  const fetchInvitations = async () => {
+    if (!user.isAuthenticated || !user.profile?.id) return
+
+    try {
+      setLoading(true)
+      const response = await fetch(`/api/invitations?user_id=${user.profile.id}&status=pending`)
+      const result = await response.json()
+      
+      if (result.success && result.data) {
+        const invitationNotifications: Notification[] = result.data.map((invitation: any) => ({
+          id: invitation.id,
+          type: 'invitation' as const,
+          message: `${invitation.sender?.name || 'Someone'} invited you for ${invitation.invitation_type === 'coffee_meetup' ? 'coffee' : 'work together'}`,
+          read: false,
+          data: invitation,
+          created_at: invitation.created_at
+        }))
+        
+        setNotifications(prev => {
+          // 合并新邀请，避免重复
+          const existingIds = new Set(prev.map(n => n.id))
+          const newNotifications = invitationNotifications.filter(n => !existingIds.has(n.id))
+          return [...prev, ...newNotifications]
+        })
+      }
+    } catch (error) {
+      logError('Failed to fetch invitations for notifications', error, 'NotificationSystem')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // 请求浏览器通知权限
+  const requestNotificationPermission = async () => {
+    if ('Notification' in window && Notification.permission === 'default') {
+      const permission = await Notification.requestPermission()
+      return permission === 'granted'
+    }
+    return Notification.permission === 'granted'
+  }
+
+  // 显示浏览器通知
+  const showBrowserNotification = (notification: Notification) => {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification('New Invitation!', {
+        body: notification.message,
+        icon: '/favicon.ico',
+        tag: notification.id
+      })
+    }
+  }
+
+  // 定期检查新邀请
+  useEffect(() => {
+    if (user.isAuthenticated) {
+      // 请求通知权限
+      requestNotificationPermission()
+      
+      // 获取初始邀请
+      fetchInvitations()
+      
+      // 设置定期检查
+      const interval = setInterval(async () => {
+        const oldCount = notifications.length
+        await fetchInvitations()
+        // 如果有新通知，显示浏览器通知
+        if (notifications.length > oldCount) {
+          const newNotifications = notifications.slice(oldCount)
+          newNotifications.forEach(showBrowserNotification)
+        }
+      }, 30000) // 每30秒检查一次
+      
+      return () => clearInterval(interval)
+    }
+  }, [user.isAuthenticated, user.profile?.id, notifications.length])
+
+  const markAsRead = (id: string) => {
     setNotifications(prev => 
       prev.map(n => n.id === id ? { ...n, read: true } : n)
     )
   }
 
-  const removeNotification = (id: number) => {
+  const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id))
+  }
+
+  const handleInvitationAction = async (invitationId: string, action: 'accept' | 'decline') => {
+    try {
+      const response = await fetch(`/api/invitations/${invitationId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: action === 'accept' ? 'accepted' : 'declined' })
+      })
+      
+      if (response.ok) {
+        // 移除通知
+        removeNotification(invitationId)
+        // 显示成功消息
+        alert(`Invitation ${action}ed successfully!`)
+      }
+    } catch (error) {
+      logError('Failed to handle invitation action', error, 'NotificationSystem')
+      alert('Failed to process invitation. Please try again.')
+    }
   }
 
   const getTypeStyles = (type: string) => {
@@ -44,8 +141,19 @@ export default function NotificationSystem() {
         return 'bg-green-50 text-green-800 border-green-200'
       case 'error':
         return 'bg-red-50 text-red-800 border-red-200'
+      case 'invitation':
+        return 'bg-purple-50 text-purple-800 border-purple-200'
       default:
         return 'bg-gray-50 text-gray-800 border-gray-200'
+    }
+  }
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case 'invitation':
+        return <Coffee className="h-4 w-4" />
+      default:
+        return null
     }
   }
 
@@ -94,7 +202,28 @@ export default function NotificationSystem() {
                     }`}
                   >
                     <div className="flex items-start justify-between">
-                      <p className="text-sm flex-1">{notification.message}</p>
+                      <div className="flex items-start space-x-2 flex-1">
+                        {getTypeIcon(notification.type)}
+                        <div className="flex-1">
+                          <p className="text-sm">{notification.message}</p>
+                          {notification.type === 'invitation' && notification.data && (
+                            <div className="mt-2 flex space-x-2">
+                              <button
+                                onClick={() => handleInvitationAction(notification.id, 'accept')}
+                                className="px-2 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700"
+                              >
+                                Accept
+                              </button>
+                              <button
+                                onClick={() => handleInvitationAction(notification.id, 'decline')}
+                                className="px-2 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700"
+                              >
+                                Decline
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                       <div className="flex items-center space-x-1 ml-2">
                         {!notification.read && (
                           <button
