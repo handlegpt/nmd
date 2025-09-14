@@ -10,19 +10,14 @@ import {
   Heart,
   Share2,
   Download,
-  Eye
+  Eye,
+  Plus,
+  Upload
 } from 'lucide-react'
+import { CityImageService, CityImageData } from '@/lib/cityImageService'
 
-interface CityImage {
-  id: string
-  url: string
-  title: string
-  description: string
-  photographer: string
-  location: string
-  likes: number
-  isUserUploaded: boolean
-}
+// Use the CityImageData interface from the service
+type CityImage = CityImageData
 
 interface CityImageGalleryProps {
   cityData: {
@@ -40,52 +35,16 @@ export default function CityImageGallery({ cityData }: CityImageGalleryProps) {
   const [images, setImages] = useState<CityImage[]>([])
 
   useEffect(() => {
-    // 模拟获取城市图片数据
-    const mockImages: CityImage[] = [
-      {
-        id: '1',
-        url: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&h=600&fit=crop',
-        title: `${cityData.name} Skyline`,
-        description: 'Beautiful cityscape view of the downtown area',
-        photographer: 'John Doe',
-        location: 'City Center',
-        likes: 124,
-        isUserUploaded: false
-      },
-      {
-        id: '2',
-        url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
-        title: 'Local Street Life',
-        description: 'Vibrant street scene showing local culture',
-        photographer: 'Jane Smith',
-        location: 'Old Town',
-        likes: 89,
-        isUserUploaded: true
-      },
-      {
-        id: '3',
-        url: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop',
-        title: 'Coastal View',
-        description: 'Stunning coastal landscape and beaches',
-        photographer: 'Mike Johnson',
-        location: 'Waterfront',
-        likes: 156,
-        isUserUploaded: false
-      },
-      {
-        id: '4',
-        url: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=800&h=600&fit=crop',
-        title: 'Night Life',
-        description: 'City lights and nightlife atmosphere',
-        photographer: 'Sarah Wilson',
-        location: 'Entertainment District',
-        likes: 203,
-        isUserUploaded: true
-      }
-    ]
+    // Use the CityImageService to generate city-specific images
+    const cityImages = CityImageService.generateCityImages({
+      cityName: cityData.name,
+      country: cityData.country,
+      region: (cityData as any).region,
+      tags: (cityData as any).tags
+    })
     
-    setImages(mockImages)
-  }, [cityData.name])
+    setImages(cityImages)
+  }, [cityData.name, cityData.country])
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % images.length)
@@ -224,9 +183,16 @@ export default function CityImageGallery({ cityData }: CityImageGalleryProps) {
               <span>{Math.floor(Math.random() * 1000) + 100} {t('cityDetail.gallery.views')}</span>
             </span>
           </div>
-          <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-            {t('cityDetail.gallery.uploadPhoto')}
-          </button>
+          <div className="flex items-center space-x-3">
+            <button className="inline-flex items-center text-sm text-blue-600 hover:text-blue-700 font-medium transition-colors">
+              <Plus className="h-4 w-4 mr-1" />
+              Add Photo
+            </button>
+            <button className="inline-flex items-center text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium transition-colors">
+              <Upload className="h-4 w-4 mr-1" />
+              Upload
+            </button>
+          </div>
         </div>
       </div>
     </div>
