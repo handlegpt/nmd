@@ -303,8 +303,8 @@
     "quickInfo": "Quick Info",
     "timezone": "Timezone",
     "coordinates": "Coordinates",
-    "utilities": "Utilities",
-    "entertainment": "Entertainment",
+      "utilities": "Utilities",
+      "entertainment": "Entertainment",
     "transportation": "Transportation",
     "food": "Food",
     "accommodation": "Accommodation",
@@ -339,7 +339,7 @@
     "hotels": "Hotels",
     "apartmentRental": "Apartment Rental",
     "coworkingSpaces": "Coworking Spaces",
-    "taxi": "Taxi",
+      "taxi": "Taxi",
     "publicTransport": "Public Transport",
     "airport": "Airport",
     "accommodationInfo": "Accommodation Information",
@@ -2281,7 +2281,7 @@
         "medium": "Medium",
         "hard": "Hard"
       },
-      "categories": {
+    "categories": {
         "taxHaven": "Tax Haven",
         "territorial": "Territorial Tax",
         "companyStructure": "Company Structure",
@@ -3815,4 +3815,4 @@
     },
     "noMeetups": "No meetups available at the moment"
   }
-}
+} 

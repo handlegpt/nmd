@@ -48,7 +48,26 @@ import {
   ChevronRight,
   Activity,
   BarChart3,
-  PieChart
+  PieChart,
+  ArrowRight,
+  CheckCircle,
+  XCircle,
+  ThumbsUp,
+  ThumbsDown,
+  Bookmark,
+  ExternalLink,
+  Navigation,
+  Compass,
+  Target,
+  Sparkles,
+  Rocket,
+  Lightbulb,
+  TrendingDown,
+  ArrowUp,
+  ArrowDown,
+  Minus,
+  Maximize2,
+  Minimize2
 } from 'lucide-react'
 
 export default function CityDetailPage() {
@@ -395,13 +414,13 @@ export default function CityDetailPage() {
   const communityActivity = getCommunityActivity()
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Breadcrumb Navigation */}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* Navigation Breadcrumb */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <Breadcrumb
           items={[
             {
-              label: t('cityDetail.nomadCities'),
+              label: 'Nomad Cities',
               href: '/nomadcities',
               icon: <MapPin className="h-4 w-4" />
             },
@@ -416,296 +435,200 @@ export default function CityDetailPage() {
         />
       </div>
 
-      {/* 核心概览区 - 首屏 */}
-      <div className="bg-white dark:bg-gray-800 shadow-lg">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* 左侧：城市基本信息 */}
-            <div className="lg:col-span-2">
+      {/* Hero Section - Modern Design */}
+      <div className="relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10 dark:from-blue-600/5 dark:via-purple-600/5 dark:to-pink-600/5"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2260%22%20height%3D%2260%22%20viewBox%3D%220%200%2060%2060%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%3E%3Cg%20fill%3D%22%239C92AC%22%20fill-opacity%3D%220.1%22%3E%3Ccircle%20cx%3D%2230%22%20cy%3D%2230%22%20r%3D%222%22/%3E%3C/g%3E%3C/g%3E%3C/svg%3E')] opacity-20"></div>
+        
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-1 lg:grid-cols-5 gap-8 items-center">
+            
+            {/* Left Content - City Info */}
+            <div className="lg:col-span-3">
               <div className="flex items-center space-x-4 mb-6">
-                <span className="text-5xl">{getCountryFlag(cityData.country_code)}</span>
+                <div className="relative">
+                  <span className="text-6xl drop-shadow-lg">{getCountryFlag(cityData.country_code)}</span>
+                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white dark:border-gray-900"></div>
+                </div>
                 <div>
-                  <h1 className="text-4xl font-bold text-gray-900 dark:text-white">{cityData.name}</h1>
-                  <p className="text-xl text-gray-600 dark:text-gray-400">{cityData.country}</p>
-                  <div className="flex items-center space-x-2 mt-2">
-                    <Star className="h-5 w-5 text-yellow-400" />
-                    <span className="text-lg font-semibold text-gray-900 dark:text-white">{getCityScore()}</span>
-                    <span className="text-gray-500 dark:text-gray-400">({cityData.vote_count || 0} {t('cityDetail.reviews')})</span>
+                  <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 dark:from-white dark:via-blue-100 dark:to-purple-100 bg-clip-text text-transparent">
+                    {cityData.name}
+                  </h1>
+                  <p className="text-2xl text-gray-600 dark:text-gray-300 font-medium">{cityData.country}</p>
+                  <div className="flex items-center space-x-3 mt-3">
+                    <div className="flex items-center space-x-1">
+                      {[1,2,3,4,5].map((star) => (
+                        <Star key={star} className={`h-5 w-5 ${star <= Math.floor(parseFloat(getCityScore())) ? 'text-yellow-400 fill-current' : 'text-gray-300'}`} />
+                      ))}
+                    </div>
+                    <span className="text-xl font-bold text-gray-900 dark:text-white">{getCityScore()}</span>
+                    <span className="text-gray-500 dark:text-gray-400">({cityData.vote_count || 0} reviews)</span>
                   </div>
                 </div>
               </div>
 
-              {/* 四大核心指标卡片 */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                {/* 月均成本 */}
-                <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 rounded-xl p-4 border border-green-200 dark:border-green-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+              {/* Key Metrics Grid */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                {/* Cost of Living */}
+                <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                       <DollarSign className="h-6 w-6 text-white" />
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">月均成本</p>
-                      <p className="text-xl font-bold text-green-600 dark:text-green-400">
-                        ${cityData.cost_of_living || cityData.cost_min_usd || 'N/A'}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                        {costLevel.level}
-                      </p>
-                    </div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Monthly Cost</p>
+                    <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                      ${cityData.cost_of_living || cityData.cost_min_usd || 'N/A'}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                      {costLevel.level} budget
+                    </p>
                   </div>
                 </div>
 
-                {/* WiFi速度 */}
-                <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
+                {/* WiFi Speed */}
+                <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-cyan-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                       <Wifi className="h-6 w-6 text-white" />
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">WiFi速度</p>
-                      <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                        {cityData.wifi_speed_mbps || cityData.wifi_speed || 'N/A'} Mbps
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                        {wifiLevel.level}
-                      </p>
-                    </div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">WiFi Speed</p>
+                    <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                      {cityData.wifi_speed_mbps || cityData.wifi_speed || 'N/A'} Mbps
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                      {wifiLevel.level} quality
+                    </p>
                   </div>
                 </div>
 
-                {/* 签证天数 */}
-                <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 rounded-xl p-4 border border-purple-200 dark:border-purple-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
+                {/* Visa Duration */}
+                <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                       <Calendar className="h-6 w-6 text-white" />
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">签证天数</p>
-                      <p className="text-xl font-bold text-purple-600 dark:text-purple-400">
-                        {visaInfo ? `${visaInfo.duration_months}个月` : cityData.visa_days ? `${cityData.visa_days}天` : 'N/A'}
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                        {visaDifficulty.level}
-                      </p>
-                    </div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Visa Duration</p>
+                    <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+                      {visaInfo ? `${visaInfo.duration_months}mo` : cityData.visa_days ? `${cityData.visa_days}d` : 'N/A'}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                      {visaDifficulty.level} process
+                    </p>
                   </div>
                 </div>
 
-                {/* 社区活跃度 */}
-                <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 rounded-xl p-4 border border-orange-200 dark:border-orange-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center">
+                {/* Community Score */}
+                <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-red-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
                       <Users className="h-6 w-6 text-white" />
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">社区活跃度</p>
-                      <p className="text-xl font-bold text-orange-600 dark:text-orange-400">
-                        {cityData.community_score || 7}/10
-                      </p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 capitalize">
-                        {communityActivity}
-                      </p>
-                    </div>
+                    <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Community</p>
+                    <p className="text-2xl font-bold text-orange-600 dark:text-orange-400">
+                      {cityData.community_score || 7}/10
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                      {communityActivity} activity
+                    </p>
                   </div>
                 </div>
               </div>
 
-              {/* 立即加入社区按钮 */}
+              {/* Action Buttons */}
               <div className="flex flex-wrap gap-4">
                 <a
                   href="/local-nomads"
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 font-semibold text-lg"
                 >
-                  <Users className="h-5 w-5 mr-2" />
-                  <span className="font-semibold">立即加入社区</span>
+                  <Users className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+                  <span>Join Community</span>
+                  <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                 </a>
                 <a
                   href={`/nomadagent?city=${cityData.slug || cityData.name.toLowerCase().replace(/\s+/g, '-')}&country=${cityData.country_code}`}
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg hover:from-purple-600 hover:to-pink-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                  className="group inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl hover:from-purple-700 hover:to-pink-700 transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1 font-semibold text-lg"
                 >
-                  <Brain className="h-5 w-5 mr-2" />
-                  <span className="font-semibold">AI规划路线</span>
+                  <Brain className="h-5 w-5 mr-3 group-hover:scale-110 transition-transform duration-300" />
+                  <span>AI Route Planning</span>
+                  <Rocket className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                 </a>
               </div>
             </div>
 
-            {/* 右侧：城市封面图 */}
-            <div className="lg:col-span-1">
-              <div className="bg-gray-200 dark:bg-gray-700 rounded-xl h-64 lg:h-80 flex items-center justify-center">
-                <CityImageGallery cityData={cityData} />
+            {/* Right Content - City Image */}
+            <div className="lg:col-span-2">
+              <div className="relative">
+                <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-6 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+                  <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 rounded-2xl overflow-hidden">
+                    <CityImageGallery cityData={cityData} />
+                  </div>
+                  
+                  {/* Quick Stats Overlay */}
+                  <div className="absolute -bottom-4 -right-4 bg-white dark:bg-gray-800 rounded-2xl p-4 shadow-xl border border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center space-x-4">
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                          {cityData.nomad_score || 8.5}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Nomad Score</p>
+                      </div>
+                      <div className="w-px h-8 bg-gray-200 dark:bg-gray-600"></div>
+                      <div className="text-center">
+                        <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                          {cityData.coffee_score || 9.2}
+                        </p>
+                        <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Coffee Score</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 详细信息区 */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      {/* Detailed Information Section */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
         
-        {/* 成本与趋势 */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-              <PieChart className="h-6 w-6 text-green-600 dark:text-green-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">📊 成本与趋势</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* 成本细分饼图 */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">月度成本细分</h3>
-              <CostBreakdownChart cityData={cityData} />
-            </div>
-            
-            {/* 成本趋势图 */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">6个月成本趋势</h3>
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-6 h-64 flex items-center justify-center">
-                <div className="text-center">
-                  <BarChart3 className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-500 dark:text-gray-400">成本趋势图表</p>
-                  <p className="text-sm text-gray-400 dark:text-gray-500">即将推出</p>
-                </div>
+        {/* Cost Analysis & Trends */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-3xl"></div>
+          <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-8 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+            <div className="flex items-center space-x-4 mb-8">
+              <div className="w-14 h-14 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
+                <PieChart className="h-7 w-7 text-white" />
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 城市简介与优缺点 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* 城市简介 */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <Globe className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">🏙️ 城市简介</h2>
-            </div>
-            <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
-              {t('cityDetail.cityDescription', { 
-                city: cityData.name, 
-                country: cityData.country,
-                cost: (cityData.cost_of_living || cityData.cost_min_usd || 0).toString(),
-                wifi: (cityData.wifi_speed_mbps || cityData.wifi_speed || 0).toString(),
-                visa: (cityData.visa_days || 0).toString()
-              })}
-            </p>
-          </div>
-
-          {/* 优缺点表格 */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">优缺点分析</h2>
-            </div>
-            
-            <div className="space-y-4">
-              {/* 优点 */}
               <div>
-                <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-3 flex items-center">
-                  <span className="text-green-500 mr-2">✓</span>
-                  优点
-                </h3>
-                <div className="space-y-2">
-                  {cityVotes.pros.slice(0, 3).map((pro) => (
-                    <div key={pro.id} className="p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
-                      <p className="font-medium text-gray-900 dark:text-white">{pro.title}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{pro.description}</p>
-                    </div>
-                  ))}
-                </div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Cost Analysis</h2>
+                <p className="text-gray-600 dark:text-gray-400">Monthly expenses breakdown and trends</p>
               </div>
-
-              {/* 缺点 */}
-              <div>
-                <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-3 flex items-center">
-                  <span className="text-red-500 mr-2">✗</span>
-                  缺点
-                </h3>
-                <div className="space-y-2">
-                  {cityVotes.cons.slice(0, 3).map((con) => (
-                    <div key={con.id} className="p-3 bg-red-50 dark:bg-red-900/20 rounded-lg border border-red-200 dark:border-red-700">
-                      <p className="font-medium text-gray-900 dark:text-white">{con.title}</p>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">{con.description}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* 地图与推荐地点 */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-orange-100 dark:bg-orange-900 rounded-lg flex items-center justify-center">
-              <MapPin className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">🗺️ 地图与推荐地点</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* 地图 */}
-            <div>
-              <CityMap cityData={cityData} />
             </div>
             
-            {/* 推荐地点列表 */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">推荐地点</h3>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Cost Breakdown Chart */}
               <div className="space-y-4">
-                {/* 联合办公空间 */}
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
-                      <Briefcase className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">联合办公空间</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">推荐3个最佳联合办公空间</p>
-                    </div>
-                  </div>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Monthly Cost Breakdown</h3>
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl p-6">
+                  {cityData && <CostBreakdownChart cityData={cityData} />}
                 </div>
-
-                {/* 咖啡馆 */}
-                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center">
-                      <Coffee className="h-5 w-5 text-white" />
+              </div>
+              
+              {/* Cost Trends */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">6-Month Cost Trends</h3>
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl p-6 h-64 flex items-center justify-center">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <TrendingUp className="h-8 w-8 text-white" />
                     </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">咖啡馆</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">适合远程工作的咖啡馆</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 住宿 */}
-                <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                      <Home className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">住宿推荐</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">数字游民友好的住宿选择</p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* 交通 */}
-                <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-700">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center">
-                      <Plane className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-gray-900 dark:text-white">交通信息</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">机场、公共交通、租车信息</p>
-                    </div>
+                    <p className="text-gray-600 dark:text-gray-400 font-medium">Cost Trend Chart</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-500">Coming Soon</p>
                   </div>
                 </div>
               </div>
@@ -713,240 +636,489 @@ export default function CityDetailPage() {
           </div>
         </div>
 
-        {/* Meetups日程表 */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <div className="flex items-center space-x-3 mb-6">
-            <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center">
-              <Calendar className="h-6 w-6 text-pink-600 dark:text-pink-400" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">📅 Meetups日程</h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* 即将举行的Meetups */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">即将举行</h3>
-              
-              <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Morning Coffee Networking</h4>
-                  <span className="text-sm text-blue-600 dark:text-blue-400">8人参加</span>
+        {/* City Overview & Analysis */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* City Description */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 rounded-3xl"></div>
+            <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-8 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Globe className="h-7 w-7 text-white" />
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">明天 9:00 AM - 11:00 AM</p>
-                <button className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
-                  🔗 加入活动
-                </button>
-              </div>
-
-              <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-700">
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Co-working Session</h4>
-                  <span className="text-sm text-green-600 dark:text-green-400">12人参加</span>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">City Overview</h2>
+                  <p className="text-gray-600 dark:text-gray-400">Discover what makes this city special</p>
                 </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">后天 2:00 PM - 6:00 PM</p>
-                <button className="w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors">
-                  🔗 加入活动
-                </button>
               </div>
-            </div>
-
-            {/* 创建新Meetup */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">创建活动</h3>
-              
-              <div className="p-6 bg-gray-50 dark:bg-gray-700 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600 text-center">
-                <Plus className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2">组织你的Meetup</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                  创建咖啡聚会、联合办公或社交活动
+              <div className="prose prose-lg dark:prose-invert max-w-none">
+                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                  {cityData && t('cityDetail.cityDescription', { 
+                    city: cityData.name, 
+                    country: cityData.country,
+                    cost: (cityData.cost_of_living || cityData.cost_min_usd || 0).toString(),
+                    wifi: (cityData.wifi_speed_mbps || cityData.wifi_speed || 0).toString(),
+                    visa: (cityData.visa_days || 0).toString()
+                  })}
                 </p>
-                <button className="bg-purple-500 text-white py-2 px-6 rounded-lg hover:bg-purple-600 transition-colors">
-                  创建活动
-                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Pros & Cons Analysis */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-3xl"></div>
+            <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-8 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Target className="h-7 w-7 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Pros & Cons</h2>
+                  <p className="text-gray-600 dark:text-gray-400">Community-driven insights</p>
+                </div>
+              </div>
+              
+              <div className="space-y-6">
+                {/* Pros */}
+                <div>
+                  <h3 className="text-lg font-semibold text-emerald-600 dark:text-emerald-400 mb-4 flex items-center">
+                    <CheckCircle className="h-5 w-5 mr-2" />
+                    Advantages
+                  </h3>
+                  <div className="space-y-3">
+                    {cityVotes.pros.slice(0, 3).map((pro) => (
+                      <div key={pro.id} className="group p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-700 hover:shadow-lg transition-all duration-300">
+                        <div className="flex items-start space-x-3">
+                          <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <ThumbsUp className="h-4 w-4 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 dark:text-white">{pro.title}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{pro.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Cons */}
+                <div>
+                  <h3 className="text-lg font-semibold text-red-600 dark:text-red-400 mb-4 flex items-center">
+                    <XCircle className="h-5 w-5 mr-2" />
+                    Challenges
+                  </h3>
+                  <div className="space-y-3">
+                    {cityVotes.cons.slice(0, 3).map((con) => (
+                      <div key={con.id} className="group p-4 bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/20 dark:to-pink-900/20 rounded-2xl border border-red-200 dark:border-red-700 hover:shadow-lg transition-all duration-300">
+                        <div className="flex items-start space-x-3">
+                          <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5">
+                            <ThumbsDown className="h-4 w-4 text-white" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-semibold text-gray-900 dark:text-white">{con.title}</p>
+                            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">{con.description}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 互动区 */}
+        {/* Map & Recommended Places */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 to-red-500/5 rounded-3xl"></div>
+          <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-8 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+            <div className="flex items-center space-x-4 mb-8">
+              <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center shadow-lg">
+                <Navigation className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Map & Places</h2>
+                <p className="text-gray-600 dark:text-gray-400">Explore the city and discover nomad-friendly spots</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Interactive Map */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Interactive Map</h3>
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl overflow-hidden shadow-lg">
+                  {cityData && <CityMap cityData={cityData} />}
+                </div>
+              </div>
+              
+              {/* Recommended Places */}
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Recommended Places</h3>
+                <div className="space-y-4">
+                  {/* Co-working Spaces */}
+                  <div className="group p-5 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl border border-blue-200 dark:border-blue-700 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <Briefcase className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">Co-working Spaces</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Top 3 recommended co-working spaces</p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-500 transition-colors" />
+                    </div>
+                  </div>
+
+                  {/* Coffee Shops */}
+                  <div className="group p-5 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-2xl border border-amber-200 dark:border-amber-700 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <Coffee className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">Coffee Shops</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Remote work friendly cafes</p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-amber-500 transition-colors" />
+                    </div>
+                  </div>
+
+                  {/* Accommodation */}
+                  <div className="group p-5 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-700 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <Home className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">Accommodation</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Nomad-friendly housing options</p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-emerald-500 transition-colors" />
+                    </div>
+                  </div>
+
+                  {/* Transportation */}
+                  <div className="group p-5 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl border border-purple-200 dark:border-purple-700 hover:shadow-lg transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <Plane className="h-6 w-6 text-white" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-gray-900 dark:text-white">Transportation</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">Airports, public transport, car rental</p>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-purple-500 transition-colors" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Community Events & Meetups */}
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-pink-500/5 to-rose-500/5 rounded-3xl"></div>
+          <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-8 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+            <div className="flex items-center space-x-4 mb-8">
+              <div className="w-14 h-14 bg-gradient-to-br from-pink-500 to-rose-500 rounded-2xl flex items-center justify-center shadow-lg">
+                <Calendar className="h-7 w-7 text-white" />
+              </div>
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Community Events</h2>
+                <p className="text-gray-600 dark:text-gray-400">Join meetups and connect with fellow nomads</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Upcoming Events */}
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Upcoming Events</h3>
+                
+                <div className="space-y-4">
+                  {/* Morning Coffee Networking */}
+                  <div className="group p-6 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl border border-blue-200 dark:border-blue-700 hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-1">Morning Coffee Networking</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Connect with local nomads over coffee</p>
+                        <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center space-x-1">
+                            <Clock className="h-4 w-4" />
+                            <span>Tomorrow 9:00 AM - 11:00 AM</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Users className="h-4 w-4" />
+                            <span>8 attendees</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <Coffee className="h-6 w-6 text-white" />
+                      </div>
+                    </div>
+                    <button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 px-4 rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 font-semibold flex items-center justify-center space-x-2">
+                      <span>Join Event</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </div>
+
+                  {/* Co-working Session */}
+                  <div className="group p-6 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-700 hover:shadow-lg transition-all duration-300">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-1">Co-working Session</h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Productive work session with fellow nomads</p>
+                        <div className="flex items-center space-x-4 text-sm text-gray-500 dark:text-gray-400">
+                          <div className="flex items-center space-x-1">
+                            <Clock className="h-4 w-4" />
+                            <span>Day after tomorrow 2:00 PM - 6:00 PM</span>
+                          </div>
+                          <div className="flex items-center space-x-1">
+                            <Users className="h-4 w-4" />
+                            <span>12 attendees</span>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="w-12 h-12 bg-emerald-500 rounded-xl flex items-center justify-center shadow-lg">
+                        <Briefcase className="h-6 w-6 text-white" />
+                      </div>
+                    </div>
+                    <button className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 px-4 rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 font-semibold flex items-center justify-center space-x-2">
+                      <span>Join Event</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Create New Event */}
+              <div className="space-y-6">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Create Event</h3>
+                
+                <div className="p-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 text-center hover:border-purple-400 dark:hover:border-purple-500 transition-colors duration-300">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <Plus className="h-8 w-8 text-white" />
+                  </div>
+                  <h4 className="font-bold text-gray-900 dark:text-white text-lg mb-2">Organize Your Meetup</h4>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                    Create coffee meetups, co-working sessions, or social events for the community
+                  </p>
+                  <button className="bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-8 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 font-semibold flex items-center space-x-2 mx-auto">
+                    <span>Create Event</span>
+                    <Sparkles className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Interactive Community Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* 社区用户列表 */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900 rounded-lg flex items-center justify-center">
-                <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          {/* Community Members */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-500/5 to-cyan-500/5 rounded-3xl"></div>
+            <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-6 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Community</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Active nomads in this city</p>
+                </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">👥 社区用户</h2>
-            </div>
-            
-            <div className="space-y-4">
-              {/* 模拟用户数据 */}
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">SC</span>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Sarah Chen</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">UX设计师 • 3个月</p>
-                </div>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  联系
-                </button>
-              </div>
-
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-teal-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">AR</span>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Alex Rodriguez</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">软件开发 • 1个月</p>
-                </div>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  联系
-                </button>
-              </div>
-
-              <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div className="w-10 h-10 bg-gradient-to-r from-pink-500 to-rose-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-semibold text-sm">MJ</span>
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Maria Johnson</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">数字营销 • 2个月</p>
-                </div>
-                <button className="text-blue-600 hover:text-blue-700 text-sm font-medium">
-                  联系
-                </button>
-              </div>
-            </div>
-
-            <button className="w-full mt-4 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">
-              查看更多用户
-            </button>
-          </div>
-
-          {/* 评论与评分 */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center">
-                <MessageCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">💬 评论与评分</h2>
-            </div>
-            
-            <div className="space-y-4">
-              {/* 模拟评论 */}
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold text-xs">JD</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white text-sm">John Doe</h4>
-                    <div className="flex items-center space-x-1">
-                      {[1,2,3,4,5].map((star) => (
-                        <Star key={star} className="h-3 w-3 text-yellow-400 fill-current" />
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  "Great city for digital nomads! Excellent WiFi, affordable cost of living, and a vibrant community. Highly recommended!"
-                </p>
-              </div>
-
-              <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                <div className="flex items-center space-x-3 mb-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-indigo-500 rounded-full flex items-center justify-center">
-                    <span className="text-white font-semibold text-xs">ES</span>
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Emma Smith</h4>
-                    <div className="flex items-center space-x-1">
-                      {[1,2,3,4].map((star) => (
-                        <Star key={star} className="h-3 w-3 text-yellow-400 fill-current" />
-                      ))}
-                      <Star className="h-3 w-3 text-gray-300" />
-                    </div>
-                  </div>
-                </div>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  "Love the coffee culture here! Perfect for remote work. Only downside is the traffic during rush hours."
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-6 space-y-3">
-              <button
-                onClick={() => setShowVoteModal(true)}
-                className="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2"
-              >
-                <Star className="h-4 w-4" />
-                <span>👍 评分城市</span>
-              </button>
               
-              <button className="w-full bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center space-x-2">
-                <Heart className="h-4 w-4" />
-                <span>❤️ 收藏</span>
-              </button>
-              
-              <button className="w-full bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors flex items-center justify-center space-x-2">
-                <Share2 className="h-4 w-4" />
-                <span>📤 分享</span>
+              <div className="space-y-4">
+                {/* Sample community members */}
+                <div className="group p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-2xl border border-blue-200 dark:border-blue-700 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-white font-bold text-sm">SC</span>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Sarah Chen</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">UX Designer • 3 months</p>
+                    </div>
+                    <button className="text-blue-600 hover:text-blue-700 text-sm font-medium px-3 py-1 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/20 transition-colors">
+                      Connect
+                    </button>
+                  </div>
+                </div>
+
+                <div className="group p-4 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl border border-emerald-200 dark:border-emerald-700 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-white font-bold text-sm">AR</span>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Alex Rodriguez</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Software Developer • 1 month</p>
+                    </div>
+                    <button className="text-emerald-600 hover:text-emerald-700 text-sm font-medium px-3 py-1 rounded-lg hover:bg-emerald-100 dark:hover:bg-emerald-900/20 transition-colors">
+                      Connect
+                    </button>
+                  </div>
+                </div>
+
+                <div className="group p-4 bg-gradient-to-r from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20 rounded-2xl border border-pink-200 dark:border-pink-700 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-rose-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <span className="text-white font-bold text-sm">MJ</span>
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Maria Johnson</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Digital Marketer • 2 months</p>
+                    </div>
+                    <button className="text-pink-600 hover:text-pink-700 text-sm font-medium px-3 py-1 rounded-lg hover:bg-pink-100 dark:hover:bg-pink-900/20 transition-colors">
+                      Connect
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <button className="w-full mt-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-3 px-4 rounded-xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 font-semibold">
+                View All Members
               </button>
             </div>
           </div>
 
-          {/* 相似城市推荐 */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center">
-                <Globe className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+          {/* Reviews & Ratings */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/5 to-teal-500/5 rounded-3xl"></div>
+            <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-6 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
+                  <MessageCircle className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Reviews</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Community feedback</p>
+                </div>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">📍 相似城市推荐</h2>
+              
+              <div className="space-y-4">
+                {/* Sample reviews */}
+                <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center">
+                      <span className="text-white font-bold text-xs">JD</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm">John Doe</h4>
+                      <div className="flex items-center space-x-1">
+                        {[1,2,3,4,5].map((star) => (
+                          <Star key={star} className="h-3 w-3 text-yellow-400 fill-current" />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    "Great city for digital nomads! Excellent WiFi, affordable cost of living, and a vibrant community. Highly recommended!"
+                  </p>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-indigo-500 rounded-xl flex items-center justify-center">
+                      <span className="text-white font-bold text-xs">ES</span>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Emma Smith</h4>
+                      <div className="flex items-center space-x-1">
+                        {[1,2,3,4].map((star) => (
+                          <Star key={star} className="h-3 w-3 text-yellow-400 fill-current" />
+                        ))}
+                        <Star className="h-3 w-3 text-gray-300" />
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    "Love the coffee culture here! Perfect for remote work. Only downside is the traffic during rush hours."
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-3">
+                <button
+                  onClick={() => setShowVoteModal(true)}
+                  className="w-full bg-gradient-to-r from-emerald-500 to-teal-500 text-white py-3 px-4 rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 font-semibold flex items-center justify-center space-x-2"
+                >
+                  <Star className="h-4 w-4" />
+                  <span>Rate City</span>
+                </button>
+                
+                <button className="w-full bg-gradient-to-r from-red-500 to-pink-500 text-white py-3 px-4 rounded-xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 font-semibold flex items-center justify-center space-x-2">
+                  <Bookmark className="h-4 w-4" />
+                  <span>Save to Favorites</span>
+                </button>
+                
+                <button className="w-full bg-gradient-to-r from-gray-500 to-gray-600 text-white py-3 px-4 rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all duration-300 font-semibold flex items-center justify-center space-x-2">
+                  <Share2 className="h-4 w-4" />
+                  <span>Share City</span>
+                </button>
+              </div>
             </div>
-            
-            <div className="space-y-4">
-              {/* 模拟推荐城市 */}
-              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer">
-                <div className="flex items-center space-x-3">
-                  <span className="text-2xl">🇵🇹</span>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Lisbon</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Portugal • $1800/月</p>
+          </div>
+
+          {/* Similar Cities */}
+          <div className="relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 rounded-3xl"></div>
+            <div className="relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-3xl p-6 border border-white/20 dark:border-gray-700/50 shadow-2xl">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Compass className="h-6 w-6 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">Similar Cities</h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">Explore alternatives</p>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                {/* Sample similar cities */}
+                <div className="group p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-600">
+                  <div className="flex items-center space-x-4">
+                    <span className="text-3xl">🇵🇹</span>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Lisbon</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Portugal • $1800/month</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-purple-500 transition-colors" />
                   </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
+                </div>
+
+                <div className="group p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-600">
+                  <div className="flex items-center space-x-4">
+                    <span className="text-3xl">🇹🇭</span>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Bangkok</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Thailand • $1200/month</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-purple-500 transition-colors" />
+                  </div>
+                </div>
+
+                <div className="group p-4 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl hover:shadow-lg transition-all duration-300 cursor-pointer border border-gray-200 dark:border-gray-600">
+                  <div className="flex items-center space-x-4">
+                    <span className="text-3xl">🇪🇸</span>
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-gray-900 dark:text-white">Barcelona</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Spain • $2200/month</p>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-purple-500 transition-colors" />
+                  </div>
                 </div>
               </div>
 
-              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer">
-                <div className="flex items-center space-x-3">
-                  <span className="text-2xl">🇹🇭</span>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Bangkok</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Thailand • $1200/月</p>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
-                </div>
-              </div>
-
-              <div className="p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors cursor-pointer">
-                <div className="flex items-center space-x-3">
-                  <span className="text-2xl">🇪🇸</span>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-gray-900 dark:text-white">Barcelona</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">Spain • $2200/月</p>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-gray-400" />
-                </div>
-              </div>
+              <button className="w-full mt-6 bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 px-4 rounded-xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 font-semibold">
+                Explore More Cities
+              </button>
             </div>
-
-            <button className="w-full mt-4 bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition-colors">
-              查看更多城市
-            </button>
           </div>
         </div>
       </div>
