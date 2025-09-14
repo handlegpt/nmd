@@ -37,11 +37,12 @@ export default function HomePage() {
           
           <div className="bg-white rounded-3xl shadow-2xl border border-gray-200 p-10">
             <EnhancedCityRanking 
-              limit={4} 
+              limit={3} 
               showQuickVote={true} 
               showCurrentCityVote={false}
               showFilters={false}
               showPersonalized={false}
+              randomize={true}
             />
             <div className="text-center mt-8">
               <a 

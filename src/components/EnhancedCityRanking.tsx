@@ -34,6 +34,7 @@ interface EnhancedCityRankingProps {
   showCurrentCityVote?: boolean
   showFilters?: boolean
   showPersonalized?: boolean
+  randomize?: boolean
 }
 
 type SortOption = 'rating' | 'votes' | 'cost' | 'wifi' | 'visa'
@@ -44,7 +45,8 @@ export default function EnhancedCityRanking({
   showQuickVote = true,
   showCurrentCityVote = true,
   showFilters = true,
-  showPersonalized = true
+  showPersonalized = true,
+  randomize = false
 }: EnhancedCityRankingProps) {
   const { t } = useTranslation()
   
@@ -148,23 +150,32 @@ export default function EnhancedCityRanking({
         break
     }
 
-    // 应用排序
-    switch (sortBy) {
-      case 'rating':
-        filtered.sort((a, b) => (b.avg_overall_rating || 0) - (a.avg_overall_rating || 0))
-        break
-      case 'votes':
-        filtered.sort((a, b) => (b.vote_count || 0) - (a.vote_count || 0))
-        break
-      case 'cost':
-        filtered.sort((a, b) => (a.cost_of_living || 0) - (b.cost_of_living || 0))
-        break
-      case 'wifi':
-        filtered.sort((a, b) => (b.wifi_speed || 0) - (a.wifi_speed || 0))
-        break
-      case 'visa':
-        filtered.sort((a, b) => (b.visa_days || 0) - (a.visa_days || 0))
-        break
+    // 应用排序或随机化
+    if (randomize) {
+      // 随机打乱数组
+      for (let i = filtered.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filtered[i], filtered[j]] = [filtered[j], filtered[i]];
+      }
+    } else {
+      // 应用正常排序
+      switch (sortBy) {
+        case 'rating':
+          filtered.sort((a, b) => (b.avg_overall_rating || 0) - (a.avg_overall_rating || 0))
+          break
+        case 'votes':
+          filtered.sort((a, b) => (b.vote_count || 0) - (a.vote_count || 0))
+          break
+        case 'cost':
+          filtered.sort((a, b) => (a.cost_of_living || 0) - (b.cost_of_living || 0))
+          break
+        case 'wifi':
+          filtered.sort((a, b) => (b.wifi_speed || 0) - (a.wifi_speed || 0))
+          break
+        case 'visa':
+          filtered.sort((a, b) => (b.visa_days || 0) - (a.visa_days || 0))
+          break
+      }
     }
 
     setFilteredCities(filtered)
