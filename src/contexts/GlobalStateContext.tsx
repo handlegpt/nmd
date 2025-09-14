@@ -218,7 +218,6 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
         // 检查JWT令牌
         const sessionToken = getSessionToken()
         if (sessionToken) {
-          console.log('🔍 Found session token, fetching user data...')
           
           // 获取用户信息
           const user = await getCurrentUser()
@@ -231,11 +230,9 @@ export function GlobalStateProvider({ children }: { children: ReactNode }) {
             logInfo('Invalid session token, cleared session', null, 'GlobalState')
           }
         } else {
-          console.log('🔍 No session token found')
         }
       } catch (error) {
         if (isMounted) {
-          console.error('❌ Failed to initialize authentication:', error)
           logError('Failed to initialize authentication', error, 'GlobalState')
           clearSession()
         }

@@ -10,6 +10,11 @@ import DynamicHead from '@/components/DynamicHead'
 import PerformanceMonitor from '@/components/PerformanceMonitor'
 import { ReactErrorMonitor } from '@/components/ReactErrorMonitor'
 
+// 安全日志系统
+import { enhancedLogger } from '@/lib/enhancedSecureLogger'
+import { replaceGlobalConsole } from '@/lib/globalLogReplacer'
+import SecureLogInitializer from '@/components/SecureLogInitializer'
+
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -200,6 +205,9 @@ export default function RootLayout({
               {/* <PerformanceMonitor /> */}
               {/* React Error Monitor */}
               {/* <ReactErrorMonitor /> */}
+              
+              {/* Secure Log Initializer */}
+              <SecureLogInitializer />
             </LanguageProvider>
           </ThemeProvider>
         </GlobalStateProvider>

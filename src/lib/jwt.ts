@@ -81,7 +81,6 @@ export async function generateToken(payload: Omit<JWTPayload, 'iat' | 'exp'>): P
     
     // 确保JWT_SECRET存在且有效
     if (!JWT_SECRET || JWT_SECRET === 'your-super-secret-jwt-key-change-in-production') {
-      console.warn('Using default JWT secret - not recommended for production')
     }
     
     // 验证payload

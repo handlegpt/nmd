@@ -22,7 +22,6 @@ export async function POST(request: NextRequest) {
     }
     
     const clientIP = getClientIP(request)
-    console.log('🌐 Client IP address:', clientIP)
     // 1. 解析请求体
     console.log('📝 Step 1: Parsing request body')
     let body
@@ -200,7 +199,8 @@ export async function POST(request: NextRequest) {
         
         const userName = email.split('@')[0]
         
-        console.log('📝 Creating user with explicit ip_address field and proper type casting for email:', email)
+    // console.log('📝 Creating user with explicit ip_address field and proper type casting for email:', email)
+    console.log('[REDACTED] Sensitive information logged at route.ts:203')
         
         // 使用 insert 操作，不提供 ip_address 字段，让数据库处理
         const { data: newUser, error: createError } = await supabase
@@ -295,7 +295,6 @@ export async function POST(request: NextRequest) {
     }
 
     // 7. 生成JWT令牌
-    console.log('🔍 Step 7: Creating JWT token')
     let sessionToken
     try {
       sessionToken = await generateToken({
@@ -303,9 +302,7 @@ export async function POST(request: NextRequest) {
         email: user.email
       })
 
-      console.log('✅ JWT token created successfully')
     } catch (tokenError) {
-      console.error('❌ JWT token creation error:', tokenError)
       return NextResponse.json(
         { 
           success: false,

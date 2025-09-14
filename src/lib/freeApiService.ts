@@ -524,7 +524,6 @@ class FreeApiService {
       await new Promise(resolve => setTimeout(resolve, 200));
     }
     
-    console.log(`✅ Refreshed ${expiredKeys.length} expired cache entries`);
   }
 }
 

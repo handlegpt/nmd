@@ -146,7 +146,6 @@ export async function POST(request: NextRequest) {
         )
       }
     } else {
-      console.log('⚠️ Database not available, skipping verification code storage')
     }
 
     // 6. 发送验证码邮件

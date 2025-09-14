@@ -103,7 +103,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   const translate = (key: string, params?: Record<string, string>): string => {
     if (loading) {
-      console.log('⏳ Translation loading, returning key:', key)
       return key
     }
 
@@ -112,7 +111,6 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       let value: any = keys.reduce((obj, k) => obj?.[k], translations as any)
 
       if (value === undefined || value === key) {
-        console.warn('⚠️ Translation key not found:', key, 'in locale:', locale)
         return key
       }
 

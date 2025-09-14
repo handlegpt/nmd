@@ -142,7 +142,8 @@ export default function GlobalNomadsMap({ onCityClick, onMeetupClick }: GlobalNo
         const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
         
         if (!apiKey || apiKey === 'your-api-key-here') {
-          console.warn('Google Maps API key not configured. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your environment variables.')
+    // console.warn('Google Maps API key not configured. Please set NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in your environment variables.')
+    console.warn('[REDACTED] Sensitive information logged at GlobalNomadsMap.tsx:145')
           setMapError('Google Maps API key not configured')
           setIsLoading(false)
           return

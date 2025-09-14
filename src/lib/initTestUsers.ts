@@ -22,7 +22,6 @@ export function initializeTestUsers(): void {
   // 检查是否已经有nomad_users数据
   const existingUsers = null // REMOVED: localStorage usage for nomad_users
   if (existingUsers && JSON.parse(existingUsers).length > 0) {
-    console.log('Test users already exist, skipping initialization')
     return
   }
 

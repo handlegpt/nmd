@@ -354,7 +354,6 @@ class UserDataService {
       const data = localStorage.getItem(key)
       return data ? JSON.parse(data) : null
     } catch (error) {
-      console.error(`Error getting data from localStorage (${key}):`, error)
       return null
     }
   }
@@ -368,7 +367,6 @@ class UserDataService {
       
       localStorage.setItem(key, JSON.stringify(data))
     } catch (error) {
-      console.error(`Error saving data to localStorage (${key}):`, error)
     }
   }
 }

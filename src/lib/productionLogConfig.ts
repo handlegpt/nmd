@@ -29,16 +29,16 @@ export interface ProductionLogConfig {
   logRetentionHours: number
 }
 
-// 默认生产环境配置
+// 默认生产环境配置 - 安全优化版本
 export const defaultProductionConfig: ProductionLogConfig = {
-  enableVerboseLogging: false,
-  logUserActions: false,
-  logApiRequests: true,
-  logDatabaseOperations: false,
-  logPerformanceMetrics: true,
-  logErrorStack: true,
-  maxLogEntries: 1000,
-  logRetentionHours: 24
+  enableVerboseLogging: false, // 生产环境禁用详细日志
+  logUserActions: false, // 不记录用户操作，保护隐私
+  logApiRequests: false, // 不记录API请求，避免敏感信息泄露
+  logDatabaseOperations: false, // 不记录数据库操作
+  logPerformanceMetrics: true, // 保留性能指标用于监控
+  logErrorStack: true, // 保留错误堆栈用于调试
+  maxLogEntries: 500, // 减少内存使用
+  logRetentionHours: 12 // 缩短日志保留时间
 }
 
 // 开发环境配置

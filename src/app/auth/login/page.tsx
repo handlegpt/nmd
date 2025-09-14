@@ -324,7 +324,6 @@ export default function LoginPage() {
       if (response.ok && data.success) {
         
         // 设置JWT令牌和用户状态
-        console.log('⏭️ Setting JWT token and user profile...')
         try {
           // 设置JWT令牌
           setSessionToken(data.data.sessionToken)
@@ -360,7 +359,6 @@ export default function LoginPage() {
             console.warn('⚠️ User data sync failed:', syncError)
           }
         } catch (error) {
-          console.warn('Failed to set JWT or user profile:', error)
         }
         
         setSuccess(safeTranslate(locale, 'loginSuccess'))

@@ -494,7 +494,6 @@ export class ExchangeRateService {
       this.cache.set(cacheKey, exchangeData)
       this.cacheExpiry.set(cacheKey, new Date(Date.now() + 60 * 60 * 1000))
 
-      console.log(`✅ 汇率数据更新成功: ${baseCurrency} -> ${Object.keys(data.rates).length} 种货币`)
       return exchangeData
     } catch (error) {
       console.error('❌ 获取汇率数据失败:', error)

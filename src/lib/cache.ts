@@ -207,7 +207,6 @@ export class PreloadCache {
         const data = await loader()
         memoryCache.set(key, data, ttl)
       } catch (error) {
-        console.warn('Preload failed for key:', key, error)
       }
     })
   }

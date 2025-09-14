@@ -26,8 +26,6 @@ export async function sendVerificationEmail(
       }
     }
 
-    console.log('📧 Resend API Key found:', resendApiKey ? 'Yes' : 'No')
-    console.log('📧 API Key length:', resendApiKey?.length || 0)
 
     // 生成邮件模板
     const emailTemplate = generateVerificationEmailTemplate({

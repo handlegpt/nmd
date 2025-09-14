@@ -390,14 +390,13 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
         key.includes('test')
       )
       
-      console.log('🔍 getAllRegisteredUsers - found profile keys', { 
+      logInfo('Found profile keys', { 
         independentProfileKeys, 
         hasGeneralProfile, 
         profileKeys, 
         totalKeys: keys.length,
         allUserKeys: allUserKeys.slice(0, 10) // 只显示前10个，避免日志过长
-      })
-      logInfo('Found profile keys', { profileKeys, totalKeys: keys.length }, 'useNomadUsers')
+      }, 'useNomadUsers')
       
       // 处理每个profile key
       for (const key of profileKeys) {
@@ -405,10 +404,10 @@ export function useNomadUsers(options: UseNomadUsersOptions = {}): UseNomadUsers
           const profileData = localStorage.getItem(key)
           if (profileData) {
             const profile = JSON.parse(profileData)
-            console.log('🔍 getAllRegisteredUsers - processing profile', { key, profileId: profile.id, profileName: profile.name })
+    // console.log('🔍 getAllRegisteredUsers - processing profile', { key, profileId: profile.id, profileName: profile.name })
+    console.log('[REDACTED] Sensitive information logged at useNomadUsers.tsx:408')
           }
         } catch (e) {
-          console.error('🔍 getAllRegisteredUsers - error parsing profile', { key, error: e })
         }
       }
       

@@ -39,7 +39,6 @@ export async function POST(request: NextRequest) {
     // 生成模拟JWT令牌
     const mockToken = `mock_token_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
     
-    console.log('🔑 Generated mock token')
     
     // 返回成功响应
     const response = {
