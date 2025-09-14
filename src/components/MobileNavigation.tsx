@@ -29,7 +29,7 @@ export default function MobileNavigation() {
 
   const navigationItems = [
     { href: '/', label: t('navigation.home'), icon: Home },
-    { href: '/cities', label: t('navigation.cities'), icon: MapPin },
+    { href: '/nomadcities', label: t('navigation.cities'), icon: MapPin },
     { href: '/local-nomads', label: t('navigation.localNomads'), icon: Users },
     { href: '/visa-guide', label: t('navigation.visaGuide'), icon: FileText },
     { href: '/tax', label: t('navigation.tax'), icon: DollarSign },
@@ -39,7 +39,7 @@ export default function MobileNavigation() {
 
   const bottomNavigationItems = [
     { href: '/', label: t('navigation.home'), icon: Home },
-    { href: '/cities', label: t('navigation.cities'), icon: MapPin },
+    { href: '/nomadcities', label: t('navigation.cities'), icon: MapPin },
     { href: '/local-nomads', label: t('navigation.localNomads'), icon: Users },
     { href: '/nomadtools', label: t('navigation.tools'), icon: Settings },
     { href: '/dashboard', label: t('navigation.dashboard'), icon: User }

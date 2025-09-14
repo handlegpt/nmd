@@ -107,7 +107,7 @@ export default function EnhancedSearch() {
         title: 'Bali, Indonesia',
         subtitle: 'Popular digital nomad destination',
         icon: <Globe className="h-4 w-4" />,
-        href: '/cities/bali',
+        href: '/nomadcities/indonesia/bali',
         popularity: 95
       },
       {
@@ -116,7 +116,7 @@ export default function EnhancedSearch() {
         title: 'Chiang Mai, Thailand',
         subtitle: 'Affordable and cultural',
         icon: <Globe className="h-4 w-4" />,
-        href: '/cities/chiang-mai',
+        href: '/nomadcities/thailand/chiang-mai',
         popularity: 88
       },
       {
@@ -185,7 +185,7 @@ export default function EnhancedSearch() {
     setSearchHistory(updatedHistory)
 
     // 导航到搜索结果
-    router.push(`/cities?search=${encodeURIComponent(searchQuery)}`)
+    router.push(`/nomadcities?search=${encodeURIComponent(searchQuery)}`)
     setIsOpen(false)
     setQuery('')
   }
