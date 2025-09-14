@@ -106,17 +106,26 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Error creating meetup:', error)
-      return NextResponse.json({ error: 'Failed to create meetup' }, { status: 500 })
+      return NextResponse.json({ 
+        error: 'Failed to create meetup', 
+        details: error.message,
+        code: error.code 
+      }, { status: 500 })
     }
 
     // 自动将组织者添加为参与者
-    await supabase
+    const { error: participantError } = await supabase
       .from('meetup_participants')
       .insert({
         meetup_id: data.id,
         user_id: organizer_id,
         status: 'joined'
       })
+
+    if (participantError) {
+      console.error('Error adding organizer as participant:', participantError)
+      // 即使添加参与者失败，meetup已经创建成功，所以继续
+    }
 
     return NextResponse.json({ meetup: data }, { status: 201 })
   } catch (error) {
