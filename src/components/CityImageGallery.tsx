@@ -36,14 +36,24 @@ export default function CityImageGallery({ cityData }: CityImageGalleryProps) {
 
   useEffect(() => {
     // Use the CityImageService to generate city-specific images
-    const cityImages = CityImageService.generateCityImages({
-      cityName: cityData.name,
-      country: cityData.country,
-      region: (cityData as any).region,
-      tags: (cityData as any).tags
-    })
+    const loadImages = async () => {
+      try {
+        const cityImages = await CityImageService.generateCityImages({
+          cityName: cityData.name,
+          country: cityData.country,
+          region: (cityData as any).region,
+          tags: (cityData as any).tags
+        }, false) // Set to true to use Unsplash API
+        
+        setImages(cityImages)
+      } catch (error) {
+        console.error('Failed to load city images:', error)
+        // Fallback to empty array or default images
+        setImages([])
+      }
+    }
     
-    setImages(cityImages)
+    loadImages()
   }, [cityData.name, cityData.country])
 
   const nextImage = () => {

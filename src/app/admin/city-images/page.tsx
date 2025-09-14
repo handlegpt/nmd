@@ -305,10 +305,10 @@ export default function CityImagesAdminPage() {
   const [cityImages, setCityImages] = useState<CityImageData[]>([])
   const [availableCities] = useState(CityImageService.getAvailableCities())
 
-  const handleCitySelect = (citySlug: string) => {
+  const handleCitySelect = async (citySlug: string) => {
     setSelectedCity(citySlug)
     // Generate sample images for the selected city
-    const images = CityImageService.generateCityImages({
+    const images = await CityImageService.generateCityImages({
       cityName: citySlug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
       country: 'Sample Country'
     })

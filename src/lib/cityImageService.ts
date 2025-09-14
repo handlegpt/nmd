@@ -1,6 +1,8 @@
 // City Image Service - Dynamic image management for cities
 // This service provides city-specific images and fallback mechanisms
 
+import { UnsplashService } from './unsplashService'
+
 export interface CityImageData {
   id: string
   url: string
@@ -241,11 +243,11 @@ export class CityImageService {
   /**
    * Generate city-specific images with fallbacks
    */
-  static generateCityImages(config: CityImageConfig): CityImageData[] {
+  static async generateCityImages(config: CityImageConfig, useAPI: boolean = false): Promise<CityImageData[]> {
     const citySlug = config.cityName.toLowerCase().replace(/\s+/g, '-')
     const countrySlug = config.country.toLowerCase().replace(/\s+/g, '-')
     
-    // Try to get curated images for this city
+    // Try to get curated images for this city first
     const curatedImages = CITY_IMAGE_COLLECTIONS[citySlug] || []
     
     let images: CityImageData[] = []
@@ -264,23 +266,45 @@ export class CityImageService {
         tags: image.tags || ['city', 'travel'],
         source: 'curated' as const
       }))
+    } else if (useAPI) {
+      // Try to get images from Unsplash API
+      try {
+        const unsplashImages = await UnsplashService.getCityImages(config.cityName, config.country, 4)
+        if (unsplashImages.length > 0) {
+          images = unsplashImages.map(img => UnsplashService.convertToCityImageData(img, config.cityName))
+        } else {
+          // Fallback to generic images
+          images = this.getFallbackImages(config)
+        }
+      } catch (error) {
+        console.warn(`Failed to fetch images for ${config.cityName}:`, error)
+        // Fallback to generic images
+        images = this.getFallbackImages(config)
+      }
     } else {
       // Use fallback images with city-specific titles
-      images = FALLBACK_IMAGE_CATEGORIES.map((image, index) => ({
-        id: `fallback-${index + 1}`,
-        url: image.url,
-        title: `${config.cityName} ${image.title}`,
-        description: image.description.replace('city', config.cityName),
-        photographer: 'Unsplash',
-        location: 'City Center',
-        likes: Math.floor(Math.random() * 150) + 30,
-        isUserUploaded: Math.random() > 0.5,
-        tags: image.tags,
-        source: 'unsplash' as const
-      }))
+      images = this.getFallbackImages(config)
     }
     
     return images
+  }
+
+  /**
+   * Get fallback images for a city
+   */
+  private static getFallbackImages(config: CityImageConfig): CityImageData[] {
+    return FALLBACK_IMAGE_CATEGORIES.map((image, index) => ({
+      id: `fallback-${config.cityName.toLowerCase().replace(/\s+/g, '-')}-${index + 1}`,
+      url: image.url,
+      title: `${config.cityName} ${image.title}`,
+      description: image.description.replace('city', config.cityName),
+      photographer: 'Unsplash',
+      location: 'City Center',
+      likes: Math.floor(Math.random() * 150) + 30,
+      isUserUploaded: Math.random() > 0.5,
+      tags: image.tags,
+      source: 'unsplash' as const
+    }))
   }
   
   /**
