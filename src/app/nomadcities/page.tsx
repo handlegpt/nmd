@@ -125,6 +125,12 @@ function CitiesPageContent() {
     if (tab === 'trajectory') {
       setActiveTab('trajectory')
     }
+    
+    // 检查URL参数，如果包含search，则设置搜索词
+    const searchQuery = searchParams.get('search')
+    if (searchQuery) {
+      setSearchTerm(searchQuery)
+    }
   }, [searchParams, user.isAuthenticated])
 
   const fetchCities = async () => {

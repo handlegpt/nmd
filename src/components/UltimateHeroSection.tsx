@@ -57,8 +57,11 @@ export default function UltimateHeroSection() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     if (searchQuery.trim()) {
-      // 实现搜索逻辑
-      console.log('Searching for:', searchQuery)
+      // Redirect to cities page with search query
+      const searchParams = new URLSearchParams({
+        search: searchQuery.trim()
+      })
+      window.location.href = `/nomadcities?${searchParams.toString()}`
     }
   }
 
@@ -142,7 +145,14 @@ export default function UltimateHeroSection() {
                 {quickSearchSuggestions.map((suggestion, index) => (
                   <button 
                     key={index}
-                    onClick={() => setSearchQuery(suggestion.text)}
+                    onClick={() => {
+                      setSearchQuery(suggestion.text)
+                      // Also trigger search immediately
+                      const searchParams = new URLSearchParams({
+                        search: suggestion.text
+                      })
+                      window.location.href = `/nomadcities?${searchParams.toString()}`
+                    }}
                     className="group flex items-center space-x-2 bg-white/80 backdrop-blur-sm text-gray-700 px-4 py-2 rounded-full border border-gray-200 hover:border-blue-300 hover:bg-blue-50 transition-all shadow-sm hover:shadow-md"
                   >
                     <span className="text-lg">{suggestion.icon}</span>
