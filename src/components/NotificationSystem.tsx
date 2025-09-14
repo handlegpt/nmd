@@ -30,7 +30,7 @@ export default function NotificationSystem() {
 
     try {
       setLoading(true)
-      const response = await fetch(`/api/invitations?user_id=${user.profile.id}&status=pending`)
+      const response = await fetch(`/api/invitations?user_id=${user.profile.id}&status=pending&receiver_only=true`)
       const result = await response.json()
       
       if (result.success && result.data) {

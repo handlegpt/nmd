@@ -143,6 +143,7 @@ export async function GET(request: NextRequest) {
     const userId = searchParams.get('user_id')
     const type = searchParams.get('type')
     const status = searchParams.get('status')
+    const receiverOnly = searchParams.get('receiver_only') === 'true'
 
     if (!userId) {
       return NextResponse.json(
@@ -158,8 +159,16 @@ export async function GET(request: NextRequest) {
         sender:users!invitations_sender_id_fkey(id, name, avatar_url),
         receiver:users!invitations_receiver_id_fkey(id, name, avatar_url)
       `)
-      .or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
       .order('created_at', { ascending: false })
+
+    // 根据receiver_only参数决定查询条件
+    if (receiverOnly) {
+      // 只获取接收到的邀请
+      query = query.eq('receiver_id', userId)
+    } else {
+      // 获取发送和接收的邀请
+      query = query.or(`sender_id.eq.${userId},receiver_id.eq.${userId}`)
+    }
 
     if (type) {
       query = query.eq('invitation_type', type)
