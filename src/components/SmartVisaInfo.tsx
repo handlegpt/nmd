@@ -70,10 +70,30 @@ export default function SmartVisaInfo({
 
   const detectUserNationality = async () => {
     try {
-      // 使用IP地理位置API检测用户国家
-      const response = await fetch('https://ipapi.co/json/')
-      const data = await response.json()
-      setUserCountry(data.country_code || 'US')
+      // 使用多个IP地理位置API作为后备
+      const apis = [
+        'https://ipapi.co/json/',
+        'https://ip-api.com/json/',
+        'https://api.ipapi.com/json/'
+      ]
+      
+      for (const api of apis) {
+        try {
+          const response = await fetch(api)
+          const data = await response.json()
+          const countryCode = data.country_code || data.countryCode || data.country
+          if (countryCode) {
+            setUserCountry(countryCode)
+            return
+          }
+        } catch (apiError) {
+          console.warn(`API ${api} failed, trying next...`)
+          continue
+        }
+      }
+      
+      // 如果所有API都失败，使用默认值
+      setUserCountry('US')
     } catch (error) {
       console.warn('无法检测用户国籍，使用默认值')
       setUserCountry('US') // 默认美国
