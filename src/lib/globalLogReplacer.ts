@@ -173,13 +173,13 @@ class GlobalLogReplacer {
 // 创建全局实例
 export const globalLogReplacer = new GlobalLogReplacer()
 
-// 自动替换（仅在客户端）
-if (typeof window !== 'undefined') {
-  // 延迟替换，确保其他初始化完成
-  setTimeout(() => {
-    globalLogReplacer.replaceConsole()
-  }, 100)
-}
+// 自动替换已禁用，由SecureLogInitializer组件控制
+// if (typeof window !== 'undefined') {
+//   // 延迟替换，确保其他初始化完成
+//   setTimeout(() => {
+//     globalLogReplacer.replaceConsole()
+//   }, 100)
+// }
 
 // 导出工具函数
 export const replaceGlobalConsole = () => globalLogReplacer.replaceConsole()

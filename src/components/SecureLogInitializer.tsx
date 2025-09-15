@@ -11,34 +11,18 @@ import { replaceGlobalConsole, getConsoleStatus } from '@/lib/globalLogReplacer'
 
 export default function SecureLogInitializer() {
   useEffect(() => {
-    // 初始化安全日志系统
-    const initializeSecureLogging = () => {
-      try {
-        // 替换全局console方法
-        replaceGlobalConsole()
-        
-        // 记录初始化成功
-        enhancedLogger.info('Secure logging system initialized successfully', {
-          timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          url: window.location.href
-        }, 'SecureLogInitializer')
-        
-        // 检查替换状态
-        const status = getConsoleStatus()
-        enhancedLogger.debug('Console replacement status', status, 'SecureLogInitializer')
-        
-      } catch (error) {
-        // 如果初始化失败，记录错误但不影响应用运行
-        console.error('Failed to initialize secure logging:', error)
-      }
-    }
-
-    // 延迟初始化，确保其他系统先启动
-    const timer = setTimeout(initializeSecureLogging, 1000)
+    // 暂时禁用安全日志系统以避免按钮点击问题
+    console.log('🔒 Secure logging system temporarily disabled for debugging')
     
-    return () => {
-      clearTimeout(timer)
+    // 简单的初始化，不替换console
+    try {
+      enhancedLogger.info('Secure logging system initialized (console replacement disabled)', {
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent,
+        url: window.location.href
+      }, 'SecureLogInitializer')
+    } catch (error) {
+      console.error('Failed to initialize secure logging:', error)
     }
   }, [])
 
