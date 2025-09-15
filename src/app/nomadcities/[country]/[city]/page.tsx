@@ -15,6 +15,7 @@ import CityMap from '@/components/CityMap'
 import Breadcrumb from '@/components/Breadcrumb'
 import CityImageGallery from '@/components/CityImageGallery'
 import RelatedCities from '@/components/RelatedCities'
+import SmartVisaInfo from '@/components/SmartVisaInfo'
 import { 
   Star, 
   Wifi, 
@@ -79,18 +80,11 @@ export default function CityDetailPage() {
   const [loading, setLoading] = useState(true)
   const [showVoteModal, setShowVoteModal] = useState(false)
   const [cityVotes, setCityVotes] = useState<{ pros: VoteItem[], cons: VoteItem[] }>({ pros: [], cons: [] })
-  const [visaInfo, setVisaInfo] = useState<any>(null)
-  const [visaLoading, setVisaLoading] = useState(false)
 
   useEffect(() => {
     fetchCityData()
   }, [country, city])
 
-  useEffect(() => {
-    if (cityData) {
-      fetchVisaInfo()
-    }
-  }, [cityData])
 
   // 初始化投票数据
   useEffect(() => {
@@ -164,24 +158,6 @@ export default function CityDetailPage() {
     }
   }
 
-  const fetchVisaInfo = async () => {
-    if (!cityData) return
-    
-    try {
-      setVisaLoading(true)
-      const response = await fetch(`/api/nomad-visas?country=${cityData.country_code}`)
-      if (response.ok) {
-        const visas = await response.json()
-        if (visas && visas.length > 0) {
-          setVisaInfo(visas[0]) // 获取第一个数字游民签证
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching visa info:', error)
-    } finally {
-      setVisaLoading(false)
-    }
-  }
 
   const getCountryFlag = (countryCode: string) => {
     const codePoints = countryCode
@@ -232,12 +208,6 @@ export default function CityDetailPage() {
     return { level: 'poor', color: 'text-red-600' }
   }
 
-  // 获取签证难度
-  const getVisaDifficulty = (days: number) => {
-    if (days >= 365) return { level: 'easy', color: 'text-green-600' }
-    if (days >= 90) return { level: 'medium', color: 'text-yellow-600' }
-    return { level: 'hard', color: 'text-red-600' }
-  }
 
   // 获取城市优点
   const getCityPros = (): VoteItem[] => {
@@ -410,7 +380,6 @@ export default function CityDetailPage() {
 
   const costLevel = getCostLevel(cityData.cost_of_living || cityData.cost_min_usd || 0)
   const wifiLevel = getWifiLevel(cityData.wifi_speed_mbps || cityData.wifi_speed || 0)
-  const visaDifficulty = getVisaDifficulty(cityData.visa_days || 0)
   const communityActivity = getCommunityActivity()
 
   return (
@@ -533,22 +502,12 @@ export default function CityDetailPage() {
               </div>
             </div>
 
-            {/* Visa Duration */}
-            <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                  <Calendar className="h-6 w-6 text-white" />
-                </div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Visa Duration</p>
-                <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
-                  {visaInfo ? `${visaInfo.duration_months}mo` : cityData.visa_days ? `${cityData.visa_days}d` : 'N/A'}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
-                  {visaDifficulty.level} process
-                </p>
-              </div>
-            </div>
+            {/* Smart Visa Information */}
+            <SmartVisaInfo 
+              countryCode={cityData.country_code}
+              countryName={cityData.country}
+              className="group relative"
+            />
 
             {/* Community Score */}
             <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
