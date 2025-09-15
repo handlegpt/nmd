@@ -55,10 +55,10 @@ export class EnhancedSecureLogger {
    * Initialize logger with environment-specific settings
    */
   private initializeLogger(): void {
-    // Override console methods in production
-    if (this.isProduction) {
-      this.overrideConsoleMethods()
-    }
+    // 完全禁用console替换以避免无限递归问题
+    // if (this.isProduction) {
+    //   this.overrideConsoleMethods()
+    // }
   }
 
   /**
@@ -133,8 +133,13 @@ export class EnhancedSecureLogger {
    */
   private formatConsoleArgs(args: any[]): string {
     return args.map(arg => {
-      if (typeof arg === 'object') {
-        return JSON.stringify(sanitizeValue(arg))
+      if (typeof arg === 'object' && arg !== null) {
+        try {
+          return JSON.stringify(sanitizeValue(arg))
+        } catch (error) {
+          // Fallback for circular references or other JSON issues
+          return '[Object]'
+        }
       }
       return String(arg)
     }).join(' ')
@@ -240,10 +245,20 @@ export class EnhancedSecureLogger {
         break
     }
 
-    // Update average log size
-    const totalSize = this.logBuffer.reduce((sum, log) => 
-      sum + JSON.stringify(log).length, 0)
-    this.metrics.averageLogSize = totalSize / this.logBuffer.length
+    // Update average log size - simplified to avoid circular references
+    try {
+      const totalSize = this.logBuffer.reduce((sum, log) => {
+        // Calculate size without JSON.stringify to avoid circular references
+        const messageSize = log.message ? log.message.length : 0
+        const componentSize = log.component ? log.component.length : 0
+        const contextSize = log.context ? String(log.context).length : 0
+        return sum + messageSize + componentSize + contextSize + 100 // Base size estimate
+      }, 0)
+      this.metrics.averageLogSize = totalSize / this.logBuffer.length
+    } catch (error) {
+      // Fallback to simple calculation if there's any issue
+      this.metrics.averageLogSize = 100
+    }
   }
 
   /**
@@ -322,12 +337,23 @@ export class EnhancedSecureLogger {
    * Export logs for analysis
    */
   exportLogs(): string {
-    return JSON.stringify({
-      metrics: this.metrics,
-      logs: this.logBuffer,
-      exportTime: new Date().toISOString(),
-      environment: process.env.NODE_ENV
-    }, null, 2)
+    try {
+      return JSON.stringify({
+        metrics: this.metrics,
+        logs: this.logBuffer,
+        exportTime: new Date().toISOString(),
+        environment: process.env.NODE_ENV
+      }, null, 2)
+    } catch (error) {
+      // Fallback for circular references
+      return JSON.stringify({
+        metrics: this.metrics,
+        logCount: this.logBuffer.length,
+        exportTime: new Date().toISOString(),
+        environment: process.env.NODE_ENV,
+        error: 'Failed to export logs due to circular references'
+      }, null, 2)
+    }
   }
 }
 

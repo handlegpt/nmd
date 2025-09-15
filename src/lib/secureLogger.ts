@@ -84,7 +84,7 @@ function isSensitiveValue(value: any): boolean {
 /**
  * 清理敏感信息
  */
-function sanitizeValue(value: any, fieldName?: string): any {
+function sanitizeValue(value: any, fieldName?: string, visited = new WeakSet()): any {
   // 如果字段名敏感，直接屏蔽
   if (fieldName && isSensitiveField(fieldName)) {
     return '[REDACTED]'
@@ -97,14 +97,29 @@ function sanitizeValue(value: any, fieldName?: string): any {
   
   // 如果是对象，递归清理
   if (typeof value === 'object' && value !== null) {
-    if (Array.isArray(value)) {
-      return value.map(item => sanitizeValue(item))
-    } else {
-      const sanitized: any = {}
-      for (const [key, val] of Object.entries(value)) {
-        sanitized[key] = sanitizeValue(val, key)
+    // 检查循环引用
+    if (visited.has(value)) {
+      return '[Circular Reference]'
+    }
+    
+    // 添加到已访问集合
+    visited.add(value)
+    
+    try {
+      if (Array.isArray(value)) {
+        return value.map(item => sanitizeValue(item, undefined, visited))
+      } else {
+        const sanitized: any = {}
+        for (const [key, val] of Object.entries(value)) {
+          sanitized[key] = sanitizeValue(val, key, visited)
+        }
+        return sanitized
       }
-      return sanitized
+    } catch (error) {
+      return '[Object Error]'
+    } finally {
+      // 清理已访问集合（可选，用于内存优化）
+      visited.delete(value)
     }
   }
   
