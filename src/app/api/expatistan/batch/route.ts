@@ -117,9 +117,9 @@ export async function POST(request: NextRequest) {
           city,
           country,
           status: 'error',
-          error: error.message
+          error: error instanceof Error ? error.message : 'Unknown error'
         })
-        console.error(`   💥 Error: ${city}, ${country} - ${error.message}`)
+        console.error(`   💥 Error: ${city}, ${country} - ${error instanceof Error ? error.message : 'Unknown error'}`)
       }
     }
 

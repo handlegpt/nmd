@@ -83,7 +83,7 @@ export default function ExpatistanManagerPage() {
       }
     } catch (error) {
       console.error('Scraping error:', error)
-      setMessage(`❌ 抓取错误: ${error.message}`)
+      setMessage(`❌ 抓取错误: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }
@@ -96,7 +96,7 @@ export default function ExpatistanManagerPage() {
       setMessage('✅ 缓存已清理')
       await loadStats()
     } catch (error) {
-      setMessage(`❌ 清理缓存失败: ${error.message}`)
+      setMessage(`❌ 清理缓存失败: ${error instanceof Error ? error.message : 'Unknown error'}`)
     } finally {
       setIsLoading(false)
     }

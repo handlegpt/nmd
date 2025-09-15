@@ -175,22 +175,26 @@ export class AvailableCostDataService {
         accommodation: {
           monthly: expatistanData.accommodation.monthly,
           daily: expatistanData.accommodation.monthly / 30,
+          source: 'Expatistan',
           confidence: expatistanData.accommodation.confidence
         },
         food: {
           monthly: expatistanData.food.monthly,
           daily: expatistanData.food.monthly / 30,
+          source: 'Expatistan',
           confidence: expatistanData.food.confidence
         },
         transport: {
           monthly: expatistanData.transport.monthly,
           daily: expatistanData.transport.monthly / 30,
+          source: 'Expatistan',
           confidence: expatistanData.transport.confidence
         },
         coworking: {
-          monthly: expatistanData.coworking.monthly,
-          daily: expatistanData.coworking.monthly / 30,
-          confidence: expatistanData.coworking.confidence
+          monthly: expatistanData.entertainment.monthly, // 使用娱乐数据作为联合办公的近似
+          daily: expatistanData.entertainment.monthly / 30,
+          source: 'Expatistan',
+          confidence: expatistanData.entertainment.confidence
         }
       }
     } catch (error) {

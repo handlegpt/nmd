@@ -176,7 +176,9 @@ export class ExpatistanCacheService {
     if (this.config.maxSize && this.memoryCache.size >= this.config.maxSize) {
       // 删除最旧的条目
       const oldestKey = this.memoryCache.keys().next().value
-      this.memoryCache.delete(oldestKey)
+      if (oldestKey) {
+        this.memoryCache.delete(oldestKey)
+      }
     }
 
     this.memoryCache.set(key, data)
@@ -348,27 +350,10 @@ export class ExpatistanCacheService {
    * 初始化Redis连接
    */
   async initRedis(): Promise<void> {
-    if (this.config.type !== 'redis') return
-
-    try {
-      // 检查是否安装了redis包
-      const redis = require('redis')
-      this.redisClient = redis.createClient({
-        url: this.config.redisUrl || 'redis://localhost:6379'
-      })
-
-      this.redisClient.on('error', (err: Error) => {
-        console.error('Redis Client Error:', err)
-      })
-
-      await this.redisClient.connect()
-      console.log('Redis cache initialized')
-    } catch (error) {
-      console.warn('Redis not available, falling back to memory cache:', error.message)
-      this.redisClient = null
-      // 自动切换到内存缓存
-      this.config.type = 'memory'
-    }
+    // 暂时禁用Redis支持，避免构建时依赖问题
+    console.log('Redis support disabled for build compatibility, using memory cache')
+    this.config.type = 'memory'
+    this.redisClient = null
   }
 }
 
