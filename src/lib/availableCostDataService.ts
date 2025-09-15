@@ -3,6 +3,8 @@
  * 基于实际可访问的免费数据源
  */
 
+import { expatistanDataService } from './expatistanDataService'
+
 export interface AvailableCostData {
   city: string
   country: string
@@ -70,14 +72,16 @@ export class AvailableCostDataService {
       // 2. 使用预设的基准数据
       // 3. 使用汇率转换的估算数据
       
-      const [numbeoData, benchmarkData, exchangeData] = await Promise.allSettled([
+      const [numbeoData, expatistanData, benchmarkData, exchangeData] = await Promise.allSettled([
         this.fetchFromNumbeo(city, country),
+        this.fetchFromExpatistan(city, country),
         this.fetchBenchmarkData(city, country),
         this.fetchExchangeBasedData(city, country)
       ])
 
       const costData = this.mergeCostData(
         numbeoData.status === 'fulfilled' ? numbeoData.value : null,
+        expatistanData.status === 'fulfilled' ? expatistanData.value : null,
         benchmarkData.status === 'fulfilled' ? benchmarkData.value : null,
         exchangeData.status === 'fulfilled' ? exchangeData.value : null,
         city,
@@ -86,7 +90,7 @@ export class AvailableCostDataService {
 
       // 缓存数据
       this.cache.set(cacheKey, costData)
-      this.cacheExpiry.set(cacheKey, new Date(Date.now() + 24 * 60 * 60 * 1000)) // 24小时缓存
+      this.cacheExpiry.set(cacheKey, new Date(Date.now() + 6 * 30 * 24 * 60 * 60 * 1000)) // 6个月缓存
 
       return costData
     } catch (error) {
@@ -156,6 +160,43 @@ export class AvailableCostDataService {
   private findPriceByCategory(prices: any[], category: string): number | null {
     const item = prices.find(p => p.item_name === category)
     return item ? parseFloat(item.average_price) : null
+  }
+
+  /**
+   * 从Expatistan获取数据
+   */
+  private async fetchFromExpatistan(city: string, country: string): Promise<Partial<AvailableCostData> | null> {
+    try {
+      const expatistanData = await expatistanDataService.getExpatistanData(city, country)
+      
+      if (!expatistanData) return null
+
+      return {
+        accommodation: {
+          monthly: expatistanData.accommodation.monthly,
+          daily: expatistanData.accommodation.monthly / 30,
+          confidence: expatistanData.accommodation.confidence
+        },
+        food: {
+          monthly: expatistanData.food.monthly,
+          daily: expatistanData.food.monthly / 30,
+          confidence: expatistanData.food.confidence
+        },
+        transport: {
+          monthly: expatistanData.transport.monthly,
+          daily: expatistanData.transport.monthly / 30,
+          confidence: expatistanData.transport.confidence
+        },
+        coworking: {
+          monthly: expatistanData.coworking.monthly,
+          daily: expatistanData.coworking.monthly / 30,
+          confidence: expatistanData.coworking.confidence
+        }
+      }
+    } catch (error) {
+      console.warn('Expatistan data fetch failed:', error)
+      return null
+    }
   }
 
   /**
@@ -378,16 +419,17 @@ export class AvailableCostDataService {
    */
   private mergeCostData(
     numbeoData: Partial<AvailableCostData> | null,
+    expatistanData: Partial<AvailableCostData> | null,
     benchmarkData: Partial<AvailableCostData> | null,
     exchangeData: Partial<AvailableCostData> | null,
     city: string,
     country: string
   ): AvailableCostData {
-    // 数据优先级：Numbeo > 基准数据 > 汇率估算
-    const accommodation = numbeoData?.accommodation || benchmarkData?.accommodation || exchangeData?.accommodation || this.getDefaultCost('accommodation')
-    const food = numbeoData?.food || benchmarkData?.food || exchangeData?.food || this.getDefaultCost('food')
-    const transport = numbeoData?.transport || benchmarkData?.transport || exchangeData?.transport || this.getDefaultCost('transport')
-    const coworking = numbeoData?.coworking || benchmarkData?.coworking || exchangeData?.coworking || this.getDefaultCost('coworking')
+    // 数据优先级：Numbeo > Expatistan > 基准数据 > 汇率估算
+    const accommodation = numbeoData?.accommodation || expatistanData?.accommodation || benchmarkData?.accommodation || exchangeData?.accommodation || this.getDefaultCost('accommodation')
+    const food = numbeoData?.food || expatistanData?.food || benchmarkData?.food || exchangeData?.food || this.getDefaultCost('food')
+    const transport = numbeoData?.transport || expatistanData?.transport || benchmarkData?.transport || exchangeData?.transport || this.getDefaultCost('transport')
+    const coworking = numbeoData?.coworking || expatistanData?.coworking || benchmarkData?.coworking || exchangeData?.coworking || this.getDefaultCost('coworking')
 
     // 计算总成本
     const totalMonthly = accommodation.monthly + food.monthly + transport.monthly + coworking.monthly
@@ -459,9 +501,13 @@ export class AvailableCostDataService {
   /**
    * 获取数据源状态
    */
-  getDataSourceStatus(): Record<string, { isActive: boolean; lastChecked: Date }> {
+  getDataSourceStatus(): Record<string, { isActive: boolean; lastChecked: Date; note?: string }> {
     return {
       numbeo: { isActive: true, lastChecked: new Date() },
+      expatistan: { 
+        isActive: true, 
+        lastChecked: new Date()
+      },
       benchmark: { isActive: true, lastChecked: new Date() },
       exchange: { isActive: true, lastChecked: new Date() }
     }

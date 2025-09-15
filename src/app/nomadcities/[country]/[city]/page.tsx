@@ -470,12 +470,21 @@ export default function CityDetailPage() {
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {/* Cost of Living */}
-            {/* Real Cost Display */}
-            <RealCostDisplay 
-              city={cityData.name}
-              country={cityData.country}
-              className="group relative"
-            />
+            <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
+                  <DollarSign className="h-6 w-6 text-white" />
+                </div>
+                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Monthly Cost</p>
+                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                  ${(cityData.cost_of_living || cityData.cost_min_usd || 0).toLocaleString()}
+                </p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
+                  {costLevel.level} cost
+                </p>
+              </div>
+            </div>
 
             {/* WiFi Speed */}
             <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">

@@ -174,6 +174,7 @@ export default function SmartVisaInfo({
     return { level: 'Hard', color: 'text-red-600' }
   }
 
+
   if (loading) {
     return (
       <div className={`bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl ${className}`}>

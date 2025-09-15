@@ -28,6 +28,17 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('获取数字游民签证失败', error)
+      // 如果是表不存在或连接问题，返回空数据而不是错误
+      if (error.code === '42P01' || error.code === 'PGRST116' || error.message?.includes('relation') || error.message?.includes('does not exist')) {
+        console.warn('签证表不存在或连接问题，返回空数据')
+        return NextResponse.json({
+          success: true,
+          data: {
+            visas: [],
+            total: 0
+          }
+        })
+      }
       return NextResponse.json({
         success: false,
         error: 'Failed to fetch nomad visas'
