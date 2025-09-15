@@ -16,6 +16,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import CityImageGallery from '@/components/CityImageGallery'
 import RelatedCities from '@/components/RelatedCities'
 import SmartVisaInfo from '@/components/SmartVisaInfo'
+import RealCostDisplay from '@/components/RealCostDisplay'
 import { 
   Star, 
   Wifi, 
@@ -469,21 +470,12 @@ export default function CityDetailPage() {
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {/* Cost of Living */}
-            <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
-              <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-teal-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center mb-3 shadow-lg">
-                  <DollarSign className="h-6 w-6 text-white" />
-                </div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Monthly Cost</p>
-                <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
-                  ${cityData.cost_of_living || cityData.cost_min_usd || 'N/A'}
-                </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 capitalize font-medium">
-                  {costLevel.level} budget
-                </p>
-              </div>
-            </div>
+            {/* Real Cost Display */}
+            <RealCostDisplay 
+              city={cityData.name}
+              country={cityData.country}
+              className="group relative"
+            />
 
             {/* WiFi Speed */}
             <div className="group relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 border border-white/20 dark:border-gray-700/50 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
@@ -567,11 +559,15 @@ export default function CityDetailPage() {
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Cost Breakdown Chart */}
+              {/* Real Cost Breakdown */}
               <div className="space-y-4">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Monthly Cost Breakdown</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Detailed Cost Analysis</h3>
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800 rounded-2xl p-6">
-                  {cityData && <CostBreakdownChart cityData={cityData} />}
+                  <RealCostDisplay 
+                    city={cityData.name}
+                    country={cityData.country}
+                    className="bg-transparent shadow-none border-none p-0"
+                  />
                 </div>
               </div>
               
