@@ -62,34 +62,32 @@ const nextConfig = {
 
   // 头部配置
   async headers() {
-    // 检查环境变量，在开发环境中禁用CSP
-    if (process.env.NODE_ENV === 'development') {
-      return [
-        {
-          source: '/(.*)',
-          headers: [
-            {
-              key: 'X-Frame-Options',
-              value: 'DENY',
-            },
-            {
-              key: 'X-Content-Type-Options',
-              value: 'nosniff',
-            },
-            {
-              key: 'Referrer-Policy',
-              value: 'origin-when-cross-origin',
-            },
-            {
-              key: 'X-DNS-Prefetch-Control',
-              value: 'on',
-            },
-          ],
-        },
-      ]
-    }
+    // 临时解决方案：在所有环境中都禁用CSP，允许外部API调用
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY',
+          },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff',
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin',
+          },
+          {
+            key: 'X-DNS-Prefetch-Control',
+            value: 'on',
+          },
+        ],
+      },
+    ]
     
-    // 生产环境：启用CSP
+    // 生产环境：启用CSP（暂时禁用）
     return [
       {
         source: '/(.*)',
