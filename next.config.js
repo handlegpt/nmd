@@ -62,7 +62,7 @@ const nextConfig = {
 
   // 头部配置
   async headers() {
-    // 临时解决方案：在所有环境中都禁用CSP，允许外部API调用
+    // 完全禁用CSP，允许所有外部API调用
     return [
       {
         source: '/(.*)',
@@ -82,6 +82,11 @@ const nextConfig = {
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
+          },
+          // 明确禁用CSP
+          {
+            key: 'Content-Security-Policy',
+            value: "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;",
           },
         ],
       },
