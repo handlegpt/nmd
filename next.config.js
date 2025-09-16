@@ -62,7 +62,77 @@ const nextConfig = {
 
   // 头部配置
   async headers() {
-    // 完全禁用CSP，允许所有外部API调用
+    // 生产环境：启用安全的CSP配置
+    if (process.env.NODE_ENV === 'production') {
+      return [
+        {
+          source: '/(.*)',
+          headers: [
+            {
+              key: 'X-Frame-Options',
+              value: 'DENY',
+            },
+            {
+              key: 'X-Content-Type-Options',
+              value: 'nosniff',
+            },
+            {
+              key: 'Referrer-Policy',
+              value: 'origin-when-cross-origin',
+            },
+            {
+              key: 'X-DNS-Prefetch-Control',
+              value: 'on',
+            },
+            {
+              key: 'Content-Security-Policy',
+              value: [
+                "default-src 'self'",
+                "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://fonts.googleapis.com https://maps.googleapis.com https://maps.gstatic.com https://static.cloudflareinsights.com",
+                "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+                "font-src 'self' https://fonts.gstatic.com",
+                "img-src 'self' data: https: blob: https://maps.googleapis.com https://maps.gstatic.com",
+                "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openweathermap.org https://worldtimeapi.org https://ip-api.com https://api.ipapi.com https://ipapi.co https://www.numbeo.com https://api.exchangerate-api.com https://static.cloudflareinsights.com https://api.bigdatacloud.net",
+                "frame-src 'none'",
+                "object-src 'none'",
+                "base-uri 'self'",
+                "form-action 'self'",
+                "upgrade-insecure-requests"
+              ].join('; ')
+            },
+          ],
+        },
+        {
+          source: '/api/(.*)',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=3600, s-maxage=3600',
+            },
+          ],
+        },
+        {
+          source: '/_next/static/(.*)',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=31536000, immutable',
+            },
+          ],
+        },
+        {
+          source: '/images/(.*)',
+          headers: [
+            {
+              key: 'Cache-Control',
+              value: 'public, max-age=31536000, immutable',
+            },
+          ],
+        },
+      ]
+    }
+    
+    // 开发环境：使用宽松的CSP配置
     return [
       {
         source: '/(.*)',
@@ -83,7 +153,6 @@ const nextConfig = {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
           },
-          // 明确禁用CSP
           {
             key: 'Content-Security-Policy',
             value: "default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;",
