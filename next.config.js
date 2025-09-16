@@ -62,7 +62,7 @@ const nextConfig = {
 
   // 头部配置
   async headers() {
-    // 在开发环境中禁用CSP以避免外部API调用问题
+    // 检查环境变量，在开发环境中禁用CSP
     if (process.env.NODE_ENV === 'development') {
       return [
         {
@@ -89,6 +89,7 @@ const nextConfig = {
       ]
     }
     
+    // 生产环境：启用CSP
     return [
       {
         source: '/(.*)',
