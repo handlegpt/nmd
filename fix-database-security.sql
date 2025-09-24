@@ -319,21 +319,21 @@ DROP VIEW IF EXISTS public.community_messages_with_user_info;
 CREATE VIEW public.community_messages_with_user_info AS
 SELECT 
     cm.*,
-    up.name as display_name,
-    up.avatar_url,
-    up.location
+    up.profile_data->>'name' as display_name,
+    up.profile_data->>'avatar_url' as avatar_url,
+    up.profile_data->>'location' as location
 FROM public.community_messages cm
-LEFT JOIN public.user_profiles up ON cm.user_id = up.id;
+LEFT JOIN public.user_profiles up ON cm.user_id = up.user_id;
 
 -- 重新创建plan_details视图
 DROP VIEW IF EXISTS public.plan_details;
 CREATE VIEW public.plan_details AS
 SELECT 
     p.*,
-    up.name as user_name,
-    up.avatar_url as user_avatar
+    up.profile_data->>'name' as user_name,
+    up.profile_data->>'avatar_url' as user_avatar
 FROM public.plans p
-LEFT JOIN public.user_profiles up ON p.user_id = up.id;
+LEFT JOIN public.user_profiles up ON p.user_id = up.user_id;
 
 -- 重新创建city_overview视图
 DROP VIEW IF EXISTS public.city_overview;
