@@ -340,12 +340,17 @@ DROP VIEW IF EXISTS public.city_overview;
 CREATE VIEW public.city_overview AS
 SELECT 
     c.*,
-    cc.monthly_cost,
-    cc.cost_breakdown,
+    cc_accommodation.monthly_estimate_usd as accommodation_cost,
+    cc_food.monthly_estimate_usd as food_cost,
+    cc_transport.monthly_estimate_usd as transport_cost,
+    cc_coworking.monthly_estimate_usd as coworking_cost,
     nv.visa_name as visa_available,
     nv.requirements as visa_requirements
 FROM public.cities c
-LEFT JOIN public.city_costs cc ON c.id = cc.city_id
+LEFT JOIN public.city_costs cc_accommodation ON c.id = cc_accommodation.city_id AND cc_accommodation.cost_type = 'accommodation'
+LEFT JOIN public.city_costs cc_food ON c.id = cc_food.city_id AND cc_food.cost_type = 'food'
+LEFT JOIN public.city_costs cc_transport ON c.id = cc_transport.city_id AND cc_transport.cost_type = 'transport'
+LEFT JOIN public.city_costs cc_coworking ON c.id = cc_coworking.city_id AND cc_coworking.cost_type = 'coworking'
 LEFT JOIN public.nomad_visas nv ON c.country = nv.country;
 
 -- 10. 为视图启用RLS
