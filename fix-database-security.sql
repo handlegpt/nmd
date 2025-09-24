@@ -319,7 +319,7 @@ DROP VIEW IF EXISTS public.community_messages_with_user_info;
 CREATE VIEW public.community_messages_with_user_info AS
 SELECT 
     cm.*,
-    up.display_name,
+    up.name as display_name,
     up.avatar_url,
     up.location
 FROM public.community_messages cm
@@ -330,7 +330,7 @@ DROP VIEW IF EXISTS public.plan_details;
 CREATE VIEW public.plan_details AS
 SELECT 
     p.*,
-    up.display_name as user_name,
+    up.name as user_name,
     up.avatar_url as user_avatar
 FROM public.plans p
 LEFT JOIN public.user_profiles up ON p.user_id = up.id;
