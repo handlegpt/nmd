@@ -325,15 +325,15 @@ SELECT
 FROM public.community_messages cm
 LEFT JOIN public.user_profiles up ON cm.user_id = up.user_id;
 
--- 重新创建plan_details视图
-DROP VIEW IF EXISTS public.plan_details;
-CREATE VIEW public.plan_details AS
-SELECT 
-    p.*,
-    up.profile_data->>'name' as user_name,
-    up.profile_data->>'avatar_url' as user_avatar
-FROM public.plans p
-LEFT JOIN public.user_profiles up ON p.user_id = up.user_id;
+-- 重新创建plan_details视图（如果plans表存在）
+-- DROP VIEW IF EXISTS public.plan_details;
+-- CREATE VIEW public.plan_details AS
+-- SELECT 
+--     p.*,
+--     up.profile_data->>'name' as user_name,
+--     up.profile_data->>'avatar_url' as user_avatar
+-- FROM public.plans p
+-- LEFT JOIN public.user_profiles up ON p.user_id = up.user_id;
 
 -- 重新创建city_overview视图
 DROP VIEW IF EXISTS public.city_overview;
@@ -350,7 +350,7 @@ LEFT JOIN public.nomad_visas nv ON c.id = nv.city_id;
 
 -- 10. 为视图启用RLS
 ALTER VIEW public.community_messages_with_user_info SET (security_invoker = true);
-ALTER VIEW public.plan_details SET (security_invoker = true);
+-- ALTER VIEW public.plan_details SET (security_invoker = true);
 ALTER VIEW public.city_overview SET (security_invoker = true);
 
 -- 完成
