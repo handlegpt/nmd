@@ -321,7 +321,7 @@ SELECT
     cm.*,
     up.profile_data->>'name' as display_name,
     up.profile_data->>'avatar_url' as avatar_url,
-    up.profile_data->>'location' as location
+    up.profile_data->>'location' as user_location
 FROM public.community_messages cm
 LEFT JOIN public.user_profiles up ON cm.user_id = up.user_id;
 
