@@ -342,11 +342,11 @@ SELECT
     c.*,
     cc.monthly_cost,
     cc.cost_breakdown,
-    nv.visa_available,
-    nv.visa_requirements
+    nv.visa_name as visa_available,
+    nv.requirements as visa_requirements
 FROM public.cities c
 LEFT JOIN public.city_costs cc ON c.id = cc.city_id
-LEFT JOIN public.nomad_visas nv ON c.id = nv.city_id;
+LEFT JOIN public.nomad_visas nv ON c.country = nv.country;
 
 -- 10. 为视图启用RLS
 ALTER VIEW public.community_messages_with_user_info SET (security_invoker = true);
